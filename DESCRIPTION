@@ -2,8 +2,8 @@ Package: allofus
 Type: Package
 Title: R package to streamline use of the AllofUs Resarcher Workbench 
 Version: 0.1.0
-Author: Rob Cavanaugh
-Maintainer: Rob Cavanaugh
+Authors@R: 
+    person("Rob", "Cavanaugh", email = "r.cavanaugh@northeastern.edu", role = c("aut", "cre"))
 Description: The allofus R package contains useful functions for working in the AllofUs Researcher Workbench.
 License: MIT
 Encoding: UTF-8
