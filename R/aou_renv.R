@@ -10,6 +10,6 @@ aou_save_renv <- function(){
 #'
 #' @export
 aou_load_renv <- function(){
-  files = c("renv.lock", ".Rprofile", "renv/activate.R")
+  files = c("renv.lock")
   allofus::aou_bucket_to_workspace(files)
 }
