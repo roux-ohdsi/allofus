@@ -9,9 +9,10 @@ License: MIT
 Encoding: UTF-8
 LazyData: true
 Imports: 
-    bigrquery,
-    cli,
-    DBI
+    cli
+Suggests:
+    DBI,
+    bigrquery
 RoxygenNote: 7.2.3
 URL: https://github.com/rbcavanaugh/allofus
 BugReports: https://github.com/rbcavanaugh/allofus/issues

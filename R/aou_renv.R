@@ -3,7 +3,7 @@
 #' @export
 aou_save_renv <- function(){
   files = c("renv.lock", ".Rprofile", "renv/activate.R")
-  allofus::aou_workspace_to_bucket(files)
+  allofus::aou_workspace_to_bucket(files, pattern = "")
 }
 
 #' Save renv files to bucket
