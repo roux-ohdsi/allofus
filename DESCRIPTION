@@ -14,3 +14,5 @@ Imports:
     cli,
     DBI
 RoxygenNote: 7.2.3
+URL: https://github.com/rbcavanaugh/allofus
+BugReports: https://github.com/rbcavanaugh/allofus/issues
