@@ -2,8 +2,8 @@
 
 export(aou_bucket_to_workspace)
 export(aou_connect)
-export(aou_load_renv)
 export(aou_ls_bucket)
 export(aou_ls_workspace)
-export(aou_save_renv)
 export(aou_workspace_to_bucket)
+export(bookstore)
+export(omop_join)

@@ -4,7 +4,7 @@
 \alias{aou_ls_workspace}
 \title{List the current files in your workspace.}
 \usage{
-aou_ls_workspace(pattern = "*.csv", silent = FALSE)
+aou_ls_workspace(pattern = "", silent = FALSE)
 }
 \arguments{
 \item{pattern}{pattern like *.csv or a single file name e.g., mydata.csv}

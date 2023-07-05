@@ -5,7 +5,7 @@
 \title{List the current files in your bucket.}
 \usage{
 aou_ls_bucket(
-  pattern = "*.csv",
+  pattern = "",
   bucket_name = Sys.getenv("WORKSPACE_BUCKET"),
   silent = FALSE
 )
