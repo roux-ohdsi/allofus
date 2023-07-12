@@ -20,15 +20,17 @@ aou_connect <- function(bucket_name = "bucket"){
     dataset = release
   )
 
-  assign("con", connection, envir = .GlobalEnv)
+
   assign(bucket_name, Sys.getenv('WORKSPACE_BUCKET'), envir = .GlobalEnv)
   options(con.default.value = connection)
 
   if(isTRUE(connection@dataset == release)){
     cat(cli::col_green("Connected successfully!"),
-        cli::col_blue("Use `con` to access the connection and `", bucket_name,
+        cli::col_blue("Use ", bucket_name,
                       "` to retrieve the name of your bucket"), sep = "\n")
   } else {
     cat(cli::col_red("Error: Unable to connect"))
   }
+
+  return(connection)
 }

@@ -3,7 +3,10 @@ Type: Package
 Title: R package to streamline use of the AllofUs Resarcher Workbench 
 Version: 0.1.0
 Authors@R: 
-    person("Rob", "Cavanaugh", email = "r.cavanaugh@northeastern.edu", role = c("aut", "cre"))
+    c(
+      person("Rob", "Cavanaugh", email = "r.cavanaugh@northeastern.edu", role = c("aut", "cre")),
+      person("Louisa", "Smith", email = "l.smith@northeastern.edu", role = c("aut"))
+    )
 Description: The allofus R package contains useful functions for working in the AllofUs Researcher Workbench.
 License: MIT
 Encoding: UTF-8
@@ -14,5 +17,5 @@ Suggests:
     DBI,
     bigrquery
 RoxygenNote: 7.2.3
-URL: https://github.com/rbcavanaugh/allofus
-BugReports: https://github.com/rbcavanaugh/allofus/issues
+URL: https://github.com/roux-ohdsi/allofus
+BugReports: https://github.com/roux-ohdsi/allofus/issues
