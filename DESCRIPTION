@@ -15,7 +15,11 @@ Imports:
     cli
 Suggests:
     DBI,
-    bigrquery
+    bigrquery,
+    knitr,
+    rmarkdown
 RoxygenNote: 7.2.3
-URL: https://github.com/roux-ohdsi/allofus
+URL: https://roux-ohdsi.github.io/allofus/, https://github.com/roux-ohdsi/allofus
 BugReports: https://github.com/roux-ohdsi/allofus/issues
+VignetteBuilder: knitr
+
