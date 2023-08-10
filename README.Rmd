@@ -48,7 +48,7 @@ Then, you can use `aou_ls_bucket()` to list files in your bucket
 aou_ls_bucket()
 ```
 
-Files in your workspace are only accessible to you, but not your collaborators. If you need to move a file from your workspace bucket to your personal workspace, use `aou_bucket_to_workspace()` to move files from your bucket to your workspace
+Files in your workspace are only accessible to you, but not your collaborators (see details on storage below). If you need to move a file from your workspace bucket to your personal workspace, use `aou_bucket_to_workspace()` to move files from your bucket to your workspace
 
 ```
 aou_bucket_to_workspace("file1.csv")
@@ -56,8 +56,7 @@ data <- read.csv("file1.csv")
 ```
 
 And when you want to save something from your workspace to your bucket so that
-your collaborators can use it (or so that you can shut down your workspace and save \$\$\$), you can use `aou_workspace_to_bucket()` to move files from your workspace to your bucket
-for permanent storage.
+your collaborators can use it (or so that you can shut down your workspace and save \$\$\$), you can use `aou_workspace_to_bucket()` to move files from your workspace to your bucket for permanent storage.
 
 ```
 write.csv(data, "file1.csv")
@@ -87,13 +86,15 @@ Working with data in AllofUs is similar to working with other OMOP CDM instances
 
 -   The workbench uses jupyter notebooks (though RStudio is coming).
 
--   It's important to understand where data is stored for AllofUs. Each user has a persistent disk that is specific to that user. For a given workspace, there is a shared "data bucket" that holds data that anyone with access to the workspace can access. Unless you're sure that no one else will need to see the data or the scripts that use the data, we currently recommend only using the bucket for storage. However, unlike the persistent disk, we can't just run `read.csv("data.csv")` from the bucket. We have to move data from the bucket into the current environment first (more on how to do this later).
+-   It's important to understand where data is stored for AllofUs. Each user has a persistent disk ("your workspace") that is specific to that user. For a given Project Workspace, there is a shared "data bucket" that holds data that anyone with access to the Project workspace can access. Unless you're sure that no one else will need to see the data or the scripts that use the data, we currently recommend using only the bucket for storage that needs be permanent. However, unlike the persistent disk, we can't just run `read.csv("data.csv")` from the bucket. We have to move data from the bucket into the your persistent disk/your workspace (the current environment) first.
 
     ![](https://support.researchallofus.org/hc/article_attachments/14431834598036)
 
 ### Example
 
 The following code would start a query for the first survey date for the AllofUs survey "The Basics" (sometimes, but rarely, participants completed this survey over multiple dates).
+
+*While the ds_survey table is conveniently organized, it does not include the "skip" response for some surveys, so we don't recommend using it unless you're sure all potential responses have been recorded in the table. It's safest to use the observation table. You can see a detailed description of the survey ETL here: https://support.researchallofus.org/hc/en-us/articles/6085114880148.*
 
 ```{r, eval = FALSE}
 library(tidyverse)

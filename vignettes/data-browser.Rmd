@@ -18,6 +18,8 @@ knitr::opts_chunk$set(
 
 This vignette will go over how to use the AllofUs Research Data Browser to identify questions of interest, and then how to pull that data from the OMOP-CDM structured database. The Data Browser is a useful took for quickly finding data (survey questions, conditions in the electronic health record, fitbit measurements etc.). It can be found here: https://databrowser.researchallofus.org/ and is available publicly. However, it's not always clear exactly how to query the OMOP-CDM database to find the data that you can preview in the Data Browser.  
 
+*Later Edit: Nearly all the key information you need to find survey data can be found here: https://support.researchallofus.org/hc/en-us/articles/6085114880148.*
+
 <div>
 <img src="images/img1.png" width="600"/>
 </div>
