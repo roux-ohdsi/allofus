@@ -4,17 +4,17 @@
 \alias{aou_connect}
 \title{Create a connection to the database in All of Us}
 \usage{
-aou_connect(CDR = getOption("cdr.default.value"))
+aou_connect(CDR = getOption("aou.default.cdr"))
 }
 \arguments{
 \item{CDR}{The name of the "curated data repository" that will be used in any
 references of the form "{CDR}" or "{cdr}" in the query. Defaults to
-getOption("cdr.default.value"), which is Sys.getenv('WORKSPACE_CDR') if it has not been changed
+getOption("aou.default.cdr"), which is Sys.getenv('WORKSPACE_CDR') if not specified otherwise
 (the "mainline" CDR). On the controlled tier, specify the "base" CDR with
 `CDR = paste0(Sys.getenv('WORKSPACE_CDR'), "_base")`.}
 }
 \value{
-A `BigQueryConnection` object
+A `BigQueryConnection` object. This object is also saved as getOption("aou.default.con").
 }
 \description{
 Use this function to create a `BigQueryConnection` object.

@@ -14,7 +14,7 @@ aou_pull_concepts(
   min_n = NULL,
   n = FALSE,
   keep_all = FALSE,
-  con = getOption("con.default.value"),
+  con = getOption("aou.default.con"),
   collect = TRUE,
   ...
 )

@@ -6,7 +6,7 @@
 #' @details
 #' Include the following line at the top of your script after setting the connection
 #' where con refers to the connection object in R.
-#' options(con.default.value = con)
+#' options(aou.default.con = con)
 #'
 #'
 #' There are a few good reasons to use omop_join() when possible over the x_join functions from dplyr.
@@ -30,7 +30,7 @@
 #'
 #' @examples
 #' allofus::aou_connect()
-#' options(con.default.value = con)
+#' options(aou.default.con = con)
 #' obs_tbl |>
 #'   omop_join("person", type = "left", by = "person_id")
 #'
@@ -39,13 +39,13 @@ omop_join <- function(data,
                       type,
                       by,
                       suffix = c("_x", "_y"),
-                      con = getOption("con.default.value"),
+                      con = getOption("aou.default.con"),
                       #schema = NULL,
                       x_as = NULL,
                       y_as = NULL,
                       ...){
 
-  if (is.null(con)) stop("Provide `con` as an argument or default with `options(con.default.value = ...)`")
+  if (is.null(con)) stop("Provide `con` as an argument or default with `options(aou.default.con = ...)`")
 
   # allow for use in AoU
   # first argument assigns the schema as a default, or NULL if not set

@@ -43,14 +43,14 @@ aou_pull_concepts <- function(cohort,
                               min_n = NULL,
                               n = FALSE,
                               keep_all = FALSE,
-                              con = getOption("con.default.value"),
+                              con = getOption("aou.default.con"),
                               collect = TRUE, ...){
 
   if (is.null(concept_set_name)) concept_set_name <- paste0("concept_set_", concept_set_id)
   if (!is.null(min_n) & !is.numeric(min_n)) stop("Provide a number to `min_n` to restrict to observations with at least that number of rows")
   if (n && keep_all) warning("The `keep_all` argument takes precedence; all data will be returned instead of counts.")
 
-  if (is.null(con)) stop("Provide `con` as an argument or default with `options(con.default.value = ...)`")
+  if (is.null(con)) stop("Provide `con` as an argument or default with `options(aou.default.con = ...)`")
 
   all_concepts <- map(
     domains,

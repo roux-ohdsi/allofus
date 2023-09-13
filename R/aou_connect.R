@@ -9,10 +9,10 @@
 #' status (successful or not).
 #' @param CDR The name of the "curated data repository" that will be used in any
 #' references of the form "{CDR}" or "{cdr}" in the query. Defaults to
-#' getOption("cdr.default.value"), which is Sys.getenv('WORKSPACE_CDR') if it has not been changed
+#' getOption("aou.default.cdr"), which is Sys.getenv('WORKSPACE_CDR') if not specified otherwise
 #' (the "mainline" CDR). On the controlled tier, specify the "base" CDR with
 #' `CDR = paste0(Sys.getenv('WORKSPACE_CDR'), "_base")`.
-#' @return A `BigQueryConnection` object
+#' @return A `BigQueryConnection` object. This object is also saved as getOption("aou.default.con").
 #' @export
 #' @examples
 #' \dontrun{
@@ -22,7 +22,7 @@
 #' # print a list of the tables in the database
 #' DBI::dbListTables(con)
 #' }
-aou_connect <- function(CDR = getOption("cdr.default.value")) {
+aou_connect <- function(CDR = getOption("aou.default.cdr")) {
   dataset <- strsplit(CDR, split = "\\.")[[1]]
   release <- dataset[2]
   prefix <- dataset[1]
@@ -34,13 +34,10 @@ aou_connect <- function(CDR = getOption("cdr.default.value")) {
     dataset = release
   )
 
-  # assign(bucket_name, Sys.getenv('WORKSPACE_BUCKET'), envir = .GlobalEnv)
-  options(con.default.value = connection)
+  options(aou.default.con = connection)
 
   if (isTRUE(connection@dataset == release)) {
     cat(cli::col_green("Connected successfully!"))
-    # cli::col_blue("Use ", bucket_name,
-    #               "` to retrieve the name of your bucket"), sep = "\n")
   } else {
     cat(cli::col_red("Error: Unable to connect"))
   }
@@ -55,8 +52,9 @@ aou_connect <- function(CDR = getOption("cdr.default.value")) {
 #' References to `cdr` or `CDR` will be evaluated automatically.
 #' @param CDR The name of the "curated data repository" that will be used in any
 #' references of the form "{CDR}" or "{cdr}" in the query. Defaults to
-#' Sys.getenv('WORKSPACE_CDR') (the "mainline" CDR). On the controlled tier,
-#' specify the "base" CDR with `CDR = paste0(Sys.getenv('WORKSPACE_CDR'), "_base")`.
+#' getOption("aou.default.cdr"), which is Sys.getenv('WORKSPACE_CDR') if not specified otherwise
+#' (the "mainline" CDR). On the controlled tier, specify the "base" CDR with
+#' `CDR = paste0(Sys.getenv('WORKSPACE_CDR'), "_base")`.
 #' @param download Do you want to retrieve the result of the SQL query into
 #' the local environment? Defaults to`TRUE`.
 #' @param ... All other arguments passed to `bigrquery::bq_table_download()`
@@ -147,7 +145,7 @@ aou_connect <- function(CDR = getOption("cdr.default.value")) {
 #'   N DESC
 #' ')
 #' }
-aou_sql <- function(query, CDR = getOption("cdr.default.value"), download = TRUE, ...) {
+aou_sql <- function(query, CDR = getOption("aou.default.cdr"), download = TRUE, ...) {
   .cdr_objs <- ls(envir = .GlobalEnv, pattern = "^CDR$|^cdr$")
   if (length(.cdr_objs) == 0) {
     CDR <- CDR

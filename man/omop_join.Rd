@@ -10,7 +10,7 @@ omop_join(
   type,
   by,
   suffix = c("_x", "_y"),
-  con = getOption("con.default.value"),
+  con = getOption("aou.default.con"),
   x_as = NULL,
   y_as = NULL,
   ...
@@ -41,7 +41,7 @@ to another table in the omop cdm (or any other of the same source).
 \details{
 Include the following line at the top of your script after setting the connection
 where con refers to the connection object in R.
-options(con.default.value = con)
+options(aou.default.con = con)
 
 There are a few good reasons to use omop_join() when possible over the x_join functions from dplyr.
 First, it reduces the code necessary to join an existing table to another table. Second,
@@ -52,7 +52,7 @@ the \code{by} argument which will result in a sql error.
 }
 \examples{
 allofus::aou_connect()
-options(con.default.value = con)
+options(aou.default.con = con)
 obs_tbl |>
   omop_join("person", type = "left", by = "person_id")
 

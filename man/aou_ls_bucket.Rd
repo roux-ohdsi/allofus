@@ -2,21 +2,39 @@
 % Please edit documentation in R/aou_ls.R
 \name{aou_ls_bucket}
 \alias{aou_ls_bucket}
-\title{List the current files in your bucket.}
+\title{List the current files in your bucket}
 \usage{
 aou_ls_bucket(
   pattern = "",
-  bucket_name = Sys.getenv("WORKSPACE_BUCKET"),
-  silent = FALSE
+  silent = FALSE,
+  bucket = Sys.getenv("WORKSPACE_BUCKET"),
+  gsutil_args = ""
 )
 }
 \arguments{
-\item{pattern}{pattern like *.csv or a single file name e.g., mydata.csv}
+\item{pattern}{Regular expression, such as "*.csv" or a single file name e.g., "mydata.csv".
+Default will find all files apart from notebooks (.ipynb files).}
 
-\item{bucket_name}{name of your bucket. Recommend leaving the default}
+\item{silent}{Logical; whether to print the names of files found.}
 
-\item{silent}{logical; whether to print the files found}
+\item{bucket}{Bucket to retrieve file from. Defaults to `getOption("aou.default.bucket")`,
+which is `Sys.getenv('WORKSPACE_BUCKET')` unless specified otherwise.}
+
+\item{gsutil_args}{A string containing other arguments passed to `gsutil ls`.
+See https://cloud.google.com/storage/docs/gsutil/commands/ls for details.}
+}
+\value{
+A vector of file names
 }
 \description{
-Quick function to list files matching a pattern in your bucket
+The files stored in a bucket are not easily visible from a notebook. List
+all files in the bucket or files matching a certain pattern.
+}
+\examples{
+\dontrun{
+aou_ls_bucket("*.csv")
+# list all csv files in the data directory, including in subdirectories
+aou_ls_bucket("data/*.csv", gsutil_args = "-r")
+}
+
 }

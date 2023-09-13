@@ -2,15 +2,26 @@
 % Please edit documentation in R/aou_ls.R
 \name{aou_ls_workspace}
 \alias{aou_ls_workspace}
-\title{List the current files in your workspace.}
+\title{List the current files in your workspace}
 \usage{
-aou_ls_workspace(pattern = "", silent = FALSE)
+aou_ls_workspace(pattern = "", silent = FALSE, ...)
 }
 \arguments{
-\item{pattern}{pattern like *.csv or a single file name e.g., mydata.csv}
+\item{pattern}{Regular expression, such as "*.csv" or a single file name e.g., "mydata.csv".
+Default will find all files apart from notebooks (.ipynb files).}
 
-\item{silent}{logical; whether to print the files found}
+\item{silent}{Logical; whether to print the names of files found.}
+
+\item{...}{Other arguments passed to `list.files()`}
+}
+\value{
+A vector of file names
 }
 \description{
-List the current files in your workspace.
+The files stored in a workspace are not easily visible from a notebook. List
+all files in the workspace (apart from notebooks) or files matching a certain pattern.
+}
+\examples{
+aou_ls_workspace("*.csv")
+
 }

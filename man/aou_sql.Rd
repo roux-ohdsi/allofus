@@ -4,7 +4,7 @@
 \alias{aou_sql}
 \title{Execute a SQL query}
 \usage{
-aou_sql(query, CDR = getOption("cdr.default.value"), download = TRUE, ...)
+aou_sql(query, CDR = getOption("aou.default.cdr"), download = TRUE, ...)
 }
 \arguments{
 \item{query}{A sql query (BigQuery dialect) to be executed. Interpreted
@@ -13,8 +13,9 @@ References to `cdr` or `CDR` will be evaluated automatically.}
 
 \item{CDR}{The name of the "curated data repository" that will be used in any
 references of the form "{CDR}" or "{cdr}" in the query. Defaults to
-Sys.getenv('WORKSPACE_CDR') (the "mainline" CDR). On the controlled tier,
-specify the "base" CDR with `CDR = paste0(Sys.getenv('WORKSPACE_CDR'), "_base")`.}
+getOption("aou.default.cdr"), which is Sys.getenv('WORKSPACE_CDR') if not specified otherwise
+(the "mainline" CDR). On the controlled tier, specify the "base" CDR with
+`CDR = paste0(Sys.getenv('WORKSPACE_CDR'), "_base")`.}
 
 \item{download}{Do you want to retrieve the result of the SQL query into
 the local environment? Defaults to`TRUE`.}
