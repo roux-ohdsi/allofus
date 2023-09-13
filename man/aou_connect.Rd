@@ -2,15 +2,32 @@
 % Please edit documentation in R/aou_connect.R
 \name{aou_connect}
 \alias{aou_connect}
-\title{Connect to big query database in All of Us}
+\title{Create a connection to the database in All of Us}
 \usage{
-aou_connect(bucket_name = "bucket")
+aou_connect(CDR = getOption("cdr.default.value"))
 }
 \arguments{
-\item{bucket_name}{variable name for your bucket. Recommend leaving the default.}
+\item{CDR}{The name of the "curated data repository" that will be used in any
+references of the form "{CDR}" or "{cdr}" in the query. Defaults to
+getOption("cdr.default.value"), which is Sys.getenv('WORKSPACE_CDR') if it has not been changed
+(the "mainline" CDR). On the controlled tier, specify the "base" CDR with
+`CDR = paste0(Sys.getenv('WORKSPACE_CDR'), "_base")`.}
+}
+\value{
+A `BigQueryConnection` object
 }
 \description{
-To use, simply run the function without any arguments. It will
-print a message if you connect successfully. It will also assign your bucket
-to an object in your R environment.
+Use this function to create a `BigQueryConnection` object.
+You can reference this object to connect to the All of Us database and run
+SQL code using, e.g., `dbplyr` or `DBI`. A message is printed with the connection
+status (successful or not).
+}
+\examples{
+\dontrun{
+con <- aou_connect()
+# reference the observation table in the database
+dplyr::tbl(con, "observation")
+# print a list of the tables in the database
+DBI::dbListTables(con)
+}
 }
