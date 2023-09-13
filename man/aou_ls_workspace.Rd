@@ -22,6 +22,8 @@ The files stored in a workspace are not easily visible from a notebook. List
 all files in the workspace (apart from notebooks) or files matching a certain pattern.
 }
 \examples{
+aou_ls_workspace()
 aou_ls_workspace("*.csv")
+aou_ls_workspace(path = "data")
 
 }

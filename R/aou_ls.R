@@ -12,7 +12,9 @@
 #'
 #' @export
 #' @examples
+#' aou_ls_workspace()
 #' aou_ls_workspace("*.csv")
+#' aou_ls_workspace(path = "data")
 #'
 aou_ls_workspace <- function(pattern = "", silent = FALSE, ...) {
   files <- list.files(pattern = pattern, ...)
@@ -49,19 +51,26 @@ aou_ls_workspace <- function(pattern = "", silent = FALSE, ...) {
 #' @export
 #' @examples
 #' \dontrun{
+#' # list all files, including in subdirectories
+#' aou_ls_bucket()
+#' # list all csv files
 #' aou_ls_bucket("*.csv")
-#' # list all csv files in the data directory, including in subdirectories
-#' aou_ls_bucket("data/*.csv", gsutil_args = "-r")
+#' # list all csv files in the data directory
+#' aou_ls_bucket("data/*.csv")
 #' }
 #'
-aou_ls_bucket <- function(pattern = "", silent = FALSE, bucket = Sys.getenv("WORKSPACE_BUCKET"), gsutil_args = "") {
+aou_ls_bucket <- function(pattern = "", silent = FALSE, recursive = TRUE, bucket = Sys.getenv("WORKSPACE_BUCKET"), gsutil_args = "") {
+  if (recursive) {
+    gsutil_args <- paste("-r", gsutil_args)
+  }
+
   # Check if file is in the bucket
-  files <- system(paste0("gsutil ls ", gsutil_args, " ", bucket, "/", pattern), intern = TRUE)
+  files <- suppressWarnings(system(paste0("gsutil ls ", gsutil_args, " ", bucket, "/", pattern), intern = TRUE))
   # stringr::str_remove(files, paste0(bucket_name, "/data/"))
   files <- gsub(".*/data/", "", files)
 
   if (length(files) == 0) {
-    cat(cli::col_red("No files found with that pattern."))
+    cat(cli::col_red("No files found with that pattern.\n"))
   } else {
     if (!silent) {
       for (i in 1:length(files)) {
@@ -126,6 +135,7 @@ aou_bucket_to_workspace <- function(file, dir = "", bucket = getOption("aou.defa
 #' @param file The name of a file in your bucket, a vector of multiple files, a directory,
 #' or a file pattern (e.g. ".csv"). See Details.
 #' @param dir Optional directory in the bucket to save files to.
+#' @param recursive description
 #' @param bucket Bucket to save files to. Defaults to `getOption("aou.default.bucket")`,
 #' which is `Sys.getenv('WORKSPACE_BUCKET')` unless specified otherwise.
 #'
@@ -146,11 +156,25 @@ aou_bucket_to_workspace <- function(file, dir = "", bucket = getOption("aou.defa
 #' aou_workspace_to_bucket(c("data1.csv", "data2.csv"))
 #' }
 #'
-aou_workspace_to_bucket <- function(file, dir = "", bucket_name = Sys.getenv("WORKSPACE_BUCKET")) {
-  # TODO? check to see if files are there as in the bucket-to-workspace func?
+aou_workspace_to_bucket <- function(file, dir = "", recursive = TRUE,
+                                    bucket = getOption("aou.default.bucket")) {
+
+  gsutil_args <- "-L gsutil_copy_to_bucket.log"
+  if (recursive) {
+    gsutil_args <- paste("-r", gsutil_args)
+  }
+
   # Copy the file from current workspace to the bucket
   for (i in 1:length(file)) {
-    system(paste0("gsutil cp ./", file[i], " ", bucket_name, "/", dir), intern = TRUE)
-    cat(cli::col_green("Saved ", file[i], " to bucket\n"))
+    system(paste0("gsutil cp", gsutil_args, " ./", file[i], " ", file.path(bucket, dir)), intern = TRUE)
   }
+  # Check which files were copied
+  if (length(read.csv("cp.log")$Destination) == 0) {
+    cat(cli::col_red("Oops! No files were copied\n"))
+  } else{
+    cat(cli::col_green("Saved to bucket:", "\n",
+                       paste(gsub(paste0(my_bucket, "/"), "", read.csv("cp.log")$Destination), collapse = "\n")))
+  }
+  invisible(file.remove("cp.log"))
 }
+

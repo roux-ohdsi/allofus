@@ -47,7 +47,7 @@ aou_connect <- function(CDR = getOption("aou.default.cdr")) {
 
 #' Execute a SQL query
 #'
-#' @param query A sql query (BigQuery dialect) to be executed. Interpreted
+#' @param query A SQL query (BigQuery dialect) to be executed. Interpreted
 #' with `glue::glue()`, so expressions enclosed with braces will be evaluated.
 #' References to `cdr` or `CDR` will be evaluated automatically.
 #' @param CDR The name of the "curated data repository" that will be used in any

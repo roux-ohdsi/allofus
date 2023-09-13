@@ -1,22 +1,18 @@
-#' Join current query to another omop table
+#' Join current query to another table
 #'
 #' @description Simple wrapper for join functions to join an existing query
-#' to another table in the omop cdm (or any other of the same source).
+#' to another table in the All of Us database.
 #'
 #' @details
-#' Include the following line at the top of your script after setting the connection
-#' where con refers to the connection object in R.
-#' options(aou.default.con = con)
 #'
-#'
-#' There are a few good reasons to use omop_join() when possible over the x_join functions from dplyr.
+#' There are a few good reasons to use aou_join() when possible over the x_join functions from dplyr.
 #' First, it reduces the code necessary to join an existing table to another table. Second,
-#' it includes checks/workarounds for two sources of common errors using dplyr with DatabaseConnector:
+#' it includes checks/workarounds for two sources of common errors using dbplyr:
 #' it automatically appends the x_as and y_as arguments to the join call if they are not provided and
 #' it changes the default suffix from .x/.y to _x/_y for cases with shared column names not specified by
-#' the `by` argument which will result in a sql error.
+#' the `by` argument which will result in a SQL error.
 #'
-#' @param data sql query from dbplyr/dplyr.
+#' @param data SQL query from dbplyr/dplyr.
 #' @param table the omop table (or other table in your schema) you wish to join
 #' @param type the type of join. use types available in dplyr: left, right, inner, anti, full etc.
 #' @param con defaults to the connection you set with options()
@@ -24,7 +20,7 @@
 #' @param x_as optional; a string for the name of the left table
 #' @param y_as optional; a string for the name of the right table
 #'
-#' @return Continued dplyr query
+#' @return Continued dbplyr query
 #' @export
 #' @md
 #'
@@ -34,7 +30,7 @@
 #' obs_tbl |>
 #'   omop_join("person", type = "left", by = "person_id")
 #'
-omop_join <- function(data,
+aou_join <- function(data,
                       table,
                       type,
                       by,
@@ -45,26 +41,16 @@ omop_join <- function(data,
                       y_as = NULL,
                       ...){
 
-  if (is.null(con)) stop("Provide `con` as an argument or default with `options(aou.default.con = ...)`")
+  if (is.null(con)) stop("Have you set up the connection? Provide `con` as an argument or default with `options(aou.default.con = ...)`")
 
-  # allow for use in AoU
-  # first argument assigns the schema as a default, or NULL if not set
-  # second if adds a period to the schema
-  # if (is.null(schema)) schema <- getOption("schema.default.value")
-  # if (!is.null(schema)) {
-  #   schema <- paste0(schema, ".")
-  # } else if (class(con) != "BigQueryConnection"){
-  #   # if(grepl("redshift", con@dbms)) {
-  #   stop("Missing schema. Either provide a schema or set options(schema.default.value = cdm_schema).")
-  # }
-
-
-  y_table = tbl(con, table) #paste0(schema, table))
+  y_table = tbl(con, table)
   shared_columns = intersect(colnames(data), colnames(y_table))
 
   # stop("Provide `schema` as an argument or default with `options(schema.default.value = ...)`")
 
-  if(!all(sort(shared_columns) == sort(by)) & all(suffix == c("_x", "_y"))){
+  # convert to the new join type
+  by <- dplyr:::as_join_by(by)
+  if(length(shared_columns) > 0 & !all(sort(shared_columns) %in% sort(c(by$x, by$y))) & all(suffix == c("_x", "_y"))){
     w1 = "There are shared column names not specified in the `by` argument."
     w2 = "These column names now include `_x` and `_y`."
     w3 = "You can change this suffix using the `suffix` argument but it cannot contain periods (`.`)."
@@ -79,5 +65,6 @@ omop_join <- function(data,
                                       by = by,
                                       suffix = suffix,
                                       ...)
+
 
 }

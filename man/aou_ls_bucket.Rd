@@ -7,6 +7,7 @@
 aou_ls_bucket(
   pattern = "",
   silent = FALSE,
+  recursive = TRUE,
   bucket = Sys.getenv("WORKSPACE_BUCKET"),
   gsutil_args = ""
 )
@@ -32,9 +33,12 @@ all files in the bucket or files matching a certain pattern.
 }
 \examples{
 \dontrun{
+# list all files, including in subdirectories
+aou_ls_bucket()
+# list all csv files
 aou_ls_bucket("*.csv")
-# list all csv files in the data directory, including in subdirectories
-aou_ls_bucket("data/*.csv", gsutil_args = "-r")
+# list all csv files in the data directory
+aou_ls_bucket("data/*.csv")
 }
 
 }

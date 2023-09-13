@@ -7,7 +7,7 @@
 aou_sql(query, CDR = getOption("aou.default.cdr"), download = TRUE, ...)
 }
 \arguments{
-\item{query}{A sql query (BigQuery dialect) to be executed. Interpreted
+\item{query}{A SQL query (BigQuery dialect) to be executed. Interpreted
 with `glue::glue()`, so expressions enclosed with braces will be evaluated.
 References to `cdr` or `CDR` will be evaluated automatically.}
 

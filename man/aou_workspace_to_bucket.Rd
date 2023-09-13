@@ -7,7 +7,8 @@
 aou_workspace_to_bucket(
   file,
   dir = "",
-  bucket_name = Sys.getenv("WORKSPACE_BUCKET")
+  recursive = TRUE,
+  bucket = getOption("aou.default.bucket")
 )
 }
 \arguments{
@@ -15,6 +16,8 @@ aou_workspace_to_bucket(
 or a file pattern (e.g. ".csv"). See Details.}
 
 \item{dir}{Optional directory in the bucket to save files to.}
+
+\item{recursive}{description}
 
 \item{bucket}{Bucket to save files to. Defaults to `getOption("aou.default.bucket")`,
 which is `Sys.getenv('WORKSPACE_BUCKET')` unless specified otherwise.}
