@@ -31,7 +31,10 @@ library(allofus)
                   rownames = FALSE,
                   filter = 'top',
                   plugins = "ellipsis",
+                  extensions = 'Buttons',
                   options = list(
+                    dom = 'Bfrtip',
+                    buttons = c('copy', 'csv', 'excel', 'pdf', 'print'),
                     pageLength = 20,
                     # scrollX = TRUE,
                     # scrollCollapse = TRUE,
