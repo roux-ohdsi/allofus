@@ -42,10 +42,10 @@ ppi_vocab = ppi_vocab |>
 
 
 join_to_ppi <- function(.x){
-  left_join(.x, ppi_vocab, join_by(`Item Concept` == concept_code)) |>
+  full_join(.x, ppi_vocab, join_by(`Item Concept` == concept_code)) |>
     filter(`Field Type` != "descriptive") |>
     select(concept_code = `Item Concept`, concept_id, concept_name,  concept_class_id,
-           form_name = `Form Name`, field_type = `Field Type`, fild_label = `Field Label`,
+           form_name = `Form Name`, field_type = `Field Type`, field_label = `Field Label`,
            choices = contains("Choices"), standard_concept, valid_start_date, valid_end_date)
 }
 
