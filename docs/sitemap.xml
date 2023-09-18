@@ -16,6 +16,9 @@
     <loc>/articles/index.html</loc>
   </url>
   <url>
+    <loc>/articles/searchable_codebook.html</loc>
+  </url>
+  <url>
     <loc>/authors.html</loc>
   </url>
   <url>
@@ -25,7 +28,13 @@
     <loc>/reference/aou_bucket_to_workspace.html</loc>
   </url>
   <url>
+    <loc>/reference/aou_codebook.html</loc>
+  </url>
+  <url>
     <loc>/reference/aou_connect.html</loc>
+  </url>
+  <url>
+    <loc>/reference/aou_join.html</loc>
   </url>
   <url>
     <loc>/reference/aou_ls_bucket.html</loc>
@@ -38,6 +47,9 @@
   </url>
   <url>
     <loc>/reference/aou_pull_survey_concepts.html</loc>
+  </url>
+  <url>
+    <loc>/reference/aou_sql.html</loc>
   </url>
   <url>
     <loc>/reference/aou_workspace_to_bucket.html</loc>
