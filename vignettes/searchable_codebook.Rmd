@@ -22,7 +22,6 @@ knitr::opts_chunk$set(
 .container .template_article {
     max-width: 94vw !important;
 }
-
 .container .row {
     justify-content: space-evenly;
 }
@@ -39,19 +38,25 @@ match between the codebook and the Athena PPI Vocabulary. The code to generate a
    cols = c("concept_code", "concept_id", "concept_name", "concept_class_id",
             "form_name", "field_type", "field_label", "choices")
 
-    DT::datatable(allofus::aou_codebook[,cols],
+  df = allofus::aou_codebook[,cols]
+  df$concept_id = paste0('<a href=https://athena.ohdsi.org/search-terms/terms/',df$concept_id,' target="_blank">',df$concept_id,'</a>')
+
+    DT::datatable(df,
                   rownames = FALSE,
                   filter = 'top',
                   plugins = "ellipsis",
                   extensions = 'Buttons',
+                  escape = FALSE,
                   options = list(
+                    #autoWidth = TRUE,
+                    hover = TRUE,
                     dom = 'Bfrtip',
                     buttons = c('copy', 'csv', 'excel', 'pdf', 'print'),
                     pageLength = 20,
                     # scrollX = TRUE,
                     # scrollCollapse = TRUE,
                     columnDefs = list(list(
-                      targets = c(6,7),
+                      targets = c(2,6,7),
                       render = DT::JS("$.fn.dataTable.render.ellipsis( 20, false )")
                     ))
                   )) |>
