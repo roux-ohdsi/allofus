@@ -1,9 +1,15 @@
-#' World Health Organization TB data
+#' All of Us Modified Codebook
 #'
-#' A subset of data from the World Health Organization Global Tuberculosis
-#' Report ...
+#' This table consists of mapped rows from the
+#' publicly available AllofUs Survey Codebook
+#' to the AllofUs PPI Vocabulary available on Athena . A small number of rows did not
+#' match between the codebook and the Athena PPI Vocabulary. It can also be accessed in R using `allofus::aou_codebook`.
+#' \itemize{
+#'    \item{\href{https://docs.google.com/spreadsheets/d/1Ey8MScRYZ9QyS4izVYScISLMb62QEhSM-ErbG27dNtw/edit#gid=1832128489}{AllofUs codebook}}
+#'    \item{\href{https://github.com/roux-ohdsi/allofus/blob/main/data-raw/pkg_data.R}{Code to generate table}}
+#' }
 #'
-#' @format ## `aou_codebook`
+#' @format `aou_codebook`
 #' A data frame with 1919 rows and 11 columns:
 #' \describe{
 #'   \item{concept_code}{chr; Concept code from AOU codebook}
@@ -17,7 +23,5 @@
 #'   \item{standard_concept}{chr; Whether concept_id is a standard omop concept}
 #'   \item{valid_start_Date}{chr; start date for concept}
 #'   \item{valid_end_Date}{int; end date for concept}
-#'   ...
 #' }
-#' @source <https://docs.google.com/spreadsheets/d/1Ey8MScRYZ9QyS4izVYScISLMb62QEhSM-ErbG27dNtw/edit#gid=1832128489>
 "aou_codebook"
