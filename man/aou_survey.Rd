@@ -2,7 +2,7 @@
 % Please edit documentation in R/survey.R
 \name{aou_survey}
 \alias{aou_survey}
-\title{Funciton to query observation table for survey responses}
+\title{Function to query allofus observation table for survey responses}
 \usage{
 aou_survey(
   con,
@@ -27,7 +27,25 @@ aou_survey(
 \item{question_output}{hether to return the survey questions (columns) in their text format (value) or concept_id}
 }
 \description{
-Funciton to query observation table for survey responses
+Because responses to the survey questions stored in the ds_survey table do not
+include skipped questions (i.e., missing data!), this function makes it easier to
+query the observation table for responses to survey questions so that the skipped
+responses are included. At the moment, it only works for relatively straightforward
+questions without extensive branching logic. It also does not work for some
+questions in the personal/family/health/medical surveys that ask participants
+to check a box for each disease.
+
+The function will return a dataframe or SQL tbl with the initial cohort table along
+with a column for each question included in `questions` and answers for
+each person_id in the cells. The column names (questions) and answers can
+be returned as the concept_code or concept_id.
+
+To find the desired survey questions, use the all of us data dictionary,
+survey codebook, athena, data browser, or the allofus R package
+modified codebook which can be found here: https://roux-ohdsi.github.io/allofus/articles/searchable_codebook.html
+
+Users may want to do some post-processing. For example PMI_skip or 903096
+could be marked as NA.
 }
 \examples{
 \dontrun{
