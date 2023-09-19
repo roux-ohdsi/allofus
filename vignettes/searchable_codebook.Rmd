@@ -17,14 +17,23 @@ knitr::opts_chunk$set(
 <style>
 .row>main {
     max-width: 100vw !important;
+    width: 94vw !important;
 }
 .container .template_article {
-    max-width: 90vw !important;
+    max-width: 94vw !important;
+}
+
+.container .row {
+    justify-content: space-evenly;
 }
 </style>
 ```{r setup, echo = FALSE}
 library(allofus)
 ```
+
+This table consists of mapped rows from the [publicly available AllofUs Survey Codebook](https://docs.google.com/spreadsheets/d/1Ey8MScRYZ9QyS4izVYScISLMb62QEhSM-ErbG27dNtw/edit#gid=1832128489)
+to the AllofUs PPI Vocabulary available on [Athena](https://athena.ohdsi.org/search-terms/start). A small number of rows did not
+match between the codebook and the Athena PPI Vocabulary. The code to generate a full table can be found [here](https://github.com/roux-ohdsi/allofus/blob/main/data-raw/pkg_data.R).
 
 ```{r, echo = FALSE, out.width = "100%"}
    cols = c("concept_code", "concept_id", "concept_name", "concept_class_id",
@@ -50,7 +59,5 @@ library(allofus)
 ```
 
 
-This table consists of mapped rows from the [publicly available AllofUs Survey Codebook](https://docs.google.com/spreadsheets/d/1Ey8MScRYZ9QyS4izVYScISLMb62QEhSM-ErbG27dNtw/edit#gid=1832128489)
-to the AllofUs PPI Vocabulary available on [Athena](https://athena.ohdsi.org/search-terms/start). A small number of rows did not
-match between the codebook and the Athena PPI Vocabulary. The code to generate a full table can be found [here](https://github.com/roux-ohdsi/allofus/blob/main/data-raw/pkg_data.R).
+
 
