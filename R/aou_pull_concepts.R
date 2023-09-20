@@ -44,7 +44,7 @@ aou_concept_set <- function(cohort,
                               concept_set_name = "concept_set",
                               min_n = 1,
                               con = getOption("aou.default.con"),
-                              collect = TRUE, ...){
+                              collect = TRUE, ...) {
 
   if (is.null(con)) stop("Provide `con` as an argument or default with `options(aou.default.con = ...)`")
 
@@ -66,7 +66,7 @@ aou_concept_set <- function(cohort,
     return(count(all_concepts, concept_set, person_id))
   }
 
-  if (is.null(min_n) | !is.numeric(min_n)) stop("Provide a number to `min_n` to restrict to observations with at least that number of rows")
+  if (is.null(min_n) || !is.numeric(min_n)) stop("Provide a number to `min_n` to restrict to observations with at least that number of rows")
 
   if (min_n > 1) {
     all_concepts <- all_concepts |>

@@ -22,7 +22,7 @@ bookstore <- function(package_names, quietly = TRUE){
   github_packages = list()
 
   if(length(github_install)){
-    for(i in 1:length(github_install)){
+    for(i in seq_along(github_install)){
 
       cat("Package", github_install[i], "not found in CRAN. \n")
       cat("Enter the Github user and repository for this package (e.g., roux-ohdsi/ohdsilab) \n")

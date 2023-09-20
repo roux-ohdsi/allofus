@@ -25,7 +25,7 @@ aou_ls_workspace <- function(pattern = "", silent = FALSE, ...) {
     cat(cli::col_red("No files found with that pattern."))
   } else {
     if (!silent) {
-      for (i in 1:length(files)) {
+      for (i in seq_along(files)) {
         cat(files[i], "\n")
       }
     }
@@ -73,7 +73,7 @@ aou_ls_bucket <- function(pattern = "", silent = FALSE, recursive = TRUE, bucket
     cat(cli::col_red("No files found with that pattern.\n"))
   } else {
     if (!silent) {
-      for (i in 1:length(files)) {
+      for (i in seq_along(files)) {
         cat(files[i], "\n")
       }
     }
@@ -114,7 +114,7 @@ aou_bucket_to_workspace <- function(file, dir = "", bucket = getOption("aou.defa
 
   missing_files <- list()
 
-  for (i in 1:length(file)) {
+  for (i in seq_along(file)) {
     if (!(file[i] %in% bucket_files)) {
       cat(cli::col_red("Oops! ", file[i], " not found in bucket\n"))
       missing_files <- append(missing_files, file[i])
@@ -165,7 +165,7 @@ aou_workspace_to_bucket <- function(file, dir = "", recursive = TRUE,
   }
 
   # Copy the file from current workspace to the bucket
-  for (i in 1:length(file)) {
+  for (i in seq_along(file)) {
     system(paste0("gsutil cp", gsutil_args, " ./", file[i], " ", file.path(bucket, dir)), intern = TRUE)
   }
   # Check which files were copied

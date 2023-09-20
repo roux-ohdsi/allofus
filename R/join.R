@@ -50,7 +50,7 @@ aou_join <- function(data,
 
   # convert to the new join type
   by <- dplyr:::as_join_by(by)
-  if(length(shared_columns) > 0 & !all(sort(shared_columns) %in% sort(c(by$x, by$y))) & all(suffix == c("_x", "_y"))){
+  if(length(shared_columns) > 0 && !all(sort(shared_columns) %in% sort(c(by$x, by$y))) && all(suffix == c("_x", "_y"))){
     w1 = "There are shared column names not specified in the `by` argument."
     w2 = "These column names now include `_x` and `_y`."
     w3 = "You can change this suffix using the `suffix` argument but it cannot contain periods (`.`)."
