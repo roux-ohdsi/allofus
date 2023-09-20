@@ -55,7 +55,7 @@ aou_connect <- function(CDR = getOption("aou.default.cdr")) {
 #' getOption("aou.default.cdr"), which is Sys.getenv('WORKSPACE_CDR') if not specified otherwise
 #' (the "mainline" CDR). On the controlled tier, specify the "base" CDR with
 #' `CDR = paste0(Sys.getenv('WORKSPACE_CDR'), "_base")`.
-#' @param download Do you want to retrieve the result of the SQL query into
+#' @param collect Do you want to retrieve the result of the SQL query into
 #' the local environment? Defaults to`TRUE`.
 #' @param ... All other arguments passed to `bigrquery::bq_table_download()`
 #'
@@ -156,7 +156,7 @@ aou_sql <- function(query, CDR = getOption("aou.default.cdr"), download = TRUE, 
     Sys.getenv("GOOGLE_PROJECT"),
     query = glue::glue(query)
   )
-  if (download) {
+  if (collect) {
     bigrquery::bq_table_download(q, ...)
   }
 }

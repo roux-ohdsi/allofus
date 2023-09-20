@@ -12,10 +12,10 @@
 #' it changes the default suffix from .x/.y to _x/_y for cases with shared column names not specified by
 #' the `by` argument which will result in a SQL error.
 #'
-#' @param data SQL query from dbplyr/dplyr.
-#' @param table the omop table (or other table in your schema) you wish to join
+#' @param data unexecuted SQL query from dbplyr/dplyr.
+#' @param table the omop table (or other remote table in your schema) you wish to join
 #' @param type the type of join. use types available in dplyr: left, right, inner, anti, full etc.
-#' @param con defaults to the connection you set with options()
+#' @param con connection to the allofus SQL database. Defaults to getOption("aou.default.con"), which is set automatically if you use `aou_connect()`
 #' @param ... arguments passed on to the join function. e.g., by = "person_id"
 #' @param x_as optional; a string for the name of the left table
 #' @param y_as optional; a string for the name of the right table
