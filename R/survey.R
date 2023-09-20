@@ -22,30 +22,32 @@
 #' Users may want to do some post-processing. For example PMI_skip or 903096
 #' could be marked as NA.
 #'
-#' @param con connection to the allofus SQL database.
 #' @param cohort tbl or dataframe with a cohort that includes a column called person_id
 #' @param questions either a vector of concept_ids or concept_codes for questions to return results
+#' @param con connection to the allofus SQL database. Defaults to getOption("aou.default.con"), which is created automatically with `aou_connect()`
 #' @param collect whether to return the results as a local (TRUE) or database table
 #' @param answer_output whether to return the survey responses in their text format (value) or concept_id
-#' @param question_output hether to return the survey questions (columns) in their text format (value) or concept_id
+#' @param question_output whether to return the survey questions (columns) in their text format (value) or concept_id
 #'
 #' @export
 #' @examples
 #' \dontrun{
 #' con <- aou_connect()
 #' cohort = tbl(con, "person") %>% filter(person_id > 5000000) %>% select(person_id, year_of_birth, gender_concept_id)
-#' aou_survey(con = con,
+#' aou_survey(
 #' cohort = cohort,
 #' questions = c(1585375, 1586135),
 #' answer_output = "value",
 #' question_output = "value")
 #' }
-aou_survey <- function(con,
-                       cohort,
+aou_survey <- function(cohort,
                        questions,
+                       con = getOption("aou.default.con"),
                        collect = TRUE,
                        answer_output = c("value", "concept_id"),
                        question_output = c("value", "concept_id")){
+
+  if(is.null(con)) stop("Please provide a connection to the database. You can do so automatically by running `aou_connect()` before this function.")
 
   # ensure person_id is a column name in cohort
   stopifnot("person_id not found in cohort data" = "person_id" %in% colnames(cohort))
