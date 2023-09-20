@@ -17,10 +17,10 @@ getOption("aou.default.cdr"), which is Sys.getenv('WORKSPACE_CDR') if not specif
 (the "mainline" CDR). On the controlled tier, specify the "base" CDR with
 `CDR = paste0(Sys.getenv('WORKSPACE_CDR'), "_base")`.}
 
-\item{download}{Do you want to retrieve the result of the SQL query into
-the local environment? Defaults to`TRUE`.}
-
 \item{...}{All other arguments passed to `bigrquery::bq_table_download()`}
+
+\item{collect}{Do you want to retrieve the result of the SQL query into
+the local environment? Defaults to`TRUE`.}
 }
 \value{
 A dataframe (if `download = TRUE`); otherwise, a `bq_table` object

@@ -5,26 +5,26 @@
 \title{Function to query allofus observation table for survey responses}
 \usage{
 aou_survey(
-  con,
   cohort,
   questions,
+  con = getOption("aou.default.con"),
   collect = TRUE,
-  answer_output = c("value", "concept_id"),
-  question_output = c("value", "concept_id")
+  answer_output = "value",
+  question_output = "value"
 )
 }
 \arguments{
-\item{con}{connection to the allofus SQL database.}
-
 \item{cohort}{tbl or dataframe with a cohort that includes a column called person_id}
 
 \item{questions}{either a vector of concept_ids or concept_codes for questions to return results}
 
+\item{con}{connection to the allofus SQL database. Defaults to getOption("aou.default.con"), which is created automatically with `aou_connect()`}
+
 \item{collect}{whether to return the results as a local (TRUE) or database table}
 
-\item{answer_output}{whether to return the survey responses in their text format (value) or concept_id}
+\item{answer_output}{whether to return the survey responses in their text format ("value") or "concept_id". Defaults to "value".}
 
-\item{question_output}{hether to return the survey questions (columns) in their text format (value) or concept_id}
+\item{question_output}{whether to return the survey questions (columns) in their text format ("value") or "concept_id". Defaults to "value".}
 }
 \description{
 Because responses to the survey questions stored in the ds_survey table do not
@@ -51,8 +51,7 @@ could be marked as NA.
 \dontrun{
 con <- aou_connect()
 cohort = tbl(con, "person") \%>\% filter(person_id > 5000000) \%>\% select(person_id, year_of_birth, gender_concept_id)
-aou_survey(con = con,
-cohort = cohort,
+aou_survey(cohort = cohort,
 questions = c(1585375, 1586135),
 answer_output = "value",
 question_output = "value")
