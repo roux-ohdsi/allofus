@@ -92,7 +92,7 @@ aou_survey <- function(cohort,
     pivot_wider(names_from = !!q, values_from = !!a, names_prefix = pref)
 
   # join back to original table
-  out = inner_join(function_cohort, wide, by = "person_id")
+  out = left_join(function_cohort, wide, by = "person_id")
 
   # collect if indicated
   if(isTRUE(collect)){
