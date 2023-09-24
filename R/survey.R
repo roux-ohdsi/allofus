@@ -72,7 +72,7 @@ aou_survey <- function(cohort,
   } else {
     question_output_arg <- match.arg(question_output, c("text", "concept_id"))
   }
-  question_output <- if(length(question_output_arg) == 1 & question_output_arg[1] == "concept_id") "concept_id" else "value"
+  question_output <- if (length(question_output_arg) == 1 & question_output_arg[1] == "concept_id") "concept_id" else "value"
 
   answer_output <- match.arg(answer_output, c("text", "concept_id"))
   answer_output <- ifelse(answer_output == "text", "value", answer_output)
@@ -123,13 +123,13 @@ aou_survey <- function(cohort,
     select(all_of(c("person_id", !!q, !!a))) %>%
     pivot_wider(names_from = !!q, values_from = !!a, names_prefix = pref)
 
-  if (length(question_output_arg) > 1 | !question_output_arg %in% c("text", "concept_id")) {
-    new_names <- setNames(names(wide), c("person_id", question_output_arg, paste0(question_output_arg, "_date")))
-    wide <- wide %>% rename(all_of(new_names))
-  } else {
+  if (length(question_output_arg) == 1 & question_output_arg[1] %in% c("text", "concept_id")) {
     wide <- wide %>%
       rename_with(.fn = str_replace, pattern = "value_source_value_|value_source_concept_id", replacement = pref) %>%
       rename_with(.fn = str_replace, pattern = "observation_date_(.+)", replacement = paste0(pref, "\\1_date"))
+  } else {
+    new_names <- setNames(names(wide), c("person_id", question_output_arg, paste0(question_output_arg, "_date")))
+    wide <- wide %>% rename(all_of(new_names))
   }
 
   # join back to original table
