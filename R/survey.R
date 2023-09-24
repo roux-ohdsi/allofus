@@ -122,7 +122,7 @@ aou_survey <- function(cohort,
     pivot_wider(names_from = !!q, values_from = !!a, names_prefix = pref)
 
   if (length(question_output_arg) > 1 | !question_output_arg %in% c("text", "concept_id")) {
-    new_names <- setNames(q, question_output_arg)
+    new_names <- setNames(names(wide), c("person_id", question_output_arg))
     wide <- wide %>% rename(all_of(new_names))
   }
 
