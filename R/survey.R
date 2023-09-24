@@ -63,7 +63,7 @@ aou_survey <- function(cohort,
         question_output_arg <- question_output
       }
     } else {
-      question_output <- "value"
+      question_output_arg <- question_output
     }
     # didn't give the right number question_output and it doesn't match one of the options
   } else if (is.null(tryCatch(match.arg(question_output, c("text", "concept_id")), error = function(e) NULL))) {
@@ -72,7 +72,7 @@ aou_survey <- function(cohort,
   } else {
     question_output_arg <- match.arg(question_output, c("text", "concept_id"))
   }
-  question_output <- ifelse(length(question_output_arg) == 1 & question_output_arg == "concept_id", "concept_id", "value")
+  question_output <- if(length(question_output_arg) == 1 & question_output_arg[1] == "concept_id") "concept_id" else "value"
 
   answer_output <- match.arg(answer_output, c("text", "concept_id"))
   answer_output <- ifelse(answer_output == "text", "value", answer_output)
