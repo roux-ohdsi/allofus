@@ -70,6 +70,7 @@ aou_survey <- function(cohort,
   } else {
     question_output_arg <- match.arg(question_output, c("text", "concept_id"))
   }
+  question_output <- ifelse(question_output_arg == "text", "value", question_output_arg)
 
   # ensure person_id is a column name in cohort
   stopifnot("person_id not found in cohort data" = "person_id" %in% colnames(cohort))
