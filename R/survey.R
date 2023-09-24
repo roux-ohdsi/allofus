@@ -125,7 +125,7 @@ aou_survey <- function(cohort,
 
   if (length(question_output_arg) == 1 & question_output_arg[1] %in% c("text", "concept_id")) {
     wide <- wide %>%
-      rename_with(.fn = str_replace, pattern = "value_source_value_|value_source_concept_id") %>%
+      rename_with(.fn = str_remove, pattern = "value_source_value_|value_source_concept_id") %>%
       rename_with(.fn = str_replace, pattern = "observation_date_(.+)", replacement = "\\1_date")
   } else {
     new_names <- setNames(names(wide), c("person_id", question_output_arg, paste0(question_output_arg, "_date")))
