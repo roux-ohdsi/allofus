@@ -43,6 +43,12 @@
 #'   answer_output = "text",
 #'   question_output = "text"
 #' )
+#' aou_survey(cohort, questions = 1585811, question_output = "pregnancy")
+#' aou_survey(cohort, questions = 1585811, question_output = "text")
+#' aou_survey(cohort, questions = 1585811, question_output = "concept_id")
+#' aou_survey(cohort, questions = c(1585811, 1585386), question_output = c("pregnancy", "insurance"))
+#' aou_survey(cohort, questions = c(1585811, 1585386), question_output = "text")
+#' aou_survey(cohort, questions = c(1585811, 1585386), question_output = "concept_id")
 #' }
 aou_survey <- function(cohort,
                        questions,
