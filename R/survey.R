@@ -70,7 +70,7 @@ aou_survey <- function(cohort,
   } else {
     question_output_arg <- match.arg(question_output, c("text", "concept_id"))
   }
-  question_output <- ifelse(question_output_arg == "text", "value", question_output_arg)
+  question_output <- ifelse(question_output_arg == "concept_id", "concept_id", "value")
 
   answer_output <- match.arg(answer_output, c("text", "concept_id"))
   answer_output <- ifelse(answer_output == "text", "value", answer_output)
