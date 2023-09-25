@@ -126,7 +126,7 @@ aou_survey <- function(cohort,
 
   # go wide
   wide <- tmp %>%
-    mutate(!!a := coalesce(!!a, as.character(value_as_number))) %>%
+    mutate(!!a := coalesce(!!ensym(a), as.character(value_as_number))) %>%
     select(all_of(c("person_id", !!q, !!a, "observation_date"))) %>%
     pivot_wider(names_from = !!q, values_from = c(!!a, observation_date), names_prefix = pref)
 
