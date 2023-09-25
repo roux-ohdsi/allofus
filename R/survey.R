@@ -115,7 +115,7 @@ aou_survey <- function(cohort,
 
   # for retrieving columns and pivoting
   q <- paste0("observation_source_", question_output)
-  a <- c(paste0("value_source_", answer_output), "observation_date")
+  a <- paste0("value_source_", answer_output)
 
   # need a prefix to fix column names if using concept_id as column names
   if (question_output == "concept_id") {
@@ -126,8 +126,9 @@ aou_survey <- function(cohort,
 
   # go wide
   wide <- tmp %>%
-    select(all_of(c("person_id", !!q, !!a))) %>%
-    pivot_wider(names_from = !!q, values_from = !!a, names_prefix = pref)
+    mutate(!!a := coalesce(!!a, as.character(value_as_number))) %>%
+    select(all_of(c("person_id", !!q, !!a, "observation_date"))) %>%
+    pivot_wider(names_from = !!q, values_from = c(!!a, observation_date), names_prefix = pref)
 
   if (length(question_output_arg) == 1 & question_output_arg[1] %in% c("text", "concept_id")) {
     wide <- wide %>%
