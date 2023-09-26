@@ -16,13 +16,11 @@
 
     library(allofus)
 
-Use `aou_connect()` to establish a database connection. It will also
-save your bucket name as a variable called `bucket` (this can be
-customized using the `bucket_name` argument)
+Use `aou_connect()` to establish a database connection.
 
     con <- aou_connect()
 
-Then, you can use `aou_ls_bucket()` to list files in your bucket
+Then, you can use `aou_ls_bucket()` to list files in your bucket.
 
     aou_ls_bucket()
 
@@ -30,7 +28,7 @@ Files in your workspace are only accessible to you, but not your
 collaborators (see details on storage below). If you need to move a file
 from your workspace bucket to your personal workspace, use
 `aou_bucket_to_workspace()` to move files from your bucket to your
-workspace
+workspace.
 
     aou_bucket_to_workspace("file1.csv")
     data <- read.csv("file1.csv")

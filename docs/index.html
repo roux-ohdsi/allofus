@@ -86,11 +86,11 @@
 <h3 id="use">Use<a class="anchor" aria-label="anchor" href="#use"></a>
 </h3>
 <div class="sourceCode" id="cb2"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" tabindex="-1"></a><span class="fu">library</span>(allofus)</span></code></pre></div>
-<p>Use <code><a href="reference/aou_connect.html">aou_connect()</a></code> to establish a database connection. It will also save your bucket name as a variable called <code>bucket</code> (this can be customized using the <code>bucket_name</code> argument)</p>
+<p>Use <code><a href="reference/aou_connect.html">aou_connect()</a></code> to establish a database connection.</p>
 <div class="sourceCode" id="cb3"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" tabindex="-1"></a>con <span class="ot">&lt;-</span> <span class="fu">aou_connect</span>()</span></code></pre></div>
-<p>Then, you can use <code><a href="reference/aou_ls_bucket.html">aou_ls_bucket()</a></code> to list files in your bucket</p>
+<p>Then, you can use <code><a href="reference/aou_ls_bucket.html">aou_ls_bucket()</a></code> to list files in your bucket.</p>
 <div class="sourceCode" id="cb4"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" tabindex="-1"></a><span class="fu">aou_ls_bucket</span>()</span></code></pre></div>
-<p>Files in your workspace are only accessible to you, but not your collaborators (see details on storage below). If you need to move a file from your workspace bucket to your personal workspace, use <code><a href="reference/aou_bucket_to_workspace.html">aou_bucket_to_workspace()</a></code> to move files from your bucket to your workspace</p>
+<p>Files in your workspace are only accessible to you, but not your collaborators (see details on storage below). If you need to move a file from your workspace bucket to your personal workspace, use <code><a href="reference/aou_bucket_to_workspace.html">aou_bucket_to_workspace()</a></code> to move files from your bucket to your workspace.</p>
 <div class="sourceCode" id="cb5"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" tabindex="-1"></a><span class="fu">aou_bucket_to_workspace</span>(<span class="st">"file1.csv"</span>)</span>
 <span id="cb5-2"><a href="#cb5-2" tabindex="-1"></a>data <span class="ot">&lt;-</span> <span class="fu">read.csv</span>(<span class="st">"file1.csv"</span>)</span></code></pre></div>
 <p>And when you want to save something from your workspace to your bucket so that your collaborators can use it (or so that you can shut down your workspace and save $$$), you can use <code><a href="reference/aou_workspace_to_bucket.html">aou_workspace_to_bucket()</a></code> to move files from your workspace to your bucket for permanent storage.</p>
