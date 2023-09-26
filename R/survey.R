@@ -30,6 +30,9 @@
 #' @param question_output how to name the columns. Options include text format ("text"), as concept ids preceded by
 #' "x_" ("concept_id"), or using a custom vector of column names matching the vector of `questions`. Defaults to "text".
 #'
+#' @importFrom dplyr filter select pull mutate rename rename_with collect tbl left_join coalesce
+#' @importFrom tidyr pivot_wider all_of
+#' @importFrom stringr str_replace str_remove
 #' @export
 #' @examples
 #' \dontrun{
@@ -126,7 +129,7 @@ aou_survey <- function(cohort,
 
   # go wide
   wide <- tmp %>%
-    mutate(!!a := coalesce(!!ensym(a), as.character(value_as_number))) %>%
+    mutate(!!a := coalesce(!!rlang::ensym(a), as.character(value_as_number))) %>%
     select(all_of(c("person_id", !!q, !!a, "observation_date"))) %>%
     pivot_wider(names_from = !!q, values_from = c(!!a, observation_date), names_prefix = pref)
 

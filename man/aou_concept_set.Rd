@@ -58,7 +58,7 @@ mutate(start_date = as.Date("1970-01-01"),
 dat <- aou_concept_set(cohort = people,
                          concepts = c(725115, 1612146, 1613031),
                          start_date = start_date,
-                         end_date = end_date, 
+                         end_date = end_date,
                          concept_set_name = "CGM",
                          return = "all")
  }

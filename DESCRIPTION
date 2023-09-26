@@ -15,7 +15,8 @@ Imports:
     cli,
     dplyr,
     tidyr,
-    tibble
+    tibble,
+    magrittr
 Suggests:
     DBI,
     bigrquery,
