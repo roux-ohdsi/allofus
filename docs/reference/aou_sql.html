@@ -74,13 +74,13 @@ getOption("aou.default.cdr"), which is Sys.getenv('WORKSPACE_CDR') if not specif
 `CDR = paste0(Sys.getenv('WORKSPACE_CDR'), "_base")`.</p></dd>
 
 
-<dt>download</dt>
-<dd><p>Do you want to retrieve the result of the SQL query into
-the local environment? Defaults to`TRUE`.</p></dd>
-
-
 <dt>...</dt>
 <dd><p>All other arguments passed to `bigrquery::bq_table_download()`</p></dd>
+
+
+<dt>collect</dt>
+<dd><p>Do you want to retrieve the result of the SQL query into
+the local environment? Defaults to`TRUE`.</p></dd>
 
 </dl></div>
     <div class="section level2">

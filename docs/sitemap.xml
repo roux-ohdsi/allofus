@@ -31,7 +31,31 @@
     <loc>/reference/aou_codebook.html</loc>
   </url>
   <url>
+    <loc>/reference/aou_concept_set.html</loc>
+  </url>
+  <url>
     <loc>/reference/aou_connect.html</loc>
+  </url>
+  <url>
+    <loc>/reference/aou_get_concepts.html</loc>
+  </url>
+  <url>
+    <loc>/reference/aou_get_condition_concepts.html</loc>
+  </url>
+  <url>
+    <loc>/reference/aou_get_device_concepts.html</loc>
+  </url>
+  <url>
+    <loc>/reference/aou_get_drug_concepts.html</loc>
+  </url>
+  <url>
+    <loc>/reference/aou_get_measurement_concepts.html</loc>
+  </url>
+  <url>
+    <loc>/reference/aou_get_observation_concepts.html</loc>
+  </url>
+  <url>
+    <loc>/reference/aou_get_procedure_concepts.html</loc>
   </url>
   <url>
     <loc>/reference/aou_join.html</loc>
@@ -50,6 +74,9 @@
   </url>
   <url>
     <loc>/reference/aou_sql.html</loc>
+  </url>
+  <url>
+    <loc>/reference/aou_survey.html</loc>
   </url>
   <url>
     <loc>/reference/aou_workspace_to_bucket.html</loc>

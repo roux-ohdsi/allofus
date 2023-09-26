@@ -9,8 +9,8 @@ aou_survey(
   questions,
   con = getOption("aou.default.con"),
   collect = TRUE,
-  answer_output = "value",
-  question_output = "value"
+  answer_output = "text",
+  question_output = "text"
 )
 }
 \arguments{
@@ -22,9 +22,11 @@ aou_survey(
 
 \item{collect}{whether to return the results as a local (TRUE) or database table}
 
-\item{answer_output}{whether to return the survey responses in their text format ("value") or "concept_id". Defaults to "value".}
+\item{answer_output}{whether to return the survey responses in their text format ("text") or as the concept id
+for a given response ("concept_id"). Defaults to "text".}
 
-\item{question_output}{whether to return the survey questions (columns) in their text format ("value") or "concept_id". Defaults to "value".}
+\item{question_output}{how to name the columns. Options include text format ("text"), as concept ids preceded by
+"x_" ("concept_id"), or using a custom vector of column names matching the vector of `questions`. Defaults to "text".}
 }
 \description{
 Because responses to the survey questions stored in the ds_survey table do not
@@ -50,10 +52,20 @@ could be marked as NA.
 \examples{
 \dontrun{
 con <- aou_connect()
-cohort = tbl(con, "person") \%>\% filter(person_id > 5000000) \%>\% select(person_id, year_of_birth, gender_concept_id)
-aou_survey(cohort = cohort,
-questions = c(1585375, 1586135),
-answer_output = "value",
-question_output = "value")
+cohort <- tbl(con, "person") \%>\%
+  filter(person_id > 5000000) \%>\%
+  select(person_id, year_of_birth, gender_concept_id)
+aou_survey(
+  cohort = cohort,
+  questions = c(1585375, 1586135),
+  answer_output = "text",
+  question_output = "text"
+)
+aou_survey(cohort, questions = 1585811, question_output = "pregnancy")
+aou_survey(cohort, questions = 1585811, question_output = "text")
+aou_survey(cohort, questions = 1585811, question_output = "concept_id")
+aou_survey(cohort, questions = c(1585811, 1585386), question_output = c("pregnancy", "insurance"))
+aou_survey(cohort, questions = c(1585811, 1585386), question_output = "text")
+aou_survey(cohort, questions = c(1585811, 1585386), question_output = "concept_id")
 }
 }
