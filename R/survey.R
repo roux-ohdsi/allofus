@@ -106,11 +106,23 @@ aou_survey <- function(cohort,
       pull(concept_id)
     stopifnot("no character questions found" = length(concept_ids) != 0)
     stopifnot("character question not in questions" = all(concept_ids %in% aou_codebook$concept_id))
+
+    concept_codes = aou_codebook %>%
+      filter(concept_code %in% questions) %>%
+      select(concept_code, concept_id) %>%
+      inner_join(tibble(concept_code = questions, cn = !!question_output_arg), by = "concept_code")
+
   } else {
     # if its already numeric, just look
     # as long as we're good, then
     stopifnot("question concept id not in questions" = all(questions %in% aou_codebook$concept_id))
     concept_ids <- questions
+
+    #holds df for renaming columns later on if indicated
+    concept_codes = aou_codebook %>%
+      filter(concept_id %in% questions) %>%
+      select(concept_code, concept_id) %>%
+      inner_join(tibble(concept_id = questions, cn = !!question_output_arg), by = "concept_id")
   }
 
   # temporary observation table with responses
@@ -138,8 +150,17 @@ aou_survey <- function(cohort,
       rename_with(.fn = str_remove, pattern = "value_source_value_|value_source_concept_id") %>%
       rename_with(.fn = str_replace, pattern = "observation_date_(.+)", replacement = "\\1_date")
   } else {
-    new_names <- setNames(names(wide), c("person_id", question_output_arg, paste0(question_output_arg, "_date")))
-    wide <- wide %>% rename(all_of(new_names))
+    # named vector to rename the columns if needed
+    nm = c(
+      paste0("value_source_value_", concept_codes$concept_code),
+      paste0("observation_date_", concept_codes$concept_code)
+    )
+    names(nm) = c(concept_codes$cn, paste0(concept_codes$cn, "_date"))
+    stopifnot("Wrong column names" = all(nm %in% tolower(colnames(wide))))
+    # change to lower, then rename
+    wide <- wide %>%
+      rename_with(tolower)%>%
+      rename(all_of(nm))
   }
 
   # join back to original table
