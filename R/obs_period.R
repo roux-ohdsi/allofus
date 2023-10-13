@@ -3,6 +3,7 @@
 #' @param cohort query to a cohort or local dataframe
 #' @param persistence_window longest allowable time between visits for the same observation period. defaults to 548 see details
 #' @param end_date_buffer number of days to add to end date. defaults to 60. see details
+#' @param exclude_aou_visits whether to exclude All of Us clinical visits (not part of the participants typical EHR) from the observation period
 #' @param collect whether to collect the data or keep as SQL query
 #'
 #'@details
@@ -55,9 +56,8 @@ aou_observation_period <- function(cohort,
       dbplyr::window_order(person_id, visit_start_date, visit_end_date) %>%
     # get the last visit end date within each person
       mutate(last_end_date = lag(visit_end_date)) %>%
-    # calc dayes in bewteen visits. I'd like to just pass the bigquery DATE_DIFF() function
-    # instead of using CDMConnector but its not working well for me
-      mutate(days_between_visits = !!CDMConnector::datediff("last_end_date", "visit_start_date", "day")) %>%
+    # calc days in between visits.
+    mutate(days_between_visits = date_diff(visit_start_date, last_end_date, sql("day"))) %>%
     # iterate over the observation period if days between visits is more than the persistence window
       mutate(obs_period = cumsum(ifelse(days_between_visits > persistence_window, 1, 0))) %>%
     # the first observation per person is NA , but can just be changed to 1
@@ -68,8 +68,8 @@ aou_observation_period <- function(cohort,
                 observation_end_date = max(visit_end_date), .groups = 'drop') %>%
       group_by(person_id) %>%
     # pad the end date
-      mutate(observation_end_date = !!CDMConnector::dateadd("observation_end_date", end_date_buffer, "day")) %>%
-      dbplyr::window_order(person_id, obs_period)
+    mutate(observation_end_date = date_add(observation_end_date,  sql(paste0("INTERVAL ", end_date_buffer, " day")))) %>%
+    dbplyr::window_order(person_id, obs_period)
 
   # collect if desired.
   if(isTRUE(collect)){

@@ -16,8 +16,7 @@ Imports:
     dplyr,
     tidyr,
     tibble,
-    magrittr,
-    CDMConnector
+    magrittr
 Suggests:
     DBI,
     bigrquery,

@@ -8,6 +8,7 @@ aou_observation_period(
   cohort,
   persistence_window = 548,
   end_date_buffer = 60,
+  exclude_aou_visits = FALSE,
   collect = FALSE
 )
 }
@@ -17,6 +18,8 @@ aou_observation_period(
 \item{persistence_window}{longest allowable time between visits for the same observation period. defaults to 548 see details}
 
 \item{end_date_buffer}{number of days to add to end date. defaults to 60. see details}
+
+\item{exclude_aou_visits}{whether to exclude All of Us clinical visits (not part of the participants typical EHR) from the observation period}
 
 \item{collect}{whether to collect the data or keep as SQL query}
 }
