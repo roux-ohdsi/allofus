@@ -126,7 +126,10 @@ aou_survey <- function(cohort,
   }
 
   # temporary observation table with responses
-  tmp <- tbl(con, "observation") %>% filter(observation_source_concept_id %in% concept_ids)
+  tmp <- tbl(con, "observation") %>%
+    filter(observation_source_concept_id %in% concept_ids) %>%
+    # this is necessary because there may be multiple rows for a single person (hence full_join later)
+    inner_join(select(function_cohort, person_id), by = join_by(person_id))
 
   # for retrieving columns and pivoting
   q <- paste0("observation_source_", question_output)
@@ -164,7 +167,7 @@ aou_survey <- function(cohort,
   }
 
   # join back to original table
-  out <- left_join(function_cohort, wide, by = "person_id")
+  out <- full_join(function_cohort, wide, by = "person_id")
 
   # collect if indicated
   if (isTRUE(collect)) {
