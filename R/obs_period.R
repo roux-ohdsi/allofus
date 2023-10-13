@@ -30,6 +30,7 @@
 aou_observation_period <- function(cohort,
                                    persistence_window = 548,
                                    end_date_buffer = 60,
+                                   exclude_aou_visits = FALSE,
                                    collect = FALSE){
 
   if(is.data.frame(cohort)){
@@ -38,6 +39,11 @@ aou_observation_period <- function(cohort,
   } else {
     tmp = tbl(con, "visit_occurrence") %>%
       inner_join(cohort, by = "person_id")
+  }
+
+  if (exclude_aou_visits) {
+    tmp = tmp %>%
+      filter(visit_type_concept_id != 44818519)
   }
 
   obs_period =
