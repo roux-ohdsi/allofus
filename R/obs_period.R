@@ -40,8 +40,6 @@ aou_observation_period <- function(cohort,
       inner_join(cohort, by = "person_id")
   }
 
-  cat("Joined to visit_occurrence table \n")
-
   obs_period =
     tmp %>%
       select(person_id, visit_start_date, visit_end_date) %>%
@@ -65,7 +63,7 @@ aou_observation_period <- function(cohort,
       group_by(person_id) %>%
     # pad the end date
       mutate(observation_end_date = !!CDMConnector::dateadd("observation_end_date", end_date_buffer, "day")) %>%
-      arrange(person_id, obs_period)
+      dbplyr::window_order(person_id, obs_period)
 
   # collect if desired.
   if(isTRUE(collect)){
