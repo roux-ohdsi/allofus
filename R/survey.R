@@ -129,7 +129,7 @@ aou_survey <- function(cohort,
   tmp <- tbl(con, "observation") %>%
     filter(observation_source_concept_id %in% concept_ids) %>%
     # this is necessary because there may be multiple rows for a single person (hence full_join later)
-    inner_join(select(function_cohort, person_id), by = join_by(person_id))
+    inner_join(select(function_cohort, person_id), by = "person_id")
 
   # for retrieving columns and pivoting
   q <- paste0("observation_source_", question_output)
