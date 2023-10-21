@@ -9,7 +9,7 @@ to another table in the All of Us database."><!-- mathjax --><script src="https:
     
 
     <nav class="navbar fixed-top navbar-dark navbar-expand-lg bg-black"><div class="container">
-    <div style="height:40px;display:inline;margin:0 10px;"><a href="https://ohdsi.northeastern.edu/" class="external-link"><img src="logo.png" style="width:auto;height:100%;"></a></div>
+    <div style="height:40px;display:inline;margin:0 10px;"><a href="https://ohdsi.northeastern.edu/" class="external-link"><img src="https://roux-ohdsi.github.io/allofus/articles/logo.png" style="width:auto;height:100%;"></a></div>
     <a class="navbar-brand me-2" href="../index.html">allofus</a>
 
     <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.0</small>
@@ -125,7 +125,7 @@ the <code>by</code> argument which will result in a SQL error.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   Dataset: NA.NA</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   Billing: </span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/options.html" class="external-link">options</a></span><span class="op">(</span>aou.default.con <span class="op">=</span> <span class="va">con</span><span class="op">)</span></span></span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in eval(expr, envir, enclos):</span> object 'con' not found</span>
+<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in options(aou.default.con = con):</span> object 'con' not found</span>
 <span class="r-in"><span><span class="va">obs_tbl</span> <span class="op">|&gt;</span></span></span>
 <span class="r-in"><span>  <span class="fu">omop_join</span><span class="op">(</span><span class="st">"person"</span>, type <span class="op">=</span> <span class="st">"left"</span>, by <span class="op">=</span> <span class="st">"person_id"</span><span class="op">)</span></span></span>
 <span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in omop_join(obs_tbl, "person", type = "left", by = "person_id"):</span> could not find function "omop_join"</span>
