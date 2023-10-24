@@ -40,6 +40,9 @@ match between the codebook and the Athena PPI Vocabulary. The code to generate a
 
   df = allofus::aou_codebook[,cols]
   df$concept_id = paste0('<a href=https://athena.ohdsi.org/search-terms/terms/',df$concept_id,' target="_blank">',df$concept_id,'</a>')
+  df$form_name = as.factor(df$form_name)
+  df$concept_class_id = as.factor(df$concept_class_id)
+  df$field_type = as.factor(df$field_type)
 
     DT::datatable(df,
                   rownames = FALSE,

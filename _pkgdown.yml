@@ -8,7 +8,7 @@ template:
     primary: "#C8102E"
     font-size-base: 0.9rem
   includes:
-    before_title: '<div style="height:40px;display:inline;margin:0 10px;"><a href="https://ohdsi.northeastern.edu/"><img src="logo.png" style="width:auto;height:100%;" /></a></div>'
+    before_title: '<div style="height:40px;display:inline;margin:0 10px;"><a href="https://ohdsi.northeastern.edu/"><img src="https://roux-ohdsi.github.io/allofus/articles/logo.png" style="width:auto;height:100%;" /></a></div>'
 navbar:
   bg: black
   includes:
