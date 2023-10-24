@@ -59,7 +59,7 @@ aou_connect <- function(CDR = getOption("aou.default.cdr")) {
 #' the local environment? Defaults to`TRUE`.
 #' @param ... All other arguments passed to `bigrquery::bq_table_download()`
 #'
-#' @return A dataframe (if `download = TRUE`); otherwise, a `bq_table` object
+#' @return A dataframe (if `collect = TRUE`); otherwise, a `bq_table` object
 #' @export
 #'
 #' @examples
@@ -145,7 +145,7 @@ aou_connect <- function(CDR = getOption("aou.default.cdr")) {
 #'   N DESC
 #' ')
 #' }
-aou_sql <- function(query, CDR = getOption("aou.default.cdr"), download = TRUE, ...) {
+aou_sql <- function(query, CDR = getOption("aou.default.cdr"), collect = TRUE, ...) {
   .cdr_objs <- ls(envir = .GlobalEnv, pattern = "^CDR$|^cdr$")
   if (length(.cdr_objs) == 0) {
     CDR <- CDR
