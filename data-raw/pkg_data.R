@@ -11,10 +11,10 @@ gs4_deauth()
 
 # # url to data dictionary
 # url = "https://docs.google.com/spreadsheets/d/1S-aHOjBSVlhuAtOhzra1Z91vIiN5t3NNU7SgZN893Nk/edit?pli=1#gid=1720082551"
- url = "https://docs.google.com/spreadsheets/d/1Ey8MScRYZ9QyS4izVYScISLMb62QEhSM-ErbG27dNtw/edit#gid=1832128489"
+url = "https://docs.google.com/spreadsheets/d/1Ey8MScRYZ9QyS4izVYScISLMb62QEhSM-ErbG27dNtw/edit#gid=1832128489"
 
- # # get sheet names
- googlesheets4::sheet_names(url)
+# # get sheet names
+googlesheets4::sheet_names(url)
 # # save all the sheets in a list for later use
 dat <- list(
   basics = googlesheets4::read_sheet(url, sheet = "Basics"),
@@ -24,6 +24,7 @@ dat <- list(
   personal_medical_history = googlesheets4::read_sheet(url, sheet = "Personal Medical History"),
   personal_and_family_health_history = googlesheets4::read_sheet(url, sheet = "Personal and Family Health History"),
   social_determinants_of_health = googlesheets4::read_sheet(url, sheet = "Social Determinants of Health"),
+  healthcare_access = googlesheets4::read_sheet(url, sheet = "Healthcare Access and Utilization"),
   cope = googlesheets4::read_sheet(url, sheet = "COPE "),
   minute_survey_on_covid19_vaccines = googlesheets4::read_sheet(url, sheet = "Minute Survey on COVID-19 Vaccines", skip = 3)
 )
@@ -50,6 +51,44 @@ join_to_ppi <- function(.x){
 }
 
 map(dat, join_to_ppi) -> joined
-aou_codebook = bind_rows(joined)
+
+form_names <- data.frame(form_name = c("covid19_participant_experience_cope_survey",
+                                       "december_covid19_participant_experience_cope_survey", "family_health_history",
+                                       "february_covid19_participant_experience_cope_survey", "july_covid19_participant_experience_cope_survey",
+                                       "june_covid19_participant_experience_cope_survey", "lifestyle",
+                                       "november_covid19_participant_experience_cope_surve", "overall_health",
+                                       "personal_and_family_health_history", "personal_medical_history",
+                                       "social_determinants_of_health_english", "summer_minute_survey_on_covid19_vaccines",
+                                       "the_basics", "winter_minute_survey_on_covid19_vaccines",
+                                       "healthcare_access_and_utilization"),
+                         new_name = c("COPE",
+                                      "COPE (Dec)", "Family Health History", "COPE (Feb)", "COPE (July)",
+                                      "COPE (June)", "Lifestyle", "COPE (Nov)", "Overall Health", "Personal and Family Health History",
+                                      "Personal Medical History", "Social Determinants of Health",
+                                      "Summer Minute Survey on COVID-19 Vaccines", "The Basics",
+                                      "Winter Minute Survey on COVID-19 Vaccines", "Healthcare Access and Utilization"),
+                         link = c("https://www.researchallofus.org/wp-content/themes/research-hub-wordpress-theme/media/surveys/COPE_Survey_English.pdf",
+                                  "https://www.researchallofus.org/wp-content/themes/research-hub-wordpress-theme/media/surveys/COPE_Survey_English.pdf",
+                                  "https://www.researchallofus.org/wp-content/themes/research-hub-wordpress-theme/media/2019/02/Family_Medical_History.pdf",
+                                  "https://www.researchallofus.org/wp-content/themes/research-hub-wordpress-theme/media/surveys/COPE_Survey_English.pdf",
+                                  "https://www.researchallofus.org/wp-content/themes/research-hub-wordpress-theme/media/surveys/COPE_Survey_English.pdf",
+                                  "https://www.researchallofus.org/wp-content/themes/research-hub-wordpress-theme/media/surveys/COPE_Survey_English.pdf",
+                                  "https://www.researchallofus.org/wp-content/themes/research-hub-wordpress-theme/media/2019/02/Lifestyle.pdf",
+                                  "https://www.researchallofus.org/wp-content/themes/research-hub-wordpress-theme/media/surveys/COPE_Survey_English.pdf",
+                                  "https://www.researchallofus.org/wp-content/themes/research-hub-wordpress-theme/media/2019/02/Overall_Health.pdf",
+                                  "https://www.researchallofus.org/wp-content/themes/research-hub-wordpress-theme/media/2023/PaFHH_Survey_English.pdf",
+                                  "https://www.researchallofus.org/wp-content/themes/research-hub-wordpress-theme/media/2019/02/Personal_Medical_History.pdf",
+                                  "https://www.researchallofus.org/wp-content/themes/research-hub-wordpress-theme/media/surveys/SDOH_Survey_English.pdf",
+                                  "https://www.researchallofus.org/wp-content/themes/research-hub-wordpress-theme/media/2023/New_Year_Minute_Survey_English.pdf",
+                                  "https://www.researchallofus.org/wp-content/themes/research-hub-wordpress-theme/media/faq/Basics_Survey_ENG_23.pdf",
+                                  "https://www.researchallofus.org/wp-content/themes/research-hub-wordpress-theme/media/2023/New_Year_Minute_Survey_English.pdf",
+                                  "https://www.researchallofus.org/wp-content/themes/research-hub-wordpress-theme/media/2019/02/Health_Care_Access.pdf"
+                                  ))
+
+aou_codebook = bind_rows(joined) |>
+  filter(concept_class_id == "Question") |>
+  left_join(form_names) |>
+  select(-form_name) |>
+  rename(form_name = new_name)
 
 usethis::use_data(aou_codebook, overwrite = TRUE)

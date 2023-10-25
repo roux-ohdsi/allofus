@@ -1,8 +1,8 @@
-pandoc: 3.1.5
+pandoc: 3.1.1
 pkgdown: 2.0.7
 pkgdown_sha: ~
 articles:
   data-browser: data-browser.html
   searchable_codebook: searchable_codebook.html
-last_built: 2023-10-22T15:16Z
+last_built: 2023-10-25T15:24Z
 

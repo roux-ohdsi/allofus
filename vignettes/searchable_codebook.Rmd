@@ -1,8 +1,8 @@
 ---
-title: "Searchable Codebook for AllofUs"
+title: "Searchable Codebook for AllofUs Surveys"
 output: rmarkdown::html_document
 vignette: >
-  %\VignetteIndexEntry{Searchable Codebook for AllofUs}
+  %\VignetteIndexEntry{Searchable Codebook for AllofUs Surveys}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
@@ -32,17 +32,22 @@ library(allofus)
 
 This table consists of mapped rows from the [publicly available AllofUs Survey Codebook](https://docs.google.com/spreadsheets/d/1Ey8MScRYZ9QyS4izVYScISLMb62QEhSM-ErbG27dNtw/edit#gid=1832128489)
 to the AllofUs PPI Vocabulary available on [Athena](https://athena.ohdsi.org/search-terms/start). A small number of rows did not
-match between the codebook and the Athena PPI Vocabulary. The code to generate a full table can be found [here](https://github.com/roux-ohdsi/allofus/blob/main/data-raw/pkg_data.R). It can also be accessed in R using `allofus::aou_codebook`.
+match between the codebook and the Athena PPI Vocabulary. The code to generate a full table can be found [here](https://github.com/roux-ohdsi/allofus/blob/main/data-raw/pkg_data.R). It can also be accessed in R using `allofus::aou_codebook`. 
+
+More information on the All of Us Surveys is available at the All of Us [Survey Explorer](https://www.researchallofus.org/data-tools/survey-explorer/). PDF versions of the individual surveys are linked in the table.
 
 ```{r, echo = FALSE, out.width = "100%"}
    cols = c("concept_code", "concept_id", "concept_name", "concept_class_id",
             "form_name", "field_type", "field_label", "choices")
 
-  df = allofus::aou_codebook[,cols]
+  df = allofus::aou_codebook
   df$concept_id = paste0('<a href=https://athena.ohdsi.org/search-terms/terms/',df$concept_id,' target="_blank">',df$concept_id,'</a>')
+  df$form_name = paste0('<a href=', df$link, ' target="_blank">',df$form_name,'</a>')
   df$form_name = as.factor(df$form_name)
   df$concept_class_id = as.factor(df$concept_class_id)
   df$field_type = as.factor(df$field_type)
+  
+  df = df[,cols]
 
     DT::datatable(df,
                   rownames = FALSE,
