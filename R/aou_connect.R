@@ -31,7 +31,8 @@ aou_connect <- function(CDR = getOption("aou.default.cdr")) {
     bigrquery::bigquery(),
     billing = Sys.getenv("GOOGLE_PROJECT"),
     project = prefix,
-    dataset = release
+    dataset = release,
+    bigint = "integer64" # fix for big integers
   )
 
   options(aou.default.con = connection)
