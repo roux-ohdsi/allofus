@@ -22,7 +22,7 @@
 #' # print a list of the tables in the database
 #' DBI::dbListTables(con)
 #' }
-aou_connect <- function(CDR = getOption("aou.default.cdr")) {
+aou_connect <- function(CDR = getOption("aou.default.cdr"), ...) {
   dataset <- strsplit(CDR, split = "\\.")[[1]]
   release <- dataset[2]
   prefix <- dataset[1]
@@ -32,7 +32,8 @@ aou_connect <- function(CDR = getOption("aou.default.cdr")) {
     billing = Sys.getenv("GOOGLE_PROJECT"),
     project = prefix,
     dataset = release,
-    bigint = "integer64" # fix for big integers
+    bigint = "integer64", # fix for big integers
+    ...
   )
 
   options(aou.default.con = connection)
