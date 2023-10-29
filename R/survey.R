@@ -338,7 +338,8 @@ aou_survey_new <- function(cohort,
 
     health_survey_concept_codes = health_history_codebook %>%
       filter(concept_id_specific %in% health_survey_concept_ids) %>%
-      select(concept_code, concept_id = concept_id_specific)
+      select(concept_code, concept_id = concept_id_specific) %>%
+      distinct(concept_code, concept_id)
 
     concept_lookup <- bind_rows(regular_survey_concept_codes, health_survey_concept_codes) %>%
       inner_join(tibble(concept_id = questions, cn = !!question_output_arg), by = "concept_id")
@@ -354,7 +355,7 @@ aou_survey_new <- function(cohort,
       if (question_output == "concept_id") {
         condition_name <- paste0("x", specific_concept_id)
       } else if (question_output == "text") {
-        condition_name <- allofus::health_history_codebook %>%
+        condition_name <- health_history_codebook %>%
           filter(concept_id_specific == specific_concept_id) %>%
           pull(concept_code)
       } else {
@@ -365,7 +366,7 @@ aou_survey_new <- function(cohort,
       }
       condition_date <- paste0(condition_name, "_date")
 
-      osci_specific <- allofus::health_history_codebook %>%
+      osci_specific <- health_history_codebook %>%
         filter(concept_id_specific == specific_concept_id) %>%
         pull(concept_id_question) %>%
         unique()
