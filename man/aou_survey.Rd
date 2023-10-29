@@ -8,7 +8,6 @@ aou_survey(
   cohort,
   questions,
   question_output = "text",
-  answer_output = "text",
   con = getOption("aou.default.con"),
   collect = TRUE
 )
@@ -20,9 +19,6 @@ aou_survey(
 
 \item{question_output}{how to name the columns. Options include text format ("text"), as concept ids preceded by
 "x_" ("concept_id"), or using a custom vector of column names matching the vector of `questions`. Defaults to "text".}
-
-\item{answer_output}{whether to return the survey responses in their text (concept code) format ("text") or as the concept id
-for a given response ("concept_id"). Defaults to "text".}
 
 \item{con}{connection to the allofus SQL database. Defaults to getOption("aou.default.con"), which is created automatically with `aou_connect()`}
 
@@ -36,16 +32,19 @@ responses are included.
 
 The function will return a dataframe or SQL tbl with the initial cohort table along
 with a column for each question included in `questions` and answers for
-each person_id in the cells. The column names (questions) and answers can
-be returned as the concept_code or concept_id. For each question, a column with
+each person_id in the cells. The column names (questions) can
+be returned as the concept_code or concept_id or by providing new column names. For each question, a column with
 the suffix "_date" is included with the date on which the question was answered.
 
 To find the desired survey questions, use the all of us data dictionary,
 survey codebook, athena, data browser, or the allofus R package
 modified codebook which can be found here: https://roux-ohdsi.github.io/allofus/articles/searchable_codebook.html
-
-Users may want to do some post-processing. For example PMI_skip or 903096
-could be marked as NA.
+For questions regarding an individual's health history or family health history,
+the function requires the specific concept_id (or concept_code) for individual in question,
+whether that is "self" or another relative. Responses are returned as "Yes" if the respondent
+answered that the individual had the condition, "No" if the respondent answered that the individual
+did not have that condition (or omitted it when selecting from related conditions), a
+skip response if the question was skipped, and NA if the respondent did not answer the question.
 }
 \examples{
 \dontrun{
@@ -53,17 +52,22 @@ con <- aou_connect()
 cohort <- tbl(con, "person") \%>\%
   filter(person_id > 5000000) \%>\%
   select(person_id, year_of_birth, gender_concept_id)
+
 aou_survey(
-  cohort = cohort,
+  cohort,
   questions = c(1585375, 1586135),
-  question_output = "text",
-  answer_output = "text"
+  question_output = "text"
 )
-aou_survey(cohort, questions = 1585811, question_output = "pregnancy")
-aou_survey(cohort, questions = 1585811, question_output = "text")
-aou_survey(cohort, questions = 1585811, question_output = "concept_id")
-aou_survey(cohort, questions = c(1585811, 1585386), question_output = c("pregnancy", "insurance"))
-aou_survey(cohort, questions = c(1585811, 1585386), question_output = "text")
-aou_survey(cohort, questions = c(1585811, 1585386), question_output = "concept_id")
+aou_survey(
+  cohort,
+  questions = c(1585811, 1585386),
+  question_output = c("pregnancy", "insurance")
+)
+aou_survey(
+  cohort,
+  questions = c(1585375, 1586135, 1740719, 43529932),
+  question_output = c("income", "birthplace", "grandpa_bowel_obstruction", "t2dm"),
+  collect = FALSE
+)
 }
 }
