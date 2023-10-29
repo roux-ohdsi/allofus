@@ -320,7 +320,7 @@ aou_survey_new <- function(cohort,
     health_survey_concept_ids <- questions[questions %in% health_history_codebook$concept_id_specific]
 
     # did we account for everything?
-    missing_qs <- questions[!questions %in% c(regular_survey_qs, health_survey_qs)]
+    missing_qs <- questions[!questions %in% c(regular_survey_concept_ids, health_survey_concept_ids)]
     if (length(missing_qs) > 0) {
       # check to see if any are in the health history codebook as overall concept ids
       too_general <- missing_qs[missing_qs %in% health_history_codebook$concept_id_overall]
@@ -442,6 +442,9 @@ aou_survey_new <- function(cohort,
         rename_with(.fn = str_replace, pattern = "observation_date_(.+)", replacement = "\\1_date")
     } else {
       # named vector to rename the columns if needed
+      concept_codes <- concept_lookup %>%
+        filter(concept_id %in% regular_survey_concept_ids) %>%
+        select(concept_code, cn)
       nm = c(
         paste0("value_source_value_", concept_codes$concept_code),
         paste0("observation_date_", concept_codes$concept_code)
