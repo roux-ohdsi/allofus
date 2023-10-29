@@ -198,19 +198,50 @@ codebook_only_health_history <- filter(aou_codebook_w_health_history, str_detect
            str_detect(concept_code, "\\_yes$") |
            str_detect(concept_code, "howoldwereyou"))
 
+sub_conditions_questions <- codebook_only_health_history %>%
+  filter(str_detect(concept_code, "currently$") |
+           str_detect(concept_code, "\\_rx") |
+           str_detect(concept_code, "prescribedmeds") |
+           str_detect(concept_code, "howoldwereyou"))
+
+
+test <- tbl(con, inDatabaseSchema(cdm_schema, "concept_relationship")) %>%
+  filter(concept_id_1 %in% !! sub_conditions_questions$concept_id) %>%
+  filter(relationship_id == "Has PPI parent code") %>%
+  select(-contains("valid"), -relationship_id) %>%
+  collect()
+
+
+conditions_table <- conditions_table %>%
+  left_join(test, by = join_by(concept_id_specific == concept_id_2)) %>%
+  left_join(select(sub_conditions_questions, concept_id, concept_code),
+            by = join_by(concept_id_1 == concept_id), suffix = c("", "_sub")) %>%
+  rename(concept_id_sub = concept_id_1) %>%
+  mutate(question_sub = case_when(
+    str_detect(concept_code_sub, "currently$") ~ "on_txt",
+    str_detect(concept_code_sub, "\\_rx") ~ "rx_meds",
+    str_detect(concept_code_sub, "prescribedmeds") ~ "rx_meds",
+    str_detect(concept_code_sub, "howoldwereyou") ~ "age_diagnosis"
+  )) %>%
+  pivot_wider(names_from = question_sub, values_from = c(concept_id_sub, concept_code_sub),
+              names_sep = "_", values_fn = first) %>%
+  select(-ends_with("NA")) %>%
+  rename_with(~str_remove(.x, "_sub"))
+
+
 # if there is no concept_id_parent for which the concept_class_id_parent == "Answer",
 # then they didn't ask it about the whole family in the first set of surveys
 ## these are the ones that don't have a parent question
-health_history_codebook <- full_join(conditions_table, all_overall_concept_id,
+health_history_codebook <- conditions_table %>%
+  left_join(all_overall_concept_id,
                       by = join_by(concept_id_specific == concept_id_answer)) %>%
   distinct(question, relative, condition, category, concept_code, concept_id_specific,
-           concept_id_overall, concept_id_question) %>%
+           concept_id_overall, concept_id_question, concept_id_rx_meds, concept_id_on_txt,
+           concept_id_age_diagnosis, concept_code_rx_meds, concept_code_on_txt, concept_code_age_diagnosis) %>%
   mutate(concept_code = str_replace(concept_code, "conditions", "condition"),
          concept_code = ifelse(relative == "self", paste0(concept_code, "_yes"), concept_code)) %>%
-  # this is removing the prescribed meds, current treatment, and how old were you
-  # questions (at least for now) because we will provide them automatically
   left_join(codebook_only_health_history, by = "concept_code", relationship = "many-to-many") %>%
   select(-c(concept_id, concept_name, concept_class_id, field_type, field_label,
-            choices, standard_concept, valid_start_date, valid_end_date, -link))
+            choices, standard_concept, valid_start_date, valid_end_date, link))
 
 usethis::use_data(health_history_codebook, overwrite = TRUE)
