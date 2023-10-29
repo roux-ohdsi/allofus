@@ -182,10 +182,15 @@ aou_survey <- function(cohort,
         missing_qs <- sub_questions %>%
           filter(!concept_id_for_sub %in% health_survey_concept_ids)
 
+        new_cols <- if (question_output == "concept_id") {
+          paste0("`x", missing_qs$concept_id_for_sub, "`")
+        } else {
+          paste0("`", missing_qs$concept_code_overall, "`")
+        }
+
         message("One or more of the requested questions were only asked of people responded that they had certain conditions. ",
                 "The top-level question(s) will be added to the output to provide context about missing data as ",
-                "column(s) ", paste0(paste0("`", missing_qs$concept_code_overall, "`"),  collapse = ", "), " or ",
-                paste0(paste0("`x", missing_qs$concept_id_for_sub, "`"),  collapse = ", "), ".")
+                "column(s) ", paste0(here,  collapse = ", "), ".")
 
         # health_survey_concept_ids <- c(health_survey_concept_ids, missing_qs$concept_id_for_sub)
         names_for_lookup <- bind_rows(names_for_lookup,
@@ -207,11 +212,14 @@ aou_survey <- function(cohort,
       mutate(type = "health")
 
     # there are more graceful ways to merge this data but ignoring that...
-    concept_lookup <- bind_rows(regular_survey_concept_codes, health_survey_concept_codes) %>%
-      full_join(names_for_lookup, by = c("concept_code", "concept_id", "type")) %>%
-      group_by(concept_id) %>%
-      fill(everything(), .direction = "up") %>%
-      slice(1)
+    suppressMessages({
+      concept_lookup <- bind_rows(regular_survey_concept_codes, health_survey_concept_codes) %>%
+        full_join(names_for_lookup) %>%
+        group_by(concept_id) %>%
+        fill(everything(), .direction = "up") %>%
+        slice(1) %>%
+        ungroup()
+    })
 
     all_health_survey_concept_ids <- filter(concept_lookup, type == "health") %>%
       pull(concept_id)
@@ -241,22 +249,22 @@ aou_survey <- function(cohort,
       condition_date <- paste0(condition_name, "_date")
 
 
-        osci_specific <- health_history_codebook_long %>%
-          filter(concept_id_specific == specific_concept_id) %>%
-          pull(concept_id_question) %>%
-          unique()
+      osci_specific <- health_history_codebook_long %>%
+        filter(concept_id_specific == specific_concept_id) %>%
+        pull(concept_id_question) %>%
+        unique()
 
-        if (length(osci_specific) == 0) stop("Concept id ", specific_concept_id,
-                                             " is too general. Look for a specific condition in the health history codebook.",
-                                             "See function documentation for more details.")
-        if (length(osci_specific) == 1) warning("The question associated with concept id ",
-                                                specific_concept_id, " was added to the later version of the",
-                                                " family health history survey so earlier All of Us participants may not have answered it.")
+      if (length(osci_specific) == 0) stop("Concept id ", specific_concept_id,
+                                           " is too general. Look for a specific condition in the health history codebook.",
+                                           "See function documentation for more details.")
+      if (length(osci_specific) == 1) warning("The question associated with concept id ",
+                                              specific_concept_id, " was added to the later version of the",
+                                              " family health history survey so earlier All of Us participants may not have answered it.")
 
-        osci_overall <- allofus::health_history_codebook %>%
-          filter(concept_id_specific == specific_concept_id) %>%
-          pull(concept_id_overall) %>%
-          unique()
+      osci_overall <- allofus::health_history_codebook %>%
+        filter(concept_id_specific == specific_concept_id) %>%
+        pull(concept_id_overall) %>%
+        unique()
 
       tbl(con, "observation") %>%
         inner_join(select(function_cohort, person_id), by = "person_id") %>%
