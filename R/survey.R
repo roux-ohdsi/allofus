@@ -372,8 +372,12 @@ aou_survey_new <- function(cohort,
         pull(concept_id_question) %>%
         unique()
 
-      if (length(osci_specific) == 0) stop("Provide a specific concept id rather than a parent concept id")
-      if (length(osci_specific) == 1) warning("This question was added to the later version of the family medical survey")
+      if (length(osci_specific) == 0) stop("Concept id ", specific_concept_id,
+                                           " is too general. Look for a specific condition in the health history codebook.",
+                                           "See function documentation for more details.")
+      if (length(osci_specific) == 1) warning("The question associated with concept id ",
+                                              specific_concept_id, " was added to the later version of the",
+                                              "family health history survey so earlier All of Us participants may not have answered it.")
 
       osci_overall <- health_history_codebook %>%
         filter(concept_id_specific == specific_concept_id) %>%
@@ -463,6 +467,10 @@ aou_survey_new <- function(cohort,
   } else { # end regular survey questions
     out <- cohort_w_health
   }
+
+  # a little reorganization
+  out <- out %>%
+    relocate(ends_with("_date") & !all_of(colnames(cohort)), .after = last_col())
 
   # collect if indicated
   if (isTRUE(collect)) {
