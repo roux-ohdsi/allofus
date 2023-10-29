@@ -279,7 +279,6 @@ aou_get_device_concepts <- function(cohort, concepts, start_date, end_date, ...)
 #' @examples
 #' aou_get_concepts(cohort, c(123, 456), start_date, end_date, domain = "condition")
 #'
-#' @export
 aou_get_concepts <- function(..., domain = c("condition", "measurement", "observation", "procedure", "drug", "device")) {
   if (length(domain) != 1) stop("Provide one domain only")
   if (!domain %in% c("condition", "measurement", "observation", "procedure", "drug", "device")) {

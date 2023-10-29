@@ -7,7 +7,6 @@
 #' and install it if found. If it doesn't find the package on CRAN, it'll ask for the owner/repository_name
 #' from github to install the package from github. this input should be provided without quotes. For example,
 #' respond with roux-ohdsi/ohdsilab NOT "roux-ohdsi/ohdsilab".
-#' @export
 #' @examples
 #' \dontrun{
 #' bookstore(c("aouFI", "CohortGenerator", "tidyr"))
