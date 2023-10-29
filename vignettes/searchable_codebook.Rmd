@@ -76,7 +76,7 @@ DT::datatable(df,
   DT::formatStyle(table = _, columns = cols, fontSize = '80%')
 ```
 
-
+## Codebook for health history surveys
 
 ```{r}
 # code from https://laustep.github.io/stlahblog/posts/DT_childTables.html
@@ -98,7 +98,7 @@ NestedData <- function(dat, children){
 }
 
 nested_data <- allofus::health_history_codebook %>% 
-  select(-c(concept_id_question, form_name, link)) %>% 
+  select(-c(concept_id_question, form_name)) %>% 
   distinct() %>% 
   rename(concept_id = concept_id_specific) %>%
   mutate(relative = fct_relevel(relative, "self", "daughter", "son", "sibling", "mother", "father", "grandparent")) %>% 

@@ -264,12 +264,16 @@ aou_survey <- function(cohort,
         pull(concept_id_question) %>%
         unique()
 
+      if (!specific_concept_id %in% c(health_history_codebook$concept_id_rx_meds, health_history_codebook$concept_id_on_txt,
+                                      health_history_codebook$concept_id_age_diagnosis)) {
+
       if (length(osci_specific) == 0) stop("Concept id ", specific_concept_id,
                                            " is too general. Look for a specific condition in the health history codebook.",
                                            "See function documentation for more details.")
       if (length(osci_specific) == 1) warning("The question associated with concept id ",
                                               specific_concept_id, " was added to the later version of the",
-                                              "family health history survey so earlier All of Us participants may not have answered it.")
+                                              " family health history survey so earlier All of Us participants may not have answered it.")
+      }
 
       osci_overall <- health_history_codebook %>%
         filter(concept_id_specific == specific_concept_id) %>%
