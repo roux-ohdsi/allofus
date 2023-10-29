@@ -190,7 +190,7 @@ aou_survey <- function(cohort,
 
         message("One or more of the requested questions were only asked of people responded that they had certain conditions. ",
                 "The top-level question(s) will be added to the output to provide context about missing data as ",
-                "column(s) ", paste0(here,  collapse = ", "), ".")
+                "column(s) ", paste0(new_cols,  collapse = ", "), ".")
 
         # health_survey_concept_ids <- c(health_survey_concept_ids, missing_qs$concept_id_for_sub)
         names_for_lookup <- bind_rows(names_for_lookup,
