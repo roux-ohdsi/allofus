@@ -231,7 +231,6 @@ aou_survey <- function(cohort,
 aou_survey_new <- function(cohort,
                            questions,
                            question_output = "text",
-                           answer_output = "text",
                            con = getOption("aou.default.con"),
                            collect = TRUE) {
   if (is.null(con)) stop("Please provide a connection to the database. You can do so automatically by running `aou_connect()` before this function.")
@@ -258,8 +257,7 @@ aou_survey_new <- function(cohort,
   }
   question_output <- if (length(question_output_arg) == 1 & question_output_arg[1] == "concept_id") "concept_id" else "value"
 
-  answer_output <- match.arg(answer_output, c("text", "concept_id"))
-  answer_output <- ifelse(answer_output == "text", "value", answer_output)
+  answer_output <- "value"
 
   # ensure person_id is a column name in cohort
   stopifnot("person_id column not found in cohort data" = "person_id" %in% colnames(cohort))
@@ -350,24 +348,25 @@ aou_survey_new <- function(cohort,
   # do this one at a time for now
   if (length(health_survey_concept_ids) > 0) {
     for (i in length(health_survey_concept_ids)) {
+      specific_concept_id <- health_survey_concept_ids[i]
 
       # this will be what the column is called
       if (question_output == "concept_id") {
-        condition_name <- paste0("x", specific_concept_id[i])
+        condition_name <- paste0("x", specific_concept_id)
       } else if (question_output == "text") {
         condition_name <- allofus::health_history_codebook %>%
-          filter(concept_id_specific == specific_concept_id[i]) %>%
+          filter(concept_id_specific == specific_concept_id) %>%
           pull(concept_code)
       } else {
 
         condition_name <- concept_lookup %>%
-          filter(concept_id == specific_concept_id[i]) %>%
+          filter(concept_id == specific_concept_id) %>%
           pull(cn)
       }
       condition_date <- paste0(condition_name, "_date")
 
       osci_specific <- allofus::health_history_codebook %>%
-        filter(concept_id_specific == specific_concept_id[i]) %>%
+        filter(concept_id_specific == specific_concept_id) %>%
         pull(concept_id_question) %>%
         unique()
       # 836800 43528758
@@ -376,7 +375,7 @@ aou_survey_new <- function(cohort,
       if (length(osci_specific) == 1) warning("This question was added to the later version of the family medical survey")
 
       osci_overall <- health_history_codebook %>%
-        filter(concept_id_specific == specific_concept_id[i]) %>%
+        filter(concept_id_specific == specific_concept_id) %>%
         pull(concept_id_overall) %>%
         unique()
 
