@@ -146,23 +146,25 @@ aou_survey <- function(cohort,
     if (length(sub_questions) > 0) {
       sub_connect <- health_history_codebook %>%
         filter(relative == "self") %>%
-        select(-contains("concept_id_sub")) %>%
-        pivot_longer(cols = c(concept_code_rx_meds, concept_code_on_txt, concept_code_age_diagnosis),
-                     names_pattern = "concept_code_(.+)",
-                     names_to = "question_sub", values_to = "concept_code_sub") %>%
-        filter(concept_code_sub %in% sub_questions) %>%
-        distinct(concept_code, condition, concept_id_specific, question_sub, concept_code_sub)
+        rename(concept_code_overall = concept_code) %>%
+        pivot_longer(cols = c(concept_id_rx_meds, concept_id_on_txt, concept_id_age_diagnosis,
+                              concept_code_rx_meds, concept_code_on_txt, concept_code_age_diagnosis),
+                     names_pattern = "(.+_.+)_(.+_.+)",
+                     names_to = c(".value", "question_sub"), values_to = c("concept_id_sub")) %>%
+        filter(concept_code %in% sub_questions) %>%
+        distinct(concept_code_overall, condition, concept_id_specific, question_sub, concept_id, concept_code)
 
       if (!all(sub_connect$concept_id_specific %in% health_survey_concept_ids)) {
         missing_qs <- sub_connect[!sub_connect$concept_id_specific %in% health_survey_concept_ids,]
         message("One or more of the requested questions were only asked of people responded that they had certain conditions. ",
                 "The top-level question(s) will be added to the output to provide context about missing data as ",
-                "column(s) ", paste0(paste0("`", missing_qs$concept_code, "`"),  collapse = ", "), " or ",
+                "column(s) ", paste0(paste0("`", missing_qs$concept_code_overall, "`"),  collapse = ", "), " or ",
                 paste0(paste0("`x", missing_qs$concept_id_specific, "`"),  collapse = ", "), ".")
 
         health_survey_concept_ids <- c(health_survey_concept_ids, missing_qs$concept_id_specific)
         names_for_lookup <- bind_rows(names_for_lookup,
-                                      tibble(concept_code = missing_qs$concept_code, cn = missing_qs$concept_code))
+                                      tibble(concept_id = missing_qs$concept_id_specific, concept_code =
+                                               missing_qs$concept_code, cn = missing_qs$concept_code))
       }
     }
 
@@ -171,7 +173,7 @@ aou_survey <- function(cohort,
       select(concept_code, concept_id = concept_id_specific)
 
     concept_lookup <- bind_rows(regular_survey_concept_codes, health_survey_concept_codes) %>%
-      inner_join(names_for_lookup, by = "concept_code")
+      full_join(names_for_lookup)
 
   } else {
     # if its already numeric, just look
@@ -203,23 +205,25 @@ aou_survey <- function(cohort,
     if (length(sub_questions) > 0) {
       sub_connect <- health_history_codebook %>%
         filter(relative == "self") %>%
-        select(-contains("concept_code_sub")) %>%
-        pivot_longer(cols = c(concept_id_rx_meds, concept_id_on_txt, concept_id_age_diagnosis),
-                     names_pattern = "concept_id_(.+)",
-                     names_to = "question_sub", values_to = "concept_id_sub") %>%
-        filter(concept_id_sub %in% sub_questions) %>%
-        distinct(concept_code, condition, concept_id_specific, question_sub, concept_id_sub)
+        rename(concept_code_overall = concept_code) %>%
+        pivot_longer(cols = c(concept_id_rx_meds, concept_id_on_txt, concept_id_age_diagnosis,
+                              concept_code_rx_meds, concept_code_on_txt, concept_code_age_diagnosis),
+                     names_pattern = "(.+_.+)_(.+_.+)",
+                     names_to = c(".value", "question_sub"), values_to = c("concept_id_sub")) %>%
+        filter(concept_id %in% sub_questions) %>%
+        distinct(concept_code_overall, condition, concept_id_specific, question_sub, concept_id, concept_code)
 
       if (!all(sub_connect$concept_id_specific %in% health_survey_concept_ids)) {
         missing_qs <- sub_connect[!sub_connect$concept_id_specific %in% health_survey_concept_ids,]
         message("One or more of the requested questions were only asked of people responded that they had certain conditions. ",
                 "The top-level question(s) will be added to the output to provide context about missing data as ",
-                "column(s) ", paste0(paste0("`", missing_qs$concept_code, "`"),  collapse = ", "), " or ",
+                "column(s) ", paste0(paste0("`", missing_qs$concept_code_overall, "`"),  collapse = ", "), " or ",
                 paste0(paste0("`x", missing_qs$concept_id_specific, "`"),  collapse = ", "), ".")
 
         health_survey_concept_ids <- c(health_survey_concept_ids, missing_qs$concept_id_specific)
         names_for_lookup <- bind_rows(names_for_lookup,
-                                      tibble(concept_id = missing_qs$concept_id_specific, cn = missing_qs$concept_code))
+                                      tibble(concept_id = missing_qs$concept_id_specific, concept_code =
+                                               missing_qs$concept_code, cn = missing_qs$concept_code))
 
       }
     }
@@ -234,7 +238,7 @@ aou_survey <- function(cohort,
       distinct(concept_code, concept_id)
 
     concept_lookup <- bind_rows(regular_survey_concept_codes, health_survey_concept_codes) %>%
-      inner_join(names_for_lookup, by = "concept_id")
+      full_join(names_for_lookup)
 
   }
 
