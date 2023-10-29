@@ -348,6 +348,7 @@ aou_survey_new <- function(cohort,
 
   # do this one at a time for now
   if (length(health_survey_concept_ids) > 0) {
+    health_tables <- list()
     for (i in length(health_survey_concept_ids)) {
       specific_concept_id <- health_survey_concept_ids[i]
 
@@ -406,8 +407,11 @@ aou_survey_new <- function(cohort,
         ungroup() %>%
         select(person_id, !!condition_name := condition, !!condition_date := observation_date)
 
-      function_cohort <- left_join(function_cohort, w_condition, by = "person_id")
+      health_tables[[i]] <- w_condition
     }
+    cohort_w_health <- reduce(health_tables, left_join, by = "person_id")
+  } else {
+    cohort_w_health <- function_cohort
   }
 
   ## this is the part for the regular survey questions, from the original function
@@ -457,9 +461,9 @@ aou_survey_new <- function(cohort,
         rename(all_of(nm))
     }
     # join back to original table
-    out <- full_join(function_cohort, wide, by = "person_id")
+    out <- full_join(cohort_w_health, wide, by = "person_id")
   } else { # end regular survey questions
-    out <- function_cohort
+    out <- cohort_w_health
   }
 
   # collect if indicated
