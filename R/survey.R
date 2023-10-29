@@ -348,9 +348,9 @@ aou_survey_new <- function(cohort,
 
   # do this one at a time for now
   if (length(health_survey_concept_ids) > 0) {
-    health_tables <- list()
-    for (i in length(health_survey_concept_ids)) {
-      specific_concept_id <- health_survey_concept_ids[i]
+
+    all_health <- map(health_survey_concept_ids, ~{
+      specific_concept_id <- .x
 
       # this will be what the column is called
       if (question_output == "concept_id") {
@@ -371,7 +371,6 @@ aou_survey_new <- function(cohort,
         filter(concept_id_specific == specific_concept_id) %>%
         pull(concept_id_question) %>%
         unique()
-      # 836800 43528758
 
       if (length(osci_specific) == 0) stop("Provide a specific concept id rather than a parent concept id")
       if (length(osci_specific) == 1) warning("This question was added to the later version of the family medical survey")
@@ -381,7 +380,7 @@ aou_survey_new <- function(cohort,
         pull(concept_id_overall) %>%
         unique()
 
-      w_condition <- tbl(con, "observation") %>%
+      tbl(con, "observation") %>%
         inner_join(select(function_cohort, person_id), by = "person_id") %>%
         filter(observation_source_concept_id %in% !!c(osci_overall, osci_specific)) %>%
         select(person_id, observation_source_concept_id, value_source_concept_id, value_source_value, observation_date) %>%
@@ -406,10 +405,9 @@ aou_survey_new <- function(cohort,
         slice_max(order_by = type, n = 1) %>%
         ungroup() %>%
         select(person_id, !!condition_name := condition, !!condition_date := observation_date)
+    }) %>% reduce(left_join, by = "person_id")
 
-      health_tables[[i]] <- w_condition
-    }
-    cohort_w_health <- reduce(health_tables, left_join, by = "person_id")
+    cohort_w_health <- left_join(cohort, all_health, by = "person_id")
   } else {
     cohort_w_health <- function_cohort
   }
