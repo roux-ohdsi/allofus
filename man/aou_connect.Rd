@@ -4,7 +4,7 @@
 \alias{aou_connect}
 \title{Create a connection to the database in All of Us}
 \usage{
-aou_connect(CDR = getOption("aou.default.cdr"))
+aou_connect(CDR = getOption("aou.default.cdr"), ...)
 }
 \arguments{
 \item{CDR}{The name of the "curated data repository" that will be used in any

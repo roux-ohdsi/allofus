@@ -7,10 +7,10 @@
 aou_survey(
   cohort,
   questions,
-  con = getOption("aou.default.con"),
-  collect = TRUE,
+  question_output = "text",
   answer_output = "text",
-  question_output = "text"
+  con = getOption("aou.default.con"),
+  collect = TRUE
 )
 }
 \arguments{
@@ -18,29 +18,27 @@ aou_survey(
 
 \item{questions}{either a vector of concept_ids or concept_codes for questions to return results}
 
+\item{question_output}{how to name the columns. Options include text format ("text"), as concept ids preceded by
+"x_" ("concept_id"), or using a custom vector of column names matching the vector of `questions`. Defaults to "text".}
+
+\item{answer_output}{whether to return the survey responses in their text (concept code) format ("text") or as the concept id
+for a given response ("concept_id"). Defaults to "text".}
+
 \item{con}{connection to the allofus SQL database. Defaults to getOption("aou.default.con"), which is created automatically with `aou_connect()`}
 
 \item{collect}{whether to return the results as a local (TRUE) or database table}
-
-\item{answer_output}{whether to return the survey responses in their text format ("text") or as the concept id
-for a given response ("concept_id"). Defaults to "text".}
-
-\item{question_output}{how to name the columns. Options include text format ("text"), as concept ids preceded by
-"x_" ("concept_id"), or using a custom vector of column names matching the vector of `questions`. Defaults to "text".}
 }
 \description{
 Because responses to the survey questions stored in the ds_survey table do not
 include skipped questions (i.e., missing data!), this function makes it easier to
 query the observation table for responses to survey questions so that the skipped
-responses are included. At the moment, it only works for relatively straightforward
-questions without extensive branching logic. It also does not work for some
-questions in the personal/family/health/medical surveys that ask participants
-to check a box for each disease.
+responses are included.
 
 The function will return a dataframe or SQL tbl with the initial cohort table along
 with a column for each question included in `questions` and answers for
 each person_id in the cells. The column names (questions) and answers can
-be returned as the concept_code or concept_id.
+be returned as the concept_code or concept_id. For each question, a column with
+the suffix "_date" is included with the date on which the question was answered.
 
 To find the desired survey questions, use the all of us data dictionary,
 survey codebook, athena, data browser, or the allofus R package
@@ -58,8 +56,8 @@ cohort <- tbl(con, "person") \%>\%
 aou_survey(
   cohort = cohort,
   questions = c(1585375, 1586135),
-  answer_output = "text",
-  question_output = "text"
+  question_output = "text",
+  answer_output = "text"
 )
 aou_survey(cohort, questions = 1585811, question_output = "pregnancy")
 aou_survey(cohort, questions = 1585811, question_output = "text")

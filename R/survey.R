@@ -4,15 +4,13 @@
 #' Because responses to the survey questions stored in the ds_survey table do not
 #' include skipped questions (i.e., missing data!), this function makes it easier to
 #' query the observation table for responses to survey questions so that the skipped
-#' responses are included. At the moment, it only works for relatively straightforward
-#' questions without extensive branching logic. It also does not work for some
-#' questions in the personal/family/health/medical surveys that ask participants
-#' to check a box for each disease.
+#' responses are included.
 #'
 #' The function will return a dataframe or SQL tbl with the initial cohort table along
 #' with a column for each question included in `questions` and answers for
 #' each person_id in the cells. The column names (questions) and answers can
-#' be returned as the concept_code or concept_id.
+#' be returned as the concept_code or concept_id. For each question, a column with
+#' the suffix "_date" is included with the date on which the question was answered.
 #'
 #' To find the desired survey questions, use the all of us data dictionary,
 #' survey codebook, athena, data browser, or the allofus R package
@@ -23,12 +21,12 @@
 #'
 #' @param cohort tbl or dataframe with a cohort that includes a column called person_id
 #' @param questions either a vector of concept_ids or concept_codes for questions to return results
-#' @param con connection to the allofus SQL database. Defaults to getOption("aou.default.con"), which is created automatically with `aou_connect()`
-#' @param collect whether to return the results as a local (TRUE) or database table
-#' @param answer_output whether to return the survey responses in their text format ("text") or as the concept id
-#' for a given response ("concept_id"). Defaults to "text".
 #' @param question_output how to name the columns. Options include text format ("text"), as concept ids preceded by
 #' "x_" ("concept_id"), or using a custom vector of column names matching the vector of `questions`. Defaults to "text".
+#' @param answer_output whether to return the survey responses in their text (concept code) format ("text") or as the concept id
+#' for a given response ("concept_id"). Defaults to "text".
+#' @param con connection to the allofus SQL database. Defaults to getOption("aou.default.con"), which is created automatically with `aou_connect()`
+#' @param collect whether to return the results as a local (TRUE) or database table
 #'
 #' @importFrom dplyr filter select pull mutate rename rename_with collect tbl left_join coalesce
 #' @importFrom tidyr pivot_wider all_of
@@ -43,8 +41,8 @@
 #' aou_survey(
 #'   cohort = cohort,
 #'   questions = c(1585375, 1586135),
-#'   answer_output = "text",
-#'   question_output = "text"
+#'   question_output = "text",
+#'   answer_output = "text"
 #' )
 #' aou_survey(cohort, questions = 1585811, question_output = "pregnancy")
 #' aou_survey(cohort, questions = 1585811, question_output = "text")
@@ -55,10 +53,10 @@
 #' }
 aou_survey <- function(cohort,
                        questions,
-                       con = getOption("aou.default.con"),
-                       collect = TRUE,
+                       question_output = "text",
                        answer_output = "text",
-                       question_output = "text") {
+                       con = getOption("aou.default.con"),
+                       collect = TRUE) {
   if (is.null(con)) stop("Please provide a connection to the database. You can do so automatically by running `aou_connect()` before this function.")
 
 
@@ -162,7 +160,7 @@ aou_survey <- function(cohort,
     stopifnot("Wrong column names" = all(nm %in% tolower(colnames(wide))))
     # change to lower, then rename
     wide <- wide %>%
-      rename_with(tolower)%>%
+      rename_with(tolower) %>%
       rename(all_of(nm))
   }
 
@@ -175,4 +173,34 @@ aou_survey <- function(cohort,
   }
 
   return(out)
+}
+
+
+aou_medical_survey <- function(cohort,
+                               questions,
+                               question_output = "text",
+                               answer_output = "text",
+                               con = getOption("aou.default.con"),
+                               collect = TRUE) {
+
+  # specific_concept_id <- 43529932
+  # specific_concept_id <- 1740719
+  # specific_concept_id <- 43529837
+  # 1740663 should be what I'm looking for
+
+  osci_specific <- allofus::health_history_codebook %>%
+    filter(concept_id_specific == specific_concept_id) %>%
+    pull(concept_id_question) %>%
+    unique()
+  # 836800 43528758
+
+  if (length(osci_specific) == 0) stop("Provide a specific concept id rather than a parent concept id")
+  if (length(osci_specific) == 1) warning("This question was added to the later version of the family medical survey")
+
+  osci_overall <- health_history_codebook %>%
+    filter(concept_id_specific == specific_concept_id) %>%
+    pull(concept_id_overall) %>%
+    unique()
+  # 43528678
+
 }

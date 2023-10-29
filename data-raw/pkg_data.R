@@ -41,7 +41,6 @@ ppi_vocab <- tbl(con, inDatabaseSchema(cdm_schema, "concept")) |>
 ppi_vocab = ppi_vocab |>
   mutate(concept_code = tolower(concept_code))
 
-
 join_to_ppi <- function(.x){
   full_join(.x, ppi_vocab, join_by(`Item Concept` == concept_code)) |>
     filter(`Field Type` != "descriptive") |>
@@ -83,12 +82,135 @@ form_names <- data.frame(form_name = c("covid19_participant_experience_cope_surv
                                   "https://www.researchallofus.org/wp-content/themes/research-hub-wordpress-theme/media/faq/Basics_Survey_ENG_23.pdf",
                                   "https://www.researchallofus.org/wp-content/themes/research-hub-wordpress-theme/media/2023/New_Year_Minute_Survey_English.pdf",
                                   "https://www.researchallofus.org/wp-content/themes/research-hub-wordpress-theme/media/2019/02/Health_Care_Access.pdf"
-                                  ))
+                         ))
 
-aou_codebook = bind_rows(joined) |>
+aou_codebook_w_health_history = bind_rows(joined) |>
   filter(concept_class_id == "Question") |>
   left_join(form_names) |>
   select(-form_name) |>
-  rename(form_name = new_name)
+  rename(form_name = new_name) |>
+  mutate(concept_code = ifelse(concept_code == "circulatorycondition_otherheartorbloodcondition_ye",
+                               "circulatorycondition_otherheartorbloodcondition_yes", concept_code))
+
+aou_codebook <- aou_codebook_w_health_history %>%
+  filter(!(str_detect(form_name, "History") &
+             (str_detect(concept_code, "currently$") |
+                str_detect(concept_code, "\\_rx") |
+                str_detect(concept_code, "prescribedmeds") |
+                str_detect(concept_code, "\\_yes$") |
+                str_detect(concept_code, "howoldwereyou") |
+                str_detect(concept_code, "freetextb"))))
 
 usethis::use_data(aou_codebook, overwrite = TRUE)
+
+specific <- tbl(con, inDatabaseSchema(cdm_schema, "concept")) %>%
+  filter(vocabulary_id == "PPI") %>%
+  filter(concept_name %like% "Including yourself, who in your family has%") %>%
+  filter(concept_class_id == "Answer") %>%
+  collect() %>%
+  separate(concept_name, into = c("question", "answer"), sep = " - ") %>%
+  filter(answer %in% c("Self", "Father", "Mother", "Sibling", "Son", "Daughter", "Grandparent")) %>%
+  mutate(condition = str_remove(question, "Including yourself, who in your family has had "),
+         condition = str_remove(condition, "\\?"),
+         condition = str_to_lower(condition),
+         condition = str_remove(condition, "^an*\\s"),
+         answer = str_to_lower(answer),
+         concept_code = str_to_lower(concept_code)) %>%
+  select(question, answer, concept_id, condition, concept_code)
+
+overall <- tbl(con, inDatabaseSchema(cdm_schema, "concept")) %>%
+  filter(vocabulary_id == "PPI") %>%
+  filter(concept_name %like% "Have you or anyone in your family ever been diagnosed%") %>%
+  filter(concept_class_id == "Answer") %>%
+  left_join(tbl(con, inDatabaseSchema(cdm_schema, "concept_relationship")), by = c("concept_id" = "concept_id_1"),
+            suffix = c("_x", "_y")) %>%
+  filter(relationship_id %in% c("Answer of (PPI)", "Has PPI parent code")) %>%
+  distinct(concept_name, concept_id_2, concept_code) %>%
+  collect() %>%
+  separate(concept_name, into = c("question", "answer"), sep = " - ") %>%
+  mutate(category = str_remove(question, "Have you or anyone in your family ever been diagnosed with the following "),
+         category = str_remove(category, "\\? Think only of the people you are related to by blood\\."),
+         category = ifelse(category == "conditions", "other conditions", category),
+         answer = str_to_lower(answer),
+         answer = str_squish(answer),
+         answer = case_when(
+           answer == "fractured/broken any bones in the last 5 years" ~ "fractured/broken bones in the last five years",
+           answer == "other bone" ~ "other bone, joint, or muscle condition(s)",
+           answer == "spine" ~ "spine, muscle, or bone disorders (non-cancer)",
+           answer == "skin condition (e.g., eczema, psoriasis)" ~ "skin condition(s) (e.g., eczema, psoriasis)",
+           answer == "atrial fibrillation (or a-fib) or atrial flutter (or a-flutter)." ~ "atrial fibrillation (or a-fib) or atrial flutter (or a-flutter)",
+           answer == "chronic lung disease (copd, emphysema or bronchitis)" ~ "chronic lung disease (copd, emphysema, or bronchitis)",
+           answer == "other condition" ~ "other condition(s)",
+           answer == "other brain or nervous system condition" ~ "other brain or nervous system condition(s)",
+           answer == "other kidney condition" ~ "other kidney condition(s)",
+           answer == "nearsighted" ~ "nearsightedness",
+           answer == "other lung condition" ~ "other lung condition(s)",
+           answer == "other hearing or eye condition" ~ "other hearing or eye condition(s)",
+           answer == "farsighted" ~ "farsightedness",
+           answer == "other cancer" ~ "other cancer(s)",
+           answer == "other mental health or substance use condition" ~ "other mental or substance use condition",
+           answer == "lou gehrig's disease (amyotrophic lateral sclerosis or als)" ~ "lou gehrig's disease (amyotrophic lateral sclerosis)",
+           answer == "coronary artery/coronary heart disease (includes angina)" ~ "coronary artery/coronary heart disease",
+           answer == "blindness" ~ "blindness, all causes",
+           answer == "head and neck (this includes cancers of the mouth, sinuses, nose, or throat.)" ~ "head and neck cancer (this includes cancers of the mouth, sinuses, nose, or throat. this does not include brain cancer.)",
+           TRUE ~ answer
+         )) %>%
+  rename(concept_id = concept_id_2) %>%
+  filter(!(concept_id == 43528634 & !str_detect(concept_code, "Digestive"))) %>%
+  filter(!(concept_id == 43528896)) %>%
+  select(-concept_code, -question)
+
+conditions_table <- specific %>%
+  left_join(overall, by = c("condition" = "answer"), suffix = c("_specific", "_overall")) %>%
+  rename(relative = answer)
+
+# conditions_table is the table for sharing
+# people can input concept_id_specific or concept_code
+
+concepts <- tbl(con, inDatabaseSchema(cdm_schema, "concept")) %>%
+  select(concept_id, concept_name, concept_class_id)
+
+question_relationships <- tbl(con, inDatabaseSchema(cdm_schema, "concept_relationship")) %>%
+  filter(concept_id_1 %in% !!conditions_table$concept_id_specific,
+         relationship_id %in% c("Answer of (PPI)", "Has PPI parent code")) %>%
+  distinct(concept_id_1, concept_id_2) %>%
+  rename(concept_id_answer = concept_id_1, concept_id_question = concept_id_2)
+
+all_overall_concept_id <- question_relationships %>%
+  inner_join(tbl(con, inDatabaseSchema(cdm_schema, "concept_relationship")),
+             by = join_by(concept_id_question == concept_id_1), suffix = c("_x", "_y")) %>%
+  filter(relationship_id == "Has PPI parent code") %>%
+  select(-contains("valid"), -relationship_id) %>%
+  rename(concept_id_parent = concept_id_2) |>
+  left_join(concepts, by = join_by(concept_id_parent == concept_id)) %>%
+  rename(concept_name_parent = concept_name, concept_class_id_parent = concept_class_id) %>%
+  left_join(concepts, by = join_by(concept_id_question == concept_id), suffix = c("", "_question")) %>%
+  left_join(concepts, by = join_by(concept_id_answer == concept_id), suffix = c("", "_answer")) %>%
+  mutate(concept_class_id_parent = ifelse(concept_class_id_parent == "Answer", "Answer", "Other")) %>%
+  distinct(concept_class_id_parent, concept_id_parent, concept_id_answer, concept_id_question) %>%
+  collect()
+
+# this is the codebook for the health history questions
+codebook_only_health_history <- filter(aou_codebook_w_health_history, str_detect(form_name, "History")) %>%
+  filter(str_detect(concept_code, "currently$") |
+           str_detect(concept_code, "\\_rx") |
+           str_detect(concept_code, "prescribedmeds") |
+           str_detect(concept_code, "\\_yes$") |
+           str_detect(concept_code, "howoldwereyou"))
+
+# if there is no concept_id_parent for which the concept_class_id_parent == "Answer",
+# then they didn't ask it about the whole family in the first set of surveys
+## these are the ones that don't have a parent question
+health_history_codebook <- full_join(conditions_table, all_overall_concept_id,
+                      by = join_by(concept_id_specific == concept_id_answer)) %>%
+  distinct(question, relative, condition, category, concept_code, concept_id_specific,
+           concept_id_overall, concept_id_question) %>%
+  mutate(concept_code = str_replace(concept_code, "conditions", "condition"),
+         concept_code = ifelse(relative == "self", paste0(concept_code, "_yes"), concept_code)) %>%
+  # this is removing the prescribed meds, current treatment, and how old were you
+  # questions (at least for now) because we will provide them automatically
+  left_join(codebook_only_health_history, by = "concept_code", relationship = "many-to-many") %>%
+  select(-c(concept_id, concept_name, concept_class_id, field_type, field_label,
+            choices, standard_concept, valid_start_date, valid_end_date, -link))
+
+usethis::use_data(health_history_codebook, overwrite = TRUE)
