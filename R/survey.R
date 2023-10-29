@@ -100,31 +100,46 @@ aou_survey <- function(cohort,
     function_cohort <- cohort
   }
 
+  # pivot longer to inclde the rx, on_txt, and age_diagnosis columns
+  health_history_codebook_long <- allofus::health_history_codebook %>%
+    filter(relative == "self") %>%
+    rename(concept_code_overall = concept_code) %>%
+    pivot_longer(cols = c(concept_id_rx_meds, concept_id_on_txt, concept_id_age_diagnosis,
+                          concept_code_rx_meds, concept_code_on_txt, concept_code_age_diagnosis),
+                 names_pattern = "(.+_.+)_(.+_.+)",
+                 names_to = c(".value", "question_sub"), values_to = c("concept_id_sub")) %>%
+    mutate(concept_id_for_sub = concept_id_specific,
+           concept_id_specific = concept_id) %>%
+    distinct(question, relative, condition, category, concept_code, concept_code_overall, concept_id_specific,
+             concept_id_for_sub) %>%
+    bind_rows(health_history_codebook)
+
   # branching logic for how to handle concept_id vs. concept_code question inputs
   if (is.character(questions)) {
     # if its a character vector, go find the matching concept_ids because thats much faster
     # and easier to search with %in%
-    regular_survey_qs <- questions[questions %in% aou_codebook$concept_code]
-    health_survey_qs <- questions[questions %in% c(health_history_codebook$concept_code,
-                                                   health_history_codebook$concept_code_rx_meds,
-                                                   health_history_codebook$concept_code_on_txt,
-                                                   health_history_codebook$concept_code_age_diagnosis)]
+    regular_survey_qs <- questions[questions %in% allofus::aou_codebook$concept_code]
+    health_survey_qs <- questions[questions %in% health_history_codebook_long$concept_code]
 
     # did we account for everything?
     missing_qs <- questions[!questions %in% c(regular_survey_qs, health_survey_qs)]
     if (length(missing_qs) > 0) stop("can't find all concept codes, check codebook")
 
     # get the concept_ids for the regular survey questions
-    regular_survey_concept_ids <- aou_codebook %>%
+    regular_survey_concept_ids <- allofus::aou_codebook %>%
       filter(concept_code %in% regular_survey_qs) %>%
       pull(concept_id) %>%
       unique()
 
+    health_survey_concept_ids <- health_history_codebook_long %>%
+      filter(concept_code %in% health_survey_qs) %>%
+      pull(concept_id_specific)
+
     # there are some concept_ids in the regular codebook that are there for reference
     # not to search -- make sure those are not included
-    too_general <- regular_survey_concept_ids[regular_survey_concept_ids %in% health_history_codebook$concept_id_overall]
+    too_general <- regular_survey_concept_ids[regular_survey_concept_ids %in% health_history_codebook_long$concept_id_overall]
     if (length(too_general) > 0) {
-      too_general <- regular_survey_qs[regular_survey_concept_ids %in% health_history_codebook$concept_id_overall]
+      too_general <- regular_survey_qs[regular_survey_concept_ids %in% health_history_codebook_long$concept_id_overall]
       stop("Concept code(s) ", paste0(too_general, collapse = ", "),
            " is/are too general. Find a concept id for a specific condition and individual in the health history codebook. ",
            "See function documentation for more details.")
@@ -132,62 +147,16 @@ aou_survey <- function(cohort,
 
     names_for_lookup <- tibble(concept_code = questions, cn = !!question_output_arg)
 
-    regular_survey_concept_codes = aou_codebook %>%
-      filter(concept_code %in% regular_survey_qs) %>%
-      select(concept_code, concept_id)
-
-    health_survey_concept_ids <- health_history_codebook %>%
-      filter(concept_code %in% health_survey_qs) %>%
-      pull(concept_id_specific)
-
-    # are there any that are the meds/treatment/age questions?
-    sub_questions <- health_survey_qs[!health_survey_qs %in% health_history_codebook$concept_code]
-
-    if (length(sub_questions) > 0) {
-      sub_connect <- health_history_codebook %>%
-        filter(relative == "self") %>%
-        rename(concept_code_overall = concept_code) %>%
-        pivot_longer(cols = c(concept_id_rx_meds, concept_id_on_txt, concept_id_age_diagnosis,
-                              concept_code_rx_meds, concept_code_on_txt, concept_code_age_diagnosis),
-                     names_pattern = "(.+_.+)_(.+_.+)",
-                     names_to = c(".value", "question_sub"), values_to = c("concept_id_sub")) %>%
-        filter(concept_code %in% sub_questions) %>%
-        distinct(concept_code_overall, condition, concept_id_specific, question_sub, concept_id, concept_code)
-
-      if (!all(sub_connect$concept_id_specific %in% health_survey_concept_ids)) {
-        missing_qs <- sub_connect[!sub_connect$concept_id_specific %in% health_survey_concept_ids,]
-        message("One or more of the requested questions were only asked of people responded that they had certain conditions. ",
-                "The top-level question(s) will be added to the output to provide context about missing data as ",
-                "column(s) ", paste0(paste0("`", missing_qs$concept_code_overall, "`"),  collapse = ", "), " or ",
-                paste0(paste0("`x", missing_qs$concept_id_specific, "`"),  collapse = ", "), ".")
-
-        health_survey_concept_ids <- c(health_survey_concept_ids, missing_qs$concept_id_specific)
-        names_for_lookup <- bind_rows(names_for_lookup,
-                                      tibble(concept_id = missing_qs$concept_id_specific, concept_code =
-                                               missing_qs$concept_code, cn = missing_qs$concept_code))
-      }
-    }
-
-    health_survey_concept_codes = health_history_codebook %>%
-      filter(concept_id_specific %in% health_survey_concept_ids) %>%
-      select(concept_code, concept_id = concept_id_specific)
-
-    concept_lookup <- bind_rows(regular_survey_concept_codes, health_survey_concept_codes) %>%
-      full_join(names_for_lookup)
-
   } else {
     # if its already numeric, just look
-    regular_survey_concept_ids <- questions[questions %in% aou_codebook$concept_id]
-    health_survey_concept_ids <- questions[questions %in% c(health_history_codebook$concept_id_specific,
-                                                            health_history_codebook$concept_id_rx_meds,
-                                                            health_history_codebook$concept_id_on_txt,
-                                                            health_history_codebook$concept_id_age_diagnosis)]
+    regular_survey_concept_ids <- questions[questions %in% allofus::aou_codebook$concept_id]
+    health_survey_concept_ids <- questions[questions %in% health_history_codebook_long$concept_id_specific]
 
     # did we account for everything?
     missing_qs <- questions[!questions %in% c(regular_survey_concept_ids, health_survey_concept_ids)]
     if (length(missing_qs) > 0) {
       # check to see if any are in the health history codebook as overall concept ids
-      too_general <- missing_qs[missing_qs %in% health_history_codebook$concept_id_overall]
+      too_general <- missing_qs[missing_qs %in% health_history_codebook_long$concept_id_overall]
       if (length(too_general) > 0) {
         stop("Concept ID(s) ", paste0(too_general, collapse = ", "),
              " is/are too general. Look for a specific condition in the health history codebook.",
@@ -198,52 +167,60 @@ aou_survey <- function(cohort,
     }
 
     names_for_lookup <- tibble(concept_id = questions, cn = !!question_output_arg)
+  }
+
+  if (length(health_survey_concept_ids) > 0) {
 
     # are there any that are the meds/treatment/age questions?
-    sub_questions <- health_survey_concept_ids[!health_survey_concept_ids %in% health_history_codebook$concept_id_specific]
+    sub_questions <- health_history_codebook_long %>%
+      filter(concept_id_specific %in% health_survey_concept_ids) %>%
+      filter(!is.na(concept_id_for_sub))
 
-    if (length(sub_questions) > 0) {
-      sub_connect <- health_history_codebook %>%
-        filter(relative == "self") %>%
-        rename(concept_code_overall = concept_code) %>%
-        pivot_longer(cols = c(concept_id_rx_meds, concept_id_on_txt, concept_id_age_diagnosis,
-                              concept_code_rx_meds, concept_code_on_txt, concept_code_age_diagnosis),
-                     names_pattern = "(.+_.+)_(.+_.+)",
-                     names_to = c(".value", "question_sub"), values_to = c("concept_id_sub")) %>%
-        filter(concept_id %in% sub_questions) %>%
-        distinct(concept_code_overall, condition, concept_id_specific, question_sub, concept_id, concept_code)
+    if (nrow(sub_questions) > 0) {
+      # if there are some sub questions without the parents
+      if (!all(sub_questions$concept_id_for_sub %in% health_survey_concept_ids)) {
+        missing_qs <- sub_questions %>%
+          filter(!concept_id_for_sub %in% health_survey_concept_ids)
 
-      if (!all(sub_connect$concept_id_specific %in% health_survey_concept_ids)) {
-        missing_qs <- sub_connect[!sub_connect$concept_id_specific %in% health_survey_concept_ids,]
         message("One or more of the requested questions were only asked of people responded that they had certain conditions. ",
                 "The top-level question(s) will be added to the output to provide context about missing data as ",
                 "column(s) ", paste0(paste0("`", missing_qs$concept_code_overall, "`"),  collapse = ", "), " or ",
-                paste0(paste0("`x", missing_qs$concept_id_specific, "`"),  collapse = ", "), ".")
+                paste0(paste0("`x", missing_qs$concept_id_for_sub, "`"),  collapse = ", "), ".")
 
-        health_survey_concept_ids <- c(health_survey_concept_ids, missing_qs$concept_id_specific)
+        # health_survey_concept_ids <- c(health_survey_concept_ids, missing_qs$concept_id_for_sub)
         names_for_lookup <- bind_rows(names_for_lookup,
-                                      tibble(concept_id = missing_qs$concept_id_specific, concept_code =
-                                               missing_qs$concept_code, cn = missing_qs$concept_code))
-
+                                      tibble(concept_id = missing_qs$concept_id_for_sub, concept_code =
+                                               missing_qs$concept_code_overall, cn = missing_qs$concept_code_overall,
+                                             type = "health"))
       }
     }
 
-    regular_survey_concept_codes = aou_codebook %>%
+    regular_survey_concept_codes = allofus::aou_codebook %>%
       filter(concept_id %in% regular_survey_concept_ids) %>%
-      select(concept_code, concept_id)
+      distinct(concept_code, concept_id) %>%
+      mutate(type = "regular")
 
-    health_survey_concept_codes = health_history_codebook %>%
+    health_survey_concept_codes = health_history_codebook_long %>%
       filter(concept_id_specific %in% health_survey_concept_ids) %>%
       select(concept_code, concept_id = concept_id_specific) %>%
-      distinct(concept_code, concept_id)
+      distinct(concept_code, concept_id) %>%
+      mutate(type = "health")
 
+    # there are more graceful ways to merge this data but ignoring that...
     concept_lookup <- bind_rows(regular_survey_concept_codes, health_survey_concept_codes) %>%
-      full_join(names_for_lookup)
+      full_join(names_for_lookup, by = c("concept_code", "concept_id", "type")) %>%
+      group_by(concept_id) %>%
+      fill(everything(), .direction = "up") %>%
+      slice(1)
 
-  }
+    all_health_survey_concept_ids <- filter(concept_lookup, type == "health") %>%
+      pull(concept_id)
 
-  # do this one at a time for now
-  if (length(health_survey_concept_ids) > 0) {
+    health_survey_concept_ids <- all_health_survey_concept_ids[all_health_survey_concept_ids %in% health_history_codebook$concept_id_specific]
+    # the sub questions for the conditions can just be treated like regular survey questions
+    regular_survey_concept_ids <- c(regular_survey_concept_ids,
+                                    all_health_survey_concept_ids[!all_health_survey_concept_ids %in%
+                                                                    health_history_codebook$concept_id_specific])
 
     all_health <- map(health_survey_concept_ids, ~{
       specific_concept_id <- .x
@@ -252,37 +229,34 @@ aou_survey <- function(cohort,
       if (question_output == "concept_id") {
         condition_name <- paste0("x", specific_concept_id)
       } else if (question_output == "text") {
-        condition_name <- health_history_codebook %>%
-          filter(if_any(c(concept_id_specific, concept_id_rx_meds,concept_id_on_txt, concept_id_age_diagnosis),
-                        ~.x == specific_concept_id)) %>%
+        condition_name <- concept_lookup %>%
+          filter(concept_id == specific_concept_id)) %>%
           pull(concept_code)
       } else {
         condition_name <- concept_lookup %>%
           filter(concept_id == specific_concept_id) %>%
           pull(cn)
       }
+
       condition_date <- paste0(condition_name, "_date")
 
-      osci_specific <- health_history_codebook %>%
-        filter(concept_id_specific == specific_concept_id) %>%
-        pull(concept_id_question) %>%
-        unique()
 
-      if (!specific_concept_id %in% c(health_history_codebook$concept_id_rx_meds, health_history_codebook$concept_id_on_txt,
-                                      health_history_codebook$concept_id_age_diagnosis)) {
+        osci_specific <- health_history_codebook_long %>%
+          filter(concept_id_specific == specific_concept_id) %>%
+          pull(concept_id_question) %>%
+          unique()
 
-      if (length(osci_specific) == 0) stop("Concept id ", specific_concept_id,
-                                           " is too general. Look for a specific condition in the health history codebook.",
-                                           "See function documentation for more details.")
-      if (length(osci_specific) == 1) warning("The question associated with concept id ",
-                                              specific_concept_id, " was added to the later version of the",
-                                              " family health history survey so earlier All of Us participants may not have answered it.")
-      }
+        if (length(osci_specific) == 0) stop("Concept id ", specific_concept_id,
+                                             " is too general. Look for a specific condition in the health history codebook.",
+                                             "See function documentation for more details.")
+        if (length(osci_specific) == 1) warning("The question associated with concept id ",
+                                                specific_concept_id, " was added to the later version of the",
+                                                " family health history survey so earlier All of Us participants may not have answered it.")
 
-      osci_overall <- health_history_codebook %>%
-        filter(concept_id_specific == specific_concept_id) %>%
-        pull(concept_id_overall) %>%
-        unique()
+        osci_overall <- allofus::health_history_codebook %>%
+          filter(concept_id_specific == specific_concept_id) %>%
+          pull(concept_id_overall) %>%
+          unique()
 
       tbl(con, "observation") %>%
         inner_join(select(function_cohort, person_id), by = "person_id") %>%
@@ -317,7 +291,6 @@ aou_survey <- function(cohort,
   }
 
   ## this is the part for the regular survey questions, from the original function
-
   if (length(regular_survey_concept_ids) > 0) {
     # temporary observation table with responses
     tmp <- tbl(con, "observation") %>%
