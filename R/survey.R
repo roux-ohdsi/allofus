@@ -337,7 +337,7 @@ aou_survey_new <- function(cohort,
       select(concept_code, concept_id)
 
     health_survey_concept_codes = health_history_codebook %>%
-      filter(concept_code %in% health_survey_concept_ids) %>%
+      filter(concept_id_specific %in% health_survey_concept_ids) %>%
       select(concept_code, concept_id = concept_id_specific)
 
     concept_lookup <- bind_rows(regular_survey_concept_codes, health_survey_concept_codes) %>%
