@@ -67,13 +67,13 @@ aou_connect <- function(CDR = getOption("aou.default.cdr"), ...) {
 #' @examples
 #' # Examples based on AoU snippets
 #' \dontrun{
-#' aou_sql('
+#' aou_sql("
 #'   -- Compute the count of unique participants in our All of Us cohort.
 #'   SELECT
 #'   COUNT(DISTINCT person_id) AS total_number_of_participants
 #'   FROM
 #'   `{CDR}.person`
-#' ')
+#' ")
 #'
 #' MEASUREMENT_OF_INTEREST <- "hemoglobin"
 #' aou_sql('
@@ -183,13 +183,14 @@ aou_sql <- function(query, CDR = getOption("aou.default.cdr"), collect = TRUE, .
 #' }
 aou_test_connect <- function(cache = TRUE, cache_dir = Sys.getenv("AOU_CACHE_DIR"),
                              overwrite = FALSE) {
-
   if (cache_dir == "") {
     cache_dir <- tempdir()
     if (cache) {
-      message("No cache directory specified. Using temporary directory: ", cache_dir,
-              ". To specify a cache directory, it is recommended to set the ",
-              "AOU_CACHE_DIR environment variable.")
+      message(
+        "No cache directory specified. Using temporary directory: ", cache_dir,
+        ". To specify a cache directory, it is recommended to set the ",
+        "AOU_CACHE_DIR environment variable."
+      )
     }
   }
   if (!dir.exists(cache_dir)) {
@@ -198,19 +199,24 @@ aou_test_connect <- function(cache = TRUE, cache_dir = Sys.getenv("AOU_CACHE_DIR
 
   if ((!file.exists(file.path(cache_dir, "aou_test_data.sqlite"))) || overwrite) {
     download.file("https://github.com/OHDSI/Eunomia/raw/main/inst/sqlite/cdm.tar.xz",
-                  destfile = file.path(cache_dir, "cdm.tar.xz"))
+      destfile = file.path(cache_dir, "cdm.tar.xz")
+    )
     file <- xzfile(file.path(cache_dir, "cdm.tar.xz"), open = "rb")
     untar(file, exdir = cache_dir)
     close(file)
-    file.rename(from = file.path(cache_dir, "cdm.sqlite"),
-                to = file.path(cache_dir, "aou_test_data.sqlite"))
+    file.rename(
+      from = file.path(cache_dir, "cdm.sqlite"),
+      to = file.path(cache_dir, "aou_test_data.sqlite")
+    )
 
     if (cache) {
       message("Cached test data to ", cache_dir)
     }
 
-    con <- DBI::dbConnect(RSQLite::SQLite(),
-                          file.path(cache_dir, "aou_test_data.sqlite"))
+    con <- DBI::dbConnect(
+      RSQLite::SQLite(),
+      file.path(cache_dir, "aou_test_data.sqlite")
+    )
 
     # change table and field names to lowercase
     for (tb in DBI::dbListTables(con)) {
@@ -227,13 +233,13 @@ aou_test_connect <- function(cache = TRUE, cache_dir = Sys.getenv("AOU_CACHE_DIR
     googlesheets4::gs4_deauth()
 
     tbls <- googlesheets4::read_sheet("1XLVq84LLd0VZMioF2sPwyiaPw3EFp5c8o1CTWGPH-Yc",
-                                      sheet = "OMOP-Compatible Tables"
+      sheet = "OMOP-Compatible Tables"
     ) |>
       janitor::clean_names()
 
     # remove tables that are not in All of Us
     for (tb in DBI::dbListTables(con)[!DBI::dbListTables(con) %in%
-                                      unique(tbls$relevant_omop_table)]) {
+      unique(tbls$relevant_omop_table)]) {
       DBI::dbRemoveTable(con, tb)
       # message("Removed ", tb)
     }
@@ -241,11 +247,11 @@ aou_test_connect <- function(cache = TRUE, cache_dir = Sys.getenv("AOU_CACHE_DIR
     # check to see if each field name is present in the database table
     for (i in seq_len(nrow(tbls))) {
       if (!tbls$relevant_omop_table[i] %in%
-          DBI::dbListTables(con)) {
+        DBI::dbListTables(con)) {
         next
       }
       if (!tbls$field_name[i] %in%
-          DBI::dbListFields(con, tbls$relevant_omop_table[i])) {
+        DBI::dbListFields(con, tbls$relevant_omop_table[i])) {
         field_type <- tbls$field_type[i]
         if (field_type == "bigint") field_type <- "integer"
         # add field to table with the correct type
@@ -292,7 +298,6 @@ aou_test_connect <- function(cache = TRUE, cache_dir = Sys.getenv("AOU_CACHE_DIR
         " ADD COLUMN value_source_value integer"
       )
     )
-
   } else {
     con <- DBI::dbConnect(
       RSQLite::SQLite(),

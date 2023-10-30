@@ -158,7 +158,6 @@ aou_bucket_to_workspace <- function(file, dir = "", bucket = getOption("aou.defa
 #'
 aou_workspace_to_bucket <- function(file, dir = "", recursive = TRUE,
                                     bucket = getOption("aou.default.bucket")) {
-
   gsutil_args <- "-L gsutil_copy_to_bucket.log"
   if (recursive) {
     gsutil_args <- paste("-r", gsutil_args)
@@ -171,10 +170,11 @@ aou_workspace_to_bucket <- function(file, dir = "", recursive = TRUE,
   # Check which files were copied
   if (length(read.csv("cp.log")$Destination) == 0) {
     cat(cli::col_red("Oops! No files were copied\n"))
-  } else{
-    cat(cli::col_green("Saved to bucket:", "\n",
-                       paste(gsub(paste0(my_bucket, "/"), "", read.csv("cp.log")$Destination), collapse = "\n")))
+  } else {
+    cat(cli::col_green(
+      "Saved to bucket:", "\n",
+      paste(gsub(paste0(my_bucket, "/"), "", read.csv("cp.log")$Destination), collapse = "\n")
+    ))
   }
   invisible(file.remove("cp.log"))
 }
-
