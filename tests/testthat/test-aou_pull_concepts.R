@@ -1,71 +1,53 @@
-# create a mock cohort table
-cohort <- data.frame(
-  person_id = c(1, 2, 3, 4, 5),
-  start_date = as.Date(c("2020-01-01", "2020-01-01", "2020-01-01", "2020-01-01", "2020-01-01")),
-  end_date = as.Date(c("2021-01-01", "2021-01-01", "2021-01-01", "2021-01-01", "2021-01-01"))
-)
-
-# create a mock concepts table
-concepts <- data.frame(
-  concept_id = c(1, 2, 3, 4, 5),
-  domain = c("condition", "measurement", "observation", "procedure", "drug")
-)
-
-# create a mock connection to the database
-con <- DBI::dbConnect(RSQLite::SQLite(), ":memory:")
-
-# create a mock table in the database
-DBI::dbWriteTable(con, "cohort", cohort)
-DBI::dbWriteTable(con, "concepts", concepts)
+library(dplyr)
+con <- allofus:::aou_test_connect()
 
 # test case 1: return indicator with default concept set name and min_n
-result1 <- aou_concept_set(cohort = tbl(con, "cohort"),
-                           concepts = c(1, 2, 3),
-                           start_date = "start_date",
-                           end_date = "end_date",
+result1 <- aou_concept_set(cohort = tbl(con, "observation_period"),
+                           concepts = c(4024958, 4323208, 433644, 378001),
+                           start_date = observation_period_start_date,
+                           end_date = observation_period_end_date,
                            domains = c("condition", "measurement", "observation"),
                            return = "indicator")
-expected1 <- data.frame(
-  person_id = c(1, 2, 3, 4, 5),
-  concept_set = "concept_set",
-  stringsAsFactors = FALSE
-)
-expected1[c(1, 2, 3), "concept_set"] <- 1
-expect_equal(result1, expected1)
+expect_equal(nrow(result1), 2690)
 
-# test case 2: return count with custom concept set name and min_n
-result2 <- aou_concept_set(cohort = tbl(con, "cohort"),
-                           concepts = c(1, 2, 3),
-                           start_date = "start_date",
-                           end_date = "end_date",
+# test case 2: only return indicator if min_n > 10
+result2 <- aou_concept_set(cohort = tbl(con, "observation_period"),
+                           concepts = c(4024958, 4323208, 433644, 378001),
+                           start_date = observation_period_start_date,
+                           end_date = observation_period_end_date,
+                           domains = c("condition", "measurement", "observation"),
+                           return = "indicator",
+                           min_n = 10)
+expect_equal(nrow(result2), 1497)
+
+# test case 3: return count with custom concept set name and min_n
+result3 <- aou_concept_set(cohort = tbl(con, "observation_period"),
+                           concepts = c(4024958, 4323208, 433644, 378001),
+                           start_date = observation_period_start_date,
+                           end_date = observation_period_end_date,
                            domains = c("condition", "measurement", "observation"),
                            return = "count",
-                           concept_set_name = "my_concept_set",
-                           min_n = 2)
-expected2 <- data.frame(
-  my_concept_set = c(0, 0, 0, 0, 0),
-  person_id = c(1, 2, 3, 4, 5),
-  n = c(0, 0, 0, 0, 0),
-  stringsAsFactors = FALSE
+                           concept_set_name = "my_concept_set")
+expect_equal(min(result3$n), 1)
+expect_equal(max(result3$n), 155)
+expect_equal(
+  result3[result3$n >= 10, "person_id"],
+  result2[, "person_id"]
 )
-expect_equal(result2, expected2)
+# should have column "concept_set" with value "my_concept_set"
+expect_equal(unique(result3$concept_set), "my_concept_set")
 
-# test case 3: return all with custom concept set name
-result3 <- aou_concept_set(cohort = tbl(con, "cohort"),
-                           concepts = c(1, 2, 3),
-                           start_date = "start_date",
-                           end_date = "end_date",
+# test case 4: return all with custom concept set name
+result4 <- aou_concept_set(cohort = tbl(con, "observation_period"),
+                           concepts = c(4024958, 4323208, 433644, 378001),
+                           start_date = observation_period_start_date,
+                           end_date = observation_period_end_date,
                            domains = c("condition", "measurement", "observation"),
                            return = "all",
                            concept_set_name = "my_concept_set")
-expected3 <- data.frame(
-  concept_id = c(1, 2, 3),
-  domain = c("condition", "measurement", "observation"),
-  person_id = c(1, 2, 3, 4, 5),
-  concept_set = "my_concept_set",
-  stringsAsFactors = FALSE
-)
-expect_equal(result3, expected3)
 
-# clean up
-DBI::dbDisconnect(con)
+# should have columns date, concept_id, concept_name, domain, concept_set
+expect_equal(colnames(result4), c("person_id", "date", "concept_id", "concept_name", "domain", "concept_set"))
+# should have many more rows
+expect_equal(nrow(result4), 45012)
+

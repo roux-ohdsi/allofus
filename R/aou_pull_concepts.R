@@ -15,6 +15,7 @@
 #'
 #' @return a dataframe if collect = TRUE; a remote tbl if not
 #' @export
+#' @importFrom dplyr union_all
 #'
 #' @examples
 #' \dontrun{
@@ -101,12 +102,26 @@ aou_concept_set <- function(cohort,
 aou_get_condition_concepts <- function(cohort, concepts, start_date, end_date, ...) {
   cohort |>
     aou_join("condition_occurrence", type = "left", by = "person_id") |>
-    dplyr::select(-c(
-      condition_start_datetime, condition_end_date, condition_end_datetime,
-      condition_type_concept_id, stop_reason, provider_id, visit_occurrence_id,
-      visit_detail_id, condition_source_value, condition_source_concept_id,
-      condition_status_source_value, condition_status_concept_id
-    )) |>
+    dplyr::select(-any_of(c("condition_start_datetime", "condition_end_date", "condition_end_datetime",
+                              "condition_type_concept_id", "stop_reason", "provider_id", "visit_occurrence_id",
+                              "visit_detail_id", "condition_source_value", "condition_source_concept_id",
+                              "condition_status_source_value", "condition_status_concept_id",
+                              "measurement_datetime", "measurement_time", "measurement_type_concept_id",
+                              "operator_concept_id", "value_as_number", "value_as_concept_id",
+                              "unit_concept_id", "range_low", "range_high", "measurement_source_value",
+                              "measurement_source_concept_id", "unit_source_value", "value_source_value",
+                              "procedure_datetime", "procedure_type_concept_id", "modifier_concept_id",
+                              "quantity", "procedure_source_value", "procedure_source_concept_id",
+                              "modifier_source_value", "observation_datetime", "observation_type_concept_id",
+                              "value_as_string", "qualifier_concept_id", "observation_source_value",
+                              "observation_source_concept_id", "qualifier_source_value", "drug_exposure_start_datetime",
+                              "drug_exposure_end_date", "drug_exposure_end_datetime", "verbatim_end_date",
+                              "drug_type_concept_id", "refills", "days_supply", "sig", "route_concept_id",
+                              "lot_number", "drug_source_value", "drug_source_concept_id",
+                              "route_source_value", "dose_unit_source_value", "device_exposure_start_datetime",
+                              "device_exposure_end_date", "device_exposure_end_datetime", "device_type_concept_id",
+                              "unique_device_id", "device_source_value", "device_source_concept_id"
+    ))) |>
     dplyr::filter(condition_concept_id %in% concepts) |>
     dplyr::filter(dplyr::between(condition_start_date, {{ start_date }}, {{ end_date }})) |>
     aou_join("concept", type = "left", by = c("condition_concept_id" = "concept_id")) |>
@@ -131,13 +146,26 @@ aou_get_condition_concepts <- function(cohort, concepts, start_date, end_date, .
 aou_get_measurement_concepts <- function(cohort, concepts, start_date, end_date, ...) {
   cohort |>
     aou_join("measurement", type = "left", by = "person_id") |>
-    dplyr::select(-c(
-      measurement_datetime, measurement_time, measurement_type_concept_id, operator_concept_id,
-      value_as_number, value_as_concept_id, unit_concept_id, range_low, range_high,
-      provider_id, visit_occurrence_id, visit_detail_id, measurement_source_value,
-      measurement_source_concept_id, unit_source_value, value_source_value
-    )) |>
-    dplyr::filter(measurement_concept_id %in% concepts) |>
+    dplyr::select(-any_of(c("condition_start_datetime", "condition_end_date", "condition_end_datetime",
+                            "condition_type_concept_id", "stop_reason", "provider_id", "visit_occurrence_id",
+                            "visit_detail_id", "condition_source_value", "condition_source_concept_id",
+                            "condition_status_source_value", "condition_status_concept_id",
+                            "measurement_datetime", "measurement_time", "measurement_type_concept_id",
+                            "operator_concept_id", "value_as_number", "value_as_concept_id",
+                            "unit_concept_id", "range_low", "range_high", "measurement_source_value",
+                            "measurement_source_concept_id", "unit_source_value", "value_source_value",
+                            "procedure_datetime", "procedure_type_concept_id", "modifier_concept_id",
+                            "quantity", "procedure_source_value", "procedure_source_concept_id",
+                            "modifier_source_value", "observation_datetime", "observation_type_concept_id",
+                            "value_as_string", "qualifier_concept_id", "observation_source_value",
+                            "observation_source_concept_id", "qualifier_source_value", "drug_exposure_start_datetime",
+                            "drug_exposure_end_date", "drug_exposure_end_datetime", "verbatim_end_date",
+                            "drug_type_concept_id", "refills", "days_supply", "sig", "route_concept_id",
+                            "lot_number", "drug_source_value", "drug_source_concept_id",
+                            "route_source_value", "dose_unit_source_value", "device_exposure_start_datetime",
+                            "device_exposure_end_date", "device_exposure_end_datetime", "device_type_concept_id",
+                            "unique_device_id", "device_source_value", "device_source_concept_id"
+    ))) |>
     dplyr::filter(dplyr::between(measurement_date, {{ start_date }}, {{ end_date }})) |>
     aou_join("concept", type = "left", by = c("measurement_concept_id" = "concept_id")) |>
     dplyr::select(person_id,
@@ -161,11 +189,26 @@ aou_get_measurement_concepts <- function(cohort, concepts, start_date, end_date,
 aou_get_procedure_concepts <- function(cohort, concepts, start_date, end_date, ...) {
   cohort |>
     aou_join("procedure_occurrence", type = "left", by = "person_id") |>
-    dplyr::select(-c(
-      procedure_datetime, procedure_type_concept_id, modifier_concept_id,
-      quantity, provider_id, visit_occurrence_id, visit_detail_id,
-      procedure_source_value, procedure_source_concept_id, modifier_source_value
-    )) |>
+    dplyr::select(-any_of(c("condition_start_datetime", "condition_end_date", "condition_end_datetime",
+                            "condition_type_concept_id", "stop_reason", "provider_id", "visit_occurrence_id",
+                            "visit_detail_id", "condition_source_value", "condition_source_concept_id",
+                            "condition_status_source_value", "condition_status_concept_id",
+                            "measurement_datetime", "measurement_time", "measurement_type_concept_id",
+                            "operator_concept_id", "value_as_number", "value_as_concept_id",
+                            "unit_concept_id", "range_low", "range_high", "measurement_source_value",
+                            "measurement_source_concept_id", "unit_source_value", "value_source_value",
+                            "procedure_datetime", "procedure_type_concept_id", "modifier_concept_id",
+                            "quantity", "procedure_source_value", "procedure_source_concept_id",
+                            "modifier_source_value", "observation_datetime", "observation_type_concept_id",
+                            "value_as_string", "qualifier_concept_id", "observation_source_value",
+                            "observation_source_concept_id", "qualifier_source_value", "drug_exposure_start_datetime",
+                            "drug_exposure_end_date", "drug_exposure_end_datetime", "verbatim_end_date",
+                            "drug_type_concept_id", "refills", "days_supply", "sig", "route_concept_id",
+                            "lot_number", "drug_source_value", "drug_source_concept_id",
+                            "route_source_value", "dose_unit_source_value", "device_exposure_start_datetime",
+                            "device_exposure_end_date", "device_exposure_end_datetime", "device_type_concept_id",
+                            "unique_device_id", "device_source_value", "device_source_concept_id"
+    ))) |>
     dplyr::filter(procedure_concept_id %in% concepts) |>
     dplyr::filter(dplyr::between(procedure_date, {{ start_date }}, {{ end_date }})) |>
     aou_join("concept", type = "left", by = c("procedure_concept_id" = "concept_id")) |>
@@ -190,13 +233,26 @@ aou_get_procedure_concepts <- function(cohort, concepts, start_date, end_date, .
 aou_get_observation_concepts <- function(cohort, concepts, start_date, end_date, ...) {
   cohort |>
     aou_join("observation", type = "left", by = "person_id") |>
-    dplyr::select(-c(
-      observation_datetime, observation_type_concept_id, value_as_number,
-      value_as_string, value_as_concept_id, qualifier_concept_id,
-      unit_concept_id, provider_id, visit_occurrence_id, visit_detail_id,
-      observation_source_value, observation_source_concept_id,
-      unit_source_value, qualifier_source_value
-    )) |>
+    dplyr::select(-any_of(c("condition_start_datetime", "condition_end_date", "condition_end_datetime",
+                            "condition_type_concept_id", "stop_reason", "provider_id", "visit_occurrence_id",
+                            "visit_detail_id", "condition_source_value", "condition_source_concept_id",
+                            "condition_status_source_value", "condition_status_concept_id",
+                            "measurement_datetime", "measurement_time", "measurement_type_concept_id",
+                            "operator_concept_id", "value_as_number", "value_as_concept_id",
+                            "unit_concept_id", "range_low", "range_high", "measurement_source_value",
+                            "measurement_source_concept_id", "unit_source_value", "value_source_value",
+                            "procedure_datetime", "procedure_type_concept_id", "modifier_concept_id",
+                            "quantity", "procedure_source_value", "procedure_source_concept_id",
+                            "modifier_source_value", "observation_datetime", "observation_type_concept_id",
+                            "value_as_string", "qualifier_concept_id", "observation_source_value",
+                            "observation_source_concept_id", "qualifier_source_value", "drug_exposure_start_datetime",
+                            "drug_exposure_end_date", "drug_exposure_end_datetime", "verbatim_end_date",
+                            "drug_type_concept_id", "refills", "days_supply", "sig", "route_concept_id",
+                            "lot_number", "drug_source_value", "drug_source_concept_id",
+                            "route_source_value", "dose_unit_source_value", "device_exposure_start_datetime",
+                            "device_exposure_end_date", "device_exposure_end_datetime", "device_type_concept_id",
+                            "unique_device_id", "device_source_value", "device_source_concept_id"
+    ))) |>
     dplyr::filter(observation_concept_id %in% concepts) |>
     dplyr::filter(dplyr::between(observation_date, {{ start_date }}, {{ end_date }})) |>
     aou_join("concept", type = "left", by = c("observation_concept_id" = "concept_id")) |>
@@ -221,14 +277,26 @@ aou_get_observation_concepts <- function(cohort, concepts, start_date, end_date,
 aou_get_drug_concepts <- function(cohort, concepts, start_date, end_date, ...) {
   cohort |>
     aou_join("drug_exposure", type = "left", by = "person_id") |>
-    dplyr::select(-c(
-      drug_exposure_start_datetime, drug_exposure_end_date,
-      drug_exposure_end_datetime, verbatim_end_date, drug_type_concept_id,
-      stop_reason, refills, quantity, days_supply, sig, route_concept_id,
-      lot_number, provider_id, visit_occurrence_id, visit_detail_id,
-      drug_source_value, drug_source_concept_id, route_source_value,
-      dose_unit_source_value
-    )) |>
+    dplyr::select(-any_of(c("condition_start_datetime", "condition_end_date", "condition_end_datetime",
+                            "condition_type_concept_id", "stop_reason", "provider_id", "visit_occurrence_id",
+                            "visit_detail_id", "condition_source_value", "condition_source_concept_id",
+                            "condition_status_source_value", "condition_status_concept_id",
+                            "measurement_datetime", "measurement_time", "measurement_type_concept_id",
+                            "operator_concept_id", "value_as_number", "value_as_concept_id",
+                            "unit_concept_id", "range_low", "range_high", "measurement_source_value",
+                            "measurement_source_concept_id", "unit_source_value", "value_source_value",
+                            "procedure_datetime", "procedure_type_concept_id", "modifier_concept_id",
+                            "quantity", "procedure_source_value", "procedure_source_concept_id",
+                            "modifier_source_value", "observation_datetime", "observation_type_concept_id",
+                            "value_as_string", "qualifier_concept_id", "observation_source_value",
+                            "observation_source_concept_id", "qualifier_source_value", "drug_exposure_start_datetime",
+                            "drug_exposure_end_date", "drug_exposure_end_datetime", "verbatim_end_date",
+                            "drug_type_concept_id", "refills", "days_supply", "sig", "route_concept_id",
+                            "lot_number", "drug_source_value", "drug_source_concept_id",
+                            "route_source_value", "dose_unit_source_value", "device_exposure_start_datetime",
+                            "device_exposure_end_date", "device_exposure_end_datetime", "device_type_concept_id",
+                            "unique_device_id", "device_source_value", "device_source_concept_id"
+    ))) |>
     dplyr::filter(drug_concept_id %in% concepts) |>
     dplyr::filter(dplyr::between(drug_exposure_start_date, {{ start_date }}, {{ end_date }})) |>
     aou_join("concept", type = "left", by = c("drug_concept_id" = "concept_id")) |>
@@ -253,12 +321,26 @@ aou_get_drug_concepts <- function(cohort, concepts, start_date, end_date, ...) {
 aou_get_device_concepts <- function(cohort, concepts, start_date, end_date, ...) {
   cohort |>
     aou_join("device_exposure", type = "left", by = "person_id") |>
-    dplyr::select(-c(
-      device_exposure_start_datetime, device_exposure_end_date,
-      device_exposure_end_datetime, device_type_concept_id,
-      unique_device_id, quantity, provider_id, visit_occurrence_id,
-      visit_detail_id, device_source_value, device_source_concept_id
-    )) |>
+    dplyr::select(-any_of(c("condition_start_datetime", "condition_end_date", "condition_end_datetime",
+                            "condition_type_concept_id", "stop_reason", "provider_id", "visit_occurrence_id",
+                            "visit_detail_id", "condition_source_value", "condition_source_concept_id",
+                            "condition_status_source_value", "condition_status_concept_id",
+                            "measurement_datetime", "measurement_time", "measurement_type_concept_id",
+                            "operator_concept_id", "value_as_number", "value_as_concept_id",
+                            "unit_concept_id", "range_low", "range_high", "measurement_source_value",
+                            "measurement_source_concept_id", "unit_source_value", "value_source_value",
+                            "procedure_datetime", "procedure_type_concept_id", "modifier_concept_id",
+                            "quantity", "procedure_source_value", "procedure_source_concept_id",
+                            "modifier_source_value", "observation_datetime", "observation_type_concept_id",
+                            "value_as_string", "qualifier_concept_id", "observation_source_value",
+                            "observation_source_concept_id", "qualifier_source_value", "drug_exposure_start_datetime",
+                            "drug_exposure_end_date", "drug_exposure_end_datetime", "verbatim_end_date",
+                            "drug_type_concept_id", "refills", "days_supply", "sig", "route_concept_id",
+                            "lot_number", "drug_source_value", "drug_source_concept_id",
+                            "route_source_value", "dose_unit_source_value", "device_exposure_start_datetime",
+                            "device_exposure_end_date", "device_exposure_end_datetime", "device_type_concept_id",
+                            "unique_device_id", "device_source_value", "device_source_concept_id"
+    ))) |>
     dplyr::filter(device_concept_id %in% concepts) |>
     dplyr::filter(dplyr::between(device_exposure_start_date, {{ start_date }}, {{ end_date }})) |>
     aou_join("concept", type = "left", by = c("device_concept_id" = "concept_id")) |>

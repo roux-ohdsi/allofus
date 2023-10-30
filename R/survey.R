@@ -30,8 +30,9 @@
 #' @param collect whether to return the results as a local (TRUE) or database table
 #'
 #' @importFrom dplyr filter select pull mutate rename rename_with collect tbl left_join coalesce
-#' @importFrom tidyr pivot_wider all_of
+#' @importFrom tidyr pivot_wider all_of pivot_longer fill
 #' @importFrom stringr str_replace str_remove
+#' @importFrom purrr reduce map
 #' @export
 #' @examples
 #' \dontrun{
@@ -266,7 +267,7 @@ aou_survey <- function(cohort,
         pull(concept_id_overall) %>%
         unique()
 
-      tbl(con, "observation") %>%
+      obs <- tbl(con, "observation") %>%
         inner_join(select(function_cohort, person_id), by = "person_id") %>%
         filter(observation_source_concept_id %in% !!c(osci_overall, osci_specific)) %>%
         select(person_id, observation_source_concept_id, value_source_concept_id, value_source_value, observation_date) %>%
@@ -277,7 +278,11 @@ aou_survey <- function(cohort,
         dbplyr::window_order(observation_date) %>%
         fill(-c(person_id, observation_date, type), .direction = "down") %>%
         slice_max(order_by = observation_date, n = 1, with_ties = FALSE) %>%
-        ungroup() %>%
+        ungroup()
+
+      if (ncol(obs) == 3) return(NULL) # if there are no matching concepts
+
+      obs %>%
         mutate(condition = case_when(
           if_any(-c(person_id, observation_date, type), ~.x == !!specific_concept_id) ~ "Yes",
           type == "Specific" & if_any(-c(person_id, observation_date, type), ~!.x %in% c(903079, 903096, 903087)) ~ "No",
@@ -293,7 +298,13 @@ aou_survey <- function(cohort,
         select(person_id, !!condition_name := condition, !!condition_date := observation_date)
     }) %>% reduce(left_join, by = "person_id")
 
-    cohort_w_health <- left_join(cohort, all_health, by = "person_id")
+    if (!is.null(all_health)) {
+      cohort_w_health <- left_join(cohort, all_health, by = "person_id")
+    } else {
+      warning("No data found for health history questions.")
+      cohort_w_health <- function_cohort
+    }
+
   } else {
     cohort_w_health <- function_cohort
   }
