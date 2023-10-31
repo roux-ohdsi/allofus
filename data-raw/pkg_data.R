@@ -138,7 +138,7 @@ specific = bind_rows(specific, specific_ID)
 
 overall <- tbl(con, inDatabaseSchema(cdm_schema, "concept")) %>%
   filter(vocabulary_id == "PPI") %>%
-  filter(concept_name %like% "Have you or anyone in your family ever been diagnosed%"|| concept_name %like% "Have you ever been diagnosed with%") %>% # second added for ID.
+  filter(concept_name %like% "Have you or anyone in your family ever been diagnosed%") %>% # second added for ID.
   filter(concept_class_id == "Answer") %>%
   left_join(tbl(con, inDatabaseSchema(cdm_schema, "concept_relationship")), by = c("concept_id" = "concept_id_1"),
             suffix = c("_x", "_y")) %>%
@@ -149,7 +149,6 @@ overall <- tbl(con, inDatabaseSchema(cdm_schema, "concept")) %>%
   mutate(category = str_remove(question, "Have you or anyone in your family ever been diagnosed with the following "),
          category = str_remove(category, "\\? Think only of the people you are related to by blood\\."),
          category = ifelse(category == "conditions", "other conditions", category),
-         category = ifelse(str_detect(concept_code, "InfectiousDisease"), "infectious disease conditions", category), # adding for ID.
          answer = str_to_lower(answer),
          answer = str_squish(answer),
          answer = case_when(
@@ -181,7 +180,9 @@ overall <- tbl(con, inDatabaseSchema(cdm_schema, "concept")) %>%
 
 conditions_table <- specific %>%
   left_join(overall, by = c("condition" = "answer"), suffix = c("_specific", "_overall")) %>%
-  rename(relative = answer)
+  rename(relative = answer) %>%
+  # id wasn't included in overall because there was no overall category question for it
+  mutate(category = ifelse(str_detect(concept_code, "infectiousdisease"), "infectious disease conditions", category)) # adding for ID.
 
 # conditions_table is the table for sharing
 # people can input concept_id_specific or concept_code

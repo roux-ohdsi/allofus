@@ -283,7 +283,7 @@ aou_survey <- function(cohort,
           "See function documentation for more details."
         )
       }
-      if (length(osci_specific) == 1) {
+      if (length(osci_specific) == 1) { # this is not the case if an infectious disease question
         warning(
           "The question associated with concept id ",
           specific_concept_id, " was added to the later version of the",
