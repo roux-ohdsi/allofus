@@ -118,9 +118,27 @@ specific <- tbl(con, inDatabaseSchema(cdm_schema, "concept")) %>%
          concept_code = str_to_lower(concept_code)) %>%
   select(question, answer, concept_id, condition, concept_code)
 
+# Adding infectious disease questions because they'r eonly asked to self.
+specific_ID = tbl(con, inDatabaseSchema(cdm_schema, "concept")) %>%
+  filter(vocabulary_id == "PPI") %>%
+  filter( concept_name %like% "Have you ever been diagnosed with%") %>%
+  filter(concept_class_id == "Answer") %>%
+  collect() %>%
+  separate(concept_name, into = c("question", "answer"), sep = " - ") %>%
+  mutate(condition = answer,
+         answer = "Self") %>%
+  mutate(condition = str_remove(condition, "\\?"),
+         condition = str_to_lower(condition),
+         condition = str_remove(condition, "^an*\\s"),
+         answer = str_to_lower(answer),
+         concept_code = str_to_lower(concept_code)) %>%
+  select(question, answer, concept_id, condition, concept_code)
+
+specific = bind_rows(specific, specific_ID)
+
 overall <- tbl(con, inDatabaseSchema(cdm_schema, "concept")) %>%
   filter(vocabulary_id == "PPI") %>%
-  filter(concept_name %like% "Have you or anyone in your family ever been diagnosed%") %>%
+  filter(concept_name %like% "Have you or anyone in your family ever been diagnosed%"|| concept_name %like% "Have you ever been diagnosed with%") %>% # second added for ID.
   filter(concept_class_id == "Answer") %>%
   left_join(tbl(con, inDatabaseSchema(cdm_schema, "concept_relationship")), by = c("concept_id" = "concept_id_1"),
             suffix = c("_x", "_y")) %>%
@@ -131,6 +149,7 @@ overall <- tbl(con, inDatabaseSchema(cdm_schema, "concept")) %>%
   mutate(category = str_remove(question, "Have you or anyone in your family ever been diagnosed with the following "),
          category = str_remove(category, "\\? Think only of the people you are related to by blood\\."),
          category = ifelse(category == "conditions", "other conditions", category),
+         category = ifelse(str_detect(concept_code, "InfectiousDisease"), "infectious disease conditions", category), # adding for ID.
          answer = str_to_lower(answer),
          answer = str_squish(answer),
          answer = case_when(
