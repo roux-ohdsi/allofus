@@ -31,13 +31,13 @@ Execute a SQL query
 \examples{
 # Examples based on AoU snippets
 \dontrun{
-aou_sql('
+aou_sql("
   -- Compute the count of unique participants in our All of Us cohort.
   SELECT
   COUNT(DISTINCT person_id) AS total_number_of_participants
   FROM
   `{CDR}.person`
-')
+")
 
 MEASUREMENT_OF_INTEREST <- "hemoglobin"
 aou_sql('

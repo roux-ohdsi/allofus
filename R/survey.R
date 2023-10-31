@@ -26,6 +26,7 @@
 #' @param questions either a vector of concept_ids or concept_codes for questions to return results
 #' @param question_output how to name the columns. Options include text format ("text"), as concept ids preceded by
 #' "x_" ("concept_id"), or using a custom vector of column names matching the vector of `questions`. Defaults to "text".
+#' @param clean_answers whether to clean the answers to the survey questions. Defaults to TRUE.
 #' @param con connection to the allofus SQL database. Defaults to getOption("aou.default.con"), which is created automatically with `aou_connect()`
 #' @param collect whether to return the results as a local (TRUE) or database table
 #'
@@ -61,6 +62,7 @@
 aou_survey <- function(cohort,
                        questions,
                        question_output = "text",
+                       clean_answers = TRUE,
                        con = getOption("aou.default.con"),
                        collect = TRUE) {
   if (is.null(con)) stop("Please provide a connection to the database. You can do so automatically by running `aou_connect()` before this function.")
@@ -215,39 +217,41 @@ aou_survey <- function(cohort,
         )
       }
     }
+  }
 
-    regular_survey_concept_codes <- allofus::aou_codebook %>%
-      filter(concept_id %in% regular_survey_concept_ids) %>%
-      distinct(concept_code, concept_id) %>%
-      mutate(type = "regular")
+  regular_survey_concept_codes <- allofus::aou_codebook %>%
+    filter(concept_id %in% regular_survey_concept_ids) %>%
+    distinct(concept_code, concept_id) %>%
+    mutate(type = "regular")
 
-    health_survey_concept_codes <- health_history_codebook_long %>%
-      filter(concept_id_specific %in% health_survey_concept_ids) %>%
-      select(concept_code, concept_id = concept_id_specific) %>%
-      distinct(concept_code, concept_id) %>%
-      mutate(type = "health")
+  health_survey_concept_codes <- health_history_codebook_long %>%
+    filter(concept_id_specific %in% health_survey_concept_ids) %>%
+    select(concept_code, concept_id = concept_id_specific) %>%
+    distinct(concept_code, concept_id) %>%
+    mutate(type = "health")
 
-    # there are more graceful ways to merge this data but ignoring that...
-    suppressMessages({
-      concept_lookup <- bind_rows(regular_survey_concept_codes, health_survey_concept_codes) %>%
-        full_join(names_for_lookup) %>%
-        group_by(concept_id) %>%
-        fill(everything(), .direction = "up") %>%
-        slice(1) %>%
-        ungroup()
-    })
+  # there are more graceful ways to merge this data but ignoring that...
+  suppressMessages({
+    concept_lookup <- bind_rows(regular_survey_concept_codes, health_survey_concept_codes) %>%
+      full_join(names_for_lookup) %>%
+      group_by(concept_id) %>%
+      fill(everything(), .direction = "up") %>%
+      slice(1) %>%
+      ungroup()
+  })
 
-    all_health_survey_concept_ids <- filter(concept_lookup, type == "health") %>%
-      pull(concept_id)
+  all_health_survey_concept_ids <- filter(concept_lookup, type == "health") %>%
+    pull(concept_id)
 
-    health_survey_concept_ids <- all_health_survey_concept_ids[all_health_survey_concept_ids %in% health_history_codebook$concept_id_specific]
-    # the sub questions for the conditions can just be treated like regular survey questions
-    regular_survey_concept_ids <- c(
-      regular_survey_concept_ids,
-      all_health_survey_concept_ids[!all_health_survey_concept_ids %in%
-        health_history_codebook$concept_id_specific]
-    )
+  health_survey_concept_ids <- all_health_survey_concept_ids[all_health_survey_concept_ids %in% health_history_codebook$concept_id_specific]
+  # the sub questions for the conditions can just be treated like regular survey questions
+  regular_survey_concept_ids <- c(
+    regular_survey_concept_ids,
+    all_health_survey_concept_ids[!all_health_survey_concept_ids %in%
+      health_history_codebook$concept_id_specific]
+  )
 
+  if (length(health_survey_concept_ids) > 0) {
     all_health <- map(health_survey_concept_ids, ~ {
       specific_concept_id <- .x
 
@@ -355,6 +359,17 @@ aou_survey <- function(cohort,
       pref <- "x"
     } else {
       pref <- ""
+    }
+
+    if (isTRUE(clean_answers)) {
+      wide <- mutate(wide,
+        value_source_value = case_when(
+          contains_substr(value_source_value, "cope_") ~ value_source_value,
+          contains_substr(value_source_value, "SDOH_") ~ value_source_value,
+          !contains_substr(value_source_value, "_") ~ value_source_value,
+          TRUE ~ regexp_extract(value_source_value, ".+_(.+_*.*)")
+        )
+      )
     }
 
     # go wide

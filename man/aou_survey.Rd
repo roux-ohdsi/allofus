@@ -8,6 +8,7 @@ aou_survey(
   cohort,
   questions,
   question_output = "text",
+  clean_answers = TRUE,
   con = getOption("aou.default.con"),
   collect = TRUE
 )
@@ -19,6 +20,8 @@ aou_survey(
 
 \item{question_output}{how to name the columns. Options include text format ("text"), as concept ids preceded by
 "x_" ("concept_id"), or using a custom vector of column names matching the vector of `questions`. Defaults to "text".}
+
+\item{clean_answers}{whether to clean the answers to the survey questions. Defaults to TRUE.}
 
 \item{con}{connection to the allofus SQL database. Defaults to getOption("aou.default.con"), which is created automatically with `aou_connect()`}
 

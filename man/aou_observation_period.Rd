@@ -33,18 +33,18 @@ Generate an observation period table based on OMOP Conventions
 Follows conventions described here: https://ohdsi.github.io/CommonDataModel/ehrObsPeriods.html
 }
 \examples{
-
 \dontrun{
 cohort <-
   tbl(con, "cb_search_person") \%>\%
-    filter(has_ehr_data == 1) \%>\%
-    head(100) \%>\%
-    select(person_id)
+  filter(has_ehr_data == 1) \%>\%
+  head(100) \%>\%
+  select(person_id)
 
-aou_observation_period <- function(cohort,
-                                   persistence_window = 548,
-                                   end_date_buffer = 60,
-                                   collect = FALSE)
+observation_periods <- aou_observation_period(cohort,
+  persistence_window = 548,
+  end_date_buffer = 60,
+  collect = FALSE
+)
 }
 
 }
