@@ -94,13 +94,13 @@ the local environment? Defaults to`TRUE`.</p></dd>
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># Examples based on AoU snippets</span></span></span>
 <span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span></span></span>
-<span class="r-in"><span><span class="fu">aou_sql</span><span class="op">(</span><span class="st">'</span></span></span>
+<span class="r-in"><span><span class="fu">aou_sql</span><span class="op">(</span><span class="st">"</span></span></span>
 <span class="r-in"><span><span class="st">  -- Compute the count of unique participants in our All of Us cohort.</span></span></span>
 <span class="r-in"><span><span class="st">  SELECT</span></span></span>
 <span class="r-in"><span><span class="st">  COUNT(DISTINCT person_id) AS total_number_of_participants</span></span></span>
 <span class="r-in"><span><span class="st">  FROM</span></span></span>
 <span class="r-in"><span><span class="st">  `{CDR}.person`</span></span></span>
-<span class="r-in"><span><span class="st">'</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="st">"</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">MEASUREMENT_OF_INTEREST</span> <span class="op">&lt;-</span> <span class="st">"hemoglobin"</span></span></span>
 <span class="r-in"><span><span class="fu">aou_sql</span><span class="op">(</span><span class="st">'</span></span></span>

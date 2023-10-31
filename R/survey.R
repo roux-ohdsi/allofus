@@ -258,7 +258,7 @@ aou_survey <- function(cohort,
       # this will be what the column is called
       if (question_output == "concept_id") {
         condition_name <- paste0("x", specific_concept_id)
-      } else if (question_output == "text") {
+      } else if (question_output == "value") {
         condition_name <- concept_lookup %>%
           filter(concept_id == specific_concept_id) %>%
           pull(concept_code)

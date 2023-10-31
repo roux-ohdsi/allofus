@@ -110,6 +110,7 @@ skip response if the question was skipped, and NA if the respondent did not answ
 <span>  <span class="va">cohort</span>,</span>
 <span>  <span class="va">questions</span>,</span>
 <span>  question_output <span class="op">=</span> <span class="st">"text"</span>,</span>
+<span>  clean_answers <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  con <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/options.html" class="external-link">getOption</a></span><span class="op">(</span><span class="st">"aou.default.con"</span><span class="op">)</span>,</span>
 <span>  collect <span class="op">=</span> <span class="cn">TRUE</span></span>
 <span><span class="op">)</span></span></code></pre></div>
@@ -128,6 +129,10 @@ skip response if the question was skipped, and NA if the respondent did not answ
 <dt>question_output</dt>
 <dd><p>how to name the columns. Options include text format ("text"), as concept ids preceded by
 "x_" ("concept_id"), or using a custom vector of column names matching the vector of `questions`. Defaults to "text".</p></dd>
+
+
+<dt>clean_answers</dt>
+<dd><p>whether to clean the answers to the survey questions. Defaults to TRUE.</p></dd>
 
 
 <dt>con</dt>
