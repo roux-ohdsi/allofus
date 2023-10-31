@@ -276,6 +276,11 @@ aou_survey <- function(cohort,
         pull(concept_id_question) %>%
         unique()
 
+      osci_overall <- allofus::health_history_codebook %>%
+        filter(concept_id_specific == specific_concept_id) %>%
+        pull(concept_id_overall) %>%
+        unique()
+
       if (length(osci_specific) == 0) {
         stop(
           "Concept id ", specific_concept_id,
@@ -283,18 +288,13 @@ aou_survey <- function(cohort,
           "See function documentation for more details."
         )
       }
-      if (length(osci_specific) == 1) { # this is not the case if an infectious disease question
+      if (length(osci_specific) == 1 & !is.na(osci_overall)) { # this is not the case if an infectious disease question
         warning(
           "The question associated with concept id ",
           specific_concept_id, " was added to the later version of the",
           " family health history survey so earlier All of Us participants may not have answered it."
         )
       }
-
-      osci_overall <- allofus::health_history_codebook %>%
-        filter(concept_id_specific == specific_concept_id) %>%
-        pull(concept_id_overall) %>%
-        unique()
 
       obs <- tbl(con, "observation") %>%
         inner_join(select(function_cohort, person_id), by = "person_id") %>%
