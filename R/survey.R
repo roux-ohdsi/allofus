@@ -362,7 +362,7 @@ aou_survey <- function(cohort,
     }
 
     if (isTRUE(clean_answers)) {
-      wide <- mutate(wide,
+      tmp <- mutate(tmp,
         value_source_value = case_when(
           contains_substr(value_source_value, "cope_") ~ value_source_value,
           contains_substr(value_source_value, "SDOH_") ~ value_source_value,
