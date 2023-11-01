@@ -416,7 +416,7 @@ aou_survey <- function(cohort,
 
   # a little reorganization
   out <- out %>%
-    relocate(ends_with("_date") & !all_of(colnames(cohort)), .after = last_col())
+    relocate(ends_with("_date") & !any_of(colnames(cohort)), .after = last_col())
 
   # collect if indicated
   if (isTRUE(collect)) {
