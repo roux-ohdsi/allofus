@@ -23,28 +23,39 @@
 #' DBI::dbListTables(con)
 #' }
 aou_connect <- function(CDR = getOption("aou.default.cdr"), ...) {
-  dataset <- strsplit(CDR, split = "\\.")[[1]]
-  release <- dataset[2]
-  prefix <- dataset[1]
 
-  connection <- DBI::dbConnect(
-    bigrquery::bigquery(),
-    billing = Sys.getenv("GOOGLE_PROJECT"),
-    project = prefix,
-    dataset = release,
-    bigint = "integer64", # fix for big integers
-    ...
+  out <- tryCatch({
+
+    dataset <- strsplit(CDR, split = "\\.")[[1]]
+    release <- dataset[2]
+    prefix <- dataset[1]
+
+    connection <- DBI::dbConnect(
+      bigrquery::bigquery(),
+      billing = Sys.getenv("GOOGLE_PROJECT"),
+      project = prefix,
+      dataset = release,
+      bigint = "integer64", # fix for big integers
+      ...
+    )
+
+    stopifnot("CDR input is incorrect" = connection@dataset == release)
+    stopifnot("Unable to establish bigquery connection" = DBI::dbIsValid(connection))
+
+    cat(cli::col_green("Connected successfully!"))
+    options(aou.default.con = connection)
+
+    connection
+
+  },
+  error = function(e) {
+    cat(cli::col_red("Error: Unable to connect"))
+    return(e)
+  }
   )
 
-  options(aou.default.con = connection)
+  return(out)
 
-  if (isTRUE(connection@dataset == release)) {
-    cat(cli::col_green("Connected successfully!"))
-  } else {
-    cat(cli::col_red("Error: Unable to connect"))
-  }
-
-  return(connection)
 }
 
 #' Execute a SQL query
