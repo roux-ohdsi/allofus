@@ -42,14 +42,14 @@ aou_connect <- function(CDR = getOption("aou.default.cdr"), ...) {
     stopifnot("CDR input is incorrect" = connection@dataset == release)
     stopifnot("Unable to establish bigquery connection" = DBI::dbIsValid(connection))
 
-    cat(cli::col_green("Connected successfully!"))
+    cat(cli::col_green("Connected successfully!"), "\n")
     options(aou.default.con = connection)
 
     connection
 
   },
   error = function(e) {
-    cat(cli::col_red("Error: Unable to connect"))
+    cat(cli::col_red("Error: Unable to connect"), "\n")
     return(e)
   }
   )
