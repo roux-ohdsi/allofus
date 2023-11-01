@@ -256,9 +256,9 @@ aou_survey <- function(cohort,
       specific_concept_id <- .x
 
       # this will be what the column is called
-      if (question_output == "concept_id") {
+      if (question_output_arg[1] == "concept_id") {
         condition_name <- paste0("x", specific_concept_id)
-      } else if (question_output == "value") {
+      } else if (question_output_arg[1] == "text") {
         condition_name <- concept_lookup %>%
           filter(concept_id == specific_concept_id) %>%
           pull(concept_code)
@@ -315,13 +315,23 @@ aou_survey <- function(cohort,
         return(NULL)
       } # if there are no matching concepts
 
+      if (isTRUE(clean_answers)) {
+        pnta <- "PreferNotToAnswer"
+        sk <- "Skip"
+        dk <- "DontKnow"
+      } else {
+        pnta <- "PMI_PreferNotToAnswer"
+        sk <- "PMI_Skip"
+        dk <- "PMI_DontKnow"
+      }
+
       obs %>%
         mutate(condition = case_when(
           if_any(-c(person_id, observation_date, type), ~ .x == !!specific_concept_id) ~ "Yes",
           type == "Specific" & if_any(-c(person_id, observation_date, type), ~ !.x %in% c(903079, 903096, 903087)) ~ "No",
-          if_any(-c(person_id, observation_date, type), ~ .x == 903079) ~ "PMI_PreferNotToAnswer",
-          if_any(-c(person_id, observation_date, type), ~ .x == 903096) ~ "PMI_Skip",
-          if_any(-c(person_id, observation_date, type), ~ .x == 903087) ~ "PMI_DontKnow",
+          if_any(-c(person_id, observation_date, type), ~ .x == 903079) ~ pnta,
+          if_any(-c(person_id, observation_date, type), ~ .x == 903096) ~ sk,
+          if_any(-c(person_id, observation_date, type), ~ .x == 903087) ~ dk,
           TRUE ~ "No"
         )) %>%
         select(person_id, type, condition, observation_date) %>%
@@ -333,7 +343,7 @@ aou_survey <- function(cohort,
       reduce(left_join, by = "person_id")
 
     if (!is.null(all_health)) {
-      cohort_w_health <- left_join(cohort, all_health, by = "person_id")
+      cohort_w_health <- left_join(function_cohort, all_health, by = "person_id")
     } else {
       warning("No data found for health history questions.")
       cohort_w_health <- function_cohort
