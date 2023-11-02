@@ -333,7 +333,19 @@ aou_test_connect <- function(cache = TRUE, cache_dir = Sys.getenv("AOU_CACHE_DIR
 
 
 
-# function to list all of the tables in the database as a tibble
+#' List tables in the AoU Database
+#'
+#' @param con connection to the database
+#' @param remove_NA whether to remove tables that are not in the data dictionary
+#'
+#' @return a dataframe with the table names and the number of columns
+#' @export
+#'
+#' @examples
+#' \dontrun{
+#' con <- aou_connect()
+#' aou_tables()
+#' }
 aou_tables <- function(con = getOption("aou.default.con"), remove_NA = TRUE) {
   if (is.null(con)) {
     stop("No connection specified. Please specify a connection or run aou_test_connect() to create a connection.")
