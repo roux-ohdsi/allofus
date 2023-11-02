@@ -17,4 +17,7 @@ The result of calling `rhs(lhs)`.
 \description{
 See \code{magrittr::\link[magrittr:pipe]{\%>\%}} for details.
 }
+\examples{
+1:10 \%>\% sum
+}
 \keyword{internal}

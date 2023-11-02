@@ -96,7 +96,7 @@ aou_survey <- function(cohort,
 
   if (is.data.frame(cohort)) {
     function_cohort <- tbl(con, "person") %>%
-      filter(person_id %in% !!cohort$person_id) %>%
+      filter(person_id %in% !!unique(cohort$person_id)) %>%
       select(person_id)
   } else {
     function_cohort <- cohort

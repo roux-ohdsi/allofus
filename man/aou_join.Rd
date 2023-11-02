@@ -47,9 +47,10 @@ it changes the default suffix from .x/.y to _x/_y for cases with shared column n
 the \code{by} argument which will result in a SQL error.
 }
 \examples{
+\dontrun{
 allofus::aou_connect()
 options(aou.default.con = con)
 obs_tbl |>
-  omop_join("person", type = "left", by = "person_id")
-
+  aou_join("person", type = "left", by = "person_id")
+}
 }

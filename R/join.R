@@ -25,11 +25,12 @@
 #' @md
 #'
 #' @examples
+#' \dontrun{
 #' allofus::aou_connect()
 #' options(aou.default.con = con)
 #' obs_tbl |>
-#'   omop_join("person", type = "left", by = "person_id")
-#'
+#'   aou_join("person", type = "left", by = "person_id")
+#' }
 aou_join <- function(data,
                      table,
                      type,
