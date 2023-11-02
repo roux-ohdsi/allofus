@@ -363,8 +363,15 @@ aou_tables <- function(con = getOption("aou.default.con"), remove_NA = TRUE) {
     tbls <- tbls %>% drop_na(columns)
   }
 
-  warning('The ds_survey table does not include "PMI_SKIP" (903096) responses for all survey questions, use with caution. \n
+  cat(
+    cli::col_green('Tables not referenced in the Data Dictionary are omitted. View them by setting remove_NA = FALSE.\n\n')
+  )
+
+  cat(
+    cli::col_red('Warning:\n The ds_survey table does not include "PMI_SKIP" (903096) responses for all survey questions, use with caution. \n
           The allofus R package authors recommend using the observation table to query complete survey data.\n
-          For assistance querying the observation table, see allofus::aou_survey().')
+          For assistance querying the observation table, see allofus::aou_survey()./n')
+  )
+
   return(tbls)
 }
