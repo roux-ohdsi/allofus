@@ -328,3 +328,23 @@ aou_test_connect <- function(cache = TRUE, cache_dir = Sys.getenv("AOU_CACHE_DIR
 
   return(con)
 }
+
+
+
+
+
+# function to list all of the tables in the database as a tibble
+aou_tables <- function(con = getOption("aou.default.con")) {
+  if (is.null(con)) {
+    stop("No connection specified. Please specify a connection or run aou_test_connect() to create a connection.")
+  }
+
+  tbls <- DBI::dbListTables(con)
+
+  tbls <- tibble(
+    table_name = tbls
+  ) |>
+    left_join(allofus::aou_table_info, by = "table_name")
+
+  return(tbls)
+}

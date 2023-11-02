@@ -56,4 +56,18 @@
 #' }
 "health_history_codebook"
 
+#' Table of tables, columns, and use for researchers from the CT data dictionary
+#' \itemize{
+#'    \item{\href{https://github.com/roux-ohdsi/allofus/blob/main/data-raw/more_data.R}{Code to generate table}}
+#' }
+#'
+#' @format `health_history_codebook`
+#' A data frame with 1685  rows and 9 columns:
+#' \describe{
+#'   \item{table_name}{chr; name of the table}
+#'   \item{columns}{chr; columns in the table}
+#'   \item{recommended_for_research}{chr; whether the table is recomended for research}
+#' }
+"aou_table_info"
+
 
