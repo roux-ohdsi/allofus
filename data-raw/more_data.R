@@ -13,6 +13,7 @@ df <- googlesheets4::read_sheet(
 ) |>
   select(table_name = 1, column = 2) |>
   distinct() |>
+  add_row(table_name = "observation", column = "value_source_value") |>
   summarize(columns = paste(column, collapse = ", "), .by = table_name) |>
   mutate(recommended_for_research = "yes (omop compatible table)")
 
