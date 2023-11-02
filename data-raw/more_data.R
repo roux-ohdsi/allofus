@@ -14,7 +14,7 @@ df <- googlesheets4::read_sheet(
   select(table_name = 1, column = 2) |>
   distinct() |>
   summarize(columns = paste(column, collapse = ", "), .by = table_name) |>
-  mutate(recommended_for_research = "yes (standard omop table)")
+  mutate(recommended_for_research = "yes (omop compatible table)")
 
 df2 <- googlesheets4::read_sheet(
   ss = "https://docs.google.com/spreadsheets/d/1XLVq84LLd0VZMioF2sPwyiaPw3EFp5c8o1CTWGPH-Yc/edit#gid=1815943286",

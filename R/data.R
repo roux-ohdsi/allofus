@@ -61,8 +61,10 @@
 #'    \item{\href{https://github.com/roux-ohdsi/allofus/blob/main/data-raw/more_data.R}{Code to generate table}}
 #' }
 #'
-#' @format `health_history_codebook`
-#' A data frame with 1685  rows and 9 columns:
+#' @format `aou_table_info`
+#' A data frame containing tables and columns in the aou OMOP CDM created from
+#' https://docs.google.com/spreadsheets/d/1XLVq84LLd0VZMioF2sPwyiaPw3EFp5c8o1CTWGPH-Yc/edit#gid=1815943286.
+#' Note that the column 'value_source_value' has been manually added as it is missing from the data dictionary.
 #' \describe{
 #'   \item{table_name}{chr; name of the table}
 #'   \item{columns}{chr; columns in the table}
