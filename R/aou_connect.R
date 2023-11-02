@@ -334,7 +334,7 @@ aou_test_connect <- function(cache = TRUE, cache_dir = Sys.getenv("AOU_CACHE_DIR
 
 
 # function to list all of the tables in the database as a tibble
-aou_tables <- function(con = getOption("aou.default.con")) {
+aou_tables <- function(con = getOption("aou.default.con"), remove_NA = TRUE) {
   if (is.null(con)) {
     stop("No connection specified. Please specify a connection or run aou_test_connect() to create a connection.")
   }
@@ -344,7 +344,12 @@ aou_tables <- function(con = getOption("aou.default.con")) {
   tbls <- tibble(
     table_name = tbls
   ) |>
-    left_join(allofus::aou_table_info, by = "table_name")
+    dplyr::left_join(allofus::aou_table_info, by = "table_name") %>%
+    dplyr::arrange(rowSums(is.na(dplyr::select(., columns, table_name))))
+
+  if(isTRUE(remove_NA)){
+    tbls <- tbls %>% drop_na(columns)
+  }
 
   return(tbls)
 }
