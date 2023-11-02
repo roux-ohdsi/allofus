@@ -384,9 +384,12 @@ aou_survey <- function(cohort,
 
     # go wide
     wide <- tmp %>%
-      mutate(!!a := coalesce(!!rlang::ensym(a), cast(sql("value_as_number AS STRING")))) %>%
+      mutate(!!a := coalesce(!!rlang::ensym(a), CAST(sql("value_as_number AS STRING")))) %>%
       select(all_of(c("person_id", !!q, !!a, "observation_date"))) %>%
-      pivot_wider(names_from = !!q, values_from = c(!!a, observation_date), names_prefix = pref)
+      mutate(observation_date = as.character(observation_date)) %>%
+      pivot_wider(names_from = !!q, values_from = c(!!a, observation_date),
+                  names_prefix = pref, values_fn = ~STRING_AGG(.x,  ", ")) %>%
+      mutate(across(contains("_date_"), ~as.Date(substr(.x, 1L, 10L))))
 
     if (length(question_output_arg) == 1 && question_output_arg[1] %in% c("text", "concept_id")) {
       wide <- wide %>%
