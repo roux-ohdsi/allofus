@@ -38,6 +38,8 @@ with a column for each question included in `questions` and answers for
 each person_id in the cells. The column names (questions) can
 be returned as the concept_code or concept_id or by providing new column names. For each question, a column with
 the suffix "_date" is included with the date on which the question was answered.
+When questions can have multiple answers ("checkbox"-style questions), answers
+are returned as a comma-separated string.
 
 To find the desired survey questions, use the all of us data dictionary,
 survey codebook, athena, data browser, or the allofus R package

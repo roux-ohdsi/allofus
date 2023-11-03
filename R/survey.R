@@ -11,6 +11,8 @@
 #' each person_id in the cells. The column names (questions) can
 #' be returned as the concept_code or concept_id or by providing new column names. For each question, a column with
 #' the suffix "_date" is included with the date on which the question was answered.
+#' When questions can have multiple answers ("checkbox"-style questions), answers
+#' are returned as a comma-separated string.
 #'
 #' To find the desired survey questions, use the all of us data dictionary,
 #' survey codebook, athena, data browser, or the allofus R package
@@ -88,8 +90,6 @@ aou_survey <- function(cohort,
     question_output_arg <- match.arg(question_output, c("text", "concept_id"))
   }
   question_output <- if (length(question_output_arg) == 1 && question_output_arg[1] == "concept_id") "concept_id" else "value"
-
-  answer_output <- "value"
 
   # ensure person_id is a column name in cohort
   stopifnot("person_id column not found in cohort data" = "person_id" %in% colnames(cohort))
@@ -362,7 +362,6 @@ aou_survey <- function(cohort,
 
     # for retrieving columns and pivoting
     q <- paste0("observation_source_", question_output)
-    a <- paste0("value_source_", answer_output)
 
     # need a prefix to fix column names if using concept_id as column names
     if (question_output == "concept_id") {
@@ -384,12 +383,14 @@ aou_survey <- function(cohort,
 
     # go wide
     wide <- tmp %>%
-      mutate(!!a := coalesce(!!rlang::ensym(a), CAST(sql("value_as_number AS STRING")))) %>%
-      select(all_of(c("person_id", !!q, !!a, "observation_date"))) %>%
-      mutate(observation_date = as.character(observation_date)) %>%
-      pivot_wider(names_from = !!q, values_from = c(!!a, observation_date),
-                  names_prefix = pref, values_fn = ~STRING_AGG(.x,  ", ")) %>%
-      mutate(across(contains("_date_"), ~as.Date(substr(.x, 1L, 10L))))
+      # numeric answers are stored in value_as_number
+      mutate(value_source_value = coalesce(value_source_value, CAST(sql("value_as_number AS STRING")))) %>%
+      # first combine all rows for a single person and question (e.g., multiple races)
+      group_by(person_id, observation_date, across(all_of(q))) %>%
+      summarise(value_source_value = STRING_AGG(sql("value_source_value order by value_source_value,  ', '")),
+                .groups = "drop") %>%
+      select(all_of(c("person_id", !!q, "value_source_value", "observation_date"))) %>%
+      pivot_wider(names_from = !!q, values_from = c(value_source_value, observation_date), names_prefix = pref)
 
     if (length(question_output_arg) == 1 && question_output_arg[1] %in% c("text", "concept_id")) {
       wide <- wide %>%
