@@ -387,7 +387,7 @@ aou_survey <- function(cohort,
       mutate(value_source_value = coalesce(value_source_value, CAST(sql("value_as_number AS STRING")))) %>%
       # first combine all rows for a single person and question (e.g., multiple races)
       group_by(person_id, observation_date, across(all_of(q))) %>%
-      summarise(value_source_value = STRING_AGG(sql("value_source_value order by value_source_value,  ', '")),
+      summarise(value_source_value = STRING_AGG(sql("value_source_value order by value_source_value")),
                 .groups = "drop") %>%
       select(all_of(c("person_id", !!q, "value_source_value", "observation_date"))) %>%
       pivot_wider(names_from = !!q, values_from = c(value_source_value, observation_date), names_prefix = pref)
