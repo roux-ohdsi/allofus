@@ -12,9 +12,9 @@
 #' }
 aou_session_info <- function(CDR = getOption("aou.default.cdr")){
   si = sessioninfo::session_info()
-  si1 = t$platform
+  si1 = si$platform
   si2 = aou_sql(query = "SELECT * FROM {CDR}._cdr_metadata")
-  si3 = t$packages
+  si3 = si$packages
 
   out = list(si1, si2, si3)
   names(out) = c("Platform", "AoU_Release", "Packages")
