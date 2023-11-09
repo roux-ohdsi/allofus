@@ -88,8 +88,9 @@ Working with data in AllofUs is similar to working with other OMOP CDM instances
 
 -   It's important to understand where data is stored for AllofUs. Each user has a persistent disk ("your workspace") that is specific to that user. For a given Project Workspace, there is a shared "data bucket" that holds data that anyone with access to the Project workspace can access. Unless you're sure that no one else will need to see the data or the scripts that use the data, we currently recommend using only the bucket for storage that needs be permanent. However, unlike the persistent disk, we can't just run `read.csv("data.csv")` from the bucket. We have to move data from the bucket into the your persistent disk/your workspace (the current environment) first.
 
-    ![](https://support.researchallofus.org/hc/article_attachments/14431834598036)
-
+    ![](https://support.researchallofus.org/hc/article_attachments/14431834598036)  
+    *source: https://support.researchallofus.org/hc/article_attachments/14431834598036*
+    
 ### Example
 
 The following code would start a query for the first survey date for the AllofUs survey "The Basics" (sometimes, but rarely, participants completed this survey over multiple dates).

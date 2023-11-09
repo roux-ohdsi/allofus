@@ -94,7 +94,9 @@ instances with a few important differences:
   bucket. We have to move data from the bucket into the your persistent
   disk/your workspace (the current environment) first.
 
-  ![](https://support.researchallofus.org/hc/article_attachments/14431834598036)
+  ![](https://support.researchallofus.org/hc/article_attachments/14431834598036)  
+  *source:
+  <https://support.researchallofus.org/hc/article_attachments/14431834598036>*
 
 ### Example
 
