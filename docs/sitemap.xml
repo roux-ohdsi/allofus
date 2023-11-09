@@ -76,10 +76,19 @@
     <loc>/reference/aou_pull_survey_concepts.html</loc>
   </url>
   <url>
+    <loc>/reference/aou_session_info.html</loc>
+  </url>
+  <url>
     <loc>/reference/aou_sql.html</loc>
   </url>
   <url>
     <loc>/reference/aou_survey.html</loc>
+  </url>
+  <url>
+    <loc>/reference/aou_table_info.html</loc>
+  </url>
+  <url>
+    <loc>/reference/aou_tables.html</loc>
   </url>
   <url>
     <loc>/reference/aou_test_connect.html</loc>

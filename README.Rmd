@@ -17,7 +17,11 @@ knitr::opts_chunk$set(
 </br> 
 </br> 
 
-## R package to streamline use of the AllofUs Research Workbench 
+## {allofus} R Package
+
+The goal of the {allofus} R package is to streamline the use of R within the AllofUS Researcher Workbench.
+
+**The {allofus} R package is a not affiliated with or endorsed by the *All ofUs* Research Program.**
 
 </br> 
 
