@@ -25,6 +25,9 @@
     <loc>/index.html</loc>
   </url>
   <url>
+    <loc>/reference/aou_atlas_cohort.html</loc>
+  </url>
+  <url>
     <loc>/reference/aou_bucket_to_workspace.html</loc>
   </url>
   <url>
@@ -98,6 +101,9 @@
   </url>
   <url>
     <loc>/reference/bookstore.html</loc>
+  </url>
+  <url>
+    <loc>/reference/get_domain_concepts.html</loc>
   </url>
   <url>
     <loc>/reference/health_history_codebook.html</loc>

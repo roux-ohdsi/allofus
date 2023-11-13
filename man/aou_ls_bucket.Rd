@@ -8,7 +8,7 @@ aou_ls_bucket(
   pattern = "",
   silent = FALSE,
   recursive = TRUE,
-  bucket = Sys.getenv("WORKSPACE_BUCKET"),
+  bucket = getOption("aou.default.bucket"),
   gsutil_args = ""
 )
 }

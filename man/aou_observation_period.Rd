@@ -13,7 +13,7 @@ aou_observation_period(
 )
 }
 \arguments{
-\item{cohort}{query to a cohort or local dataframe}
+\item{cohort}{query to a cohort or local dataframe with column "person_id"}
 
 \item{persistence_window}{longest allowable time between visits for the same observation period. defaults to 548 see details}
 

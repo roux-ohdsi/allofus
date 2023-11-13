@@ -56,16 +56,17 @@
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">aou_concept_set</span><span class="op">(</span></span>
-<span>  <span class="va">cohort</span>,</span>
+<span>  cohort <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  <span class="va">concepts</span>,</span>
-<span>  <span class="va">start_date</span>,</span>
-<span>  <span class="va">end_date</span>,</span>
-<span>  domains <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"condition"</span>, <span class="st">"measurement"</span>, <span class="st">"observation"</span>, <span class="st">"procedure"</span>, <span class="st">"drug"</span>, <span class="st">"device"</span><span class="op">)</span>,</span>
-<span>  return <span class="op">=</span> <span class="st">"indicator"</span>,</span>
+<span>  start_date <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  end_date <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  domains <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"condition"</span>, <span class="st">"measurement"</span>, <span class="st">"observation"</span>, <span class="st">"procedure"</span>, <span class="st">"drug"</span>, <span class="st">"device"</span>,</span>
+<span>    <span class="st">"visit"</span><span class="op">)</span>,</span>
+<span>  output <span class="op">=</span> <span class="st">"indicator"</span>,</span>
 <span>  concept_set_name <span class="op">=</span> <span class="st">"concept_set"</span>,</span>
 <span>  min_n <span class="op">=</span> <span class="fl">1</span>,</span>
 <span>  con <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/options.html" class="external-link">getOption</a></span><span class="op">(</span><span class="st">"aou.default.con"</span><span class="op">)</span>,</span>
-<span>  collect <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  collect <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  <span class="va">...</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
@@ -73,32 +74,37 @@
     <div class="section level2">
     <h2 id="arguments">Arguments<a class="anchor" aria-label="anchor" href="#arguments"></a></h2>
     <dl><dt>cohort</dt>
-<dd><p>tbl; reference to a table with a column called "person_id", and columns for start_date and end_date</p></dd>
+<dd><p>query to a cohort or local dataframe with a column called "person_id", and (possibly) columns for start_date and end_date.
+If not provided, defaults to entire All of Us cohort.</p></dd>
 
 
 <dt>concepts</dt>
-<dd><p>num; a vector of concept ids</p></dd>
+<dd><p>a vector of concept ids</p></dd>
 
 
 <dt>start_date</dt>
-<dd><p>the name of the start_date column in the cohort table (unquoted)</p></dd>
+<dd><p>chr; the name of the start_date column in the cohort table; defaults to NULL to pull data across all dates</p></dd>
 
 
 <dt>end_date</dt>
-<dd><p>the name of the end_date column in the cohort table (unquoted)</p></dd>
+<dd><p>chr; the name of the end_date column in the cohort table; defaults to NULL to pull data across all dates</p></dd>
 
 
-<dt>return</dt>
+<dt>domains</dt>
+<dd><p>chr; a vector of domains to search for the concepts in ("condition", "measurement", "observation", "procedure", "drug", "device", "visit"); defaults to all</p></dd>
+
+
+<dt>output</dt>
 <dd><p>one of "indicator", "count", "all"; do you want to return a 1 if a person has any matching concepts and 0 if not ("indicator"),
 the number of matching concepts per person ("count"), or all info about the matching concepts ("all"). Defaults to "indicator"</p></dd>
 
 
 <dt>concept_set_name</dt>
-<dd><p>chr; If return = "indicator", name for that column. Defaults to "concept_set".</p></dd>
+<dd><p>chr; If output = "indicator" or output = "n", name for that column. Defaults to "concept_set".</p></dd>
 
 
 <dt>min_n</dt>
-<dd><p>dbl; If return = "indicator", the minimum number of occurrences per person to consider the indicator true. Defaults to 1.</p></dd>
+<dd><p>dbl; If output = "indicator", the minimum number of occurrences per person to consider the indicator true. Defaults to 1.</p></dd>
 
 
 <dt>con</dt>
@@ -119,22 +125,26 @@ the number of matching concepts per person ("count"), or all info about the matc
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span></span></span>
-<span class="r-in"><span><span class="co"># simple example</span></span></span>
-<span class="r-in"><span><span class="va">aspirin_users</span> <span class="op">&lt;-</span> <span class="fu">pull_concepts</span><span class="op">(</span><span class="va">cohort</span>, concepts <span class="op">=</span> <span class="fl">1191</span>, start_date <span class="op">=</span> <span class="va">covariate_start_date</span>,</span></span>
-<span class="r-in"><span> end_date <span class="op">=</span> <span class="va">cohort_start_date</span>, concept_set_name <span class="op">=</span> <span class="st">"aspirin"</span>, domain <span class="op">=</span> <span class="st">"drug"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="co"># indicator for any aspirin at any time</span></span></span>
+<span class="r-in"><span><span class="va">aspirin_users</span> <span class="op">&lt;-</span> <span class="fu">aou_concept_set</span><span class="op">(</span>concepts <span class="op">=</span> <span class="fl">1191</span>, concept_set_name <span class="op">=</span> <span class="st">"aspirin"</span>, domains <span class="op">=</span> <span class="st">"drug"</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co"># starting with person table</span></span></span>
-<span class="r-in"><span><span class="va">people</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/tbl.html" class="external-link">tbl</a></span><span class="op">(</span><span class="va">con</span>, <span class="st">"person"</span><span class="op">)</span> <span class="op"><a href="pipe.html">%&gt;%</a></span></span></span>
-<span class="r-in"><span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>start_date <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/as.Date.html" class="external-link">as.Date</a></span><span class="op">(</span><span class="st">"1970-01-01"</span><span class="op">)</span>,</span></span>
-<span class="r-in"><span>       end_date <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/as.Date.html" class="external-link">as.Date</a></span><span class="op">(</span><span class="st">"2023-05-24"</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="co"># starting with person table to create a cohort</span></span></span>
+<span class="r-in"><span><span class="va">people</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/tbl.html" class="external-link">tbl</a></span><span class="op">(</span><span class="va">con</span>, <span class="st">"person"</span><span class="op">)</span> <span class="op">|&gt;</span></span></span>
+<span class="r-in"><span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">person_id</span> <span class="op">&lt;</span> <span class="fl">2000000</span><span class="op">)</span> <span class="op">|&gt;</span></span></span>
+<span class="r-in"><span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span></span></span>
+<span class="r-in"><span>    start <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/as.Date.html" class="external-link">as.Date</a></span><span class="op">(</span><span class="st">"2021-01-01"</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>    end <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/as.Date.html" class="external-link">as.Date</a></span><span class="op">(</span><span class="st">"2023-12-31"</span><span class="op">)</span></span></span>
+<span class="r-in"><span>  <span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="va">dat</span> <span class="op">&lt;-</span> <span class="fu">aou_concept_set</span><span class="op">(</span>cohort <span class="op">=</span> <span class="va">people</span>,</span></span>
-<span class="r-in"><span>                         concepts <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">725115</span>, <span class="fl">1612146</span>, <span class="fl">1613031</span><span class="op">)</span>,</span></span>
-<span class="r-in"><span>                         start_date <span class="op">=</span> <span class="va">start_date</span>,</span></span>
-<span class="r-in"><span>                         end_date <span class="op">=</span> <span class="va">end_date</span>,</span></span>
-<span class="r-in"><span>                         concept_set_name <span class="op">=</span> <span class="st">"CGM"</span>,</span></span>
-<span class="r-in"><span>                         return <span class="op">=</span> <span class="st">"all"</span><span class="op">)</span></span></span>
-<span class="r-in"><span> <span class="op">}</span></span></span>
+<span class="r-in"><span><span class="va">dat</span> <span class="op">&lt;-</span> <span class="fu">aou_concept_set</span><span class="op">(</span></span></span>
+<span class="r-in"><span>  cohort <span class="op">=</span> <span class="va">people</span>,</span></span>
+<span class="r-in"><span>  concepts <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">725115</span>, <span class="fl">1612146</span>, <span class="fl">1613031</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>  start_date <span class="op">=</span> <span class="st">"start"</span>,</span></span>
+<span class="r-in"><span>  end_date <span class="op">=</span> <span class="st">"end"</span>,</span></span>
+<span class="r-in"><span>  concept_set_name <span class="op">=</span> <span class="st">"CGM"</span>,</span></span>
+<span class="r-in"><span>  output <span class="op">=</span> <span class="st">"all"</span></span></span>
+<span class="r-in"><span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="op">}</span></span></span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
     </div>

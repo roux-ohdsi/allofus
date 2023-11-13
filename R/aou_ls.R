@@ -59,14 +59,13 @@ aou_ls_workspace <- function(pattern = "", silent = FALSE, ...) {
 #' aou_ls_bucket("data/*.csv")
 #' }
 #'
-aou_ls_bucket <- function(pattern = "", silent = FALSE, recursive = TRUE, bucket = Sys.getenv("WORKSPACE_BUCKET"), gsutil_args = "") {
+aou_ls_bucket <- function(pattern = "", silent = FALSE, recursive = TRUE, bucket = getOption("aou.default.bucket"), gsutil_args = "") {
   if (recursive) {
     gsutil_args <- paste("-r", gsutil_args)
   }
 
   # Check if file is in the bucket
   files <- suppressWarnings(system(paste0("gsutil ls ", gsutil_args, " ", bucket, "/", pattern), intern = TRUE))
-  # stringr::str_remove(files, paste0(bucket_name, "/data/"))
   files <- gsub(".*/data/", "", files)
 
   if (length(files) == 0) {

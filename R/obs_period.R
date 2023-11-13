@@ -1,6 +1,6 @@
 #' Generate an observation period table based on OMOP Conventions
 #'
-#' @param cohort query to a cohort or local dataframe
+#' @param cohort query to a cohort or local dataframe with column "person_id"
 #' @param persistence_window longest allowable time between visits for the same observation period. defaults to 548 see details
 #' @param end_date_buffer number of days to add to end date. defaults to 60. see details
 #' @param exclude_aou_visits whether to exclude All of Us clinical visits (not part of the participants typical EHR) from the observation period

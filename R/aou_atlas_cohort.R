@@ -1,14 +1,15 @@
 #' Retrieve a cohort from ATLAS for use in AllofUs
-#' 
+#'
 #' This function retrieves a cohort definition from ATLAS and generates the cohort in All of Us.
 #' Observation periods are first generated for each subject using the {aou_observation_period} function.
 #' The resulting cohort is a dataframe with the cohort start and end dates for each subject.
-#' The function is based on https://github.com/cmayer2/r4aou with some tweaks to generate the appropriate observation periods.
-#' @param cohort_id The ID of the cohort to retrieve
+#' The function is based on a similar function in https://github.com/cmayer2/r4aou with some tweaks
+#' to generate the appropriate observation periods and incorporate other package functions.
+#' @param cohort_id The ID of the cohort to retrieve from ATLAS.
+#' @param base_url The URL of the ATLAS instance to use ending in /WebAPI. Defaults to demo atlas at https://atlas-demo.ohdsi.org
 #' @param persistence_window The number of days to look back from the cohort start date for the observation period. Defaults to 548 days.
 #' @param end_date_buffer The number of days to add to the end date of the observation period. Defaults to 60 days.
 #' @param exclude_aou_visits Whether to exclude AllofUs-specific visit concepts from the observation period. Defaults to FALSE.
-#' @param base_url The URL of the ATLAS instance to use ending in /WebAPI. Defaults to demo atlas at https://atlas-demo.ohdsi.org
 #'
 #' @return A dataframe with the resulting cohort. The SQL query used to generate the cohort is stored as an attribute.
 #' @export
@@ -16,14 +17,18 @@
 #' @examples
 #'
 #' \dontrun{
+#'  # generate cohort
 #'  cohort <- aou_atlas_cohort(1788061, base_url = "https://atlas-demo.ohdsi.org/WebAPI")
+#'
+#'  # print query that was executed
+#'  cat(attr(cohort, "query"))
 #' }
 #'
-aou_atlas_cohort <-function(cohort_id,
+aou_atlas_cohort <- function(cohort_id,
+                            base_url = "http://atlas-demo.ohdsi.org/WebAPI",
                             persistence_window = 548,
                             end_date_buffer = 60,
-                            exclude_aou_visits = FALSE,
-                            base_url = "http://atlas-demo.ohdsi.org/WebAPI"){
+                            exclude_aou_visits = FALSE){
 
   message("Querying ATLAS...generating a cohort can take a few minutes.")
   # Credit to https://github.com/cmayer2/r4aou with a few tweaks
@@ -42,18 +47,16 @@ aou_atlas_cohort <-function(cohort_id,
 
   # Create observation period table
   suppressWarnings({
-  obs_period_sql <- paste("
-                          CREATE TEMP TABLE #observation_period2 AS (
-                          ",
-                          dbplyr::sql_render(
-                            aou_observation_period(persistence_window = persistence_window,
-                                                   end_date_buffer = end_date_buffer,
-                                                   exclude_aou_visits = exclude_aou_visits,
-                                                   collect = FALSE)
-                          ),
-                          "
-                          );
-                          ")
+    obs_period_sql <- paste("CREATE TEMP TABLE #observation_period2 AS (
+", dbplyr::sql_render(
+  aou_observation_period(persistence_window = persistence_window,
+                         end_date_buffer = end_date_buffer,
+                         exclude_aou_visits = exclude_aou_visits,
+                         collect = FALSE)
+),
+"
+);
+")
   })
   obs_period_sql <- gsub("`visit_occurrence`", "`{cdr}.visit_occurrence`", obs_period_sql)
 
