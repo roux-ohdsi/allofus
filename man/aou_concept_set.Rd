@@ -5,34 +5,38 @@
 \title{Get occurrences of a concept set from AoU for a given cohort}
 \usage{
 aou_concept_set(
-  cohort,
+  cohort = NULL,
   concepts,
-  start_date,
-  end_date,
-  domains = c("condition", "measurement", "observation", "procedure", "drug", "device"),
-  return = "indicator",
+  start_date = NULL,
+  end_date = NULL,
+  domains = c("condition", "measurement", "observation", "procedure", "drug", "device",
+    "visit"),
+  output = "indicator",
   concept_set_name = "concept_set",
   min_n = 1,
   con = getOption("aou.default.con"),
-  collect = TRUE,
+  collect = FALSE,
   ...
 )
 }
 \arguments{
-\item{cohort}{tbl; reference to a table with a column called "person_id", and columns for start_date and end_date}
+\item{cohort}{query to a cohort or local dataframe with a column called "person_id", and (possibly) columns for start_date and end_date.
+If not provided, defaults to entire All of Us cohort.}
 
-\item{concepts}{num; a vector of concept ids}
+\item{concepts}{a vector of concept ids}
 
-\item{start_date}{the name of the start_date column in the cohort table (unquoted)}
+\item{start_date}{chr; the name of the start_date column in the cohort table; defaults to NULL to pull data across all dates}
 
-\item{end_date}{the name of the end_date column in the cohort table (unquoted)}
+\item{end_date}{chr; the name of the end_date column in the cohort table; defaults to NULL to pull data across all dates}
 
-\item{return}{one of "indicator", "count", "all"; do you want to return a 1 if a person has any matching concepts and 0 if not ("indicator"),
+\item{domains}{chr; a vector of domains to search for the concepts in ("condition", "measurement", "observation", "procedure", "drug", "device", "visit"); defaults to all}
+
+\item{output}{one of "indicator", "count", "all"; do you want to return a 1 if a person has any matching concepts and 0 if not ("indicator"),
 the number of matching concepts per person ("count"), or all info about the matching concepts ("all"). Defaults to "indicator"}
 
-\item{concept_set_name}{chr; If return = "indicator", name for that column. Defaults to "concept_set".}
+\item{concept_set_name}{chr; If output = "indicator" or output = "n", name for that column. Defaults to "concept_set".}
 
-\item{min_n}{dbl; If return = "indicator", the minimum number of occurrences per person to consider the indicator true. Defaults to 1.}
+\item{min_n}{dbl; If output = "indicator", the minimum number of occurrences per person to consider the indicator true. Defaults to 1.}
 
 \item{con}{connection to the allofus SQL database. Defaults to getOption("aou.default.con"), which is set automatically if you use `aou_connect()`}
 
@@ -46,21 +50,25 @@ Get occurrences of a concept set from AoU for a given cohort
 }
 \examples{
 \dontrun{
-# simple example
-aspirin_users <- pull_concepts(cohort, concepts = 1191, start_date = covariate_start_date,
- end_date = cohort_start_date, concept_set_name = "aspirin", domain = "drug")
+# indicator for any aspirin at any time
+aspirin_users <- aou_concept_set(concepts = 1191, concept_set_name = "aspirin", domains = "drug")
 
-# starting with person table
-people <- tbl(con, "person") \%>\%
-mutate(start_date = as.Date("1970-01-01"),
-       end_date = as.Date("2023-05-24"))
+# starting with person table to create a cohort
+people <- tbl(con, "person") |>
+  filter(person_id < 2000000) |>
+  mutate(
+    start = as.Date("2021-01-01"),
+    end = as.Date("2023-12-31")
+  )
 
-dat <- aou_concept_set(cohort = people,
-                         concepts = c(725115, 1612146, 1613031),
-                         start_date = start_date,
-                         end_date = end_date,
-                         concept_set_name = "CGM",
-                         return = "all")
- }
+dat <- aou_concept_set(
+  cohort = people,
+  concepts = c(725115, 1612146, 1613031),
+  start_date = "start",
+  end_date = "end",
+  concept_set_name = "CGM",
+  output = "all"
+)
+}
 
 }

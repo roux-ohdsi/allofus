@@ -1,372 +1,197 @@
 #' Get occurrences of a concept set from AoU for a given cohort
 #'
-#'
-#'
-#' @param cohort tbl; reference to a table with a column called "person_id", and columns for start_date and end_date
-#' @param concepts num; a vector of concept ids
-#' @param start_date the name of the start_date column in the cohort table (unquoted)
-#' @param end_date the name of the end_date column in the cohort table (unquoted)
-#' @param return one of "indicator", "count", "all"; do you want to return a 1 if a person has any matching concepts and 0 if not ("indicator"),
+#' @param cohort query to a cohort or local dataframe with a column called "person_id", and (possibly) columns for start_date and end_date.
+#' If not provided, defaults to entire All of Us cohort.
+#' @param concepts a vector of concept ids
+#' @param start_date chr; the name of the start_date column in the cohort table; defaults to NULL to pull data across all dates
+#' @param end_date chr; the name of the end_date column in the cohort table; defaults to NULL to pull data across all dates
+#' @param domains chr; a vector of domains to search for the concepts in ("condition", "measurement", "observation", "procedure", "drug", "device", "visit"); defaults to all
+#' @param output one of "indicator", "count", "all"; do you want to return a 1 if a person has any matching concepts and 0 if not ("indicator"),
 #'  the number of matching concepts per person ("count"), or all info about the matching concepts ("all"). Defaults to "indicator"
-#' @param concept_set_name chr; If return = "indicator", name for that column. Defaults to "concept_set".
-#' @param min_n dbl; If return = "indicator", the minimum number of occurrences per person to consider the indicator true. Defaults to 1.
+#' @param concept_set_name chr; If output = "indicator" or output = "n", name for that column. Defaults to "concept_set".
+#' @param min_n dbl; If output = "indicator", the minimum number of occurrences per person to consider the indicator true. Defaults to 1.
 #' @param con connection to the allofus SQL database. Defaults to getOption("aou.default.con"), which is set automatically if you use `aou_connect()`
 #' @param collect lgl; whether to collect from the database
 #'
 #' @return a dataframe if collect = TRUE; a remote tbl if not
 #' @export
-#' @importFrom dplyr union_all
 #'
 #' @examples
 #' \dontrun{
-#' # simple example
-#' aspirin_users <- pull_concepts(cohort, concepts = 1191, start_date = covariate_start_date,
-#'  end_date = cohort_start_date, concept_set_name = "aspirin", domain = "drug")
+#' # indicator for any aspirin at any time
+#' aspirin_users <- aou_concept_set(concepts = 1191, concept_set_name = "aspirin", domains = "drug")
 #'
-#' # starting with person table
-#'people <- tbl(con, "person") %>%
-#' mutate(start_date = as.Date("1970-01-01"),
-#'        end_date = as.Date("2023-05-24"))
+#' # starting with person table to create a cohort
+#' people <- tbl(con, "person") |>
+#'   filter(person_id < 2000000) |>
+#'   mutate(
+#'     start = as.Date("2021-01-01"),
+#'     end = as.Date("2023-12-31")
+#'   )
 #'
-#' dat <- aou_concept_set(cohort = people,
-#'                          concepts = c(725115, 1612146, 1613031),
-#'                          start_date = start_date,
-#'                          end_date = end_date,
-#'                          concept_set_name = "CGM",
-#'                          return = "all")
-#'  }
+#' dat <- aou_concept_set(
+#'   cohort = people,
+#'   concepts = c(725115, 1612146, 1613031),
+#'   start_date = "start",
+#'   end_date = "end",
+#'   concept_set_name = "CGM",
+#'   output = "all"
+#' )
+#' }
 #'
-aou_concept_set <- function(cohort,
-                              concepts,
-                              start_date,
-                              end_date,
-                              domains = c("condition", "measurement", "observation", "procedure", "drug", "device"),
-                              return = "indicator",
-                              concept_set_name = "concept_set",
-                              min_n = 1,
-                              con = getOption("aou.default.con"),
-                              collect = TRUE, ...) {
+aou_concept_set <- function(cohort = NULL,
+                            concepts,
+                            start_date = NULL,
+                            end_date = NULL,
+                            domains = c(
+                              "condition", "measurement", "observation",
+                              "procedure", "drug", "device", "visit"
+                            ),
+                            output = "indicator",
+                            concept_set_name = "concept_set",
+                            min_n = 1,
+                            con = getOption("aou.default.con"),
+                            collect = FALSE, ...) {
+
+  # keep track of whether we are forced to collect 
+  # due to start and end dates provided with cohort as dataframe                            
+  must_collect <- FALSE
+
+  if (is.null(cohort)) {
+    warning("No cohort provided. Pulling concepts for entire All of Us cohort.")
+    if (!is.null(start_date) || !is.null(end_date)) {
+      warning("Ignoring start and end date; no cohort with those columns provided")
+    }
+    tmp <- dplyr::tbl(con, "person")
+  } else {
+    if (is.data.frame(cohort)) {
+      tmp <- dplyr::tbl(con, "person") |>
+        dplyr::filter(person_id %in% !!cohort$person_id)
+      if (!collect && (!is.null(start_date) || !is.null(end_date))) {
+        # can't have these both because we can't join (on the dates) without collecting
+        warning("Cannot have `collect = FALSE` and also provide start and end dates. Changing to `collect = TRUE`.")
+        collect <- TRUE
+        must_collect <- TRUE
+      }
+    } else {
+      tmp <- cohort
+    }
+  }
 
   if (is.null(con)) stop("Provide `con` as an argument or default with `options(aou.default.con = ...)`")
+  if (!all(domains %in% c("condition", "measurement", "observation", "procedure", "drug", "device", "visit"))) {
+    stop(
+      '`domains` can only include "condition", "measurement", "observation", "procedure", "drug", "device", "visit"'
+    )
+  }
 
-  all_concepts <- purrr::map(
-    domains,
-    ~ aou_get_concepts(cohort, concepts,
-                       {{ start_date }}, {{ end_date }},
-                       domain = tolower(.x))
+  if (is.null(start_date) || is.data.frame(cohort)) {
+    tmp <- dplyr::mutate(tmp, start_date = as.Date("1970-01-01"))
+    start_date <- "start_date"
+  }
+  if (is.null(end_date) || is.data.frame(cohort)) {
+    tmp <- dplyr::mutate(tmp, end_date = as.Date("2100-01-01"))
+    end_date <- "end_date"
+  }
+
+  all_concepts <- data.frame(
+    domain = c(
+      "condition", "measurement", "observation",
+      "procedure", "drug", "device", "visit"
+    ),
+    tbl_name = c(
+      "condition_occurrence",
+      "measurement", "observation", "procedure_occurrence", "drug_exposure",
+      "device_exposure", "visit_occurrence"
+    ),
+    date_column = c(
+      "condition_start_date",
+      "measurement_date", "observation_date",
+      "procedure_date", "drug_exposure_start_date",
+      "device_exposure_start_date", "visit_start_date"
+    ),
+    concept_id_column = c(
+      "condition_concept_id", "measurement_concept_id",
+      "observation_concept_id", "procedure_concept_id",
+      "drug_concept_id", "device_concept_id", "visit_concept_id"
+    )
   ) |>
-    purrr::reduce(union_all) |>
-    dplyr::mutate(concept_set = concept_set_name) |>
-    dplyr::distinct()
+    dplyr::filter(domain %in% domains) |>
+    purrr::pmap(get_domain_concepts, cohort = tmp, concepts = concepts, start_date = start_date, end_date = end_date) |>
+    purrr::reduce(dplyr::union_all) |>
+    dplyr::distinct() |>
+    dplyr::select(person_id, concept_id, concept_name, concept_date)
 
-  if (return == "all") {
-    if (collect) return(dplyr::collect(all_concepts))
-    return(all_concepts)
-  } else if (return == "count") {
-    if (collect) return(dplyr::collect(dplyr::count(all_concepts, concept_set, person_id)))
-    return(dplyr::count(all_concepts, concept_set, person_id))
+
+  if (must_collect) {
+    # collect to restrict the concepts between the given start and end dates
+    all_concepts <- dplyr::collect(all_concepts) |>
+      dplyr::right_join(cohort, by = join_by(person_id, between(concept_date, y$start_date, y$end_date)))
+    cohort_w_concepts <- all_concepts
+  } else {
+    cohort_w_concepts <- dplyr::right_join(all_concepts, tmp,
+      by = join_by(person_id, between(concept_date, y$start_date, y$end_date))
+    )
+  }
+
+  if (output == "all") {
+    if (collect && !must_collect) {
+      # if must_collect, then it's already collected
+      return(dplyr::collect(all_concepts))
+    } else {
+      return(all_concepts)
+    }
+  }
+
+  counted <- cohort_w_concepts |>
+    dplyr::group_by(person_id, .data[[start_date]], .data[[end_date]]) |>
+    dplyr::summarise(n = sum(ifelse(is.na(concept_id), 0, 1)), .groups = "drop")
+
+  if (output == "count") {
+    counted <- counted |>
+      dplyr::rename(!!concept_set_name := n)
+
+    if (collect && !must_collect) {
+      return(dplyr::collect(counted))
+    } else {
+      return(counted)
+    }
   }
 
   if (is.null(min_n) || !is.numeric(min_n)) stop("Provide a number to `min_n` to restrict to observations with at least that number of rows")
 
-  if (min_n > 1) {
-    all_concepts <- all_concepts |>
-      dplyr::group_by(person_id) |>
-      dplyr::filter(dplyr::n() >= min_n) |>
-      dplyr::ungroup()
+  res <- counted |>
+    dplyr::mutate(!!concept_set_name := ifelse(n >= min_n, 1, 0)) |>
+    dplyr::select(-n)
+
+  if (collect && !must_collect) {
+    return(dplyr::collect(res))
+  } else {
+    return(res)
   }
-
-  res <- all_concepts |>
-    dplyr::distinct(person_id) |>
-    dplyr::mutate(!!concept_set_name := 1)
-
-  if (collect) return(dplyr::collect(res))
-
-  res
-
 }
+#' Retrieves domain concepts for a given cohort and time range
+#'
+#' @param cohort A data frame containing person IDs
+#' @param concepts A vector of concept IDs to retrieve
+#' @param start_date The start date of the time range to retrieve concepts for
+#' @param end_date The end date of the time range to retrieve concepts for
+#' @param tbl_name The name of the table containing the domain concepts
+#' @param date_column The name of the column containing the concept dates
+#' @param concept_id_column The name of the column containing the concept IDs
+#' @param ... Additional arguments
+#'
 
-#' Get concepts from the condition table for a given cohort
-#'
-#' @param cohort A cohort object
-#' @param concepts A vector of concept IDs to filter by
-#' @param start_date The name of the column with the start date for filtering condition occurrences
-#' @param end_date The name of the column with the end date for filtering condition occurrences
-#' @param ... Additional arguments to pass to aou_join
-#'
-#' @return A data frame with columns person_id, date, concept_id, concept_name, and domain = "condition"
-#'
-#' @examples
-#' aou_get_condition_concepts(cohort, c(123, 456), start_date, end_date)
+get_domain_concepts <- function(cohort, concepts, start_date, end_date, tbl_name, date_column, concept_id_column, ...) {
+  domain_tbl <- tbl(con, tbl_name) |>
+    dplyr::select(person_id, concept_date = .data[[date_column]], concept_id = .data[[concept_id_column]])
 
-aou_get_condition_concepts <- function(cohort, concepts, start_date, end_date, ...) {
   cohort |>
-    aou_join("condition_occurrence", type = "left", by = "person_id") |>
-    dplyr::select(-any_of(c("condition_start_datetime", "condition_end_date", "condition_end_datetime",
-                              "condition_type_concept_id", "stop_reason", "provider_id", "visit_occurrence_id",
-                              "visit_detail_id", "condition_source_value", "condition_source_concept_id",
-                              "condition_status_source_value", "condition_status_concept_id",
-                              "measurement_datetime", "measurement_time", "measurement_type_concept_id",
-                              "operator_concept_id", "value_as_number", "value_as_concept_id",
-                              "unit_concept_id", "range_low", "range_high", "measurement_source_value",
-                              "measurement_source_concept_id", "unit_source_value", "value_source_value",
-                              "procedure_datetime", "procedure_type_concept_id", "modifier_concept_id",
-                              "quantity", "procedure_source_value", "procedure_source_concept_id",
-                              "modifier_source_value", "observation_datetime", "observation_type_concept_id",
-                              "value_as_string", "qualifier_concept_id", "observation_source_value",
-                              "observation_source_concept_id", "qualifier_source_value", "drug_exposure_start_datetime",
-                              "drug_exposure_end_date", "drug_exposure_end_datetime", "verbatim_end_date",
-                              "drug_type_concept_id", "refills", "days_supply", "sig", "route_concept_id",
-                              "lot_number", "drug_source_value", "drug_source_concept_id",
-                              "route_source_value", "dose_unit_source_value", "device_exposure_start_datetime",
-                              "device_exposure_end_date", "device_exposure_end_datetime", "device_type_concept_id",
-                              "unique_device_id", "device_source_value", "device_source_concept_id"
-    ))) |>
-    dplyr::filter(condition_concept_id %in% concepts) |>
-    dplyr::filter(dplyr::between(condition_start_date, {{ start_date }}, {{ end_date }})) |>
-    aou_join("concept", type = "left", by = c("condition_concept_id" = "concept_id")) |>
-    dplyr::select(person_id,
-           date = condition_start_date, concept_id = condition_concept_id,
-           concept_name, domain = domain_id
-    )
-}
-
-#' Get concepts from the measurement table for a given cohort
-#'
-#' @param cohort A cohort object
-#' @param concepts A vector of concept IDs to filter by
-#' @param start_date The name of the column with the start date for filtering measurements
-#' @param end_date The name of the column with the end date for filtering measurements
-#' @param ... Additional arguments to pass to aou_join
-#'
-#' @return A data frame with columns person_id, date, concept_id, concept_name, and domain = "measurement"
-#'
-#' @examples
-#' aou_get_measurement_concepts(cohort, c(123, 456), start_date, end_date)
-aou_get_measurement_concepts <- function(cohort, concepts, start_date, end_date, ...) {
-  cohort |>
-    aou_join("measurement", type = "left", by = "person_id") |>
-    dplyr::select(-any_of(c("condition_start_datetime", "condition_end_date", "condition_end_datetime",
-                            "condition_type_concept_id", "stop_reason", "provider_id", "visit_occurrence_id",
-                            "visit_detail_id", "condition_source_value", "condition_source_concept_id",
-                            "condition_status_source_value", "condition_status_concept_id",
-                            "measurement_datetime", "measurement_time", "measurement_type_concept_id",
-                            "operator_concept_id", "value_as_number", "value_as_concept_id",
-                            "unit_concept_id", "range_low", "range_high", "measurement_source_value",
-                            "measurement_source_concept_id", "unit_source_value", "value_source_value",
-                            "procedure_datetime", "procedure_type_concept_id", "modifier_concept_id",
-                            "quantity", "procedure_source_value", "procedure_source_concept_id",
-                            "modifier_source_value", "observation_datetime", "observation_type_concept_id",
-                            "value_as_string", "qualifier_concept_id", "observation_source_value",
-                            "observation_source_concept_id", "qualifier_source_value", "drug_exposure_start_datetime",
-                            "drug_exposure_end_date", "drug_exposure_end_datetime", "verbatim_end_date",
-                            "drug_type_concept_id", "refills", "days_supply", "sig", "route_concept_id",
-                            "lot_number", "drug_source_value", "drug_source_concept_id",
-                            "route_source_value", "dose_unit_source_value", "device_exposure_start_datetime",
-                            "device_exposure_end_date", "device_exposure_end_datetime", "device_type_concept_id",
-                            "unique_device_id", "device_source_value", "device_source_concept_id"
-    ))) |>
-    dplyr::filter(dplyr::between(measurement_date, {{ start_date }}, {{ end_date }})) |>
-    aou_join("concept", type = "left", by = c("measurement_concept_id" = "concept_id")) |>
-    dplyr::select(person_id,
-           date = measurement_date, concept_id = measurement_concept_id,
-           concept_name, domain = domain_id
-    )
-}
-
-#' Get concepts from the procedure table for a given cohort
-#'
-#' @param cohort A cohort object
-#' @param concepts A vector of concept IDs to filter by
-#' @param start_date The name of the column with the start date for filtering procedures
-#' @param end_date The name of the column with the end date for filtering procedures
-#' @param ... Additional arguments to pass to aou_join
-#'
-#' @return A data frame with columns person_id, date, concept_id, concept_name, and domain = "procedure"
-#'
-#' @examples
-#' aou_get_procedure_concepts(cohort, c(123, 456), start_date, end_date)
-aou_get_procedure_concepts <- function(cohort, concepts, start_date, end_date, ...) {
-  cohort |>
-    aou_join("procedure_occurrence", type = "left", by = "person_id") |>
-    dplyr::select(-any_of(c("condition_start_datetime", "condition_end_date", "condition_end_datetime",
-                            "condition_type_concept_id", "stop_reason", "provider_id", "visit_occurrence_id",
-                            "visit_detail_id", "condition_source_value", "condition_source_concept_id",
-                            "condition_status_source_value", "condition_status_concept_id",
-                            "measurement_datetime", "measurement_time", "measurement_type_concept_id",
-                            "operator_concept_id", "value_as_number", "value_as_concept_id",
-                            "unit_concept_id", "range_low", "range_high", "measurement_source_value",
-                            "measurement_source_concept_id", "unit_source_value", "value_source_value",
-                            "procedure_datetime", "procedure_type_concept_id", "modifier_concept_id",
-                            "quantity", "procedure_source_value", "procedure_source_concept_id",
-                            "modifier_source_value", "observation_datetime", "observation_type_concept_id",
-                            "value_as_string", "qualifier_concept_id", "observation_source_value",
-                            "observation_source_concept_id", "qualifier_source_value", "drug_exposure_start_datetime",
-                            "drug_exposure_end_date", "drug_exposure_end_datetime", "verbatim_end_date",
-                            "drug_type_concept_id", "refills", "days_supply", "sig", "route_concept_id",
-                            "lot_number", "drug_source_value", "drug_source_concept_id",
-                            "route_source_value", "dose_unit_source_value", "device_exposure_start_datetime",
-                            "device_exposure_end_date", "device_exposure_end_datetime", "device_type_concept_id",
-                            "unique_device_id", "device_source_value", "device_source_concept_id"
-    ))) |>
-    dplyr::filter(procedure_concept_id %in% concepts) |>
-    dplyr::filter(dplyr::between(procedure_date, {{ start_date }}, {{ end_date }})) |>
-    aou_join("concept", type = "left", by = c("procedure_concept_id" = "concept_id")) |>
-    dplyr::select(person_id,
-           date = procedure_date, concept_id = procedure_concept_id,
-           concept_name, domain = domain_id
-    )
-}
-
-#' Get concepts from the observation table for a given cohort
-#'
-#' @param cohort A cohort object
-#' @param concepts A vector of concept IDs to filter by
-#' @param start_date The name of the column with the start date for filtering observations
-#' @param end_date The name of the column with the end date for filtering observations
-#' @param ... Additional arguments to pass to aou_join
-#'
-#' @return A data frame with columns person_id, date, concept_id, concept_name, and domain = "observation"
-#'
-#' @examples
-#' aou_get_observation_concepts(cohort, c(123, 456), start_date, end_date)
-aou_get_observation_concepts <- function(cohort, concepts, start_date, end_date, ...) {
-  cohort |>
-    aou_join("observation", type = "left", by = "person_id") |>
-    dplyr::select(-any_of(c("condition_start_datetime", "condition_end_date", "condition_end_datetime",
-                            "condition_type_concept_id", "stop_reason", "provider_id", "visit_occurrence_id",
-                            "visit_detail_id", "condition_source_value", "condition_source_concept_id",
-                            "condition_status_source_value", "condition_status_concept_id",
-                            "measurement_datetime", "measurement_time", "measurement_type_concept_id",
-                            "operator_concept_id", "value_as_number", "value_as_concept_id",
-                            "unit_concept_id", "range_low", "range_high", "measurement_source_value",
-                            "measurement_source_concept_id", "unit_source_value", "value_source_value",
-                            "procedure_datetime", "procedure_type_concept_id", "modifier_concept_id",
-                            "quantity", "procedure_source_value", "procedure_source_concept_id",
-                            "modifier_source_value", "observation_datetime", "observation_type_concept_id",
-                            "value_as_string", "qualifier_concept_id", "observation_source_value",
-                            "observation_source_concept_id", "qualifier_source_value", "drug_exposure_start_datetime",
-                            "drug_exposure_end_date", "drug_exposure_end_datetime", "verbatim_end_date",
-                            "drug_type_concept_id", "refills", "days_supply", "sig", "route_concept_id",
-                            "lot_number", "drug_source_value", "drug_source_concept_id",
-                            "route_source_value", "dose_unit_source_value", "device_exposure_start_datetime",
-                            "device_exposure_end_date", "device_exposure_end_datetime", "device_type_concept_id",
-                            "unique_device_id", "device_source_value", "device_source_concept_id"
-    ))) |>
-    dplyr::filter(observation_concept_id %in% concepts) |>
-    dplyr::filter(dplyr::between(observation_date, {{ start_date }}, {{ end_date }})) |>
-    aou_join("concept", type = "left", by = c("observation_concept_id" = "concept_id")) |>
-    dplyr::select(person_id,
-           date = observation_date, concept_id = observation_concept_id,
-           concept_name, domain = domain_id
-    )
-}
-
-#' Get concepts from the drug exposure table for a given cohort
-#'
-#' @param cohort A cohort object
-#' @param concepts A vector of concept IDs to filter by
-#' @param start_date The name of the column with the start date for filtering drugs
-#' @param end_date The name of the column with the end date for filtering drugs
-#' @param ... Additional arguments to pass to aou_join
-#'
-#' @return A data frame with columns person_id, date, concept_id, concept_name, and domain = "drug"
-#'
-#' @examples
-#' aou_get_drug_concepts(cohort, c(123, 456), start_date, end_date)
-aou_get_drug_concepts <- function(cohort, concepts, start_date, end_date, ...) {
-  cohort |>
-    aou_join("drug_exposure", type = "left", by = "person_id") |>
-    dplyr::select(-any_of(c("condition_start_datetime", "condition_end_date", "condition_end_datetime",
-                            "condition_type_concept_id", "stop_reason", "provider_id", "visit_occurrence_id",
-                            "visit_detail_id", "condition_source_value", "condition_source_concept_id",
-                            "condition_status_source_value", "condition_status_concept_id",
-                            "measurement_datetime", "measurement_time", "measurement_type_concept_id",
-                            "operator_concept_id", "value_as_number", "value_as_concept_id",
-                            "unit_concept_id", "range_low", "range_high", "measurement_source_value",
-                            "measurement_source_concept_id", "unit_source_value", "value_source_value",
-                            "procedure_datetime", "procedure_type_concept_id", "modifier_concept_id",
-                            "quantity", "procedure_source_value", "procedure_source_concept_id",
-                            "modifier_source_value", "observation_datetime", "observation_type_concept_id",
-                            "value_as_string", "qualifier_concept_id", "observation_source_value",
-                            "observation_source_concept_id", "qualifier_source_value", "drug_exposure_start_datetime",
-                            "drug_exposure_end_date", "drug_exposure_end_datetime", "verbatim_end_date",
-                            "drug_type_concept_id", "refills", "days_supply", "sig", "route_concept_id",
-                            "lot_number", "drug_source_value", "drug_source_concept_id",
-                            "route_source_value", "dose_unit_source_value", "device_exposure_start_datetime",
-                            "device_exposure_end_date", "device_exposure_end_datetime", "device_type_concept_id",
-                            "unique_device_id", "device_source_value", "device_source_concept_id"
-    ))) |>
-    dplyr::filter(drug_concept_id %in% concepts) |>
-    dplyr::filter(dplyr::between(drug_exposure_start_date, {{ start_date }}, {{ end_date }})) |>
-    aou_join("concept", type = "left", by = c("drug_concept_id" = "concept_id")) |>
-    dplyr::select(person_id,
-           date = drug_exposure_start_date, concept_id = drug_concept_id,
-           concept_name, domain = domain_id
-    )
-}
-
-#' Get concepts from the device exposure table for a given cohort
-#'
-#' @param cohort A cohort object
-#' @param concepts A vector of concept IDs to filter by
-#' @param start_date The name of the column with the start date for filtering devices
-#' @param end_date The name of the column with the end date for filtering devices
-#' @param ... Additional arguments to pass to aou_join
-#'
-#' @return A data frame with columns person_id, date, concept_id, concept_name, and domain = "device"
-#'
-#' @examples
-#' aou_get_device_concepts(cohort, c(123, 456), start_date, end_date)
-aou_get_device_concepts <- function(cohort, concepts, start_date, end_date, ...) {
-  cohort |>
-    aou_join("device_exposure", type = "left", by = "person_id") |>
-    dplyr::select(-any_of(c("condition_start_datetime", "condition_end_date", "condition_end_datetime",
-                            "condition_type_concept_id", "stop_reason", "provider_id", "visit_occurrence_id",
-                            "visit_detail_id", "condition_source_value", "condition_source_concept_id",
-                            "condition_status_source_value", "condition_status_concept_id",
-                            "measurement_datetime", "measurement_time", "measurement_type_concept_id",
-                            "operator_concept_id", "value_as_number", "value_as_concept_id",
-                            "unit_concept_id", "range_low", "range_high", "measurement_source_value",
-                            "measurement_source_concept_id", "unit_source_value", "value_source_value",
-                            "procedure_datetime", "procedure_type_concept_id", "modifier_concept_id",
-                            "quantity", "procedure_source_value", "procedure_source_concept_id",
-                            "modifier_source_value", "observation_datetime", "observation_type_concept_id",
-                            "value_as_string", "qualifier_concept_id", "observation_source_value",
-                            "observation_source_concept_id", "qualifier_source_value", "drug_exposure_start_datetime",
-                            "drug_exposure_end_date", "drug_exposure_end_datetime", "verbatim_end_date",
-                            "drug_type_concept_id", "refills", "days_supply", "sig", "route_concept_id",
-                            "lot_number", "drug_source_value", "drug_source_concept_id",
-                            "route_source_value", "dose_unit_source_value", "device_exposure_start_datetime",
-                            "device_exposure_end_date", "device_exposure_end_datetime", "device_type_concept_id",
-                            "unique_device_id", "device_source_value", "device_source_concept_id"
-    ))) |>
-    dplyr::filter(device_concept_id %in% concepts) |>
-    dplyr::filter(dplyr::between(device_exposure_start_date, {{ start_date }}, {{ end_date }})) |>
-    aou_join("concept", type = "left", by = c("device_concept_id" = "concept_id")) |>
-    dplyr::select(person_id,
-           date = device_exposure_start_date, concept_id = device_concept_id,
-           concept_name, domain = domain_id
-    )
-}
-
-
-#' Get concepts from a specified domain
-#'
-#' @param ...  Arguments passed to specific `aou_get_{}_concepts()` function
-#' @param domain A character string specifying the domain to retrieve concepts from. Must be one of: "condition", "measurement", "observation", "procedure", "drug", "device"
-#'
-#' @return A list of concepts from the specified domain
-#'
-#' @examples
-#' aou_get_concepts(cohort, c(123, 456), start_date, end_date, domain = "condition")
-#'
-aou_get_concepts <- function(..., domain = c("condition", "measurement", "observation", "procedure", "drug", "device")) {
-  if (length(domain) != 1) stop("Provide one domain only")
-  if (!domain %in% c("condition", "measurement", "observation", "procedure", "drug", "device")) {
-    stop(
-      '`domain` must be one of: "condition", "measurement", "observation", "procedure", "drug", "device"'
-    )
-  }
-  get(paste("aou_get", domain, "concepts", sep = "_"))(..., combine = FALSE)
+    dplyr::left_join(domain_tbl, by = "person_id", suffix = c(tbl_name, "")) |>
+    dplyr::filter(concept_id %in% concepts) |>
+    dplyr::filter(dplyr::between(concept_date, .data[[start_date]], .data[[end_date]])) |>
+    dplyr::left_join(dplyr::select(dplyr::tbl(con, "concept"), concept_id, concept_name, domain_id),
+      by = "concept_id"
+    ) |>
+    dplyr::select(person_id, concept_date, concept_id, concept_name, concept_domain = domain_id)
 }
