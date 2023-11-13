@@ -28,7 +28,7 @@
 #' )
 #' }
 #'
-aou_observation_period <- function(cohort,
+aou_observation_period <- function(cohort = NULL,
                                    persistence_window = 548,
                                    end_date_buffer = 60,
                                    exclude_aou_visits = FALSE,
