@@ -36,6 +36,7 @@ aou_atlas_cohort <-function(cohort_id,
   modified_sql <- gsub("@cdm_database_schema","{cdr}",modified_sql)
 
   # Create observation period table
+  suppressWarnings({
   obs_period_sql <- paste("
                           CREATE TEMP TABLE #observation_period2 AS (
                           ",
@@ -47,6 +48,7 @@ aou_atlas_cohort <-function(cohort_id,
                           "
                           );
                           ")
+  })
   #   obs_period_sql <- "
   # CREATE TEMP TABLE #observation_period2 AS (
   #     SELECT
@@ -109,16 +111,15 @@ SELECT * FROM #target_cohort_table;
 "
 
   # Combine SQL statements
-  sql <- paste0(obs_period_sql, target_cohort_sql, modified_sql, select_sql)
+  sql_all <- paste0(obs_period_sql, target_cohort_sql, modified_sql, select_sql)
 
   # Translate SQL to BigQuery dialect
-  sql_translated <- SqlRender::translate(sql, targetDialect = "bigquery")
+  sql_translated <- SqlRender::translate(sql_all, targetDialect = "bigquery")
   sql_translated <- gsub("create table", "CREATE TEMP TABLE", sql_translated)
   sql_translated <- gsub("CREATE TABLE", "CREATE TEMP TABLE", sql_translated)
 
   # Execute SQL
-  r <- aou_sql(sql5)
-
+  r <- aou_sql(sql_translated)
 
   return(r)
 
