@@ -20,7 +20,7 @@ getOption("aou.default.cdr"), which is Sys.getenv('WORKSPACE_CDR') if not specif
 \item{...}{All other arguments passed to `bigrquery::bq_table_download()`}
 }
 \value{
-A dataframe (if `collect = TRUE`); otherwise, a `bq_table` object
+A dataframe with the results of the query.
 }
 \description{
 Execute a SQL query

@@ -70,7 +70,7 @@ aou_connect <- function(CDR = getOption("aou.default.cdr"), ...) {
 #' `CDR = paste0(Sys.getenv('WORKSPACE_CDR'), "_base")`.
 #' @param ... All other arguments passed to `bigrquery::bq_table_download()`
 #'
-#' @return A dataframe (if `collect = TRUE`); otherwise, a `bq_table` object
+#' @return A dataframe with the results of the query.
 #' @export
 #'
 #' @examples
