@@ -30,6 +30,7 @@ A dataframe with the resulting cohort. The SQL query used to generate the cohort
 This function retrieves a cohort definition from ATLAS and generates the cohort in All of Us.
 Observation periods are first generated for each subject using the {aou_observation_period} function.
 The resulting cohort is a dataframe with the cohort start and end dates for each subject.
+The function is based on https://github.com/cmayer2/r4aou with some tweaks to generate the appropriate observation periods.
 }
 \examples{
 

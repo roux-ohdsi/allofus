@@ -3,6 +3,7 @@
 #' This function retrieves a cohort definition from ATLAS and generates the cohort in All of Us.
 #' Observation periods are first generated for each subject using the {aou_observation_period} function.
 #' The resulting cohort is a dataframe with the cohort start and end dates for each subject.
+#' The function is based on https://github.com/cmayer2/r4aou with some tweaks to generate the appropriate observation periods.
 #' @param cohort_id The ID of the cohort to retrieve
 #' @param persistence_window The number of days to look back from the cohort start date for the observation period. Defaults to 548 days.
 #' @param end_date_buffer The number of days to add to the end date of the observation period. Defaults to 60 days.
@@ -80,7 +81,7 @@ SELECT * FROM #target_cohort_table;
   sql_translated <- gsub("CREATE TABLE", "CREATE TEMP TABLE", sql_translated)
 
   # Execute SQL
-  r <- aou_sql(sql_translated, collect = collect)
+  r <- aou_sql(sql_translated)
 
   attr(r, "query") <- sql_translated
 
