@@ -33,12 +33,18 @@ aou_observation_period <- function(cohort,
                                    end_date_buffer = 60,
                                    exclude_aou_visits = FALSE,
                                    collect = FALSE) {
-  if (is.data.frame(cohort)) {
-    tmp <- tbl(con, "visit_occurrence") %>%
-      filter(person_id %in% !!cohort$person_id)
+
+  if (is.null(cohort)) {
+    warning("No cohort provided. Creating observation periods for entire All of Us cohort.")
+    tmp <- tbl(con, "visit_occurrence")
   } else {
-    tmp <- tbl(con, "visit_occurrence") %>%
-      inner_join(cohort, by = "person_id")
+    if (is.data.frame(cohort)) {
+      tmp <- tbl(con, "visit_occurrence") %>%
+        filter(person_id %in% !!cohort$person_id)
+    } else {
+      tmp <- tbl(con, "visit_occurrence") %>%
+        inner_join(cohort, by = "person_id")
+    }
   }
 
   if (exclude_aou_visits) {
