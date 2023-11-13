@@ -1,25 +1,28 @@
-
 #' Retrieve a cohort from ATLAS for use in AllofUs
-#'
+#' 
+#' This function retrieves a cohort definition from ATLAS and generates the cohort in All of Us.
+#' Observation periods are first generated for each subject using the {aou_observation_period} function.
+#' The resulting cohort is a dataframe with the cohort start and end dates for each subject.
 #' @param cohort_id The ID of the cohort to retrieve
+#' @param persistence_window The number of days to look back from the cohort start date for the observation period. Defaults to 548 days.
+#' @param end_date_buffer The number of days to add to the end date of the observation period. Defaults to 60 days.
+#' @param exclude_aou_visits Whether to exclude AllofUs-specific visit concepts from the observation period. Defaults to FALSE.
 #' @param base_url The URL of the ATLAS instance to use ending in /WebAPI. Defaults to demo atlas at https://atlas-demo.ohdsi.org
 #'
-#' @return a dataframe or list with the resulting cohort. see include_query
+#' @return A dataframe with the resulting cohort. The SQL query used to generate the cohort is stored as an attribute.
 #' @export
 #'
 #' @examples
 #'
 #' \dontrun{
-#'  con <- allofus::aou_connect()
-#'  cohort <- aou_atlas_cohort(1788061, baseUrl = "https://atlas-demo.ohdsi.org/WebAPI")
+#'  cohort <- aou_atlas_cohort(1788061, base_url = "https://atlas-demo.ohdsi.org/WebAPI")
 #' }
 #'
 aou_atlas_cohort <-function(cohort_id,
                             persistence_window = 548,
                             end_date_buffer = 60,
                             exclude_aou_visits = FALSE,
-                            base_url = "http://api.ohdsi.org/WebAPI",
-                            collect = FALSE){
+                            base_url = "http://atlas-demo.ohdsi.org/WebAPI"){
 
   message("Querying ATLAS...generating a cohort can take a few minutes.")
   # Credit to https://github.com/cmayer2/r4aou with a few tweaks
@@ -78,6 +81,8 @@ SELECT * FROM #target_cohort_table;
 
   # Execute SQL
   r <- aou_sql(sql_translated, collect = collect)
+
+  attr(r, "query") <- sql_translated
 
   return(r)
 

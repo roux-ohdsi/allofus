@@ -68,8 +68,6 @@ aou_connect <- function(CDR = getOption("aou.default.cdr"), ...) {
 #' getOption("aou.default.cdr"), which is Sys.getenv('WORKSPACE_CDR') if not specified otherwise
 #' (the "mainline" CDR). On the controlled tier, specify the "base" CDR with
 #' `CDR = paste0(Sys.getenv('WORKSPACE_CDR'), "_base")`.
-#' @param collect Do you want to retrieve the result of the SQL query into
-#' the local environment? Defaults to`TRUE`.
 #' @param ... All other arguments passed to `bigrquery::bq_table_download()`
 #'
 #' @return A dataframe (if `collect = TRUE`); otherwise, a `bq_table` object
@@ -158,7 +156,7 @@ aou_connect <- function(CDR = getOption("aou.default.cdr"), ...) {
 #'   N DESC
 #' ')
 #' }
-aou_sql <- function(query, CDR = getOption("aou.default.cdr"), collect = TRUE, ...) {
+aou_sql <- function(query, CDR = getOption("aou.default.cdr"), ...) {
   .cdr_objs <- ls(envir = .GlobalEnv, pattern = "^CDR$|^cdr$")
   if (length(.cdr_objs) == 0) {
     CDR <- CDR
@@ -169,9 +167,9 @@ aou_sql <- function(query, CDR = getOption("aou.default.cdr"), collect = TRUE, .
     Sys.getenv("GOOGLE_PROJECT"),
     query = glue::glue(query)
   )
-  if (collect) {
-    bigrquery::bq_table_download(q, ...)
-  }
+
+  bigrquery::bq_table_download(q, ...)
+
 }
 
 
@@ -210,7 +208,7 @@ aou_test_connect <- function(cache = TRUE, cache_dir = Sys.getenv("AOU_CACHE_DIR
 
   if ((!file.exists(file.path(cache_dir, "aou_test_data.sqlite"))) || overwrite) {
     download.file("https://github.com/OHDSI/Eunomia/raw/main/inst/sqlite/cdm.tar.xz",
-      destfile = file.path(cache_dir, "cdm.tar.xz")
+                  destfile = file.path(cache_dir, "cdm.tar.xz")
     )
     file <- xzfile(file.path(cache_dir, "cdm.tar.xz"), open = "rb")
     untar(file, exdir = cache_dir)
@@ -244,13 +242,13 @@ aou_test_connect <- function(cache = TRUE, cache_dir = Sys.getenv("AOU_CACHE_DIR
     googlesheets4::gs4_deauth()
 
     tbls <- googlesheets4::read_sheet("1XLVq84LLd0VZMioF2sPwyiaPw3EFp5c8o1CTWGPH-Yc",
-      sheet = "OMOP-Compatible Tables"
+                                      sheet = "OMOP-Compatible Tables"
     ) |>
       janitor::clean_names()
 
     # remove tables that are not in All of Us
     for (tb in DBI::dbListTables(con)[!DBI::dbListTables(con) %in%
-      unique(tbls$relevant_omop_table)]) {
+                                      unique(tbls$relevant_omop_table)]) {
       DBI::dbRemoveTable(con, tb)
       # message("Removed ", tb)
     }
@@ -258,11 +256,11 @@ aou_test_connect <- function(cache = TRUE, cache_dir = Sys.getenv("AOU_CACHE_DIR
     # check to see if each field name is present in the database table
     for (i in seq_len(nrow(tbls))) {
       if (!tbls$relevant_omop_table[i] %in%
-        DBI::dbListTables(con)) {
+          DBI::dbListTables(con)) {
         next
       }
       if (!tbls$field_name[i] %in%
-        DBI::dbListFields(con, tbls$relevant_omop_table[i])) {
+          DBI::dbListFields(con, tbls$relevant_omop_table[i])) {
         field_type <- tbls$field_type[i]
         if (field_type == "bigint") field_type <- "integer"
         # add field to table with the correct type
