@@ -70,12 +70,12 @@ aou_observation_period <- function(cohort = NULL,
     # get the minimum and maximums leftover
     group_by(person_id, obs_period) %>%
     summarize(
-      observation_start_date = min(visit_start_date),
-      observation_end_date = max(visit_end_date), .groups = "drop"
+      observation_period_start_date = min(visit_start_date),
+      observation_period_end_date = max(visit_end_date), .groups = "drop"
     ) %>%
     group_by(person_id) %>%
     # pad the end date
-    mutate(observation_end_date = date_add(observation_end_date, sql(paste0("INTERVAL ", end_date_buffer, " day")))) %>%
+    mutate(observation_end_date = date_add(observation_period_end_date, sql(paste0("INTERVAL ", end_date_buffer, " day")))) %>%
     dbplyr::window_order(person_id, obs_period)
 
   # collect if desired.

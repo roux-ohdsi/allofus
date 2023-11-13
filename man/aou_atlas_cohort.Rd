@@ -9,7 +9,8 @@ aou_atlas_cohort(
   persistence_window = 548,
   end_date_buffer = 60,
   exclude_aou_visits = FALSE,
-  base_url = "http://api.ohdsi.org/WebAPI"
+  base_url = "http://api.ohdsi.org/WebAPI",
+  collect = FALSE
 )
 }
 \arguments{

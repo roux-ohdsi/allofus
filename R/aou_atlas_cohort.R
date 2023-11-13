@@ -18,7 +18,8 @@ aou_atlas_cohort <-function(cohort_id,
                             persistence_window = 548,
                             end_date_buffer = 60,
                             exclude_aou_visits = FALSE,
-                            base_url = "http://api.ohdsi.org/WebAPI"){
+                            base_url = "http://api.ohdsi.org/WebAPI",
+                            collect = FALSE){
 
   message("Querying ATLAS...generating a cohort can take a few minutes.")
   # Credit to https://github.com/cmayer2/r4aou with a few tweaks
@@ -43,57 +44,14 @@ aou_atlas_cohort <-function(cohort_id,
                           dbplyr::sql_render(
                             aou_observation_period(persistence_window = persistence_window,
                                                    end_date_buffer = end_date_buffer,
-                                                   exclude_aou_visits = exclude_aou_visits)
+                                                   exclude_aou_visits = exclude_aou_visits,
+                                                   collect = FALSE)
                           ),
                           "
                           );
                           ")
   })
-  #   obs_period_sql <- "
-  # CREATE TEMP TABLE #observation_period2 AS (
-  #     SELECT
-  #         person_id,
-  #         observation_start_date as observation_period_start_date,
-  #         date_add(observation_end_date, interval 60 day) as observation_period_end_date
-  #     FROM (
-  #         SELECT
-  #             person_id,
-  #             obs_period,
-  #             min(visit_start_date) as observation_start_date,
-  #             max(visit_end_date) as observation_end_date
-  #         FROM (
-  #             SELECT
-  #                 person_id,
-  #                 visit_start_date,
-  #                 visit_end_date,
-  #                 last_end_date,
-  #                 days_between_visits,
-  #                 if(obs_period is null, 1.0, obs_period + 1.0) as obs_period
-  #             FROM (
-  #                 SELECT
-  #                     *,
-  #                     sum(if(days_between_visits > 548.0, 1.0, 0.0)) over (partition by person_id order by person_id, visit_start_date, visit_end_date rows unbounded preceding) as obs_period
-  #                 FROM (
-  #                     SELECT
-  #                         *,
-  #                         date_diff(visit_start_date, last_end_date, day) as days_between_visits
-  #                     FROM (
-  #                         SELECT DISTINCT *
-  #                         FROM (
-  #                             SELECT
-  #                                 person_id,
-  #                                 visit_start_date,
-  #                                 visit_end_date
-  #                             FROM {cdr}.visit_occurrence
-  #                         )
-  #                     )
-  #                 )
-  #             )
-  #         )
-  #         GROUP BY 1, 2
-  #     )
-  # );
-  # "
+  obs_period_sql <- gsub("`visit_occurrence`", "`{cdr}.visit_occurrence`", obs_period_sql)
 
   # Create target cohort table
   target_cohort_sql <- "
@@ -119,7 +77,7 @@ SELECT * FROM #target_cohort_table;
   sql_translated <- gsub("CREATE TABLE", "CREATE TEMP TABLE", sql_translated)
 
   # Execute SQL
-  r <- aou_sql(sql_translated)
+  r <- aou_sql(sql_translated, collect = collect)
 
   return(r)
 

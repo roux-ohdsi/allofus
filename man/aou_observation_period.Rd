@@ -5,7 +5,7 @@
 \title{Generate an observation period table based on OMOP Conventions}
 \usage{
 aou_observation_period(
-  cohort,
+  cohort = NULL,
   persistence_window = 548,
   end_date_buffer = 60,
   exclude_aou_visits = FALSE,
