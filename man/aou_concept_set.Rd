@@ -54,8 +54,8 @@ Get occurrences of a concept set from AoU for a given cohort
 aspirin_users <- aou_concept_set(concepts = 1191, concept_set_name = "aspirin", domains = "drug")
 
 # starting with person table to create a cohort
-people <- tbl(con, "person") |>
-  filter(person_id < 2000000) |>
+people <- tbl(con, "person") \%>\%
+  filter(person_id < 2000000) \%>\%
   mutate(
     start = as.Date("2021-01-01"),
     end = as.Date("2023-12-31")

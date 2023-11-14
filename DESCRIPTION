@@ -25,7 +25,8 @@ Suggests:
     DBI,
     knitr,
     rmarkdown,
-    testthat (>= 3.0.0)
+    testthat (>= 3.0.0),
+    ROhdsiWebApi
 RoxygenNote: 7.2.3
 URL: https://roux-ohdsi.github.io/allofus/, https://github.com/roux-ohdsi/allofus
 BugReports: https://github.com/roux-ohdsi/allofus/issues

@@ -15,12 +15,8 @@
 }
 
 .onAttach <- function(libname = find.package("allofus"), pkgname = "allofus"){
-  cat(
-    cli::col_green("
-  Thank you for using the {allofus} R package!
-  This package is currently in beta. Please report any issues to https://github.com/roux-ohdsi/allofus/issues.
-  The {allofus} R package is not affiliated with or endorsed by the AllofUs Research Program. \n\n"
-    )
-  )
+    cli::cli_inform(c("i" = "Thank you for using the {.pkg allofus} R package!",
+                    "This package is currently in beta. Please report any issues to {.url https://github.com/roux-ohdsi/allofus/issues}.",
+                    "The {.pkg allofus} R package is not affiliated with or endorsed by the AllofUs Research Program. \n\n"))
 }
 

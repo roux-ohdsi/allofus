@@ -34,16 +34,16 @@ con <- ohdsilab_connect(username = key_get("db_username"), password = key_get("d
 cdm_schema = getOption("schema.default.value")
 write_schema = getOption("write_schema.default.value")
 
-ppi_vocab <- tbl(con, inDatabaseSchema(cdm_schema, "concept")) |>
-  filter(vocabulary_id == "PPI") |>
+ppi_vocab <- tbl(con, inDatabaseSchema(cdm_schema, "concept")) %>%
+  filter(vocabulary_id == "PPI") %>%
   collect()
 
-ppi_vocab = ppi_vocab |>
+ppi_vocab = ppi_vocab %>%
   mutate(concept_code = tolower(concept_code))
 
 join_to_ppi <- function(.x){
-  full_join(.x, ppi_vocab, join_by(`Item Concept` == concept_code)) |>
-    filter(`Field Type` != "descriptive") |>
+  full_join(.x, ppi_vocab, join_by(`Item Concept` == concept_code)) %>%
+    filter(`Field Type` != "descriptive") %>%
     select(concept_code = `Item Concept`, concept_id, concept_name,  concept_class_id,
            form_name = `Form Name`, field_type = `Field Type`, field_label = `Field Label`,
            choices = contains("Choices"), standard_concept, valid_start_date, valid_end_date)
@@ -84,11 +84,11 @@ form_names <- data.frame(form_name = c("covid19_participant_experience_cope_surv
                                   "https://www.researchallofus.org/wp-content/themes/research-hub-wordpress-theme/media/2019/02/Health_Care_Access.pdf"
                          ))
 
-aou_codebook_w_health_history = bind_rows(joined) |>
-  filter(concept_class_id == "Question") |>
-  left_join(form_names) |>
-  select(-form_name) |>
-  rename(form_name = new_name) |>
+aou_codebook_w_health_history = bind_rows(joined) %>%
+  filter(concept_class_id == "Question") %>%
+  left_join(form_names) %>%
+  select(-form_name) %>%
+  rename(form_name = new_name) %>%
   mutate(concept_code = ifelse(concept_code == "circulatorycondition_otherheartorbloodcondition_ye",
                                "circulatorycondition_otherheartorbloodcondition_yes", concept_code))
 
@@ -201,7 +201,7 @@ all_overall_concept_id <- question_relationships %>%
              by = join_by(concept_id_question == concept_id_1), suffix = c("_x", "_y")) %>%
   filter(relationship_id == "Has PPI parent code") %>%
   select(-contains("valid"), -relationship_id) %>%
-  rename(concept_id_parent = concept_id_2) |>
+  rename(concept_id_parent = concept_id_2) %>%
   left_join(concepts, by = join_by(concept_id_parent == concept_id)) %>%
   rename(concept_name_parent = concept_name, concept_class_id_parent = concept_class_id) %>%
   left_join(concepts, by = join_by(concept_id_question == concept_id), suffix = c("", "_question")) %>%
@@ -252,7 +252,7 @@ conditions_table <- conditions_table %>%
 # if there is no concept_id_parent for which the concept_class_id_parent == "Answer",
 # then they didn't ask it about the whole family in the first set of surveys
 ## these are the ones that don't have a parent question
-health_history_codebook <- conditions_table %>%
+aou_health_history <- conditions_table %>%
   left_join(all_overall_concept_id,
                       by = join_by(concept_id_specific == concept_id_answer)) %>%
   distinct(question, relative, condition, category, concept_code, concept_id_specific,
@@ -264,4 +264,4 @@ health_history_codebook <- conditions_table %>%
   select(-c(concept_id, concept_name, concept_class_id, field_type, field_label,
             choices, standard_concept, valid_start_date, valid_end_date, link))
 
-usethis::use_data(health_history_codebook, overwrite = TRUE)
+usethis::use_data(aou_health_history, overwrite = TRUE)

@@ -10,7 +10,7 @@ aou_survey(
   question_output = "text",
   clean_answers = TRUE,
   con = getOption("aou.default.con"),
-  collect = TRUE
+  collect = FALSE
 )
 }
 \arguments{
@@ -54,9 +54,9 @@ skip response if the question was skipped, and NA if the respondent did not answ
 \examples{
 \dontrun{
 con <- aou_connect()
-cohort <- tbl(con, "person") \%>\%
-  filter(person_id > 5000000) \%>\%
-  select(person_id, year_of_birth, gender_concept_id)
+cohort <- dplyr::tbl(con, "person") \%>\%
+  dplyr::filter(person_id > 5000000) \%>\%
+  dplyr::select(person_id, year_of_birth, gender_concept_id)
 
 aou_survey(
   cohort,

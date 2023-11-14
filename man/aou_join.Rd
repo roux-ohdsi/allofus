@@ -50,7 +50,7 @@ the \code{by} argument which will result in a SQL error.
 \dontrun{
 allofus::aou_connect()
 options(aou.default.con = con)
-obs_tbl |>
+obs_tbl \%>\%
   aou_join("person", type = "left", by = "person_id")
 }
 }

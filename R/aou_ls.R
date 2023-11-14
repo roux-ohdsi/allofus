@@ -22,7 +22,7 @@ aou_ls_workspace <- function(pattern = "", silent = FALSE, ...) {
     files <- files[!grepl("*.ipynb", files)]
   }
   if (length(files) == 0) {
-    cat(cli::col_red("No files found with that pattern."))
+    cli::cli_inform(c("!" = "No files found with that pattern."))
   } else {
     if (!silent) {
       for (i in seq_along(files)) {
@@ -69,7 +69,7 @@ aou_ls_bucket <- function(pattern = "", silent = FALSE, recursive = TRUE, bucket
   files <- gsub(".*/data/", "", files)
 
   if (length(files) == 0) {
-    cat(cli::col_red("No files found with that pattern.\n"))
+    cli::cli_inform(c("!" = "No files found with that pattern."))
   } else {
     if (!silent) {
       for (i in seq_along(files)) {
@@ -115,17 +115,17 @@ aou_bucket_to_workspace <- function(file, dir = "", bucket = getOption("aou.defa
 
   for (i in seq_along(file)) {
     if (!(file[i] %in% bucket_files)) {
-      cat(cli::col_red("Oops! ", file[i], " not found in bucket\n"))
+      cli::cli_inform(c("!" = "Oops! ", file[i], " not found in bucket."))
       missing_files <- append(missing_files, file[i])
     } else {
       system(paste0("gsutil cp ", bucket, "/", file[i], " ."), intern = TRUE)
-      cat(cli::col_green("Retrieved ", file[i], " from bucket\n"))
+      cli::cli_inform(c("v" = "Retrieved ", file[i], " from bucket."))
     }
   }
 
   if (length(missing_files) > 0) {
     missing <- paste0(unlist(missing_files), collapse = ", ")
-    stop(paste0(missing, " not found in bucket\n"))
+    cli::cli_inform(c("!" = paste0(missing, " not found in bucket.")))
   }
 }
 
@@ -168,12 +168,12 @@ aou_workspace_to_bucket <- function(file, dir = "", recursive = TRUE,
   }
   # Check which files were copied
   if (length(read.csv("cp.log")$Destination) == 0) {
-    cat(cli::col_red("Oops! No files were copied\n"))
+    cli::cli_inform(c("!" = "Oops! No files were copied"))
   } else {
-    cat(cli::col_green(
-      "Saved to bucket:", "\n",
-      paste(gsub(paste0(my_bucket, "/"), "", read.csv("cp.log")$Destination), collapse = "\n")
-    ))
+    cli::cli_inform(c("v" =
+      "Saved to bucket:",
+      paste(gsub(paste0(my_bucket, "/"), "", read.csv("cp.log")$Destination), collapse = "\n"))
+    )
   }
   invisible(file.remove("cp.log"))
 }

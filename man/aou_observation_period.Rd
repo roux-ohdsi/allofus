@@ -35,10 +35,10 @@ Follows conventions described here: https://ohdsi.github.io/CommonDataModel/ehrO
 \examples{
 \dontrun{
 cohort <-
-  tbl(con, "cb_search_person") \%>\%
-  filter(has_ehr_data == 1) \%>\%
+  dplyr::tbl(con, "cb_search_person") \%>\%
+  dplyr::filter(has_ehr_data == 1) \%>\%
   head(100) \%>\%
-  select(person_id)
+  dplyr::select(person_id)
 
 observation_periods <- aou_observation_period(cohort,
   persistence_window = 548,

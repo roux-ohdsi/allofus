@@ -13,4 +13,28 @@ navbar:
   bg: black
   includes:
     in_header: pkgdown/extra.css
-
+reference:
+- title: Connection helpers
+- contents:
+  - aou_connect
+  - aou_sql
+  - aou_tables
+  - aou_session_info
+- title: Workspace helpers
+- contents:
+  - aou_ls_workspace
+  - aou_ls_bucket
+  - aou_workspace_to_bucket
+  - aou_bucket_to_workspace
+- title: Analysis helpers
+- contents:
+  - aou_atlas_cohort
+  - aou_concept_set
+  - aou_join
+  - aou_observation_period
+  - aou_survey
+- title: Data dictionaries
+- contents:
+  - aou_codebook
+  - aou_table_info
+  - aou_health_history

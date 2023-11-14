@@ -16,10 +16,10 @@
 #' @examples
 #' \dontrun{
 #' cohort <-
-#'   tbl(con, "cb_search_person") %>%
-#'   filter(has_ehr_data == 1) %>%
+#'   dplyr::tbl(con, "cb_search_person") %>%
+#'   dplyr::filter(has_ehr_data == 1) %>%
 #'   head(100) %>%
-#'   select(person_id)
+#'   dplyr::select(person_id)
 #'
 #' observation_periods <- aou_observation_period(cohort,
 #'   persistence_window = 548,
@@ -35,52 +35,52 @@ aou_observation_period <- function(cohort = NULL,
                                    collect = FALSE) {
 
   if (is.null(cohort)) {
-    warning("No cohort provided. Creating observation periods for entire All of Us cohort.")
-    tmp <- tbl(con, "visit_occurrence")
+    cli::cli_warn(c("No cohort provided.", ">" = "Creating observation periods for entire All of Us cohort."))
+    tmp <- dplyr::tbl(con, "visit_occurrence")
   } else {
     if (is.data.frame(cohort)) {
-      tmp <- tbl(con, "visit_occurrence") %>%
-        filter(person_id %in% !!cohort$person_id)
+      tmp <- dplyr::tbl(con, "visit_occurrence") %>%
+        dplyr::filter(person_id %in% !!cohort$person_id)
     } else {
-      tmp <- tbl(con, "visit_occurrence") %>%
-        inner_join(cohort, by = "person_id")
+      tmp <- dplyr::tbl(con, "visit_occurrence") %>%
+        dplyr::inner_join(cohort, by = "person_id")
     }
   }
 
   if (exclude_aou_visits) {
     tmp <- tmp %>%
-      filter(visit_type_concept_id != 44818519)
+      dplyr::filter(visit_type_concept_id != 44818519)
   }
 
   obs_period <-
     tmp %>%
-    select(person_id, visit_start_date, visit_end_date) %>%
-    distinct() %>%
-    group_by(person_id) %>%
+    dplyr::select(person_id, visit_start_date, visit_end_date) %>%
+    dplyr::distinct() %>%
+    dplyr::group_by(person_id) %>%
     # use window order instead of arrange. because arrange == ORDER BY which is executed last in sql
     dbplyr::window_order(person_id, visit_start_date, visit_end_date) %>%
     # get the last visit end date within each person
-    mutate(last_end_date = lag(visit_end_date)) %>%
+    dplyr::mutate(last_end_date = lag(visit_end_date)) %>%
     # calc days in between visits.
-    mutate(days_between_visits = date_diff(visit_start_date, last_end_date, sql("day"))) %>%
+    dplyr::mutate(days_between_visits = date_diff(visit_start_date, last_end_date, dplyr::sql("day"))) %>%
     # iterate over the observation period if days between visits is more than the persistence window
-    mutate(obs_period = cumsum(ifelse(days_between_visits > persistence_window, 1, 0))) %>%
+    dplyr::mutate(obs_period = cumsum(ifelse(days_between_visits > persistence_window, 1, 0))) %>%
     # the first observation per person is NA , but can just be changed to 1
-    mutate(obs_period = ifelse(is.na(obs_period), 1, obs_period + 1)) %>%
+    dplyr::mutate(obs_period = ifelse(is.na(obs_period), 1, obs_period + 1)) %>%
     # get the minimum and maximums leftover
-    group_by(person_id, obs_period) %>%
-    summarize(
+    dplyr::group_by(person_id, obs_period) %>%
+    dplyr::summarize(
       observation_period_start_date = min(visit_start_date),
       observation_period_end_date = max(visit_end_date), .groups = "drop"
     ) %>%
-    group_by(person_id) %>%
+    dplyr::group_by(person_id) %>%
     # pad the end date
-    mutate(observation_end_date = date_add(observation_period_end_date, sql(paste0("INTERVAL ", end_date_buffer, " day")))) %>%
+    dplyr::mutate(observation_end_date = date_add(observation_period_end_date, dplyr::sql(paste0("INTERVAL ", end_date_buffer, " day")))) %>%
     dbplyr::window_order(person_id, obs_period)
 
   # collect if desired.
   if (isTRUE(collect)) {
-    obs_period <- collect(obs_period)
+    obs_period <- dplyr::collect(obs_period)
   }
 
   return(obs_period)

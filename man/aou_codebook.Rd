@@ -33,7 +33,7 @@ match between the codebook and the Athena PPI Vocabulary. It can also be accesse
 }
 \details{
 Questions relating to specific conditions are not included as part of this table.
-They are instead available in the `health_history_codebook` table.
+They are instead available in the `aou_health_history` table.
 \itemize{
    \item{\href{https://docs.google.com/spreadsheets/d/1Ey8MScRYZ9QyS4izVYScISLMb62QEhSM-ErbG27dNtw/edit#gid=1832128489}{AllofUs codebook}}
    \item{\href{https://github.com/roux-ohdsi/allofus/blob/main/data-raw/pkg_data.R}{Code to generate table}}

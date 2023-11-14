@@ -22,8 +22,8 @@
 #' aspirin_users <- aou_concept_set(concepts = 1191, concept_set_name = "aspirin", domains = "drug")
 #'
 #' # starting with person table to create a cohort
-#' people <- tbl(con, "person") |>
-#'   filter(person_id < 2000000) |>
+#' people <- tbl(con, "person") %>%
+#'   filter(person_id < 2000000) %>%
 #'   mutate(
 #'     start = as.Date("2021-01-01"),
 #'     end = as.Date("2023-12-31")
@@ -53,23 +53,25 @@ aou_concept_set <- function(cohort = NULL,
                             con = getOption("aou.default.con"),
                             collect = FALSE, ...) {
 
-  # keep track of whether we are forced to collect 
-  # due to start and end dates provided with cohort as dataframe                            
+  # keep track of whether we are forced to collect
+  # due to start and end dates provided with cohort as dataframe
   must_collect <- FALSE
 
   if (is.null(cohort)) {
-    warning("No cohort provided. Pulling concepts for entire All of Us cohort.")
+    cli::cli_warn(c("No cohort provided.", ">" = "Pulling concepts for entire All of Us cohort."))
     if (!is.null(start_date) || !is.null(end_date)) {
-      warning("Ignoring start and end date; no cohort with those columns provided")
+      cli::cli_warn(c("No cohort provided.",
+                      ">" = "Ignoring start and end date."))
     }
     tmp <- dplyr::tbl(con, "person")
   } else {
     if (is.data.frame(cohort)) {
-      tmp <- dplyr::tbl(con, "person") |>
+      tmp <- dplyr::tbl(con, "person") %>%
         dplyr::filter(person_id %in% !!cohort$person_id)
       if (!collect && (!is.null(start_date) || !is.null(end_date))) {
         # can't have these both because we can't join (on the dates) without collecting
-        warning("Cannot have `collect = FALSE` and also provide start and end dates. Changing to `collect = TRUE`.")
+        cli::cli_warn(c("Cannot have {.code collect = FALSE} and also provide start and end dates.",
+                        ">" = "Changing to {.code collect = TRUE}."))
         collect <- TRUE
         must_collect <- TRUE
       }
@@ -78,10 +80,13 @@ aou_concept_set <- function(cohort = NULL,
     }
   }
 
-  if (is.null(con)) stop("Provide `con` as an argument or default with `options(aou.default.con = ...)`")
+  if (is.null(con)) cli::cli_abort(c("No connection available.",
+                                     "i" = "Provide a connection automatically by running {.code aou_connect()} before this function.",
+                                     "i" = "You can also provide {.code con} as an argument or default with {.code options(aou.default.con = ...)}."))
+
   if (!all(domains %in% c("condition", "measurement", "observation", "procedure", "drug", "device", "visit"))) {
-    stop(
-      '`domains` can only include "condition", "measurement", "observation", "procedure", "drug", "device", "visit"'
+    cli::cli_abort(
+      '{.code domains} can only include "condition", "measurement", "observation", "procedure", "drug", "device", "visit".'
     )
   }
 
@@ -115,17 +120,17 @@ aou_concept_set <- function(cohort = NULL,
       "observation_concept_id", "procedure_concept_id",
       "drug_concept_id", "device_concept_id", "visit_concept_id"
     )
-  ) |>
-    dplyr::filter(domain %in% domains) |>
-    purrr::pmap(get_domain_concepts, cohort = tmp, concepts = concepts, start_date = start_date, end_date = end_date) |>
-    purrr::reduce(dplyr::union_all) |>
-    dplyr::distinct() |>
+  ) %>%
+    dplyr::filter(domain %in% domains) %>%
+    purrr::pmap(get_domain_concepts, cohort = tmp, concepts = concepts, start_date = start_date, end_date = end_date) %>%
+    purrr::reduce(dplyr::union_all) %>%
+    dplyr::distinct() %>%
     dplyr::select(person_id, concept_id, concept_name, concept_date)
 
 
   if (must_collect) {
     # collect to restrict the concepts between the given start and end dates
-    all_concepts <- dplyr::collect(all_concepts) |>
+    all_concepts <- dplyr::collect(all_concepts) %>%
       dplyr::right_join(cohort, by = join_by(person_id, between(concept_date, y$start_date, y$end_date)))
     cohort_w_concepts <- all_concepts
   } else {
@@ -143,12 +148,12 @@ aou_concept_set <- function(cohort = NULL,
     }
   }
 
-  counted <- cohort_w_concepts |>
-    dplyr::group_by(person_id, .data[[start_date]], .data[[end_date]]) |>
+  counted <- cohort_w_concepts %>%
+    dplyr::group_by(person_id, .data[[start_date]], .data[[end_date]]) %>%
     dplyr::summarise(n = sum(ifelse(is.na(concept_id), 0, 1)), .groups = "drop")
 
   if (output == "count") {
-    counted <- counted |>
+    counted <- counted %>%
       dplyr::rename(!!concept_set_name := n)
 
     if (collect && !must_collect) {
@@ -158,10 +163,10 @@ aou_concept_set <- function(cohort = NULL,
     }
   }
 
-  if (is.null(min_n) || !is.numeric(min_n)) stop("Provide a number to `min_n` to restrict to observations with at least that number of rows")
+  if (is.null(min_n) || !is.numeric(min_n)) cli::cli_abort("Provide a number to {.code min_n} to restrict to observations with at least that number of rows.")
 
-  res <- counted |>
-    dplyr::mutate(!!concept_set_name := ifelse(n >= min_n, 1, 0)) |>
+  res <- counted %>%
+    dplyr::mutate(!!concept_set_name := ifelse(n >= min_n, 1, 0)) %>%
     dplyr::select(-n)
 
   if (collect && !must_collect) {
@@ -181,17 +186,18 @@ aou_concept_set <- function(cohort = NULL,
 #' @param concept_id_column The name of the column containing the concept IDs
 #' @param ... Additional arguments
 #'
+#' @noRd
 
 get_domain_concepts <- function(cohort, concepts, start_date, end_date, tbl_name, date_column, concept_id_column, ...) {
-  domain_tbl <- tbl(con, tbl_name) |>
+  domain_tbl <- tbl(con, tbl_name) %>%
     dplyr::select(person_id, concept_date = .data[[date_column]], concept_id = .data[[concept_id_column]])
 
-  cohort |>
-    dplyr::left_join(domain_tbl, by = "person_id", suffix = c(tbl_name, "")) |>
-    dplyr::filter(concept_id %in% concepts) |>
-    dplyr::filter(dplyr::between(concept_date, .data[[start_date]], .data[[end_date]])) |>
+  cohort %>%
+    dplyr::left_join(domain_tbl, by = "person_id", suffix = c(tbl_name, "")) %>%
+    dplyr::filter(concept_id %in% concepts) %>%
+    dplyr::filter(dplyr::between(concept_date, .data[[start_date]], .data[[end_date]])) %>%
     dplyr::left_join(dplyr::select(dplyr::tbl(con, "concept"), concept_id, concept_name, domain_id),
       by = "concept_id"
-    ) |>
+    ) %>%
     dplyr::select(person_id, concept_date, concept_id, concept_name, concept_domain = domain_id)
 }

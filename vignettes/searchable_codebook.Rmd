@@ -29,7 +29,7 @@ max-width: 94vw !important;
 justify-content: space-evenly;
 }
 </style>
-```{r setup, echo = FALSE}
+```{r setup, include = FALSE}
 library(allofus)
 ```
 
@@ -97,7 +97,7 @@ NestedData <- function(dat, children){
         stringsAsFactors = FALSE)
 }
 
-nested_data <- allofus::health_history_codebook %>% 
+nested_data <- allofus::aou_health_history %>% 
   select(-c(concept_id_question, form_name)) %>% 
   distinct() %>% 
   rename(concept_id = concept_id_specific) %>%

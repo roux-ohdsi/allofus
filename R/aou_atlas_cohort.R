@@ -30,7 +30,14 @@ aou_atlas_cohort <- function(cohort_id,
                             end_date_buffer = 60,
                             exclude_aou_visits = FALSE){
 
-  message("Querying ATLAS...generating a cohort can take a few minutes.")
+  if (!requireNamespace("ROhdsiWebApi", quietly = TRUE)) {
+    cli::cli_abort(
+      c("Package {.pkg ROhdsiWebApi} must be installed to use this function.",
+      "i" = "Use {.code remotes::install_github(\"ohdsi/ROhdsiWebApi\")} to install."
+    ))
+  }
+
+  cli::cli_inform(c("i" = "Querying ATLAS...generating a cohort can take a few minutes."))
   # Credit to https://github.com/cmayer2/r4aou with a few tweaks
 
   cohort_definition <- ROhdsiWebApi:::getCohortDefinition(cohort_id, base_url)

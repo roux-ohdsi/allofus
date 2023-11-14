@@ -4,12 +4,12 @@
 \alias{aou_tables}
 \title{List tables in the AoU Database}
 \usage{
-aou_tables(con = getOption("aou.default.con"), remove_NA = TRUE)
+aou_tables(con = getOption("aou.default.con"), remove_na = TRUE)
 }
 \arguments{
 \item{con}{connection to the database}
 
-\item{remove_NA}{whether to remove tables that are not in the data dictionary}
+\item{remove_na}{whether to remove tables that are not in the data dictionary}
 }
 \value{
 a dataframe with the table names and the number of columns

@@ -28,7 +28,7 @@
 #' \dontrun{
 #' allofus::aou_connect()
 #' options(aou.default.con = con)
-#' obs_tbl |>
+#' obs_tbl %>%
 #'   aou_join("person", type = "left", by = "person_id")
 #' }
 aou_join <- function(data,
@@ -37,29 +37,27 @@ aou_join <- function(data,
                      by,
                      suffix = c("_x", "_y"),
                      con = getOption("aou.default.con"),
-                     # schema = NULL,
                      x_as = NULL,
                      y_as = NULL,
                      ...) {
-  if (is.null(con)) stop("Have you set up the connection? Provide `con` as an argument or default with `options(aou.default.con = ...)`")
+  if (is.null(con)) cli::cli_abort(c("No connection available.",
+                                     "i" = "Provide a connection automatically by running {.code aou_connect()} before this function.",
+                                     "i" = "You can also provide {.code con} as an argument or default with {.code options(aou.default.con = ...)}."))
 
   y_table <- tbl(con, table)
   shared_columns <- intersect(colnames(data), colnames(y_table))
 
-  # stop("Provide `schema` as an argument or default with `options(schema.default.value = ...)`")
-
   # convert to the new join type
   by <- dplyr:::as_join_by(by)
   if (length(shared_columns) > 0 && !all(sort(shared_columns) %in% sort(c(by$x, by$y))) && all(suffix == c("_x", "_y"))) {
-    w1 <- "There are shared column names not specified in the `by` argument."
-    w2 <- "These column names now include `_x` and `_y`."
-    w3 <- "You can change this suffix using the `suffix` argument but it cannot contain periods (`.`)."
-    w4 <- "Consider specifing all shared columns in the `by` argument."
-    w5 <- "Or if these additional shared columns are `NA`, remove them prior to joining."
-    warning(paste(w1, w2, w3, w4, w5, sep = "\n  "))
+    cli::cli_warn(c("There are shared column names not specified in the {.code by} argument.",
+                    ">" = "These column names now end in '_x' and '_y'.",
+                    "i" = "You can change these suffixes using the {.code suffix} argument but it cannot contain periods (`.`).",
+                    ">" = "Consider specifing all shared columns in the {.code by} argument.",
+                    ">" = "Or if these additional shared columns are `NA`, remove them prior to joining."))
   }
 
-  get(paste(type, "join", sep = "_"))(data, y_table,
+  get(paste(paste0("dplyr::", type), "join", sep = "_"))(data, y_table,
     x_as = if (missing(x_as)) {
       paste(sample(letters, 10, TRUE), collapse = "")
     } else {

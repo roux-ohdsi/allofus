@@ -6,7 +6,7 @@
 #' match between the codebook and the Athena PPI Vocabulary. It can also be accessed in R using `allofus::aou_codebook`.
 #'
 #' Questions relating to specific conditions are not included as part of this table.
-#' They are instead available in the `health_history_codebook` table.
+#' They are instead available in the `aou_health_history` table.
 #' \itemize{
 #'    \item{\href{https://docs.google.com/spreadsheets/d/1Ey8MScRYZ9QyS4izVYScISLMb62QEhSM-ErbG27dNtw/edit#gid=1832128489}{AllofUs codebook}}
 #'    \item{\href{https://github.com/roux-ohdsi/allofus/blob/main/data-raw/pkg_data.R}{Code to generate table}}
@@ -36,12 +36,12 @@
 #' This table consists of rows of the codebook pertaining to the health history questions. In early All of Us surveys,
 #' these questions were asked separately about the respondent and the respondent's family. In the current version,
 #' the questions are asked on the same survey. The nested nature of these questions makes them challenging to deal with.
-#' It can also be accessed in R using `allofus::health_history_codebook`.
+#' It can also be accessed in R using `allofus::aou_health_history`.
 #' \itemize{
 #'    \item{\href{https://github.com/roux-ohdsi/allofus/blob/main/data-raw/pkg_data.R}{Code to generate table}}
 #' }
 #'
-#' @format `health_history_codebook`
+#' @format `aou_health_history`
 #' A data frame with 1685  rows and 9 columns:
 #' \describe{
 #'   \item{question}{chr; Question asked on survey}
@@ -54,17 +54,18 @@
 #'   \item{concept_id_question}{int; Concept id for the overarching question}
 #'   \item{form_name}{chr; Survey name}
 #' }
-"health_history_codebook"
+"aou_health_history"
 
 #' Table of tables, columns, and use for researchers from the CT data dictionary
+#'
+#' A data frame containing tables and columns in the aou OMOP CDM created from
+#' https://docs.google.com/spreadsheets/d/1XLVq84LLd0VZMioF2sPwyiaPw3EFp5c8o1CTWGPH-Yc/edit#gid=1815943286.
+#' Note that the column 'value_source_value' has been manually added as it is missing from the data dictionary.
 #' \itemize{
 #'    \item{\href{https://github.com/roux-ohdsi/allofus/blob/main/data-raw/more_data.R}{Code to generate table}}
 #' }
 #'
 #' @format `aou_table_info`
-#' A data frame containing tables and columns in the aou OMOP CDM created from
-#' https://docs.google.com/spreadsheets/d/1XLVq84LLd0VZMioF2sPwyiaPw3EFp5c8o1CTWGPH-Yc/edit#gid=1815943286.
-#' Note that the column 'value_source_value' has been manually added as it is missing from the data dictionary.
 #' \describe{
 #'   \item{table_name}{chr; name of the table}
 #'   \item{columns}{chr; columns in the table}
