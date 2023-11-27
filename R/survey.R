@@ -310,7 +310,7 @@ aou_survey <- function(cohort,
         ) %>%
         dplyr::group_by(person_id, type) %>%
         dbplyr::window_order(observation_date) %>%
-        dbplyr::fill(-c(person_id, observation_date, type), .direction = "down") %>%
+        tidyr::fill(-c(person_id, observation_date, type), .direction = "down") %>%
         dplyr::slice_max(order_by = observation_date, n = 1, with_ties = FALSE) %>%
         dplyr::ungroup()
 
