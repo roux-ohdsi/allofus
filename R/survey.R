@@ -111,7 +111,7 @@ aou_survey <- function(cohort,
   aou_health_history_long <- allofus::aou_health_history %>%
     dplyr::filter(relative == "self") %>%
     dplyr::rename(concept_code_overall = concept_code) %>%
-    dplyr::pivot_longer(
+    tidyr::pivot_longer(
       cols = c(
         concept_id_rx_meds, concept_id_on_txt, concept_id_age_diagnosis,
         concept_code_rx_meds, concept_code_on_txt, concept_code_age_diagnosis
@@ -304,7 +304,7 @@ aou_survey <- function(cohort,
         dplyr::filter(observation_source_concept_id %in% !!c(osci_overall, osci_specific)) %>%
         dplyr::select(person_id, observation_source_concept_id, value_source_concept_id, value_source_value, observation_date) %>%
         dplyr::mutate(type = case_when(observation_source_concept_id %in% osci_specific ~ "Specific", TRUE ~ "Overall")) %>%
-        dplyr::pivot_wider(
+        tidyr::pivot_wider(
           id_cols = c(person_id, observation_date, type), names_from = value_source_value,
           values_from = value_source_concept_id
         ) %>%
@@ -393,7 +393,7 @@ aou_survey <- function(cohort,
       dplyr::summarise(value_source_value = STRING_AGG(sql("value_source_value order by value_source_value")),
                 .groups = "drop") %>%
       dplyr::select(dplyr::all_of(c("person_id", !!q, "value_source_value", "observation_date"))) %>%
-      dplyr::pivot_wider(names_from = !!q, values_from = c(value_source_value, observation_date), names_prefix = pref)
+      tidyr::pivot_wider(names_from = !!q, values_from = c(value_source_value, observation_date), names_prefix = pref)
 
     if (length(question_output_arg) == 1 && question_output_arg[1] %in% c("text", "concept_id")) {
       wide <- wide %>%
