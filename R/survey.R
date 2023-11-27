@@ -242,7 +242,7 @@ aou_survey <- function(cohort,
     concept_lookup <- dplyr::bind_rows(regular_survey_concept_codes, health_survey_concept_codes) %>%
       dplyr::full_join(names_for_lookup) %>%
       dplyr::group_by(concept_id) %>%
-      dplyr::fill(everything(), .direction = "up") %>%
+      tidyr::fill(everything(), .direction = "up") %>%
       dplyr::slice(1) %>%
       dplyr::ungroup()
   })
@@ -310,7 +310,7 @@ aou_survey <- function(cohort,
         ) %>%
         dplyr::group_by(person_id, type) %>%
         dbplyr::window_order(observation_date) %>%
-        dplyr::fill(-c(person_id, observation_date, type), .direction = "down") %>%
+        dbplyr::fill(-c(person_id, observation_date, type), .direction = "down") %>%
         dplyr::slice_max(order_by = observation_date, n = 1, with_ties = FALSE) %>%
         dplyr::ungroup()
 
