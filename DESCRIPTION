@@ -13,7 +13,6 @@ Encoding: UTF-8
 LazyData: true
 Imports: 
     cli,
-    dplyr,
     tidyr,
     tibble,
     magrittr,
