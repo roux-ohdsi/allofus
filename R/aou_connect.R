@@ -23,6 +23,21 @@
 #' DBI::dbListTables(con)
 #' }
 aou_connect <- function(CDR = getOption("aou.default.cdr"), ...) {
+
+  if(packageVersion("dbplyr")=='2.4.0'){
+    stop('
+         dbplyr v2.4.0 is not compatible with the AllofUs database (bigquery).
+         Please install either dbplyr v2.3.4 or the development version of dbplyr.
+         # Install {pak}
+         install.packages("pak")
+         # Install dbplyr v2.3.4
+         pak::pkg_install("dbplyr@v2.3.4")
+         # Or install development version of dbplyr
+         pak::pkg_install("tidyverse/dbplyr")
+         # restart your R kernel')
+  }
+
+
   out <- tryCatch(
     {
       dataset <- strsplit(CDR, split = "\\.")[[1]]

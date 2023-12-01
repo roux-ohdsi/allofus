@@ -64,6 +64,20 @@ aou_survey <- function(cohort,
                        con = getOption("aou.default.con"),
                        collect = FALSE) {
 
+  if(packageVersion("dbplyr")<'2.3.0'){
+    stop('
+          Older versions of dbplyr are not supported by the aou_survey() function.
+          Please install either v2.3.4 or the development version of dbplyr.
+          note: v.2.4.0 is not compatible with the AllofUS Database
+          # Install {pak}
+          install.packages("pak")
+          # Install dbplyr v2.3.4
+          pak::pkg_install("dbplyr@v2.3.4")
+          # Or install development version of dbplyr
+          pak::pkg_install("tidyverse/dbplyr")
+          # restart your R kernel')
+  }
+
   if (is.null(con)) cli::cli_abort(c("No connection available.",
                                      "i" = "Provide a connection automatically by running {.code aou_connect()} before this function.",
                                      "i" = "You can also provide {.code con} as an argument or default with {.code options(aou.default.con = ...)}."))
