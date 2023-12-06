@@ -56,7 +56,7 @@ aou_atlas_cohort <- function(cohort_id,
   suppressWarnings({
     obs_period_sql <- paste("CREATE TEMP TABLE #observation_period2 AS (
 ", dbplyr::sql_render(
-  aou_observation_period(persistence_window = persistence_window,
+  allofus::aou_observation_period(persistence_window = persistence_window,
                          end_date_buffer = end_date_buffer,
                          exclude_aou_visits = exclude_aou_visits,
                          collect = FALSE)
@@ -91,7 +91,7 @@ SELECT * FROM #target_cohort_table;
   sql_translated <- gsub("CREATE TABLE", "CREATE TEMP TABLE", sql_translated)
 
   # Execute SQL
-  r <- aou_sql(sql_translated)
+  r <- allofus::aou_sql(sql_translated)
 
   attr(r, "query") <- sql_translated
 

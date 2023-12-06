@@ -344,11 +344,11 @@ aou_survey <- function(cohort,
 
       obs %>%
         dplyr::mutate(condition = case_when(
-          if_any(-c(person_id, observation_date, type), ~ .x == !!specific_concept_id) ~ "Yes",
-          type == "Specific" & if_any(-c(person_id, observation_date, type), ~ !.x %in% c(903079, 903096, 903087)) ~ "No",
-          if_any(-c(person_id, observation_date, type), ~ .x == 903079) ~ pnta,
-          if_any(-c(person_id, observation_date, type), ~ .x == 903096) ~ sk,
-          if_any(-c(person_id, observation_date, type), ~ .x == 903087) ~ dk,
+          dplyr::if_any(-c(person_id, observation_date, type), ~ .x == !!specific_concept_id) ~ "Yes",
+          type == "Specific" & dplyr::if_any(-c(person_id, observation_date, type), ~ !.x %in% c(903079, 903096, 903087)) ~ "No",
+          dplyr::if_any(-c(person_id, observation_date, type), ~ .x == 903079) ~ pnta,
+          dplyr::if_any(-c(person_id, observation_date, type), ~ .x == 903096) ~ sk,
+          dplyr::if_any(-c(person_id, observation_date, type), ~ .x == 903087) ~ dk,
           TRUE ~ "No"
         )) %>%
         dplyr::select(person_id, type, condition, observation_date) %>%
