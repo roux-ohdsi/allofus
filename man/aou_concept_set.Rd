@@ -41,6 +41,8 @@ the number of matching concepts per person ("count"), or all info about the matc
 \item{con}{connection to the allofus SQL database. Defaults to getOption("aou.default.con"), which is set automatically if you use `aou_connect()`}
 
 \item{collect}{lgl; whether to collect from the database}
+
+\item{...}{further arguments passed along to}
 }
 \value{
 a dataframe if collect = TRUE; a remote tbl if not

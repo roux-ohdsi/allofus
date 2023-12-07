@@ -42,6 +42,7 @@ aou_ls_workspace <- function(pattern = "", silent = FALSE, ...) {
 #' @param pattern Regular expression, such as "*.csv" or a single file name e.g., "mydata.csv".
 #' Default will find all files apart from notebooks (.ipynb files).
 #' @param silent Logical; whether to print the names of files found.
+#' @param recursive Logical; whether to search subdirectories.
 #' @param bucket Bucket to retrieve file from. Defaults to `getOption("aou.default.bucket")`,
 #' which is `Sys.getenv('WORKSPACE_BUCKET')` unless specified otherwise.
 #' @param gsutil_args A string containing other arguments passed to `gsutil ls`.
@@ -172,7 +173,7 @@ aou_workspace_to_bucket <- function(file, dir = "", recursive = TRUE,
   } else {
     cli::cli_inform(c("v" =
       "Saved to bucket:",
-      paste(gsub(paste0(my_bucket, "/"), "", read.csv("cp.log")$Destination), collapse = "\n"))
+      paste(gsub(paste0(bucket, "/"), "", read.csv("cp.log")$Destination), collapse = "\n"))
     )
   }
   invisible(file.remove("cp.log"))

@@ -11,6 +11,8 @@
 #' references of the form "{CDR}" or "{cdr}" in the query. Defaults to
 #' getOption("aou.default.cdr"), which is Sys.getenv('WORKSPACE_CDR') if not specified otherwise
 #' (the "mainline" CDR). On the controlled tier, specify the "base" CDR with
+#' @param ... further arguments passed along to DBI::dbConnect
+#'
 #' `CDR = paste0(Sys.getenv('WORKSPACE_CDR'), "_base")`.
 #' @return A `BigQueryConnection` object. This object is also saved as getOption("aou.default.con").
 #' @export

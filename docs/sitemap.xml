@@ -16,13 +16,28 @@
     <loc>/articles/index.html</loc>
   </url>
   <url>
+    <loc>/articles/pkgdown_only/data-browser.html</loc>
+  </url>
+  <url>
+    <loc>/articles/pkgdown_only/searchable_codebook.html</loc>
+  </url>
+  <url>
     <loc>/articles/searchable_codebook.html</loc>
+  </url>
+  <url>
+    <loc>/articles/web_only/data-browser.html</loc>
+  </url>
+  <url>
+    <loc>/articles/web_only/searchable_codebook.html</loc>
   </url>
   <url>
     <loc>/authors.html</loc>
   </url>
   <url>
     <loc>/index.html</loc>
+  </url>
+  <url>
+    <loc>/reference/allofus-package.html</loc>
   </url>
   <url>
     <loc>/reference/aou_atlas_cohort.html</loc>

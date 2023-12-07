@@ -40,8 +40,8 @@ aou_atlas_cohort <- function(cohort_id,
   cli::cli_inform(c("i" = "Querying ATLAS...generating a cohort can take a few minutes."))
   # Credit to https://github.com/cmayer2/r4aou with a few tweaks
 
-  cohort_definition <- ROhdsiWebApi:::getCohortDefinition(cohort_id, base_url)
-  cohort_sql <- ROhdsiWebApi:::getCohortSql(cohort_definition, base_url)
+  cohort_definition <- ROhdsiWebApi::getCohortDefinition(cohort_id, base_url)
+  cohort_sql <- ROhdsiWebApi::getCohortSql(cohort_definition, base_url)
 
   # Modify SQL
   modified_sql <- gsub("@results_database_schema.", "", cohort_sql)

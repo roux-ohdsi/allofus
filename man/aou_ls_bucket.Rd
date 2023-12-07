@@ -18,6 +18,8 @@ Default will find all files apart from notebooks (.ipynb files).}
 
 \item{silent}{Logical; whether to print the names of files found.}
 
+\item{recursive}{Logical; whether to search subdirectories.}
+
 \item{bucket}{Bucket to retrieve file from. Defaults to `getOption("aou.default.bucket")`,
 which is `Sys.getenv('WORKSPACE_BUCKET')` unless specified otherwise.}
 

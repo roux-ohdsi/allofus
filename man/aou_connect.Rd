@@ -10,7 +10,10 @@ aou_connect(CDR = getOption("aou.default.cdr"), ...)
 \item{CDR}{The name of the "curated data repository" that will be used in any
 references of the form "{CDR}" or "{cdr}" in the query. Defaults to
 getOption("aou.default.cdr"), which is Sys.getenv('WORKSPACE_CDR') if not specified otherwise
-(the "mainline" CDR). On the controlled tier, specify the "base" CDR with
+(the "mainline" CDR). On the controlled tier, specify the "base" CDR with}
+
+\item{...}{further arguments passed along to DBI::dbConnect
+
 `CDR = paste0(Sys.getenv('WORKSPACE_CDR'), "_base")`.}
 }
 \value{

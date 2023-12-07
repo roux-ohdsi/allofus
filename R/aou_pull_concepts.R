@@ -12,6 +12,7 @@
 #' @param min_n dbl; If output = "indicator", the minimum number of occurrences per person to consider the indicator true. Defaults to 1.
 #' @param con connection to the allofus SQL database. Defaults to getOption("aou.default.con"), which is set automatically if you use `aou_connect()`
 #' @param collect lgl; whether to collect from the database
+#' @param ... further arguments passed along to
 #'
 #' @return a dataframe if collect = TRUE; a remote tbl if not
 #' @export
@@ -184,11 +185,12 @@ aou_concept_set <- function(cohort = NULL,
 #' @param tbl_name The name of the table containing the domain concepts
 #' @param date_column The name of the column containing the concept dates
 #' @param concept_id_column The name of the column containing the concept IDs
-#' @param ... Additional arguments
+#' @param ... Additional arguments not currently used
 #'
 #' @noRd
 
 get_domain_concepts <- function(cohort, concepts, start_date, end_date, tbl_name, date_column, concept_id_column, ...) {
+
   domain_tbl <- dplyr::tbl(con, tbl_name) %>%
     dplyr::select(person_id, concept_date = .data[[date_column]], concept_id = .data[[concept_id_column]])
 

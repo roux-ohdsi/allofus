@@ -8,24 +8,35 @@ Authors@R:
       person("Louisa", "Smith", email = "l.smith@northeastern.edu", role = c("aut"))
     )
 Description: The allofus R package contains useful functions for working in the AllofUs Researcher Workbench.
-License: MIT
+License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
 Imports: 
     cli,
     tidyr,
-    tibble,
     magrittr,
     dplyr (>= 1.1.0),
     glue,
     bigrquery,
-    purrr
+    purrr,
+    stats,
+    utils,
+    ROhdsiWebApi,
+    RSQLite,
+    SqlRender,
+    janitor,
+    dbplyr,
+    sessioninfo
 Suggests:
     DBI,
     knitr,
     rmarkdown,
     testthat (>= 3.0.0),
-    ROhdsiWebApi
+    kableExtra,
+    DT,
+    googlesheets4,
+    tibble,
+    forcats
 RoxygenNote: 7.2.3
 URL: https://roux-ohdsi.github.io/allofus/, https://github.com/roux-ohdsi/allofus
 BugReports: https://github.com/roux-ohdsi/allofus/issues
