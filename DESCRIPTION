@@ -21,12 +21,15 @@ Imports:
     purrr,
     stats,
     utils,
-    ROhdsiWebApi,
     RSQLite,
-    SqlRender,
     janitor,
     dbplyr,
-    sessioninfo
+    sessioninfo,
+    SqlRender (>= 1.16.1),
+    ROhdsiWebApi
+Remotes: 
+    OHDSI/ROhdsiWebApi,
+    OHDSI/SqlRender
 Suggests:
     DBI,
     knitr,
