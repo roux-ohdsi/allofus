@@ -25,8 +25,9 @@ Imports:
     janitor,
     dbplyr,
     sessioninfo,
-    SqlRender (>= 1.16.1),
-    ROhdsiWebApi
+    SqlRender,
+    ROhdsiWebApi,
+    rlang
 Remotes: 
     OHDSI/ROhdsiWebApi,
     OHDSI/SqlRender

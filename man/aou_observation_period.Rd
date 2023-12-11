@@ -5,6 +5,7 @@
 \title{Generate an observation period table based on OMOP Conventions}
 \usage{
 aou_observation_period(
+  con = getOption("aou.default.con"),
   cohort = NULL,
   persistence_window = 548,
   end_date_buffer = 60,
@@ -13,6 +14,8 @@ aou_observation_period(
 )
 }
 \arguments{
+\item{con}{connection to the allofus SQL database. Defaults to getOption("aou.default.con"), which is set automatically if you use `aou_connect()`}
+
 \item{cohort}{query to a cohort or local dataframe with column "person_id"}
 
 \item{persistence_window}{longest allowable time between visits for the same observation period. defaults to 548 see details}

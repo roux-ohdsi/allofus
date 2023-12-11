@@ -1,5 +1,6 @@
 #' Generate an observation period table based on OMOP Conventions
 #'
+#' @param con connection to the allofus SQL database. Defaults to getOption("aou.default.con"), which is set automatically if you use `aou_connect()`
 #' @param cohort query to a cohort or local dataframe with column "person_id"
 #' @param persistence_window longest allowable time between visits for the same observation period. defaults to 548 see details
 #' @param end_date_buffer number of days to add to end date. defaults to 60. see details
@@ -28,7 +29,8 @@
 #' )
 #' }
 #'
-aou_observation_period <- function(cohort = NULL,
+aou_observation_period <- function(con = getOption("aou.default.con"),
+                                   cohort = NULL,
                                    persistence_window = 548,
                                    end_date_buffer = 60,
                                    exclude_aou_visits = FALSE,

@@ -213,12 +213,12 @@ aou_tables <- function(con = getOption("aou.default.con"), remove_na = TRUE) {
 
   tbls <- DBI::dbListTables(con)
 
-  tbls <- tibble(table_name = tbls) %>%
+  tbls <- tibble::tibble(table_name = tbls) %>%
     dplyr::left_join(allofus::aou_table_info, by = "table_name") %>%
-    dplyr::arrange(rowSums(is.na(dplyr::select(., 'columns', 'table_name'))))
+    dplyr::arrange(rowSums(is.na(dplyr::select(.data, 'columns', 'table_name'))))
 
   if (isTRUE(remove_na)) {
-    tbls <- tbls %>% drop_na('columns')
+    tbls <- tbls %>% tidyr::drop_na('columns')
   }
 
   cli::cli_inform(c("i" = "Tables not referenced in the Data Dictionary are omitted. View them by setting {.code remove_na = FALSE}."))

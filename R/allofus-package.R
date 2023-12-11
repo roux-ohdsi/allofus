@@ -2,6 +2,8 @@
 "_PACKAGE"
 
 ## usethis namespace: start
+#' @importFrom rlang :=
+#' @importFrom rlang .data
 #' @importFrom stats lag
 #' @importFrom utils download.file
 #' @importFrom utils packageVersion
