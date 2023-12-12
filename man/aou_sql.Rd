@@ -2,32 +2,32 @@
 % Please edit documentation in R/aou_connect.R
 \name{aou_sql}
 \alias{aou_sql}
-\title{Execute a SQL query}
+\title{Execute a SQL query on the All of Us database}
 \usage{
 aou_sql(query, CDR = getOption("aou.default.cdr"), ...)
 }
 \arguments{
 \item{query}{A SQL query (BigQuery dialect) to be executed. Interpreted
-with `glue::glue()`, so expressions enclosed with braces will be evaluated.
-References to `cdr` or `CDR` will be evaluated automatically.}
+with \code{glue::glue()}, so expressions enclosed with braces will be evaluated.
+References to \code{"{CDR}"} or \code{"{cdr}"} will be evaluated automatically (see examples).}
 
 \item{CDR}{The name of the "curated data repository" that will be used in any
-references of the form "{CDR}" or "{cdr}" in the query. Defaults to
-getOption("aou.default.cdr"), which is Sys.getenv('WORKSPACE_CDR') if not specified otherwise
-(the "mainline" CDR). On the controlled tier, specify the "base" CDR with
-`CDR = paste0(Sys.getenv('WORKSPACE_CDR'), "_base")`.}
+references of the form \code{"{CDR}"} or \code{"{cdr}"} in the query (see examples). Defaults to
+\code{getOption("aou.default.cdr")}, which is \code{Sys.getenv('WORKSPACE_CDR')} if not specified otherwise
+(i.e., \href{https://support.researchallofus.org/hc/en-us/articles/4616869437204-Controlled-CDR-Directory}{the "mainline" CDR}).
+On the controlled tier, specify the "base" CDR with \code{CDR = paste0(Sys.getenv('WORKSPACE_CDR'), "_base")}.}
 
-\item{...}{All other arguments passed to `bigrquery::bq_table_download()`}
+\item{...}{All other arguments passed to \code{bigrquery::bq_table_download()}}
 }
 \value{
 A dataframe with the results of the query.
 }
 \description{
-Execute a SQL query
+Execute a SQL query on the All of Us database
 }
 \examples{
+\dontshow{if (on_workbench()) (if (getRversion() >= "3.4") withAutoprint else force)(\{ # examplesIf}
 # Examples based on AoU snippets
-\dontrun{
 aou_sql("
   -- Compute the count of unique participants in our All of Us cohort.
   SELECT
@@ -107,5 +107,5 @@ GROUP BY
 ORDER BY
   N DESC
 ')
-}
+\dontshow{\}) # examplesIf}
 }

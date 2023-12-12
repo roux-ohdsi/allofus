@@ -28,6 +28,10 @@ greet_startup <- function() {
 
 .onAttach <- function(libname = find.package("allofus"), pkgname = "allofus"){
   greet_startup()
+  if (!on_workbench()) {
+    rlang::inform(cli::format_inline("{cli::symbol$warning} This package has limited functionality outside of the All of Us Researcher Workbench"),
+                     class = "packageStartupMessage")
+  }
 }
 
 

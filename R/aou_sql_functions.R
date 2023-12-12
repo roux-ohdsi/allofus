@@ -2,23 +2,23 @@
 #'
 #'
 #' @param ... additional arguments passed to dbplyr SQL
-#'
+#' @keywords internal
 #' @return Internal, passed along to dbplyr SQL.
-date_add <- function(...){}
+DATE_ADD <- function(...){}
 
 #' Date add function to be passed along to SQL
 #'
 #'
 #' @param ... additional arguments passed to dbplyr SQL
-#'
+#' @keywords internal
 #' @return Internal, passed along to dbplyr SQL.
-date_diff <- function(...){}
+DATE_DIFF <- function(...){}
 
 #' Date add function to be passed along to SQL
 #'
 #'
 #' @param ... additional arguments passed to dbplyr SQL
-#'
+#' @keywords internal
 #' @return Internal, passed along to dbplyr SQL.
 STRING_AGG <- function(...){}
 
@@ -26,6 +26,6 @@ STRING_AGG <- function(...){}
 #'
 #'
 #' @param ... additional arguments passed to dbplyr SQL
-#'
+#' @keywords internal
 #' @return Internal, passed along to dbplyr SQL.
 CAST <- function(...){}

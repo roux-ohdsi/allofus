@@ -38,7 +38,7 @@ the number of matching concepts per person ("count"), or all info about the matc
 
 \item{min_n}{dbl; If output = "indicator", the minimum number of occurrences per person to consider the indicator true. Defaults to 1.}
 
-\item{con}{connection to the allofus SQL database. Defaults to getOption("aou.default.con"), which is set automatically if you use `aou_connect()`}
+\item{con}{connection to the allofus SQL database. Defaults to getOption("aou.default.con"), which is set automatically if you use \code{aou_connect()}}
 
 \item{collect}{lgl; whether to collect from the database}
 

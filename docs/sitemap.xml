@@ -37,6 +37,18 @@
     <loc>/index.html</loc>
   </url>
   <url>
+    <loc>/reference/CAST.html</loc>
+  </url>
+  <url>
+    <loc>/reference/DATE_ADD.html</loc>
+  </url>
+  <url>
+    <loc>/reference/DATE_DIFF.html</loc>
+  </url>
+  <url>
+    <loc>/reference/STRING_AGG.html</loc>
+  </url>
+  <url>
     <loc>/reference/allofus-package.html</loc>
   </url>
   <url>
@@ -131,6 +143,9 @@
   </url>
   <url>
     <loc>/reference/omop_join.html</loc>
+  </url>
+  <url>
+    <loc>/reference/on_workbench.html</loc>
   </url>
   <url>
     <loc>/reference/pipe.html</loc>

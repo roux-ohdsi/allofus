@@ -14,17 +14,20 @@ aou_observation_period(
 )
 }
 \arguments{
-\item{con}{connection to the allofus SQL database. Defaults to getOption("aou.default.con"), which is set automatically if you use `aou_connect()`}
+\item{con}{Connection to the allofus SQL database. Defaults to getOption("aou.default.con"), which is set automatically if you use \code{aou_connect()}}
 
-\item{cohort}{query to a cohort or local dataframe with column "person_id"}
+\item{cohort}{Query to a cohort or local dataframe with column "person_id". If no cohort is provided,
+defaults to the entire All of Us cohort}
 
-\item{persistence_window}{longest allowable time between visits for the same observation period. defaults to 548 see details}
+\item{persistence_window}{Longest allowable time between visits for the same observation period. Defaults to 548 (see details)}
 
-\item{end_date_buffer}{number of days to add to end date. defaults to 60. see details}
+\item{end_date_buffer}{Number of days to add to last observed date. Defaults to 60 (see details)}
 
-\item{exclude_aou_visits}{whether to exclude All of Us clinical visits (not part of the participants typical EHR) from the observation period}
+\item{exclude_aou_visits}{Whether to exclude All of Us clinical visits (i.e., for program-specific measurements,
+not part of the participants' typical EHR) from the observation period. Defaults to \code{FALSE}}
 
-\item{collect}{whether to collect the data or keep as SQL query}
+\item{collect}{Whether to collect the data or keep as SQL query
+from the observation period. Defaults to \code{FALSE}.}
 }
 \value{
 a sql query or local data frame
@@ -33,12 +36,11 @@ a sql query or local data frame
 Generate an observation period table based on OMOP Conventions
 }
 \details{
-Follows conventions described here: https://ohdsi.github.io/CommonDataModel/ehrObsPeriods.html
+Follows conventions described here: \url{https://ohdsi.github.io/CommonDataModel/ehrObsPeriods.html}
 }
 \examples{
-\dontrun{
-cohort <-
-  dplyr::tbl(con, "cb_search_person") \%>\%
+\dontshow{if (on_workbench()) (if (getRversion() >= "3.4") withAutoprint else force)(\{ # examplesIf}
+cohort <- dplyr::tbl(con, "cb_search_person") \%>\%
   dplyr::filter(has_ehr_data == 1) \%>\%
   head(100) \%>\%
   dplyr::select(person_id)
@@ -48,6 +50,5 @@ observation_periods <- aou_observation_period(cohort,
   end_date_buffer = 60,
   collect = FALSE
 )
-}
-
+\dontshow{\}) # examplesIf}
 }

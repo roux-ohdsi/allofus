@@ -2,7 +2,7 @@
 % Please edit documentation in R/aou_ls.R
 \name{aou_workspace_to_bucket}
 \alias{aou_workspace_to_bucket}
-\title{Save a file from your workspace to your bucket.}
+\title{Save a file from your workspace to your bucket}
 \usage{
 aou_workspace_to_bucket(
   file,
@@ -17,16 +17,16 @@ or a file pattern (e.g. ".csv"). See Details.}
 
 \item{dir}{Optional directory in the bucket to save files to.}
 
-\item{recursive}{description}
+\item{recursive}{Whether to include subdirectories. Defaults to \code{TRUE}.}
 
-\item{bucket}{Bucket to save files to. Defaults to `getOption("aou.default.bucket")`,
-which is `Sys.getenv('WORKSPACE_BUCKET')` unless specified otherwise.}
+\item{bucket}{Bucket to save files to. Defaults to \code{getOption("aou.default.bucket")},
+which is \code{Sys.getenv('WORKSPACE_BUCKET')} unless specified otherwise.}
 }
 \description{
 This function moves a file saved in a workspace
 to a bucket, where it can be retrieved even if the environment is deleted. To use, first save the desired
-object as a file to the workspace (e.g., write.csv(object, "filename.csv")) and then run this function
-(e.g., aou_workspace_to_bucket(files = "filename.csv")). See https://cloud.google.com/storage/docs/gsutil/commands/cp for details on the
+object as a file to the workspace (e.g., \code{write.csv(object, "filename.csv")}) and then run this function
+(e.g., \code{aou_workspace_to_bucket(files = "filename.csv")}). See \url{https://cloud.google.com/storage/docs/gsutil/commands/cp} for details on the
 underlying function.
 }
 \examples{

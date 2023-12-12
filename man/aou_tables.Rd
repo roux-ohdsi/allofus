@@ -7,19 +7,20 @@
 aou_tables(con = getOption("aou.default.con"), remove_na = TRUE)
 }
 \arguments{
-\item{con}{connection to the database}
+\item{con}{Connection to the allofus SQL database. Defaults to \code{getOption("aou.default.con")},
+which is created automatically with \code{aou_connect()}}
 
-\item{remove_na}{whether to remove tables that are not in the data dictionary}
+\item{remove_na}{Whether to remove tables that are not in the data dictionary. Defaults to \code{TRUE}}
 }
 \value{
-a dataframe with the table names and the number of columns
+A dataframe with the table names and the number of columns
 }
 \description{
 List tables in the AoU Database
 }
 \examples{
-\dontrun{
+\dontshow{if (on_workbench()) (if (getRversion() >= "3.4") withAutoprint else force)(\{ # examplesIf}
 con <- aou_connect()
 aou_tables()
-}
+\dontshow{\}) # examplesIf}
 }

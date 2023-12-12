@@ -15,3 +15,4 @@ Internal, passed along to dbplyr SQL.
 \description{
 Date add function to be passed along to SQL
 }
+\keyword{internal}

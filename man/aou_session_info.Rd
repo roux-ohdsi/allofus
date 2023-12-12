@@ -7,17 +7,18 @@
 aou_session_info(CDR = getOption("aou.default.cdr"))
 }
 \arguments{
-\item{CDR}{The name of the CDR to use. Defaults to `getOption("aou.default.cdr")`}
+\item{CDR}{The name of the CDR to use. Defaults to \code{getOption("aou.default.cdr")}}
 }
 \value{
 A list with three elements: the platform, the AoU release, and the packages
 }
 \description{
-Print session information for the AoU R environment
+For the purposes of reproducibility, it is important to know the version of R,
+the packages, and the AoU release that you are using. This function prints
+this information to the console.
 }
 \examples{
-\dontrun{
-  con <- allofus::aou_connect()
-  allofus::aou_session_info()
-}
+\dontshow{if (on_workbench()) (if (getRversion() >= "3.4") withAutoprint else force)(\{ # examplesIf}
+allofus::aou_session_info()
+\dontshow{\}) # examplesIf}
 }

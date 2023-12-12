@@ -5,18 +5,18 @@
 \alias{aou_health_history}
 \title{All of Us Health History Codebook}
 \format{
-`aou_health_history`
+\code{aou_health_history}
 A data frame with 1685  rows and 9 columns:
 \describe{
-  \item{question}{chr; Question asked on survey}
-  \item{relative}{chr; Person to whom the answer pertains}
-  \item{condition}{chr; Formatted text name of concept}
-  \item{category}{chr; Type of health condition}
-  \item{concept_code}{chr; Concept code from AOU codebook}
-  \item{concept_id_specific}{int; Concept id for the answer}
-  \item{concept_id_overall}{int; Concept id for the condition overall}
-  \item{concept_id_question}{int; Concept id for the overarching question}
-  \item{form_name}{chr; Survey name}
+\item{question}{chr; Question asked on survey}
+\item{relative}{chr; Person to whom the answer pertains}
+\item{condition}{chr; Formatted text name of concept}
+\item{category}{chr; Type of health condition}
+\item{concept_code}{chr; Concept code from AOU codebook}
+\item{concept_id_specific}{int; Concept id for the answer}
+\item{concept_id_overall}{int; Concept id for the condition overall}
+\item{concept_id_question}{int; Concept id for the overarching question}
+\item{form_name}{chr; Survey name}
 }
 }
 \usage{
@@ -26,9 +26,9 @@ aou_health_history
 This table consists of rows of the codebook pertaining to the health history questions. In early All of Us surveys,
 these questions were asked separately about the respondent and the respondent's family. In the current version,
 the questions are asked on the same survey. The nested nature of these questions makes them challenging to deal with.
-It can also be accessed in R using `allofus::aou_health_history`.
+It can also be accessed in R using \code{allofus::aou_health_history}.
 \itemize{
-   \item{\href{https://github.com/roux-ohdsi/allofus/blob/main/data-raw/pkg_data.R}{Code to generate table}}
+\item{\href{https://github.com/roux-ohdsi/allofus/blob/main/data-raw/pkg_data.R}{Code to generate table}}
 }
 }
 \keyword{datasets}

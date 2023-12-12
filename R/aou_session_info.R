@@ -1,15 +1,18 @@
 #' Print session information for the AoU R environment
 #'
+#' @description
+#' For the purposes of reproducibility, it is important to know the version of R,
+#' the packages, and the AoU release that you are using. This function prints
+#' this information to the console.
+#'
 #' @param CDR The name of the CDR to use. Defaults to `getOption("aou.default.cdr")`
 #'
 #' @return A list with three elements: the platform, the AoU release, and the packages
 #' @export
 #'
-#' @examples
-#' \dontrun{
-#'   con <- allofus::aou_connect()
-#'   allofus::aou_session_info()
-#' }
+#' @examplesIf on_workbench()
+#' allofus::aou_session_info()
+
 aou_session_info <- function(CDR = getOption("aou.default.cdr")){
   si = sessioninfo::session_info()
   si1 = si$platform

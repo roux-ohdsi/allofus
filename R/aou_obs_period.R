@@ -1,23 +1,23 @@
 #' Generate an observation period table based on OMOP Conventions
 #'
-#' @param con connection to the allofus SQL database. Defaults to getOption("aou.default.con"), which is set automatically if you use `aou_connect()`
-#' @param cohort query to a cohort or local dataframe with column "person_id"
-#' @param persistence_window longest allowable time between visits for the same observation period. defaults to 548 see details
-#' @param end_date_buffer number of days to add to end date. defaults to 60. see details
-#' @param exclude_aou_visits whether to exclude All of Us clinical visits (not part of the participants typical EHR) from the observation period
-#' @param collect whether to collect the data or keep as SQL query
-#'
+#' @param con Connection to the allofus SQL database. Defaults to getOption("aou.default.con"), which is set automatically if you use `aou_connect()`
+#' @param cohort Query to a cohort or local dataframe with column "person_id". If no cohort is provided,
+#' defaults to the entire All of Us cohort
+#' @param persistence_window Longest allowable time between visits for the same observation period. Defaults to 548 (see details)
+#' @param end_date_buffer Number of days to add to last observed date. Defaults to 60 (see details)
+#' @param exclude_aou_visits Whether to exclude All of Us clinical visits (i.e., for program-specific measurements,
+#' not part of the participants' typical EHR) from the observation period. Defaults to `FALSE`
+#' @param collect Whether to collect the data or keep as SQL query
+#' from the observation period. Defaults to `FALSE`.
 #' @details
-#' Follows conventions described here: https://ohdsi.github.io/CommonDataModel/ehrObsPeriods.html
+#' Follows conventions described here: <https://ohdsi.github.io/CommonDataModel/ehrObsPeriods.html>
 #'
 #'
 #' @return a sql query or local data frame
 #' @export
 #'
-#' @examples
-#' \dontrun{
-#' cohort <-
-#'   dplyr::tbl(con, "cb_search_person") %>%
+#' @examplesIf on_workbench()
+#' cohort <- dplyr::tbl(con, "cb_search_person") %>%
 #'   dplyr::filter(has_ehr_data == 1) %>%
 #'   head(100) %>%
 #'   dplyr::select(person_id)
@@ -27,7 +27,6 @@
 #'   end_date_buffer = 60,
 #'   collect = FALSE
 #' )
-#' }
 #'
 aou_observation_period <- function(con = getOption("aou.default.con"),
                                    cohort = NULL,
@@ -64,7 +63,7 @@ aou_observation_period <- function(con = getOption("aou.default.con"),
     # get the last visit end date within each person
     dplyr::mutate(last_end_date = lag(.data$visit_end_date)) %>%
     # calc days in between visits.
-    dplyr::mutate(days_between_visits = date_diff(.data$visit_start_date, .data$last_end_date, dplyr::sql("day"))) %>%
+    dplyr::mutate(days_between_visits = DATE_DIFF(.data$visit_start_date, .data$last_end_date, dplyr::sql("day"))) %>%
     # iterate over the observation period if days between visits is more than the persistence window
     dplyr::mutate(obs_period = cumsum(ifelse(.data$days_between_visits > persistence_window, 1, 0))) %>%
     # the first observation per person is NA , but can just be changed to 1
@@ -77,7 +76,7 @@ aou_observation_period <- function(con = getOption("aou.default.con"),
     ) %>%
     dplyr::group_by(.data$person_id) %>%
     # pad the end date
-    dplyr::mutate(observation_end_date = date_add(.data$observation_period_end_date, dplyr::sql(paste0("INTERVAL ", end_date_buffer, " day")))) %>%
+    dplyr::mutate(observation_end_date = DATE_ADD(.data$observation_period_end_date, dplyr::sql(paste0("INTERVAL ", end_date_buffer, " day")))) %>%
     dbplyr::window_order(.data$person_id, .data$obs_period)
 
   # collect if desired.

@@ -19,11 +19,11 @@ aou_survey(
 \item{questions}{either a vector of concept_ids or concept_codes for questions to return results}
 
 \item{question_output}{how to name the columns. Options include text format ("text"), as concept ids preceded by
-"x_" ("concept_id"), or using a custom vector of column names matching the vector of `questions`. Defaults to "text".}
+"x_" ("concept_id"), or using a custom vector of column names matching the vector of \code{questions}. Defaults to "text".}
 
 \item{clean_answers}{whether to clean the answers to the survey questions. Defaults to TRUE.}
 
-\item{con}{connection to the allofus SQL database. Defaults to getOption("aou.default.con"), which is created automatically with `aou_connect()`}
+\item{con}{connection to the allofus SQL database. Defaults to getOption("aou.default.con"), which is created automatically with \code{aou_connect()}}
 
 \item{collect}{whether to return the results as a local (TRUE) or database table}
 }
@@ -34,7 +34,7 @@ query the observation table for responses to survey questions so that the skippe
 responses are included.
 
 The function will return a dataframe or SQL tbl with the initial cohort table along
-with a column for each question included in `questions` and answers for
+with a column for each question included in \code{questions} and answers for
 each person_id in the cells. The column names (questions) can
 be returned as the concept_code or concept_id or by providing new column names. For each question, a column with
 the suffix "_date" is included with the date on which the question was answered.
