@@ -18,6 +18,11 @@ help researchers manage storage in their workspace and bucket, as well
 as take advantage of tools developed for [OMOP
 CDM](https://www.researchallofus.org/faq/what-is-omop/) data.
 
+<!-- badges: start -->
+
+[![R-CMD-check](https://github.com/roux-ohdsi/allofus/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/roux-ohdsi/allofus/actions/workflows/R-CMD-check.yaml)
+<!-- badges: end -->
+
 ### Installation
 
 ``` r

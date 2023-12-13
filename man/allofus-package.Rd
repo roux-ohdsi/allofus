@@ -4,9 +4,9 @@
 \name{allofus-package}
 \alias{allofus}
 \alias{allofus-package}
-\title{allofus: R package to streamline use of the AllofUs Resarcher Workbench}
+\title{allofus: OHDSI Tools for the AllofUs Resarcher Workbench}
 \description{
-The allofus R package contains useful functions for working in the AllofUs Researcher Workbench.
+Streamlining use of the AllofUs Researcher Workbench Jupyter Notebooks and icreasing interoperability with the OHDSI toolstack.
 }
 \seealso{
 Useful links:
@@ -18,11 +18,11 @@ Useful links:
 
 }
 \author{
-\strong{Maintainer}: Rob Cavanaugh \email{r.cavanaugh@northeastern.edu}
+\strong{Maintainer}: Rob Cavanaugh \email{r.cavanaugh@northeastern.edu} [copyright holder]
 
 Authors:
 \itemize{
-  \item Louisa Smith \email{l.smith@northeastern.edu}
+  \item Louisa Smith \email{l.smith@northeastern.edu} [copyright holder]
 }
 
 }

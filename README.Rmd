@@ -22,6 +22,10 @@ The goal of the `allofus` R package is to streamline the use of R within the [Al
 
 The `allofus` package helps researchers query the database and build transparent and reproducible analysed pipeline. The package allows researchers to easily use other database packages, such as `dbplyr` and `DBI`, with the AllofUs database. The package also includes functions to help researchers manage storage in their workspace and bucket, as well as take advantage of tools developed for [OMOP CDM](https://www.researchallofus.org/faq/what-is-omop/) data.
 
+<!-- badges: start -->
+[![R-CMD-check](https://github.com/roux-ohdsi/allofus/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/roux-ohdsi/allofus/actions/workflows/R-CMD-check.yaml)
+<!-- badges: end -->
+
 ### Installation
 
 ```{r}
