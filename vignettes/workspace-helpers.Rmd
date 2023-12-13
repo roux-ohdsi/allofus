@@ -1,0 +1,45 @@
+---
+title: "Workspace helpers"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Workspace helpers}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  eval = FALSE
+)
+```
+
+```{r setup}
+library(allofus)
+```
+
+The `allofus` package also includes functions to help you manage storage in your workspace and bucket. Use `aou_ls_workspace()` to list files in your workspace, and `aou_ls_bucket()` to list files in your bucket. Once you have saved a file to your workspace, you can easily move it to the bucket using `aou_workspace_to_bucket()`.
+
+```{r}
+aou_workspace_to_bucket("file1.csv")
+```
+and then move it back to the workspace if you delete your environment, or if you want to use a file that a collaborator on your project has saved to the bucket:
+
+```{r}
+aou_bucket_to_workspace("file2.csv")
+```
+
+Files in your workspace are only accessible to you, but not your collaborators (see details on storage below). If you need to move a file from your workspace bucket to your personal workspace, use `aou_bucket_to_workspace()` to move files from your bucket to your workspace.
+
+```
+aou_bucket_to_workspace("file1.csv")
+data <- read.csv("file1.csv")
+```
+
+And when you want to save something from your workspace to your bucket so that your collaborators can use it (or so that you can shut down your workspace and save \$\$\$), you can use `aou_workspace_to_bucket()` to move files from your workspace to your bucket for permanent storage.
+
+```
+write.csv(data, "file1.csv")
+aou_bucket_to_workspace("file1.csv")
+```
