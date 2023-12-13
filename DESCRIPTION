@@ -1,13 +1,13 @@
 Package: allofus
 Type: Package
-Title: R package to streamline use of the AllofUs Resarcher Workbench 
+Title: OHDSI tools for the AllofUs Resarcher Workbench 
 Version: 0.1.0
 Authors@R: 
     c(
-      person("Rob", "Cavanaugh", email = "r.cavanaugh@northeastern.edu", role = c("aut", "cre")),
-      person("Louisa", "Smith", email = "l.smith@northeastern.edu", role = c("aut"))
+      person("Louisa", "Smith", email = "l.smith@northeastern.edu", role = c("aut", "cph"))
+      person("Rob", "Cavanaugh", email = "r.cavanaugh@northeastern.edu", role = c("aut", "cre" "cph")),
     )
-Description: The allofus R package contains useful functions for working in the AllofUs Researcher Workbench.
+Description: Streamlining use of the AllofUs Researcher Workbench Jupyter Notebooks and icreasing interoperability with the OHDSI toolstack.
 License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
