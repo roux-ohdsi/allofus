@@ -25,6 +25,10 @@ The goal of the {allofus} R package is to streamline the use of R within the All
 
 </br> 
 
+<!-- badges: start -->
+[![R-CMD-check](https://github.com/roux-ohdsi/allofus/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/roux-ohdsi/allofus/actions/workflows/R-CMD-check.yaml)
+<!-- badges: end -->
+
 ### Installation
 
 ```

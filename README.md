@@ -13,6 +13,11 @@ the AllofUS Researcher Workbench.
 
 </br>
 
+<!-- badges: start -->
+
+[![R-CMD-check](https://github.com/roux-ohdsi/allofus/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/roux-ohdsi/allofus/actions/workflows/R-CMD-check.yaml)
+<!-- badges: end -->
+
 ### Installation
 
     install.packages("remotes")
