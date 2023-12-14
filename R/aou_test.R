@@ -1,3 +1,35 @@
+
+
+#' Function to test all of us package on AllofUs Researcher Workbench using documented examples
+#'
+#' @return result of test
+#' @export
+#'
+#' @examples
+#' aou_test_package()
+#'
+aou_test_package <- function() {
+  testthat::test_that("all examples run without error",{
+    fun_names <- getNamespaceExports("allofus")
+    for (fun in fun_names){
+     # cat("Testing examples from:", fun, "\n")
+      expect_no_error({
+        invisible(
+          capture.output(
+            example(fun, package = "allofus", character.only = TRUE, echo = FALSE)
+          )
+        )
+      })
+    }
+  })
+}
+
+
+
+
+
+
+
 #' Internal function to test allofus package on fake database
 #'
 #' @param cache logical indicating whether to cache the downloaded data
