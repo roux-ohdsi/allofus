@@ -6,9 +6,6 @@
 \usage{
 aou_test_package()
 }
-\value{
-result of test
-}
 \description{
 Function to test all of us package on AllofUs Researcher Workbench using documented examples
 }

@@ -1,16 +1,11 @@
 
 
 #' Function to test all of us package on AllofUs Researcher Workbench using documented examples
-#'
-#' @return result of test
-#' @export
-#'
-#'
 aou_test_package <- function() {
   testthat::test_that("all examples run without error",{
     fun_names <- getNamespaceExports("allofus")
     for (fun in fun_names){
-      expect_no_error({
+      testthat::expect_no_error({
         invisible(
           capture.output(
             example(fun, package = "allofus", character.only = TRUE, echo = FALSE)

@@ -26,10 +26,7 @@ Imports:
     dbplyr,
     sessioninfo,
     SqlRender (>= 1.6.0),
-    ROhdsiWebApi,
     rlang
-Remotes: 
-    OHDSI/ROhdsiWebApi,
 Suggests:
     DBI,
     knitr,
