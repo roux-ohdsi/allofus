@@ -1,12 +1,12 @@
 #' Generate an observation period table based on OMOP Conventions
 #'
-#' @param con Connection to the allofus SQL database. Defaults to getOption("aou.default.con"), which is set automatically if you use `aou_connect()`
 #' @param cohort Query to a cohort or local dataframe with column "person_id". If no cohort is provided,
 #' defaults to the entire All of Us cohort
 #' @param persistence_window Longest allowable time between visits for the same observation period. Defaults to 548 (see details)
 #' @param end_date_buffer Number of days to add to last observed date. Defaults to 60 (see details)
 #' @param exclude_aou_visits Whether to exclude All of Us clinical visits (i.e., for program-specific measurements,
 #' not part of the participants' typical EHR) from the observation period. Defaults to `FALSE`
+#' @param con Connection to the allofus SQL database. Defaults to getOption("aou.default.con"), which is set automatically if you use `aou_connect()`
 #' @param collect Whether to collect the data or keep as SQL query
 #' from the observation period. Defaults to `FALSE`.
 #' @details
@@ -28,11 +28,11 @@
 #'   collect = FALSE
 #' )
 #'
-aou_observation_period <- function(con = getOption("aou.default.con"),
-                                   cohort = NULL,
+aou_observation_period <- function(cohort = NULL,
                                    persistence_window = 548,
                                    end_date_buffer = 60,
                                    exclude_aou_visits = FALSE,
+                                   con = getOption("aou.default.con"),
                                    collect = FALSE) {
 
   if (is.null(cohort)) {
