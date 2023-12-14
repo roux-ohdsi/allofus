@@ -42,9 +42,8 @@ Follows conventions described here: \url{https://ohdsi.github.io/CommonDataModel
 
 # generate a simple stroke cohort
 # see https://atlas-demo.ohdsi.org/#/cohortdefinition/1788061
-library(ROhdsiWebApi)
-cd <- ROhdsiWebApi::getCohortDefinition(1788061, "https://atlas-demo.ohdsi.org/WebAPI")
-cd_sql <- ROhdsiWebApi::getCohortSql(cd, "https://atlas-demo.ohdsi.org/WebAPI")
+cd <- getCohortDefinition(1788061, "https://atlas-demo.ohdsi.org/WebAPI")
+cd_sql <- getCohortSql(cd, "https://atlas-demo.ohdsi.org/WebAPI")
 cohort <- aou_atlas_cohort(cohort_definition = cd, cohort_sql = cd_sql)
 
 # print query that was executed

@@ -16,9 +16,8 @@
 #'
 #'# generate a simple stroke cohort
 #'# see https://atlas-demo.ohdsi.org/#/cohortdefinition/1788061
-#'library(ROhdsiWebApi)
-#'cd <- ROhdsiWebApi::getCohortDefinition(1788061, "https://atlas-demo.ohdsi.org/WebAPI")
-#'cd_sql <- ROhdsiWebApi::getCohortSql(cd, "https://atlas-demo.ohdsi.org/WebAPI")
+#'cd <- getCohortDefinition(1788061, "https://atlas-demo.ohdsi.org/WebAPI")
+#'cd_sql <- getCohortSql(cd, "https://atlas-demo.ohdsi.org/WebAPI")
 #'cohort <- aou_atlas_cohort(cohort_definition = cd, cohort_sql = cd_sql)
 #'
 #'# print query that was executed
@@ -32,10 +31,11 @@ aou_atlas_cohort <- function(cohort_definition,
                             end_date_buffer = 60,
                             exclude_aou_visits = FALSE){
 
-  if (!requireNamespace("ROhdsiWebApi", quietly = TRUE)) {
+  if (!requireNamespace("ROhdsiWebApi", quietly = TRUE) | !requireNamespace("SqlRender", quietly = TRUE)) {
     cli::cli_abort(
-      c("Package {.pkg ROhdsiWebApi} must be installed to use this function.",
-      "i" = "Use {.code remotes::install_github(\"ohdsi/ROhdsiWebApi\")} to install."
+      c("Package {.pkg ROhdsiWebApi} and {.pkg SqlRender} must be installed to use this function.",
+      "i" = "Use {.code remotes::install_github(\"ohdsi/ROhdsiWebApi\")} to install ROhdsiWebApi.",
+      "i" = "Use {.code install.packages(\"SqlRender\")} to install SqlRender."
     ))
   }
 
