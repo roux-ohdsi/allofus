@@ -48,10 +48,12 @@
 <li class="nav-item dropdown">
   <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" role="button" aria-expanded="false" aria-haspopup="true" id="dropdown-articles">Articles</a>
   <div class="dropdown-menu" aria-labelledby="dropdown-articles">
+    <a class="dropdown-item" href="articles/atlas.html">Using ATLAS to create a cohort</a>
+    <a class="dropdown-item" href="articles/data.html">Extracting All of Us survey and EHR data</a>
     <a class="dropdown-item" href="articles/tips.html">Tips for using the All of Us Workbench</a>
     <a class="dropdown-item" href="articles/web_only/data-browser.html">Using the Data Browser and AllofUs Database</a>
     <a class="dropdown-item" href="articles/web_only/searchable_codebook.html">Searchable Codebook for AllofUs Surveys</a>
-    <a class="dropdown-item" href="articles/workspace-helpers.html">Workspace helpers</a>
+    <a class="dropdown-item" href="articles/workspace.html">Workspace helpers</a>
   </div>
 </li>
       </ul>
@@ -73,25 +75,25 @@
   </div>
 </nav><div class="container template-home">
 <div class="row">
-  <main id="main" class="col-md-9"><div class="section level2">
-<h2 id="allofus-r-package">
+  <main id="main" class="col-md-9"><div class="section level1">
+<div class="page-header"><h1 id="allofus-r-package">
 <code>allofus</code> R Package<a class="anchor" aria-label="anchor" href="#allofus-r-package"></a>
-</h2>
+</h1></div>
 <p>The goal of the <code>allofus</code> R package is to streamline the use of R within the <a href="https://www.researchallofus.org/data-tools/workbench/" class="external-link">AllofUs Researcher Workbench</a>.</p>
 <p><em>The <code>allofus</code> R package is a not affiliated with or endorsed by the All of Us Research Program.</em></p>
 <p>The <code>allofus</code> package helps researchers query the database and build transparent and reproducible analysed pipeline. The package allows researchers to easily use other database packages, such as <code>dbplyr</code> and <code>DBI</code>, with the AllofUs database. The package also includes functions to help researchers manage storage in their workspace and bucket, as well as take advantage of tools developed for <a href="https://www.researchallofus.org/faq/what-is-omop/" class="external-link">OMOP CDM</a> data.</p>
 <!-- badges: start -->
 
-<div class="section level3">
-<h3 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
-</h3>
+<div class="section level2">
+<h2 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
+</h2>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"remotes"</span><span class="op">)</span></span>
 <span><span class="fu">remotes</span><span class="fu">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html" class="external-link">install_github</a></span><span class="op">(</span><span class="st">"roux-ohdsi/allofus"</span><span class="op">)</span></span></code></pre></div>
 </div>
-<div class="section level3">
-<h3 id="use">Use<a class="anchor" aria-label="anchor" href="#use"></a>
-</h3>
+<div class="section level2">
+<h2 id="use">Use<a class="anchor" aria-label="anchor" href="#use"></a>
+</h2>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://roux-ohdsi.github.io/allofus/" class="external-link">allofus</a></span><span class="op">)</span></span></code></pre></div>
 <p>Use <code><a href="reference/aou_connect.html">aou_connect()</a></code> to establish a database connection.</p>
@@ -114,13 +116,13 @@
 <code class="sourceCode R"><span><span class="va">person</span> <span class="op">|&gt;</span> </span>
 <span>  <span class="fu"><a href="reference/aou_join.html">aou_join</a></span><span class="op">(</span><span class="st">"observation"</span>, type <span class="op">=</span> <span class="st">"left"</span><span class="op">)</span></span></code></pre></div>
 </div>
-<div class="section level3">
-<h3 id="example">Example<a class="anchor" aria-label="anchor" href="#example"></a>
-</h3>
+<div class="section level2">
+<h2 id="example">Example<a class="anchor" aria-label="anchor" href="#example"></a>
+</h2>
 <p>Suppose we want to create a cohort of All of Us participants who have experienced a stroke. There are a couple of ways we could go about this.</p>
-<div class="section level4">
-<h4 id="using-the-observation-table">Using the observation table<a class="anchor" aria-label="anchor" href="#using-the-observation-table"></a>
-</h4>
+<div class="section level3">
+<h3 id="using-the-observation-table">Using the observation table<a class="anchor" aria-label="anchor" href="#using-the-observation-table"></a>
+</h3>
 <p>The following code would start a query for the first survey date for the AllofUs survey “The Basics” (sometimes, but rarely, participants completed this survey over multiple dates).</p>
 <p><em>While the ds_survey table is conveniently organized, it does not include the “skip” response for some surveys, so we don’t recommend using it unless you’re sure all potential responses have been recorded in the table. It’s safest to use the observation table. You can see a detailed description of the survey ETL here: <a href="https://support.researchallofus.org/hc/en-us/articles/6085114880148" class="external-link uri">https://support.researchallofus.org/hc/en-us/articles/6085114880148</a>.</em></p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
@@ -144,9 +146,9 @@
 <code class="sourceCode R"><span><span class="va">demo_collected</span> <span class="op">&lt;-</span> <span class="va">demo</span> <span class="op"><a href="reference/pipe.html">%&gt;%</a></span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/compute.html" class="external-link">collect</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 </div>
 </div>
-<div class="section level3">
-<h3 id="bugs">Bugs<a class="anchor" aria-label="anchor" href="#bugs"></a>
-</h3>
+<div class="section level2">
+<h2 id="bugs">Bugs<a class="anchor" aria-label="anchor" href="#bugs"></a>
+</h2>
 <p>Please leave us comments, requests, and report bugs using the “Issues” tab on github located here: <a href="https://github.com/roux-ohdsi/allofus/issues" class="external-link uri">https://github.com/roux-ohdsi/allofus/issues</a>.</p>
 </div>
 </div>

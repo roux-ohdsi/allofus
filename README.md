@@ -1,7 +1,7 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
-## `allofus` R Package
+# `allofus` R Package
 
 The goal of the `allofus` R package is to streamline the use of R within
 the [AllofUs Researcher
@@ -23,14 +23,14 @@ CDM](https://www.researchallofus.org/faq/what-is-omop/) data.
 [![R-CMD-check](https://github.com/roux-ohdsi/allofus/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/roux-ohdsi/allofus/actions/workflows/R-CMD-check.yaml)
 <!-- badges: end -->
 
-### Installation
+## Installation
 
 ``` r
 install.packages("remotes")
 remotes::install_github("roux-ohdsi/allofus")
 ```
 
-### Use
+## Use
 
 ``` r
 library(allofus)
@@ -76,12 +76,12 @@ person |>
   aou_join("observation", type = "left")
 ```
 
-### Example
+## Example
 
 Suppose we want to create a cohort of All of Us participants who have
 experienced a stroke. There are a couple of ways we could go about this.
 
-#### Using the observation table
+### Using the observation table
 
 The following code would start a query for the first survey date for the
 AllofUs survey “The Basics” (sometimes, but rarely, participants
@@ -124,7 +124,7 @@ session:
 demo_collected <- demo %>% collect()
 ```
 
-### Bugs
+## Bugs
 
 Please leave us comments, requests, and report bugs using the “Issues”
 tab on github located here:

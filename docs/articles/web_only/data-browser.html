@@ -48,10 +48,12 @@
 <li class="active nav-item dropdown">
   <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" role="button" aria-expanded="false" aria-haspopup="true" id="dropdown-articles">Articles</a>
   <div class="dropdown-menu" aria-labelledby="dropdown-articles">
+    <a class="dropdown-item" href="../../articles/atlas.html">Using ATLAS to create a cohort</a>
+    <a class="dropdown-item" href="../../articles/data.html">Extracting All of Us survey and EHR data</a>
     <a class="dropdown-item" href="../../articles/tips.html">Tips for using the All of Us Workbench</a>
     <a class="dropdown-item" href="../../articles/web_only/data-browser.html">Using the Data Browser and AllofUs Database</a>
     <a class="dropdown-item" href="../../articles/web_only/searchable_codebook.html">Searchable Codebook for AllofUs Surveys</a>
-    <a class="dropdown-item" href="../../articles/workspace-helpers.html">Workspace helpers</a>
+    <a class="dropdown-item" href="../../articles/workspace.html">Workspace helpers</a>
   </div>
 </li>
       </ul>
@@ -102,7 +104,7 @@ Browser.</p>
 <p><em>Later Edit: Nearly all the key information you need to find
 survey data can be found here: <a href="https://support.researchallofus.org/hc/en-us/articles/6085114880148" class="external-link uri">https://support.researchallofus.org/hc/en-us/articles/6085114880148</a>.</em></p>
 <div>
-<p><img src="../../../../All%20of%20Us/allofus/articles/web_only/images/img1.png" width="600"></p>
+<p><img src="images/img1.png" width="600"></p>
 </div>
 <div class="section level3">
 <h3 id="survey-data">Survey Data<a class="anchor" aria-label="anchor" href="#survey-data"></a>
@@ -113,7 +115,7 @@ survey data can be found here: <a href="https://support.researchallofus.org/hc/e
 <p>Finding the question “In what country were you born?” and
 participants answers</p>
 <div>
-<p><img src="../../../../All%20of%20Us/allofus/articles/web_only/images/img2.png" width="600"></p>
+<p><img src="images/img2.png" width="600"></p>
 </div>
 <p>We can see in the image above that the “Concept Code” for Birthplace
 USA is 1586136. This is a <strong>Non-Standard</strong> AllofUs specific
@@ -121,7 +123,7 @@ code used to identify Birthplace: USA. We need to find the code for the
 question. An easy way to do this is to search for this code in Athena
 (<a href="https://athena.ohdsi.org/search-terms/start" class="external-link uri">https://athena.ohdsi.org/search-terms/start</a>).</p>
 <div>
-<p><img src="../../../../All%20of%20Us/allofus/articles/web_only/images/img3.png" width="600"></p>
+<p><img src="images/img3.png" width="600"></p>
 </div>
 <p>Clicking on Birthplace:USA reveals that it is in the
 <strong>Observation</strong> Domain, it is a question
@@ -132,7 +134,7 @@ PPI Parent Code of 1586135 “The Basics: Birthplace”. This is the
 non-standard to Standard map (OMOP) For Birthlace code is 3005917. This
 is the <strong>Standard</strong> code for “Birthplace”.</p>
 <div>
-<p><img src="../../../../All%20of%20Us/allofus/articles/web_only/images/img4.png" width="600"></p>
+<p><img src="images/img4.png" width="600"></p>
 </div>
 <p>To be successful finding AllofUs Data from the Data Browswer, it is
 really important to understand the difference between these

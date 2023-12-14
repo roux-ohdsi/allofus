@@ -1,0 +1,78 @@
+---
+title: "Extracting All of Us survey and EHR data"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Extracting All of Us survey and EHR data}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  eval = FALSE
+)
+```
+
+```{r setup, include = FALSE}
+library(allofus)
+```
+
+The [Researcher Workbench](https://workbench.researchallofus.org/), available only to registered users, provides tools for creating datasets using the All of Us database. Researchers first use the Workbench to create a cohort defined by values of survey variables (e.g., gender, race, age), observations from the electronic health record (e.g., diagnosis codes, lab values), data from wearable devices (e.g., fitbit), genomic data, and/or physical measurements. Data -- either predefined or user-specified [*concept sets*](https://www.researchallofus.org/faq/what-is-a-concept-set/) -- from each of the database tables can then be extracted for the cohort. More information on this process is available [here](https://support.researchallofus.org/hc/en-us/articles/4556645124244-Using-the-Concept-Set-Selector-and-Dataset-Builder-tools-to-build-your-dataset).
+
+The `allofus` package takes a programmatic approach to extracting data from the All of Us database. One advantage to this approach is that it is easier to document and share the process. This is especially important for reproducibility and transparency. To demonstrate, this vignette will walk through an example of extracting data from the All of Us database.
+
+Suppose we want a cohort of the female All of Us participants who weren't born in the US. For this cohort, we want to extract data on their history of diabetes, their A1C lab values, and their use of metformin after joining All of Us.
+
+The first step is extracting gender and country of birth from the survey data. We can retrieve these variables either by concept code or concept id. Using the `allofus` [searchable codebook](https://roux-ohdsi.github.io/allofus/articles/searchable_codebook.html), we find that the concept id for gender is 1585838 and for birthplace is 1586135.
+
+```{r}
+svy_vars <- aou_survey(questions = c(1585838, 1586135), question_output = c("gender", "birthplace"))
+count(svy_vars, gender, birthplace)
+```
+
+To create our cohort, we can subset the data to the participants matching our criteria.
+
+```{r}
+cohort <- svy_vars |> 
+  filter(gender == "Female", birthplace != "United States")
+```
+
+Now that we have our cohort, we want to create a dataset with data from these participants' medical records. We first want to find the concept ids of the data we want to extract. There are a number of tools we could use to do so:
+
+1.  [Athena](https://athena.ohdsi.org/): a web-based tool for searching the entire OMOP vocabulary. The concept id for Type 2 diabetes mellitus can be found under ID. There are many results for this search, but we want only standard concepts when searching for EHR data. 
+
+    ![](images/diabetes-athena.png){width="600"}
+
+2.  [Data Browser](https://databrowser.researchallofus.org/): a tool for exploring data in the All of Us database. Finding the concept id for Type 2 diabetes mellitus requires searching for that concept and then clicking "Sources": 
+
+    ![](images/diabetes-browser.png){width="600"}
+
+3.  [Researcher Workbench](https://workbench.researchallofus.org/): Creating a concept set can allow you to find a number of concept ids quickly. Add concepts to your concept set, and then review the concept set to see them all.
+
+    ![](images/diabetes-workbench.png){width="600"}
+
+| Concept ID | Concept Name                                     | Domain      |
+|-------------------------|-----------------------------|------------------|
+| 201826     | Type 2 diabetes mellitus                         | Condition   |
+| 4193704    | Type 2 diabetes mellitus without complication    | Condition   |
+| 40164929   | metformin hydrochloride 500 MG Oral Tablet       | Drug        |
+| 40164897   | metformin hydrochloride 1000 MG Oral Tablet      | Drug        |
+| 3004410    | Hemoglobin A1c/Hemoglobin.total in Blood         | Measurement |
+| 3005673    | Hemoglobin A1c/Hemoglobin.total in Blood by HPLC | Measurement |
+
+```{r}
+t2dm <- aou_concept_set(cohort, concepts = c(201826, 4193704), 
+                        domains = "condition", output = "indicator")
+metformin <- aou_concept_set(cohort, concepts = c(40164929, 40164897), 
+                             domains = "drug", output = "count")
+a1c <- aou_concept_set(cohort, concepts = c(3004410, 3005673), 
+                       domains = "measurement", output = "all")
+```
+
+You can actually extract data from multiple domains at once -- the default is to search all domains. However, it is helpful to specify the domain(s) when you can, for speed and clarity.
+
+There are several tools available for finding data to extract from the All of Us database. The [Data Browser](https://databrowser.researchallofus.org/) is a useful, publicly available tool for exploring data (survey questions, conditions in the electronic health record, fitbit measurements etc.). However, it doesn't necessarily contain the information needed to actually find the data in the database.
+
+Data dictionaries can be found [via this link](https://support.researchallofus.org/hc/en-us/articles/360033200232-Data-Dictionaries-for-the-Curated-Data-Repositories-CDRs-) and [this page](https://support.researchallofus.org/hc/en-us/articles/6085114880148) also has helpful information.
