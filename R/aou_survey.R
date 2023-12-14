@@ -138,8 +138,8 @@ aou_survey <- function(cohort,
       concept_id_specific = .data$concept_id
     ) %>%
     dplyr::distinct(
-      'question', 'relative', 'condition', 'category', 'concept_code', 'concept_code_overall', 'concept_id_specific',
-      'concept_id_for_sub'
+      question,relative, condition, category, concept_code, concept_code_overall, concept_id_specific,
+      concept_id_for_sub
     ) %>%
     dplyr::bind_rows(allofus::aou_health_history)
 
@@ -243,13 +243,13 @@ aou_survey <- function(cohort,
 
   regular_survey_concept_codes <- allofus::aou_codebook %>%
     dplyr::filter(.data$concept_id %in% regular_survey_concept_ids) %>%
-    dplyr::distinct('concept_code', 'concept_id') %>%
+    dplyr::distinct(concept_code, concept_id) %>%
     dplyr::mutate(type = "regular")
 
   health_survey_concept_codes <- aou_health_history_long %>%
     dplyr::filter(.data$concept_id_specific %in% health_survey_concept_ids) %>%
     dplyr::select('concept_code', concept_id = 'concept_id_specific') %>%
-    dplyr::distinct('concept_code', 'concept_id') %>%
+    dplyr::distinct(concept_code, concept_id) %>%
     dplyr::mutate(type = "health")
 
   # there are more graceful ways to merge this data but ignoring that...
