@@ -432,7 +432,7 @@ aou_survey <- function(cohort,
       # change to lower, then rename
       wide <- wide %>%
         dplyr::rename_with(tolower) %>%
-        dplyr::rename(dplyr::all_of('nm'))
+        dplyr::rename(dplyr::all_of(nm))
     }
     # join back to original table
     out <- dplyr::full_join(cohort_w_health, wide, by = "person_id")
