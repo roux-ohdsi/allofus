@@ -217,7 +217,8 @@ aou_tables <- function(con = getOption("aou.default.con"), remove_na = TRUE) {
 
   tbls <- tibble::tibble(table_name = tbls) %>%
     dplyr::left_join(allofus::aou_table_info, by = "table_name") %>%
-    dplyr::arrange(rowSums(is.na(dplyr::select(.data, 'columns', 'table_name'))))
+    dplyr::select('table_name', 'columns') %>%
+    dplyr::arrange(.data$columns)
 
   if (isTRUE(remove_na)) {
     tbls <- tbls %>% tidyr::drop_na('columns')
