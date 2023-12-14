@@ -5,9 +5,8 @@
 #' The resulting cohort is a dataframe with the cohort start and end dates for each subject.
 #' The function is based on a similar function in <https://github.com/cmayer2/r4aou> with some tweaks
 #' to generate the appropriate observation periods and incorporate other package functions.
-#' @param cohort_id The ID of the cohort to retrieve from ATLAS.
-#' @param base_url The URL of the ATLAS instance to use, ending in "/WebAPI". Defaults to the demo
-#' ATLAS at <https://atlas-demo.ohdsi.org>
+#' @param cohort_definition A cohort definition generated using ROhdsiWebApi::getCohortDefinition(cohort_id, base_url)
+#' @param cohort_sql The cohort_sql generated using ROhdsiWebApi::getCohortSql(cohort_definition, base_url)
 #' @inheritParams aou_observation_period
 #' @inherit aou_observation_period details
 #' @return A dataframe with the resulting cohort. The SQL query used to generate the cohort is stored as an attribute.
@@ -17,14 +16,18 @@
 #'
 #'# generate a simple stroke cohort
 #'# see https://atlas-demo.ohdsi.org/#/cohortdefinition/1788061
-#'cohort <- aou_atlas_cohort(1788061, base_url = "https://atlas-demo.ohdsi.org/WebAPI")
+#'library(ROhdsiWebApi)
+#'cd <- ROhdsiWebApi::getCohortDefinition(1788061, "https://atlas-demo.ohdsi.org/WebAPI")
+#'cd_sql <- ROhdsiWebApi::getCohortSql(cd, "https://atlas-demo.ohdsi.org/WebAPI")
+#'cohort <- aou_atlas_cohort(cohort_definition = cd, cohort_sql = cd_sql)
 #'
 #'# print query that was executed
 #'cat(attr(cohort, "query"))
 #'
 #'
-aou_atlas_cohort <- function(cohort_id,
-                            base_url = "http://atlas-demo.ohdsi.org/WebAPI",
+#'
+aou_atlas_cohort <- function(cohort_definition,
+                             cohort_sql,
                             persistence_window = 548,
                             end_date_buffer = 60,
                             exclude_aou_visits = FALSE){
@@ -36,17 +39,19 @@ aou_atlas_cohort <- function(cohort_id,
     ))
   }
 
+  cohort_definition_ <- cohort_definition
+  cohort_sql_ <- cohort_sql
+  cohort_id_ <- cohort_definition$id
+
   cli::cli_inform(c("i" = "Querying ATLAS...generating a cohort can take a few minutes."))
   # Credit to https://github.com/cmayer2/r4aou with a few tweaks
 
-  cohort_definition <- ROhdsiWebApi::getCohortDefinition(cohort_id, base_url)
-  cohort_sql <- ROhdsiWebApi::getCohortSql(cohort_definition, base_url)
 
   # Modify SQL
-  modified_sql <- gsub("@results_database_schema.", "", cohort_sql)
+  modified_sql <- gsub("@results_database_schema.", "", cohort_sql_)
   modified_sql <- gsub("@vocabulary_database_schema", "@cdm_database_schema", modified_sql)
   modified_sql <- gsub("@target_database_schema.@", "#", modified_sql)
-  modified_sql <- gsub("@target_cohort_id", cohort_id, modified_sql)
+  modified_sql <- gsub("@target_cohort_id", cohort_id_, modified_sql)
   modified_sql <- gsub("delete from cohort_censor_stats where cohort_definition_id = \\d+;","",modified_sql)
   modified_sql <- gsub("@cdm_database_schema.observation_period","#observation_period2",modified_sql)
   modified_sql <- gsub("@cdm_database_schema","{cdr}",modified_sql)
@@ -74,7 +79,7 @@ aou_atlas_cohort <- function(cohort_id,
   target_cohort_sql <- "
 CREATE TEMP TABLE #target_cohort_table (
     cohort_definition_id INT64 not null,
-    subject_id INT64 not null,
+    person_id INT64 not null,
     cohort_start_date DATE,
     cohort_end_date DATE
 );
