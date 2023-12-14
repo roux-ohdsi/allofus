@@ -262,7 +262,7 @@ aou_survey <- function(cohort,
       dplyr::ungroup()
   })
 
-  all_health_survey_concept_ids <- dplyr::filter(.data$concept_lookup, .data$type == "health") %>%
+  all_health_survey_concept_ids <- dplyr::filter(concept_lookup, .data$type == "health") %>%
     dplyr::pull('concept_id')
 
   health_survey_concept_ids <- all_health_survey_concept_ids[all_health_survey_concept_ids %in% allofus::aou_health_history$concept_id_specific]
