@@ -5,18 +5,17 @@
 \title{Retrieve a cohort from ATLAS for use in AllofUs}
 \usage{
 aou_atlas_cohort(
-  cohort_id,
-  base_url = "http://atlas-demo.ohdsi.org/WebAPI",
+  cohort_definition,
+  cohort_sql,
   persistence_window = 548,
   end_date_buffer = 60,
   exclude_aou_visits = FALSE
 )
 }
 \arguments{
-\item{cohort_id}{The ID of the cohort to retrieve from ATLAS.}
+\item{cohort_definition}{A cohort definition generated using \code{ROhdsiWebApi::getCohortDefinition(cohort_id, base_url)}}
 
-\item{base_url}{The URL of the ATLAS instance to use, ending in "/WebAPI". Defaults to the demo
-ATLAS at \url{https://atlas-demo.ohdsi.org}}
+\item{cohort_sql}{The cohort_sql generated using \code{ROhdsiWebApi::getCohortSql(cohort_definition, base_url)}}
 
 \item{persistence_window}{Longest allowable time between visits for the same observation period. Defaults to 548 (see details)}
 
@@ -39,14 +38,18 @@ to generate the appropriate observation periods and incorporate other package fu
 Follows conventions described here: \url{https://ohdsi.github.io/CommonDataModel/ehrObsPeriods.html}
 }
 \examples{
-\dontshow{if (on_workbench()) (if (getRversion() >= "3.4") withAutoprint else force)(\{ # examplesIf}
+\dontshow{if (on_workbench() && require("ROhdsiWebApi")) (if (getRversion() >= "3.4") withAutoprint else force)(\{ # examplesIf}
 
 # generate a simple stroke cohort
 # see https://atlas-demo.ohdsi.org/#/cohortdefinition/1788061
-cohort <- aou_atlas_cohort(1788061, base_url = "https://atlas-demo.ohdsi.org/WebAPI")
+library(ROhdsiWebApi)
+cd <- ROhdsiWebApi::getCohortDefinition(1788061, "https://atlas-demo.ohdsi.org/WebAPI")
+cd_sql <- ROhdsiWebApi::getCohortSql(cd, "https://atlas-demo.ohdsi.org/WebAPI")
+cohort <- aou_atlas_cohort(cohort_definition = cd, cohort_sql = cd_sql)
 
 # print query that was executed
 cat(attr(cohort, "query"))
+
 
 \dontshow{\}) # examplesIf}
 }

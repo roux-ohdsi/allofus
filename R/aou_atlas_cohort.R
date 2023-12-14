@@ -5,14 +5,14 @@
 #' The resulting cohort is a dataframe with the cohort start and end dates for each subject.
 #' The function is based on a similar function in <https://github.com/cmayer2/r4aou> with some tweaks
 #' to generate the appropriate observation periods and incorporate other package functions.
-#' @param cohort_definition A cohort definition generated using ROhdsiWebApi::getCohortDefinition(cohort_id, base_url)
-#' @param cohort_sql The cohort_sql generated using ROhdsiWebApi::getCohortSql(cohort_definition, base_url)
+#' @param cohort_definition A cohort definition generated using `ROhdsiWebApi::getCohortDefinition(cohort_id, base_url)`
+#' @param cohort_sql The cohort_sql generated using `ROhdsiWebApi::getCohortSql(cohort_definition, base_url)`
 #' @inheritParams aou_observation_period
 #' @inherit aou_observation_period details
 #' @return A dataframe with the resulting cohort. The SQL query used to generate the cohort is stored as an attribute.
 #' @export
 #'
-#' @examplesIf on_workbench()
+#' @examplesIf on_workbench() && require("ROhdsiWebApi")
 #'
 #'# generate a simple stroke cohort
 #'# see https://atlas-demo.ohdsi.org/#/cohortdefinition/1788061

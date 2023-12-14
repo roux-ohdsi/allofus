@@ -5,17 +5,15 @@
 \title{Generate an observation period table based on OMOP Conventions}
 \usage{
 aou_observation_period(
-  con = getOption("aou.default.con"),
   cohort = NULL,
   persistence_window = 548,
   end_date_buffer = 60,
   exclude_aou_visits = FALSE,
+  con = getOption("aou.default.con"),
   collect = FALSE
 )
 }
 \arguments{
-\item{con}{Connection to the allofus SQL database. Defaults to getOption("aou.default.con"), which is set automatically if you use \code{aou_connect()}}
-
 \item{cohort}{Query to a cohort or local dataframe with column "person_id". If no cohort is provided,
 defaults to the entire All of Us cohort}
 
@@ -25,6 +23,8 @@ defaults to the entire All of Us cohort}
 
 \item{exclude_aou_visits}{Whether to exclude All of Us clinical visits (i.e., for program-specific measurements,
 not part of the participants' typical EHR) from the observation period. Defaults to \code{FALSE}}
+
+\item{con}{Connection to the allofus SQL database. Defaults to getOption("aou.default.con"), which is set automatically if you use \code{aou_connect()}}
 
 \item{collect}{Whether to collect the data or keep as SQL query
 from the observation period. Defaults to \code{FALSE}.}
