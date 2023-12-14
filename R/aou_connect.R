@@ -7,6 +7,8 @@
 #' @return TRUE if you are on the workbench, FALSE otherwise
 #' @export
 #' @keywords internal
+#' @examples
+#' on_workbench()
 on_workbench <- function() {
   Sys.getenv("WORKSPACE_CDR") != "" && Sys.getenv("WORKSPACE_BUCKET") != ""
 }

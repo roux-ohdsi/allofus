@@ -79,7 +79,7 @@ aou_atlas_cohort <- function(cohort_definition,
   target_cohort_sql <- "
 CREATE TEMP TABLE #target_cohort_table (
     cohort_definition_id INT64 not null,
-    person_id INT64 not null,
+    subject_id INT64 not null,
     cohort_start_date DATE,
     cohort_end_date DATE
 );
@@ -100,6 +100,7 @@ SELECT * FROM #target_cohort_table;
 
   # Execute SQL
   r <- allofus::aou_sql(sql_translated)
+  r <- r %>% dplyr::rename(person_id = 'subject_id')
 
   attr(r, "query") <- sql_translated
 
