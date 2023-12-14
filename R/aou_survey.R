@@ -315,7 +315,7 @@ aou_survey <- function(cohort,
       }
 
       obs <- tbl(con, "observation") %>%
-        dplyr::inner_join(dplyr::select('function_cohort', 'person_id'), by = "person_id") %>%
+        dplyr::inner_join(dplyr::select(function_cohort, 'person_id'), by = "person_id") %>%
         dplyr::filter(.data$observation_source_concept_id %in% !!c(osci_overall, osci_specific)) %>%
         dplyr::select('person_id', 'observation_source_concept_id', 'value_source_concept_id', 'value_source_value', 'observation_date') %>%
         dplyr::mutate(type = dplyr::case_when(.data$observation_source_concept_id %in% osci_specific ~ "Specific", TRUE ~ "Overall")) %>%
@@ -376,7 +376,7 @@ aou_survey <- function(cohort,
     tmp <- dplyr::tbl(con, "observation") %>%
       dplyr::filter(.data$observation_source_concept_id %in% regular_survey_concept_ids) %>%
       # this is necessary because there may be multiple rows for a single person (hence full_join later)
-      dplyr::inner_join(dplyr::select('function_cohort', 'person_id'), by = "person_id")
+      dplyr::inner_join(dplyr::select(function_cohort, 'person_id'), by = "person_id")
 
     # for retrieving columns and pivoting
     q <- paste0("observation_source_", question_output)

@@ -25,12 +25,11 @@ Imports:
     janitor,
     dbplyr,
     sessioninfo,
-    SqlRender,
+    SqlRender (>= 1.6.0),
     ROhdsiWebApi,
     rlang
 Remotes: 
     OHDSI/ROhdsiWebApi,
-    OHDSI/SqlRender
 Suggests:
     DBI,
     knitr,
