@@ -13,7 +13,7 @@
 #' the `by` argument which will result in a SQL error.
 #'
 #' @param data unexecuted SQL query from dbplyr/dplyr.
-#' @param table the omop table (or other remote table in your schema) you wish to join
+#' @param table the omop table (or other remote table in your schema) you wish to join, as a character string, or a tbl object.
 #' @param type the type of join. use types available in dplyr: left, right, inner, anti, full etc.
 #' @param con connection to the allofus SQL database. Defaults to getOption("aou.default.con"), which is set automatically if you use `aou_connect()`
 #' @param ... arguments passed on to the join function. e.g., by = "person_id"
@@ -24,15 +24,15 @@
 #'
 #' @return Continued dbplyr query
 #' @export
+#' @importFrom dplyr left_join right_join inner_join anti_join full_join semi_join
 #' @md
 #'
-#' @examples
-#' \dontrun{
-#' allofus::aou_connect()
-#' options(aou.default.con = con)
+#' @examplesIf on_workbench()
+#'
+#' con <- aou_connect()
 #' obs_tbl %>%
 #'   aou_join("person", type = "left", by = "person_id")
-#' }
+#'
 aou_join <- function(data,
                      table,
                      type,
@@ -46,13 +46,13 @@ aou_join <- function(data,
                                      "i" = "Provide a connection automatically by running {.code aou_connect()} before this function.",
                                      "i" = "You can also provide {.code con} as an argument or default with {.code options(aou.default.con = ...)}."))
 
-  y_table <- dplyr::tbl(con, table)
+  if (is.character(table)) y_table <- dplyr::tbl(con, table) else y_table <- table
   shared_columns <- intersect(colnames(data), colnames(y_table))
 
   # convert to the new join type
   by <- dplyr::join_by(by)
 
- res <- get(paste(paste0("dplyr::", type), "join", sep = "_"))(data, y_table,
+ res <- get(paste(type, "join", sep = "_"))(data, y_table,
     x_as = if (missing(x_as)) {
       paste(sample(letters, 10, TRUE), collapse = "")
     } else {

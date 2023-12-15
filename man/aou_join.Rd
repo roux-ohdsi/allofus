@@ -19,7 +19,7 @@ aou_join(
 \arguments{
 \item{data}{unexecuted SQL query from dbplyr/dplyr.}
 
-\item{table}{the omop table (or other remote table in your schema) you wish to join}
+\item{table}{the omop table (or other remote table in your schema) you wish to join, as a character string, or a tbl object.}
 
 \item{type}{the type of join. use types available in dplyr: left, right, inner, anti, full etc.}
 
@@ -51,10 +51,10 @@ it changes the default suffix from .x/.y to _x/_y for cases with shared column n
 the \code{by} argument which will result in a SQL error.
 }
 \examples{
-\dontrun{
-allofus::aou_connect()
-options(aou.default.con = con)
+\dontshow{if (on_workbench()) (if (getRversion() >= "3.4") withAutoprint else force)(\{ # examplesIf}
+
+con <- aou_connect()
 obs_tbl \%>\%
   aou_join("person", type = "left", by = "person_id")
-}
+\dontshow{\}) # examplesIf}
 }
