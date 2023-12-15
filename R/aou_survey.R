@@ -326,7 +326,7 @@ aou_survey <- function(cohort,
         dplyr::group_by(.data$person_id, .data$type) %>%
         dbplyr::window_order(.data$observation_date) %>%
         tidyr::fill(-c('person_id', 'observation_date', 'type'), .direction = "down") %>%
-        dplyr::slice_max(order_by = .data$observation_date, n = 1, with_ties = FALSE) %>%
+        dplyr::slice_max(order_by = observation_date, n = 1, with_ties = FALSE) %>%
         dplyr::ungroup()
 
       if (ncol(obs) == 3) {
@@ -354,7 +354,7 @@ aou_survey <- function(cohort,
         )) %>%
         dplyr::select('person_id', 'type', 'condition', 'observation_date') %>%
         dplyr::group_by(.data$person_id) %>%
-        dplyr::slice_max(order_by = .data$type, n = 1) %>%
+        dplyr::slice_max(order_by = type, n = 1) %>%
         dplyr::ungroup() %>%
         dplyr::select('person_id', !!condition_name := 'condition', !!condition_date := 'observation_date')
     }) %>%

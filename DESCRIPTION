@@ -1,6 +1,6 @@
 Package: allofus
 Type: Package
-Title: Tools for the AllofUs Resarcher Workbench 
+Title: Tools for the AllofUs Researcher Workbench 
 Version: 0.1.0
 Authors@R: 
     c(
@@ -21,8 +21,6 @@ Imports:
     purrr,
     stats,
     utils,
-    RSQLite,
-    janitor,
     dbplyr,
     sessioninfo,
     rlang

@@ -14,17 +14,19 @@
 #' @return A dataframe with the resulting cohort. The SQL query used to generate the cohort is stored as an attribute.
 #' @export
 #'
-#' @examples
-#'\dontrun{
+#' @examplesIf on_workbench()
 #'# generate a simple stroke cohort
 #'# see https://atlas-demo.ohdsi.org/#/cohortdefinition/1788061
-#'cd <- getCohortDefinition(1788061, "https://atlas-demo.ohdsi.org/WebAPI")
-#'cd_sql <- getCohortSql(cd, "https://atlas-demo.ohdsi.org/WebAPI")
-#'cohort <- aou_atlas_cohort(cohort_definition = cd, cohort_sql = cd_sql)
+#'# aou_cohort_example contains the results of
+#'# cd <- ROhdsiWebApi::getCohortDefinition(1788061, "https://atlas-demo.ohdsi.org/WebAPI")
+#'# cd_sql <- ROhdsiWebApi::getCohortSql(cd, "https://atlas-demo.ohdsi.org/WebAPI")
+#'
+#'cohort <- aou_atlas_cohort(cohort_definition = aou_cohort_example$cd,
+#'                           cohort_sql = aou_cohort_example$cd_sql)
 #'
 #'# print query that was executed
 #'cat(attr(cohort, "query"))
-#'}
+#'
 #'
 #'
 aou_atlas_cohort <- function(cohort_definition,

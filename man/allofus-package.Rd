@@ -4,7 +4,7 @@
 \name{allofus-package}
 \alias{allofus}
 \alias{allofus-package}
-\title{allofus: Tools for the AllofUs Resarcher Workbench}
+\title{allofus: Tools for the AllofUs Researcher Workbench}
 \description{
 Streamlining use of the 'AllofUs Researcher Workbench' notebooks and increasing interoperability with the OHDSI toolstack.
 }
