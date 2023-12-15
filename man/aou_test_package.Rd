@@ -12,3 +12,6 @@ result of test
 \description{
 Function to test all of us package on AllofUs Researcher Workbench using documented examples
 }
+\examples{
+NULL
+}

@@ -5,12 +5,13 @@
 #' @return result of test
 #' @export
 #'
-#'
+#' @examples
+#' NULL
 aou_test_package <- function() {
   testthat::test_that("all examples run without error",{
     fun_names <- getNamespaceExports("allofus")
     for (fun in fun_names){
-      expect_no_error({
+      testthat::expect_no_error({
         invisible(
           capture.output(
             example(fun, package = "allofus", character.only = TRUE, echo = FALSE)
