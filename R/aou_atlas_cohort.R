@@ -8,34 +8,37 @@
 #' @param cohort_definition A cohort definition generated using `ROhdsiWebApi::getCohortDefinition(cohort_id, base_url)`
 #' @param cohort_sql The cohort_sql generated using `ROhdsiWebApi::getCohortSql(cohort_definition, base_url)`
 #' @inheritParams aou_observation_period
+#' @inheritParams aou_sql
 #' @inherit aou_observation_period details
 #' @return A dataframe with the resulting cohort. The SQL query used to generate the cohort is stored as an attribute.
 #' @export
 #'
-#' @examplesIf on_workbench() && require("ROhdsiWebApi")
-#'
+#' @examples
+#'\dontrun{
 #'# generate a simple stroke cohort
 #'# see https://atlas-demo.ohdsi.org/#/cohortdefinition/1788061
-#'library(ROhdsiWebApi)
-#'cd <- ROhdsiWebApi::getCohortDefinition(1788061, "https://atlas-demo.ohdsi.org/WebAPI")
-#'cd_sql <- ROhdsiWebApi::getCohortSql(cd, "https://atlas-demo.ohdsi.org/WebAPI")
+#'cd <- getCohortDefinition(1788061, "https://atlas-demo.ohdsi.org/WebAPI")
+#'cd_sql <- getCohortSql(cd, "https://atlas-demo.ohdsi.org/WebAPI")
 #'cohort <- aou_atlas_cohort(cohort_definition = cd, cohort_sql = cd_sql)
 #'
 #'# print query that was executed
 #'cat(attr(cohort, "query"))
-#'
+#'}
 #'
 #'
 aou_atlas_cohort <- function(cohort_definition,
                              cohort_sql,
                             persistence_window = 548,
                             end_date_buffer = 60,
-                            exclude_aou_visits = FALSE){
+                            exclude_aou_visits = FALSE,
+                            debug = FALSE,
+                            ...){
 
-  if (!requireNamespace("ROhdsiWebApi", quietly = TRUE)) {
+  if (!("id" %in% names(cohort_definition))) {
     cli::cli_abort(
-      c("Package {.pkg ROhdsiWebApi} must be installed to use this function.",
-      "i" = "Use {.code remotes::install_github(\"ohdsi/ROhdsiWebApi\")} to install."
+      c("This function is designed to be used with cohort definitions created by {.code ROhdsiWebApi::getCohortDefinition()}",
+        "Please see example in the documentation.",
+      "i" = "Use {.code remotes::install_github(\"ohdsi/ROhdsiWebApi\")} to install ROhdsiWebApi."
     ))
   }
 
@@ -45,7 +48,6 @@ aou_atlas_cohort <- function(cohort_definition,
 
   cli::cli_inform(c("i" = "Querying ATLAS...generating a cohort can take a few minutes."))
   # Credit to https://github.com/cmayer2/r4aou with a few tweaks
-
 
   # Modify SQL
   modified_sql <- gsub("@results_database_schema.", "", cohort_sql_)
@@ -99,8 +101,9 @@ SELECT * FROM #target_cohort_table;
   sql_translated <- gsub("CREATE TABLE", "CREATE TEMP TABLE", sql_translated)
 
   # Execute SQL
-  r <- allofus::aou_sql(sql_translated)
-  r <- r %>% dplyr::rename(person_id = 'subject_id')
+
+  r <- allofus::aou_sql(sql_translated, debug = debug, ...) %>%
+    dplyr::rename(person_id = 'subject_id')
 
   attr(r, "query") <- sql_translated
 

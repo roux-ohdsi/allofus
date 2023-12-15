@@ -1,10 +1,6 @@
 ---
 title: "Tips for using the All of Us Workbench"
 output: rmarkdown::html_vignette
-vignette: >
-  %\VignetteIndexEntry{Tips for using the All of Us Workbench}
-  %\VignetteEngine{knitr::rmarkdown}
-  %\VignetteEncoding{UTF-8}
 ---
 
 ```{r, include = FALSE}

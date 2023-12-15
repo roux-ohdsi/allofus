@@ -1,10 +1,6 @@
 ---
 title: "Extracting All of Us survey and EHR data"
 output: rmarkdown::html_vignette
-vignette: >
-  %\VignetteIndexEntry{Extracting All of Us survey and EHR data}
-  %\VignetteEngine{knitr::rmarkdown}
-  %\VignetteEncoding{UTF-8}
 ---
 
 ```{r, include = FALSE}

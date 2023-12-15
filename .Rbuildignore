@@ -9,3 +9,5 @@
 ^cran-comments\.md$
 ^vignettes$
 ^\.github$
+^doc$
+^Meta$

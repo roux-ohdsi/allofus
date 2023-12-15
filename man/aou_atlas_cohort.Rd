@@ -9,7 +9,9 @@ aou_atlas_cohort(
   cohort_sql,
   persistence_window = 548,
   end_date_buffer = 60,
-  exclude_aou_visits = FALSE
+  exclude_aou_visits = FALSE,
+  debug = FALSE,
+  ...
 )
 }
 \arguments{
@@ -23,6 +25,10 @@ aou_atlas_cohort(
 
 \item{exclude_aou_visits}{Whether to exclude All of Us clinical visits (i.e., for program-specific measurements,
 not part of the participants' typical EHR) from the observation period. Defaults to \code{FALSE}}
+
+\item{debug}{Print the query to the console; useful for debugging.}
+
+\item{...}{All other arguments passed to \code{bigrquery::bq_table_download()}}
 }
 \value{
 A dataframe with the resulting cohort. The SQL query used to generate the cohort is stored as an attribute.
@@ -38,18 +44,16 @@ to generate the appropriate observation periods and incorporate other package fu
 Follows conventions described here: \url{https://ohdsi.github.io/CommonDataModel/ehrObsPeriods.html}
 }
 \examples{
-\dontshow{if (on_workbench() && require("ROhdsiWebApi")) (if (getRversion() >= "3.4") withAutoprint else force)(\{ # examplesIf}
-
+\dontrun{
 # generate a simple stroke cohort
 # see https://atlas-demo.ohdsi.org/#/cohortdefinition/1788061
-library(ROhdsiWebApi)
-cd <- ROhdsiWebApi::getCohortDefinition(1788061, "https://atlas-demo.ohdsi.org/WebAPI")
-cd_sql <- ROhdsiWebApi::getCohortSql(cd, "https://atlas-demo.ohdsi.org/WebAPI")
+cd <- getCohortDefinition(1788061, "https://atlas-demo.ohdsi.org/WebAPI")
+cd_sql <- getCohortSql(cd, "https://atlas-demo.ohdsi.org/WebAPI")
 cohort <- aou_atlas_cohort(cohort_definition = cd, cohort_sql = cd_sql)
 
 # print query that was executed
 cat(attr(cohort, "query"))
+}
 
 
-\dontshow{\}) # examplesIf}
 }

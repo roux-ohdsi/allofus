@@ -1,10 +1,6 @@
 ---
 title: "Using ATLAS to create a cohort"
 output: rmarkdown::html_vignette
-vignette: >
-  %\VignetteIndexEntry{Using ATLAS to create a cohort}
-  %\VignetteEngine{knitr::rmarkdown}
-  %\VignetteEncoding{UTF-8}
 ---
 
 ```{r, include = FALSE}

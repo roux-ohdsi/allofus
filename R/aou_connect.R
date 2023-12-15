@@ -44,7 +44,7 @@ aou_connect <- function(CDR = getOption("aou.default.cdr"), ...) {
          # Install {pak}
          install.packages("pak")
          # Install dbplyr v2.3.4
-         pak::pkg_install("dbplyr@v2.3.4")
+         pak::pkg_install("tidyverse/dbplyr@v2.3.4")
          # Or install development version of dbplyr
          pak::pkg_install("tidyverse/dbplyr")
          # restart your R kernel')
@@ -95,6 +95,7 @@ aou_connect <- function(CDR = getOption("aou.default.cdr"), ...) {
 #' `getOption("aou.default.cdr")`, which is `Sys.getenv('WORKSPACE_CDR')` if not specified otherwise
 #' (i.e., [the "mainline" CDR](https://support.researchallofus.org/hc/en-us/articles/4616869437204-Controlled-CDR-Directory)).
 #' On the controlled tier, specify the "base" CDR with `CDR = paste0(Sys.getenv('WORKSPACE_CDR'), "_base")`.
+#' @param debug Print the query to the console; useful for debugging.
 #' @param ... All other arguments passed to `bigrquery::bq_table_download()`
 #'
 #' @return A dataframe with the results of the query.
@@ -180,20 +181,42 @@ aou_connect <- function(CDR = getOption("aou.default.cdr"), ...) {
 #'   unit_name
 #' ORDER BY
 #'   N DESC
-#' ')
-aou_sql <- function(query, CDR = getOption("aou.default.cdr"), ...) {
+#' ', debug = TRUE)
+aou_sql <- function(query, CDR = getOption("aou.default.cdr"), debug = FALSE, ...) {
+
   .cdr_objs <- ls(envir = .GlobalEnv, pattern = "^CDR$|^cdr$")
   if (length(.cdr_objs) == 0) {
     CDR <- CDR
     cdr <- CDR
   }
 
-  q <- bigrquery::bq_project_query(
-    Sys.getenv("GOOGLE_PROJECT"),
-    query = glue::glue(query)
-  )
+  if (debug) {
+    cli::cli_h1("SQL QUERY")
+    cli::cat_line(glue::glue(query))
+    cli::cli_h1("END SQL QUERY")
+  }
 
-  bigrquery::bq_table_download(q, ...)
+  if (Sys.getenv("GOOGLE_PROJECT") == "") {
+    cli::cli_abort(c('This function only works on the Researcher Workbench. Please ensure you have a valid Google Cloud project set up by checking {.code Sys.getenv("GOOGLE_PROJECT")}.'),
+                   call = NULL)
+  }
+
+  res <- tryCatch({
+    q <- bigrquery::bq_project_query(
+      Sys.getenv("GOOGLE_PROJECT"),
+      query = glue::glue(query)
+    )
+
+    bigrquery::bq_table_download(q, ...)
+  },
+  error = function(e) {
+    cli::cli_abort(c("SQL query did not result in a table. Please check to make sure SQL code is valid.",
+                     "To print the query, run {.code aou_sql(query, debug = TRUE)}"),
+                   call = NULL)
+    return(e)
+  })
+
+  res
 }
 
 

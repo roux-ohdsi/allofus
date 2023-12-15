@@ -4,7 +4,7 @@
 \alias{aou_sql}
 \title{Execute a SQL query on the All of Us database}
 \usage{
-aou_sql(query, CDR = getOption("aou.default.cdr"), ...)
+aou_sql(query, CDR = getOption("aou.default.cdr"), debug = FALSE, ...)
 }
 \arguments{
 \item{query}{A SQL query (BigQuery dialect) to be executed. Interpreted
@@ -16,6 +16,8 @@ references of the form \code{"{CDR}"} or \code{"{cdr}"} in the query (see exampl
 \code{getOption("aou.default.cdr")}, which is \code{Sys.getenv('WORKSPACE_CDR')} if not specified otherwise
 (i.e., \href{https://support.researchallofus.org/hc/en-us/articles/4616869437204-Controlled-CDR-Directory}{the "mainline" CDR}).
 On the controlled tier, specify the "base" CDR with \code{CDR = paste0(Sys.getenv('WORKSPACE_CDR'), "_base")}.}
+
+\item{debug}{Print the query to the console; useful for debugging.}
 
 \item{...}{All other arguments passed to \code{bigrquery::bq_table_download()}}
 }
@@ -106,6 +108,6 @@ GROUP BY
   unit_name
 ORDER BY
   N DESC
-')
+', debug = TRUE)
 \dontshow{\}) # examplesIf}
 }
