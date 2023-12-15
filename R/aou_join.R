@@ -63,12 +63,12 @@ aou_join <- function(data,
     suffix = suffix,
     ...)
 
- if (any(!paste0(names(data), "_x") %in% names(res)) || any(!paste0(names(y_table), "_y") %in% names(res))) {
-     cli::cli_warn(c("There are shared column names not specified in the {.code by} argument.",
-                     ">" = "These column names now end in '_x' and '_y'.",
-                     "i" = "You can change these suffixes using the {.code suffix} argument but it cannot contain periods (`.`).",
-                     ">" = "Consider specifing all shared columns in the {.code by} argument.",
-                     ">" = "Or if these additional shared columns are `NA`, remove them prior to joining."))
+ if (any(paste0(colnames(data), "_x") %in% colnames(res)) || any(paste0(colnames(y_table), "_y") %in% colnames(res))) {
+   cli::cli_warn(c("There are shared column names not specified in the {.code by} argument.",
+                   ">" = "These column names now end in '_x' and '_y'.",
+                   "i" = "You can change these suffixes using the {.code suffix} argument but it cannot contain periods (`.`).",
+                   ">" = "Consider specifing all shared columns in the {.code by} argument.",
+                   ">" = "Or if these additional shared columns are `NA`, remove them prior to joining."))
  }
 
  return(res)

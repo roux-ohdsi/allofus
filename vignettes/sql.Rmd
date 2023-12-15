@@ -321,22 +321,43 @@ The result of this SQL query is just 9 rows, so we get to see all of them. Both 
 
 ### `aou_join()`
 
-The `allofus` package includes a function called `aou_join()` that makes it easy to join tables together. It includes some additional checks to help avoid mistakes in joining. For example, if we wanted to join the `person` table with the `observation` table, we could do it like this:
+The `allofus` package includes a function called `aou_join()` that makes it easy to join tables together. It includes some additional checks to help avoid mistakes in joining. For example, if we wanted to join the `person` table with the `observation` table, dropping people with no observations, we could do it like this:
 ```{r}
-person_tbl %>%
-  aou_join("observation", type = "left", by = "person_id")
+obs <- person_tbl %>%
+  aou_join("observation", type = "inner", by = "person_id")
 ```
-
-
+```
+Warning message:
+“There are shared column names not specified in the `by` argument.
+→ These column names now end in '_x' and '_y'.
+ℹ You can change these suffixes using the `suffix` argument but it cannot
+  contain periods (`.`).
+→ Consider specifing all shared columns in the `by` argument.
+→ Or if these additional shared columns are `NA`, remove them prior to joining.”
+```
+The warning message tells us that the `person` and `observation` tables share some column names
+that we didn't specify as part of the join argument. That is because both tables have a column called `provider_id`. We can see this by looking at the column names of the `obs` table that have the default added suffix, "_x" and "_y":
+```{r}
+obs %>% 
+  select(ends_with("_x"), ends_with("_y")) %>%
+  colnames()
+```
+```{r, echo = FALSE, eval = TRUE}
+c("provider_id_x", "provider_id_y")
+```
+Because this is often a mistake occurring because we are not working with the tables directly, `aou_join()` warns us about this. We can avoid this warning by specifying all of the columns that we want to join on and removing the columns that we don't want to join on. For example, we could remove the `provider_id` column from the `person` table before joining:
+```{r}
+obs <- person_tbl %>%
+  select(-provider_id) %>%
+  aou_join("observation", type = "inner", by = "person_id")
+```
 
 ## Viewing the Underlying SQL with `show_query()`
 
-Understanding the SQL code that `dbplyr` generates can be insightful, especially if you're debugging or simply curious about the translation from R to SQL.
-
-To view the SQL query that corresponds to your `dbplyr` operations, use the `show_query()` function:
+Understanding the SQL code that `dbplyr` generates can be insightful, especially if you're debugging or simply curious about the translation from R to SQL. To view the SQL query that corresponds to your `dbplyr` operations, use the `show_query()` function:
 
 ```{r}
-filtered_data %>% 
+obs %>% 
   show_query()
 ```
 
