@@ -76,7 +76,7 @@ aou_survey <- function(cohort,
           # Install {pak}
           install.packages("pak")
           # Install dbplyr v2.3.4
-          pak::pkg_install("dbplyr@v2.3.4")
+          pak::pkg_install("tidyverse/dbplyr@v2.3.4")
           # Or install development version of dbplyr
           pak::pkg_install("tidyverse/dbplyr")
           # restart your R kernel')

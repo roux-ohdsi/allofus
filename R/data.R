@@ -73,7 +73,16 @@
 #' }
 "aou_table_info"
 
-
+#' Example cohort definition and SQL query from ATLAS
+#'
+#' A list containing a sample cohort definition and SQL query from the demo ATLAS for a cohort of stroke survivors.
+#'
+#' @format `aou_cohort_example`
+#' \describe{
+#'   \item{cd}{Cohort definition object}
+#'   \item{cd_sql}{SQL query for cohort definition}
+#' }
+"aou_cohort_example"
 
 
 
