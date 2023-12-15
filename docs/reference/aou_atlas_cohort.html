@@ -3,11 +3,13 @@
 Observation periods are first generated for each subject using the aou_observation_period() function.
 The resulting cohort is a dataframe with the cohort start and end dates for each subject.
 The function is based on a similar function in https://github.com/cmayer2/r4aou with some tweaks
-to generate the appropriate observation periods and incorporate other package functions."><title>Retrieve a cohort from ATLAS for use in AllofUs — aou_atlas_cohort • allofus</title><!-- favicons --><link rel="icon" type="image/png" sizes="16x16" href="../favicon-16x16.png"><link rel="icon" type="image/png" sizes="32x32" href="../favicon-32x32.png"><link rel="apple-touch-icon" type="image/png" sizes="180x180" href="../apple-touch-icon.png"><link rel="apple-touch-icon" type="image/png" sizes="120x120" href="../apple-touch-icon-120x120.png"><link rel="apple-touch-icon" type="image/png" sizes="76x76" href="../apple-touch-icon-76x76.png"><link rel="apple-touch-icon" type="image/png" sizes="60x60" href="../apple-touch-icon-60x60.png"><script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"><link href="../deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet"><script src="../deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous"><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/v4-shims.min.css" integrity="sha256-wZjR52fzng1pJHwx4aV2AO3yyTOXrcDW7jBpJtTwVxw=" crossorigin="anonymous"><!-- bootstrap-toc --><script src="https://cdn.jsdelivr.net/gh/afeld/bootstrap-toc@v1.0.1/dist/bootstrap-toc.min.js" integrity="sha256-4veVQbu7//Lk5TSmc7YV48MxtMy98e26cf5MrgZYnwo=" crossorigin="anonymous"></script><!-- headroom.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/headroom.min.js" integrity="sha256-AsUX4SJE1+yuDu5+mAVzJbuYNPHj/WroHuZ8Ir/CkE0=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script><!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><!-- search --><script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/6.4.6/fuse.js" integrity="sha512-zv6Ywkjyktsohkbp9bb45V6tEMoWhzFzXis+LrMehmJZZSys19Yxf1dopHx7WzIKxr5tK2dVcYmaCk2uqdjF4A==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/autocomplete.js/0.38.0/autocomplete.jquery.min.js" integrity="sha512-GU9ayf+66Xx2TmpxqJpliWbT5PiGYxpaG8rfnBEk1LL8l1KGkRShhngwdXK1UgqhAzWpZHSiYPc09/NwDQIGyg==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.11.1/mark.min.js" integrity="sha512-5CYOlHXGh6QpOFA/TeTylKLWfB3ftPsde7AnmhuitiTX4K5SqCLBeKro6sPS8ilsz1Q4NRx3v8Ko2IBiszzdww==" crossorigin="anonymous"></script><!-- pkgdown --><script src="../pkgdown.js"></script><link href="../extra.css" rel="stylesheet"><meta property="og:title" content="Retrieve a cohort from ATLAS for use in AllofUs — aou_atlas_cohort"><meta property="og:description" content="This function retrieves a cohort definition from ATLAS and generates the cohort in All of Us.
+to generate the appropriate observation periods and incorporate other package functions.
+Please see the online vignette for additional details insert link here"><title>Retrieve a cohort from ATLAS for use in AllofUs — aou_atlas_cohort • allofus</title><!-- favicons --><link rel="icon" type="image/png" sizes="16x16" href="../favicon-16x16.png"><link rel="icon" type="image/png" sizes="32x32" href="../favicon-32x32.png"><link rel="apple-touch-icon" type="image/png" sizes="180x180" href="../apple-touch-icon.png"><link rel="apple-touch-icon" type="image/png" sizes="120x120" href="../apple-touch-icon-120x120.png"><link rel="apple-touch-icon" type="image/png" sizes="76x76" href="../apple-touch-icon-76x76.png"><link rel="apple-touch-icon" type="image/png" sizes="60x60" href="../apple-touch-icon-60x60.png"><script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"><link href="../deps/bootstrap-5.2.2/bootstrap.min.css" rel="stylesheet"><script src="../deps/bootstrap-5.2.2/bootstrap.bundle.min.js"></script><!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous"><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/v4-shims.min.css" integrity="sha256-wZjR52fzng1pJHwx4aV2AO3yyTOXrcDW7jBpJtTwVxw=" crossorigin="anonymous"><!-- bootstrap-toc --><script src="https://cdn.jsdelivr.net/gh/afeld/bootstrap-toc@v1.0.1/dist/bootstrap-toc.min.js" integrity="sha256-4veVQbu7//Lk5TSmc7YV48MxtMy98e26cf5MrgZYnwo=" crossorigin="anonymous"></script><!-- headroom.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/headroom.min.js" integrity="sha256-AsUX4SJE1+yuDu5+mAVzJbuYNPHj/WroHuZ8Ir/CkE0=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script><!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><!-- search --><script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/6.4.6/fuse.js" integrity="sha512-zv6Ywkjyktsohkbp9bb45V6tEMoWhzFzXis+LrMehmJZZSys19Yxf1dopHx7WzIKxr5tK2dVcYmaCk2uqdjF4A==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/autocomplete.js/0.38.0/autocomplete.jquery.min.js" integrity="sha512-GU9ayf+66Xx2TmpxqJpliWbT5PiGYxpaG8rfnBEk1LL8l1KGkRShhngwdXK1UgqhAzWpZHSiYPc09/NwDQIGyg==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.11.1/mark.min.js" integrity="sha512-5CYOlHXGh6QpOFA/TeTylKLWfB3ftPsde7AnmhuitiTX4K5SqCLBeKro6sPS8ilsz1Q4NRx3v8Ko2IBiszzdww==" crossorigin="anonymous"></script><!-- pkgdown --><script src="../pkgdown.js"></script><link href="../extra.css" rel="stylesheet"><meta property="og:title" content="Retrieve a cohort from ATLAS for use in AllofUs — aou_atlas_cohort"><meta property="og:description" content="This function retrieves a cohort definition from ATLAS and generates the cohort in All of Us.
 Observation periods are first generated for each subject using the aou_observation_period() function.
 The resulting cohort is a dataframe with the cohort start and end dates for each subject.
 The function is based on a similar function in https://github.com/cmayer2/r4aou with some tweaks
-to generate the appropriate observation periods and incorporate other package functions."><!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js" integrity="sha256-nvJJv9wWKEm88qvoQl9ekL2J+k/RWIsaSScxxlsrv8k=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/config/TeX-AMS-MML_HTMLorMML.js" integrity="sha256-84DKXVJXs0/F8OTMzX4UR909+jtl4G7SPypPavF+GfA=" crossorigin="anonymous"></script><!--[if lt IE 9]>
+to generate the appropriate observation periods and incorporate other package functions.
+Please see the online vignette for additional details insert link here"><!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js" integrity="sha256-nvJJv9wWKEm88qvoQl9ekL2J+k/RWIsaSScxxlsrv8k=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/config/TeX-AMS-MML_HTMLorMML.js" integrity="sha256-84DKXVJXs0/F8OTMzX4UR909+jtl4G7SPypPavF+GfA=" crossorigin="anonymous"></script><!--[if lt IE 9]>
 <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
 <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
 <![endif]--></head><body>
@@ -34,6 +36,7 @@ to generate the appropriate observation periods and incorporate other package fu
   <div class="dropdown-menu" aria-labelledby="dropdown-articles">
     <a class="dropdown-item" href="../articles/atlas.html">Using ATLAS to create a cohort</a>
     <a class="dropdown-item" href="../articles/data.html">Extracting All of Us survey and EHR data</a>
+    <a class="dropdown-item" href="../articles/sql.html">SQL in R</a>
     <a class="dropdown-item" href="../articles/tips.html">Tips for using the All of Us Workbench</a>
     <a class="dropdown-item" href="../articles/web_only/data-browser.html">Using the Data Browser and AllofUs Database</a>
     <a class="dropdown-item" href="../articles/web_only/searchable_codebook.html">Searchable Codebook for AllofUs Surveys</a>
@@ -66,7 +69,8 @@ to generate the appropriate observation periods and incorporate other package fu
 Observation periods are first generated for each subject using the <code><a href="aou_observation_period.html">aou_observation_period()</a></code> function.
 The resulting cohort is a dataframe with the cohort start and end dates for each subject.
 The function is based on a similar function in <a href="https://github.com/cmayer2/r4aou" class="external-link">https://github.com/cmayer2/r4aou</a> with some tweaks
-to generate the appropriate observation periods and incorporate other package functions.</p>
+to generate the appropriate observation periods and incorporate other package functions.
+Please see the online vignette for additional details insert link here</p>
     </div>
 
     <div class="section level2">
@@ -76,18 +80,20 @@ to generate the appropriate observation periods and incorporate other package fu
 <span>  <span class="va">cohort_sql</span>,</span>
 <span>  persistence_window <span class="op">=</span> <span class="fl">548</span>,</span>
 <span>  end_date_buffer <span class="op">=</span> <span class="fl">60</span>,</span>
-<span>  exclude_aou_visits <span class="op">=</span> <span class="cn">FALSE</span></span>
+<span>  exclude_aou_visits <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  debug <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  <span class="va">...</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div class="section level2">
     <h2 id="arguments">Arguments<a class="anchor" aria-label="anchor" href="#arguments"></a></h2>
     <dl><dt>cohort_definition</dt>
-<dd><p>A cohort definition generated using <code>ROhdsiWebApi::getCohortDefinition(cohort_id, base_url)</code></p></dd>
+<dd><p>A cohort definition generated using <code>getCohortDefinition() from ROhdsiWebApi</code></p></dd>
 
 
 <dt>cohort_sql</dt>
-<dd><p>The cohort_sql generated using <code>ROhdsiWebApi::getCohortSql(cohort_definition, base_url)</code></p></dd>
+<dd><p>The cohort_sql generated using <code>getCohortSql() from ROhdsiWebApi</code></p></dd>
 
 
 <dt>persistence_window</dt>
@@ -101,6 +107,14 @@ to generate the appropriate observation periods and incorporate other package fu
 <dt>exclude_aou_visits</dt>
 <dd><p>Whether to exclude All of Us clinical visits (i.e., for program-specific measurements,
 not part of the participants' typical EHR) from the observation period. Defaults to <code>FALSE</code></p></dd>
+
+
+<dt>debug</dt>
+<dd><p>Print the query to the console; useful for debugging.</p></dd>
+
+
+<dt>...</dt>
+<dd><p>All other arguments passed to <code><a href="https://bigrquery.r-dbi.org/reference/bq_table_download.html" class="external-link">bigrquery::bq_table_download()</a></code></p></dd>
 
 </dl></div>
     <div class="section level2">
@@ -116,13 +130,15 @@ not part of the participants' typical EHR) from the observation period. Defaults
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span> <span class="co"># on_workbench() &amp;&amp; require("ROhdsiWebApi")</span></span></span>
-<span class="r-in"><span></span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span> <span class="co"># on_workbench()</span></span></span>
 <span class="r-in"><span><span class="co"># generate a simple stroke cohort</span></span></span>
 <span class="r-in"><span><span class="co"># see https://atlas-demo.ohdsi.org/#/cohortdefinition/1788061</span></span></span>
-<span class="r-in"><span><span class="va">cd</span> <span class="op">&lt;-</span> <span class="fu">getCohortDefinition</span><span class="op">(</span><span class="fl">1788061</span>, <span class="st">"https://atlas-demo.ohdsi.org/WebAPI"</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="va">cd_sql</span> <span class="op">&lt;-</span> <span class="fu">getCohortSql</span><span class="op">(</span><span class="va">cd</span>, <span class="st">"https://atlas-demo.ohdsi.org/WebAPI"</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="va">cohort</span> <span class="op">&lt;-</span> <span class="fu">aou_atlas_cohort</span><span class="op">(</span>cohort_definition <span class="op">=</span> <span class="va">cd</span>, cohort_sql <span class="op">=</span> <span class="va">cd_sql</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="co"># aou_cohort_example contains the results of</span></span></span>
+<span class="r-in"><span><span class="co"># cd &lt;- ROhdsiWebApi::getCohortDefinition(1788061, "https://atlas-demo.ohdsi.org/WebAPI")</span></span></span>
+<span class="r-in"><span><span class="co"># cd_sql &lt;- ROhdsiWebApi::getCohortSql(cd, "https://atlas-demo.ohdsi.org/WebAPI")</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="va">cohort</span> <span class="op">&lt;-</span> <span class="fu">aou_atlas_cohort</span><span class="op">(</span>cohort_definition <span class="op">=</span> <span class="va">aou_cohort_example</span><span class="op">$</span><span class="va">cd</span>,</span></span>
+<span class="r-in"><span>                          cohort_sql <span class="op">=</span> <span class="va">aou_cohort_example</span><span class="op">$</span><span class="va">cd_sql</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># print query that was executed</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/cat.html" class="external-link">cat</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/attr.html" class="external-link">attr</a></span><span class="op">(</span><span class="va">cohort</span>, <span class="st">"query"</span><span class="op">)</span><span class="op">)</span></span></span>

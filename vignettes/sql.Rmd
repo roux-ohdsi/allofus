@@ -360,14 +360,73 @@ Understanding the SQL code that `dbplyr` generates can be insightful, especially
 obs %>% 
   show_query()
 ```
+```
+SELECT
+  `edjnngldox`.`person_id` AS `person_id`,
+  `gender_concept_id`,
+  `year_of_birth`,
+  `month_of_birth`,
+  `day_of_birth`,
+  `birth_datetime`,
+  `race_concept_id`,
+  `ethnicity_concept_id`,
+  `location_id`,
+  `care_site_id`,
+  `person_source_value`,
+  `gender_source_value`,
+  `gender_source_concept_id`,
+  `race_source_value`,
+  `race_source_concept_id`,
+  `ethnicity_source_value`,
+  `ethnicity_source_concept_id`,
+  `state_of_residence_concept_id`,
+  `state_of_residence_source_value`,
+  `sex_at_birth_concept_id`,
+  `sex_at_birth_source_concept_id`,
+  `sex_at_birth_source_value`,
+  `observation_id`,
+  `observation_concept_id`,
+  `observation_date`,
+  `observation_datetime`,
+  `observation_type_concept_id`,
+  `value_as_number`,
+  `value_as_string`,
+  `value_as_concept_id`,
+  `qualifier_concept_id`,
+  `unit_concept_id`,
+  `zwcwezaowf`.`provider_id` AS `provider_id`,
+  `visit_occurrence_id`,
+  `visit_detail_id`,
+  `observation_source_value`,
+  `observation_source_concept_id`,
+  `unit_source_value`,
+  `qualifier_source_value`,
+  `value_source_concept_id`,
+  `value_source_value`,
+  `questionnaire_response_id`
+FROM `person` `edjnngldox`
+INNER JOIN `observation` `zwcwezaowf`
+  ON (`edjnngldox`.`person_id` = `zwcwezaowf`.`person_id`)
+```
 
-This function prints the SQL query that would be sent to the database. It's a great way to learn SQL and understand how `dbplyr` optimizes data manipulation.
+This function prints the SQL query that would be sent to the database. It's a great way to learn SQL and understand how `dbplyr` optimizes data manipulation. (Why the gibberish table names? Bugs in previous versions of `dbplyr` resulted in table names that would break the query, and giving them unique names is a workaround.)
 
 ## Running SQL code directly
 
-## Conclusion
+Another approach to working with the data is to write SQL code directly. This is especially useful for complex queries that are difficult to express in `dplyr` syntax. The `allofus` package includes a function called `aou_sql()` that makes it easy to run SQL code directly on the database. For example, we could count the number of people in the `person` table like this:
+```{r}
+aou_sql("SELECT COUNT(*) AS n FROM {CDR}.person")
+```
+There are a few important things to note about this code. First, the `CDR` variable is a special variable referring to what All of Us calls the "curated data repository". When writing SQL code directly, we don't need the database connection object `con`, instead we need to direct the code to the correct tables by preceding the table names with "{CDR}". This means we can't run the code we get from `show_query()` without modification. For example, we could count the number of young women in the dataset, as we did above with the `dbplyr` approach, like this:
+```{r}
+aou_sql("
+SELECT count(*) AS `n`
+FROM (
+  SELECT `person`.*
+  FROM {CDR}.`person`
+  WHERE (`gender_concept_id` = 45878463.0) AND (`year_of_birth` > 1980.0)
+)
+")
+```
 
-`allofus` leverages `dbplyr` to enable efficient and intuitive access to SQL databases directly from R. This allows for powerful data manipulation while avoiding the pitfalls of loading large datasets into memory.
-
-
-
+Second, the `aou_sql()` function returns a dataframe -- the entire result of the SQL query is brought into memory. This means that we want to run an entire query at once, instead of breaking it into multiple steps like we did with `dbplyr`.

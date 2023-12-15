@@ -25,6 +25,9 @@
     <loc>/articles/pkgdown_only/searchable_codebook.html</loc>
   </url>
   <url>
+    <loc>/articles/sql.html</loc>
+  </url>
+  <url>
     <loc>/articles/tips.html</loc>
   </url>
   <url>
@@ -68,6 +71,9 @@
   </url>
   <url>
     <loc>/reference/aou_codebook.html</loc>
+  </url>
+  <url>
+    <loc>/reference/aou_cohort_example.html</loc>
   </url>
   <url>
     <loc>/reference/aou_concept_set.html</loc>

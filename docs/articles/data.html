@@ -14,8 +14,8 @@
 <link rel="apple-touch-icon" type="image/png" sizes="76x76" href="../apple-touch-icon-76x76.png">
 <link rel="apple-touch-icon" type="image/png" sizes="60x60" href="../apple-touch-icon-60x60.png">
 <script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<link href="../deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet">
-<script src="../deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous">
+<link href="../deps/bootstrap-5.2.2/bootstrap.min.css" rel="stylesheet">
+<script src="../deps/bootstrap-5.2.2/bootstrap.bundle.min.js"></script><!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/v4-shims.min.css" integrity="sha256-wZjR52fzng1pJHwx4aV2AO3yyTOXrcDW7jBpJtTwVxw=" crossorigin="anonymous">
 <!-- bootstrap-toc --><script src="https://cdn.jsdelivr.net/gh/afeld/bootstrap-toc@v1.0.1/dist/bootstrap-toc.min.js" integrity="sha256-4veVQbu7//Lk5TSmc7YV48MxtMy98e26cf5MrgZYnwo=" crossorigin="anonymous"></script><!-- headroom.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/headroom.min.js" integrity="sha256-AsUX4SJE1+yuDu5+mAVzJbuYNPHj/WroHuZ8Ir/CkE0=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script><!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><!-- search --><script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/6.4.6/fuse.js" integrity="sha512-zv6Ywkjyktsohkbp9bb45V6tEMoWhzFzXis+LrMehmJZZSys19Yxf1dopHx7WzIKxr5tK2dVcYmaCk2uqdjF4A==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/autocomplete.js/0.38.0/autocomplete.jquery.min.js" integrity="sha512-GU9ayf+66Xx2TmpxqJpliWbT5PiGYxpaG8rfnBEk1LL8l1KGkRShhngwdXK1UgqhAzWpZHSiYPc09/NwDQIGyg==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.11.1/mark.min.js" integrity="sha512-5CYOlHXGh6QpOFA/TeTylKLWfB3ftPsde7AnmhuitiTX4K5SqCLBeKro6sPS8ilsz1Q4NRx3v8Ko2IBiszzdww==" crossorigin="anonymous"></script><!-- pkgdown --><script src="../pkgdown.js"></script><link href="../extra.css" rel="stylesheet">
 <meta property="og:title" content="Extracting All of Us survey and EHR data">
@@ -50,6 +50,7 @@
   <div class="dropdown-menu" aria-labelledby="dropdown-articles">
     <a class="dropdown-item" href="../articles/atlas.html">Using ATLAS to create a cohort</a>
     <a class="dropdown-item" href="../articles/data.html">Extracting All of Us survey and EHR data</a>
+    <a class="dropdown-item" href="../articles/sql.html">SQL in R</a>
     <a class="dropdown-item" href="../articles/tips.html">Tips for using the All of Us Workbench</a>
     <a class="dropdown-item" href="../articles/web_only/data-browser.html">Using the Data Browser and AllofUs Database</a>
     <a class="dropdown-item" href="../articles/web_only/searchable_codebook.html">Searchable Codebook for AllofUs Surveys</a>
@@ -90,20 +91,20 @@
     
     
 <p>The <a href="https://workbench.researchallofus.org/" class="external-link">Researcher
-Workbench</a>, available only to registered users, provides tools for
-creating datasets using the All of Us database. Researchers first use
-the Workbench to create a cohort defined by values of survey variables
-(e.g., gender, race, age), observations from the electronic health
-record (e.g., diagnosis codes, lab values), data from wearable devices
-(e.g., fitbit), genomic data, and/or physical measurements. Data –
-either predefined or user-specified <a href="https://www.researchallofus.org/faq/what-is-a-concept-set/" class="external-link"><em>concept
+Workbench</a>, available to registered All of Us researchers, provides
+tools for creating datasets using the All of Us database. Researchers
+first use the Workbench to create a cohort defined by values of survey
+variables (e.g., gender, race, age), observations from the electronic
+health record (e.g., diagnosis codes, lab values), data from wearable
+devices (e.g., fitbit), genomic data, and/or physical measurements. Data
+– either predefined or user-specified <a href="https://www.researchallofus.org/faq/what-is-a-concept-set/" class="external-link"><em>concept
 sets</em></a> – from each of the database tables can then be extracted
 for the cohort. More information on this process is available <a href="https://support.researchallofus.org/hc/en-us/articles/4556645124244-Using-the-Concept-Set-Selector-and-Dataset-Builder-tools-to-build-your-dataset" class="external-link">here</a>.</p>
 <p>The <code>allofus</code> package takes a programmatic approach to
 extracting data from the All of Us database. One advantage to this
 approach is that it is easier to document and share the process. This is
 especially important for reproducibility and transparency. To
-demonstrate, this vignette will walk through an example of extracting
+demonstrate, this vignette will walk through some examples of extracting
 data from the All of Us database.</p>
 <p>Suppose we want a cohort of the female All of Us participants who
 weren’t born in the US. For this cohort, we want to extract data on
@@ -116,12 +117,12 @@ codebook</a>, we find that the concept id for gender is 1585838 and for
 birthplace is 1586135.</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">svy_vars</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/aou_survey.html">aou_survey</a></span><span class="op">(</span>questions <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1585838</span>, <span class="fl">1586135</span><span class="op">)</span>, question_output <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"gender"</span>, <span class="st">"birthplace"</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/count.html" class="external-link">count</a></span><span class="op">(</span><span class="va">svy_vars</span>, <span class="va">gender</span>, <span class="va">birthplace</span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu">count</span><span class="op">(</span><span class="va">svy_vars</span>, <span class="va">gender</span>, <span class="va">birthplace</span><span class="op">)</span></span></code></pre></div>
 <p>To create our cohort, we can subset the data to the participants
 matching our criteria.</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">cohort</span> <span class="op">&lt;-</span> <span class="va">svy_vars</span> <span class="op">|&gt;</span> </span>
-<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">gender</span> <span class="op">==</span> <span class="st">"Female"</span>, <span class="va">birthplace</span> <span class="op">!=</span> <span class="st">"United States"</span><span class="op">)</span></span></code></pre></div>
+<span>  <span class="fu"><a href="https://rdrr.io/r/stats/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">gender</span> <span class="op">==</span> <span class="st">"Female"</span>, <span class="va">birthplace</span> <span class="op">!=</span> <span class="st">"United States"</span><span class="op">)</span></span></code></pre></div>
 <p>Now that we have our cohort, we want to create a dataset with data
 from these participants’ medical records. We first want to find the
 concept ids of the data we want to extract. There are a number of tools
@@ -133,21 +134,21 @@ for searching the entire OMOP vocabulary. The concept id for Type 2
 diabetes mellitus can be found under ID. There are many results for this
 search, but we want only standard concepts when searching for EHR
 data.</p>
-<p><img src="images/diabetes-athena.png" width="600"></p>
+<p><img src="../../../All%20of%20Us/allofus/articles/images/diabetes-athena.png" width="600"></p>
 </li>
 <li>
 <p><a href="https://databrowser.researchallofus.org/" class="external-link">Data
 Browser</a>: a tool for exploring data in the All of Us database.
 Finding the concept id for Type 2 diabetes mellitus requires searching
 for that concept and then clicking “Sources”:</p>
-<p><img src="images/diabetes-browser.png" width="600"></p>
+<p><img src="../../../All%20of%20Us/allofus/articles/images/diabetes-browser.png" width="600"></p>
 </li>
 <li>
 <p><a href="https://workbench.researchallofus.org/" class="external-link">Researcher
 Workbench</a>: Creating a concept set can allow you to find a number of
 concept ids quickly. Add concepts to your concept set, and then review
 the concept set to see them all.</p>
-<p><img src="images/diabetes-workbench.png" width="600"></p>
+<p><img src="../../../All%20of%20Us/allofus/articles/images/diabetes-workbench.png" width="600"></p>
 </li>
 </ol>
 <table class="table">

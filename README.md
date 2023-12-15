@@ -1,7 +1,7 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
-# `allofus` R Package
+## `allofus` R Package
 
 The goal of the `allofus` R package is to streamline the use of R within
 the [AllofUs Researcher
@@ -23,14 +23,14 @@ CDM](https://www.researchallofus.org/faq/what-is-omop/) data.
 [![R-CMD-check](https://github.com/roux-ohdsi/allofus/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/roux-ohdsi/allofus/actions/workflows/R-CMD-check.yaml)
 <!-- badges: end -->
 
-## Installation
+### Installation
 
 ``` r
 install.packages("remotes")
 remotes::install_github("roux-ohdsi/allofus")
 ```
 
-## Use
+### Use
 
 ``` r
 library(allofus)
@@ -76,53 +76,34 @@ person |>
   aou_join("observation", type = "left")
 ```
 
-## Example
+See `vignette("sql", package = "allofus")` for more examples.
 
-Suppose we want to create a cohort of All of Us participants who have
-experienced a stroke. There are a couple of ways we could go about this.
-
-### Using the observation table
-
-The following code would start a query for the first survey date for the
-AllofUs survey “The Basics” (sometimes, but rarely, participants
-completed this survey over multiple dates).
-
-*While the ds_survey table is conveniently organized, it does not
-include the “skip” response for some surveys, so we don’t recommend
-using it unless you’re sure all potential responses have been recorded
-in the table. It’s safest to use the observation table. You can see a
-detailed description of the survey ETL here:
-<https://support.researchallofus.org/hc/en-us/articles/6085114880148>.*
-
-``` r
-library(tidyverse)
-
-survey_dates = tbl(con, "ds_survey") %>%
-  filter(survey == "The Basics") %>%
-  group_by(person_id) %>%
-  filter(survey_datetime == min(survey_datetime)) %>%
-  distinct(person_id, survey_datetime)
-```
-
-And this code would start with the all of us specific person table and
-join that to the survey dates table to incorporate information about
-demographics.
-
-``` r
-demo <- tbl(con, "cb_search_person") %>%
-  filter(age_at_consent >= 40 & age_at_consent <= 120,
-         has_ehr_data == 1) %>%
-  distinct(person_id, sex_at_birth, dob)  %>%
-  inner_join(survey_dates, by = "person_id") %>%
-  select(person_id, sex_at_birth, dob, survey_datetime)
-```
-
-We could leave this as a query, or we could pull the data into our local
-session:
-
-``` r
-demo_collected <- demo %>% collect()
-```
+<!-- ## Example -->
+<!-- Suppose we want to create a cohort of All of Us participants who have experienced a stroke. There are a couple of ways we could go about this. -->
+<!-- ### Using the observation table -->
+<!-- The following code would start a query for the first survey date for the AllofUs survey "The Basics" (sometimes, but rarely, participants completed this survey over multiple dates). -->
+<!-- *While the ds_survey table is conveniently organized, it does not include the "skip" response for some surveys, so we don't recommend using it unless you're sure all potential responses have been recorded in the table. It's safest to use the observation table. You can see a detailed description of the survey ETL here: https://support.researchallofus.org/hc/en-us/articles/6085114880148.* -->
+<!-- ```{r, eval = FALSE} -->
+<!-- library(tidyverse) -->
+<!-- survey_dates = tbl(con, "ds_survey") %>% -->
+<!--   filter(survey == "The Basics") %>% -->
+<!--   group_by(person_id) %>% -->
+<!--   filter(survey_datetime == min(survey_datetime)) %>% -->
+<!--   distinct(person_id, survey_datetime) -->
+<!-- ``` -->
+<!-- And this code would start with the all of us specific person table and join that to the survey dates table to incorporate information about demographics. -->
+<!-- ```{r, eval = FALSE} -->
+<!-- demo <- tbl(con, "cb_search_person") %>% -->
+<!--   filter(age_at_consent >= 40 & age_at_consent <= 120, -->
+<!--          has_ehr_data == 1) %>% -->
+<!--   distinct(person_id, sex_at_birth, dob)  %>% -->
+<!--   inner_join(survey_dates, by = "person_id") %>% -->
+<!--   select(person_id, sex_at_birth, dob, survey_datetime) -->
+<!-- ``` -->
+<!-- We could leave this as a query, or we could pull the data into our local session: -->
+<!-- ```{r, eval = FALSE} -->
+<!-- demo_collected <- demo %>% collect() -->
+<!-- ``` -->
 
 ## Bugs
 

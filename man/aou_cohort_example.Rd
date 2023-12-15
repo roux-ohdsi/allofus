@@ -17,4 +17,4 @@ aou_cohort_example
 \description{
 A list containing a sample cohort definition and SQL query from the demo ATLAS for a cohort of stroke survivors.
 }
-\keyword{datasets}
+\keyword{internal}
