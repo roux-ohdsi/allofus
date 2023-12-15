@@ -36,7 +36,7 @@
 aou_join <- function(data,
                      table,
                      type,
-                     by,
+                     by = NULL,
                      suffix = c("_x", "_y"),
                      con = getOption("aou.default.con"),
                      x_as = NULL,
@@ -47,10 +47,6 @@ aou_join <- function(data,
                                      "i" = "You can also provide {.code con} as an argument or default with {.code options(aou.default.con = ...)}."))
 
   if (is.character(table)) y_table <- dplyr::tbl(con, table) else y_table <- table
-  shared_columns <- intersect(colnames(data), colnames(y_table))
-
-  # convert to the new join type
-  by <- dplyr::join_by(by)
 
  res <- get(paste(type, "join", sep = "_"))(data, y_table,
     x_as = if (missing(x_as)) {
@@ -68,7 +64,6 @@ aou_join <- function(data,
     ...)
 
  if (any(!paste0(names(data), "_x") %in% names(res)) || any(!paste0(names(y_table), "_y") %in% names(res))) {
-  # if (length(shared_columns) > 0 && !all(sort(shared_columns) %in% sort(c(by$x, by$y))) && all(suffix == c("_x", "_y"))) {
      cli::cli_warn(c("There are shared column names not specified in the {.code by} argument.",
                      ">" = "These column names now end in '_x' and '_y'.",
                      "i" = "You can change these suffixes using the {.code suffix} argument but it cannot contain periods (`.`).",

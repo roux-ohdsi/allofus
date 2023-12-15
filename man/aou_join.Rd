@@ -8,7 +8,7 @@ aou_join(
   data,
   table,
   type,
-  by,
+  by = NULL,
   suffix = c("_x", "_y"),
   con = getOption("aou.default.con"),
   x_as = NULL,
