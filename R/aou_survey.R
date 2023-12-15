@@ -56,6 +56,10 @@
 #'   question_output = c("income", "birthplace", "grandpa_bowel_obstruction", "t2dm"),
 #'   collect = FALSE
 #' )
+#'
+#'aou_survey(cohort = dplyr::tbl(con, "person"), questions = 1384452,
+#'           question_output = "osteoarthritis") %>%
+#'. dplyr::count(osteoarthritis)
 #' }
 aou_survey <- function(cohort,
                        questions,
