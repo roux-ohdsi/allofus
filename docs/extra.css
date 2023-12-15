@@ -1,3 +1,11 @@
 .text-muted {
 	color: #C8102E !important;
 }
+.navbar-brand, .nav-link {
+  color: white;
+}
+.navbar-brand:hover, nav-link:hover {
+  color: #C8102E;
+}
+
+

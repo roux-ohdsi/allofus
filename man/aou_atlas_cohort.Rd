@@ -15,9 +15,9 @@ aou_atlas_cohort(
 )
 }
 \arguments{
-\item{cohort_definition}{A cohort definition generated using \code{ROhdsiWebApi::getCohortDefinition(cohort_id, base_url)}}
+\item{cohort_definition}{A cohort definition generated using \verb{getCohortDefinition() from ROhdsiWebApi}}
 
-\item{cohort_sql}{The cohort_sql generated using \code{ROhdsiWebApi::getCohortSql(cohort_definition, base_url)}}
+\item{cohort_sql}{The cohort_sql generated using \verb{getCohortSql() from ROhdsiWebApi}}
 
 \item{persistence_window}{Longest allowable time between visits for the same observation period. Defaults to 548 (see details)}
 
@@ -39,6 +39,7 @@ Observation periods are first generated for each subject using the \code{\link[=
 The resulting cohort is a dataframe with the cohort start and end dates for each subject.
 The function is based on a similar function in \url{https://github.com/cmayer2/r4aou} with some tweaks
 to generate the appropriate observation periods and incorporate other package functions.
+Please see the online vignette for additional details insert link here
 }
 \details{
 Follows conventions described here: \url{https://ohdsi.github.io/CommonDataModel/ehrObsPeriods.html}

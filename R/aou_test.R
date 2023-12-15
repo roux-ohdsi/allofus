@@ -1,6 +1,8 @@
 
 
 #' Function to test all of us package on AllofUs Researcher Workbench using documented examples
+#' @keywords internal
+#' @noRd
 aou_test_package <- function() {
   testthat::test_that("all examples run without error",{
     fun_names <- getNamespaceExports("allofus")
