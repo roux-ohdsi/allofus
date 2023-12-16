@@ -151,7 +151,7 @@ aou_concept_set <- function(cohort = NULL,
     }
   }
 
-  if (grep("value", colnames(cohort_w_concepts))) {
+  if (any(grepl("^value\\_", colnames(cohort_w_concepts)))) {
     cli::cli_warn(c("Output includes data from the measurement table. Measurement values will be lost with {.code output = 'indicator'} or {.code output = 'count'}.",
                     ">" = "Consider using {.code output = 'all'} to get all data."))
   }

@@ -37,10 +37,5 @@ reference:
   - aou_codebook
   - aou_table_info
   - aou_health_history
-articles:
-  sql: sql.html
-urls:
-  reference: https://roux-ohdsi.github.io/allofus/reference
-  article: https://roux-ohdsi.github.io/allofus/articles
 deploy:
   install_metadata: true

@@ -139,27 +139,27 @@ When you print `person_tbl`, you'll get something like this:
 person_tbl
 ```
 ```
-# Source:   table<person> [?? x 23]
-# Database: BigQueryConnection
-   person_id gender_concept_id year_of_birth month_of_birth day_of_birth
-     <int64>           <int64>       <int64>        <int64>      <int64>
- 1   xxxxxxx            903096          1955             NA           NA
- 2   xxxxxxx            903096          1978             NA           NA
- 3   xxxxxxx            903096          2000             NA           NA
- 4   xxxxxxx            903096          1988             NA           NA
- 5   xxxxxxx            903096          1993             NA           NA
- 6   xxxxxxx            903096          1959             NA           NA
- 7   xxxxxxx            903096          1976             NA           NA
- 8   xxxxxxx            903096          1961             NA           NA
- 9   xxxxxxx            903096          1952             NA           NA
-10   xxxxxxx            903096          1980             NA           NA
-# ℹ more rows
-# ℹ 18 more variables: birth_datetime <dttm>, race_concept_id <int64>,
-#   ethnicity_concept_id <int64>, location_id <int64>, provider_id <int64>,
-#   care_site_id <int64>, person_source_value <chr>, gender_source_value <chr>,
-#   gender_source_concept_id <int64>, race_source_value <chr>,
-#   race_source_concept_id <int64>, ethnicity_source_value <chr>,
-#   ethnicity_source_concept_id <int64>, …
+#> # Source:   table<person> [?? x 23]
+#> # Database: BigQueryConnection
+#>    person_id gender_concept_id year_of_birth month_of_birth day_of_birth
+#>      <int64>           <int64>       <int64>        <int64>      <int64>
+#>  1   xxxxxxx            903096          1955             NA           NA
+#>  2   xxxxxxx            903096          1978             NA           NA
+#>  3   xxxxxxx            903096          2000             NA           NA
+#>  4   xxxxxxx            903096          1988             NA           NA
+#>  5   xxxxxxx            903096          1993             NA           NA
+#>  6   xxxxxxx            903096          1959             NA           NA
+#>  7   xxxxxxx            903096          1976             NA           NA
+#>  8   xxxxxxx            903096          1961             NA           NA
+#>  9   xxxxxxx            903096          1952             NA           NA
+#> 10   xxxxxxx            903096          1980             NA           NA
+#> # ℹ more rows
+#> # ℹ 18 more variables: birth_datetime <dttm>, race_concept_id <int64>,
+#> #   ethnicity_concept_id <int64>, location_id <int64>, provider_id <int64>,
+#> #   care_site_id <int64>, person_source_value <chr>, gender_source_value <chr>,
+#> #   gender_source_concept_id <int64>, race_source_value <chr>,
+#> #   race_source_concept_id <int64>, ethnicity_source_value <chr>,
+#> #   ethnicity_source_concept_id <int64>, …
 ```
 You'll only see the first 10 rows of the person table (person ids were omitted from the output). This allows you to see what the data looks like without loading the entire table into R, which can be slow or even crash your session.
 

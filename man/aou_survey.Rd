@@ -5,7 +5,7 @@
 \title{Function to query allofus observation table for survey responses}
 \usage{
 aou_survey(
-  cohort,
+  cohort = NULL,
   questions,
   question_output = "text",
   clean_answers = TRUE,

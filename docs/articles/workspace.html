@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <meta name="description" content="allofus">
-<title>Workspace helpers • allofus</title>
+<title>Managing files with `allofus` • allofus</title>
 <!-- favicons --><link rel="icon" type="image/png" sizes="16x16" href="../favicon-16x16.png">
 <link rel="icon" type="image/png" sizes="32x32" href="../favicon-32x32.png">
 <link rel="apple-touch-icon" type="image/png" sizes="180x180" href="../apple-touch-icon.png">
@@ -18,7 +18,7 @@
 <script src="../deps/bootstrap-5.2.2/bootstrap.bundle.min.js"></script><!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/v4-shims.min.css" integrity="sha256-wZjR52fzng1pJHwx4aV2AO3yyTOXrcDW7jBpJtTwVxw=" crossorigin="anonymous">
 <!-- bootstrap-toc --><script src="https://cdn.jsdelivr.net/gh/afeld/bootstrap-toc@v1.0.1/dist/bootstrap-toc.min.js" integrity="sha256-4veVQbu7//Lk5TSmc7YV48MxtMy98e26cf5MrgZYnwo=" crossorigin="anonymous"></script><!-- headroom.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/headroom.min.js" integrity="sha256-AsUX4SJE1+yuDu5+mAVzJbuYNPHj/WroHuZ8Ir/CkE0=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script><!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><!-- search --><script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/6.4.6/fuse.js" integrity="sha512-zv6Ywkjyktsohkbp9bb45V6tEMoWhzFzXis+LrMehmJZZSys19Yxf1dopHx7WzIKxr5tK2dVcYmaCk2uqdjF4A==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/autocomplete.js/0.38.0/autocomplete.jquery.min.js" integrity="sha512-GU9ayf+66Xx2TmpxqJpliWbT5PiGYxpaG8rfnBEk1LL8l1KGkRShhngwdXK1UgqhAzWpZHSiYPc09/NwDQIGyg==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.11.1/mark.min.js" integrity="sha512-5CYOlHXGh6QpOFA/TeTylKLWfB3ftPsde7AnmhuitiTX4K5SqCLBeKro6sPS8ilsz1Q4NRx3v8Ko2IBiszzdww==" crossorigin="anonymous"></script><!-- pkgdown --><script src="../pkgdown.js"></script><link href="../extra.css" rel="stylesheet">
-<meta property="og:title" content="Workspace helpers">
+<meta property="og:title" content="Managing files with `allofus`">
 <meta property="og:description" content="allofus">
 <!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js" integrity="sha256-nvJJv9wWKEm88qvoQl9ekL2J+k/RWIsaSScxxlsrv8k=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/config/TeX-AMS-MML_HTMLorMML.js" integrity="sha256-84DKXVJXs0/F8OTMzX4UR909+jtl4G7SPypPavF+GfA=" crossorigin="anonymous"></script><!--[if lt IE 9]>
 <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
@@ -54,7 +54,7 @@
     <a class="dropdown-item" href="../articles/tips.html">Tips for using the All of Us Workbench</a>
     <a class="dropdown-item" href="../articles/web_only/data-browser.html">Using the Data Browser and AllofUs Database</a>
     <a class="dropdown-item" href="../articles/web_only/searchable_codebook.html">Searchable Codebook for AllofUs Surveys</a>
-    <a class="dropdown-item" href="../articles/workspace.html">Workspace helpers</a>
+    <a class="dropdown-item" href="../articles/workspace.html">Managing files with `allofus`</a>
   </div>
 </li>
       </ul>
@@ -81,7 +81,7 @@
 
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
-      <img src="" class="logo" alt=""><h1>Workspace helpers</h1>
+      <img src="" class="logo" alt=""><h1>Managing files with `allofus`</h1>
             
       
       <small class="dont-index">Source: <a href="https://github.com/roux-ohdsi/allofus/blob/HEAD/vignettes/workspace.Rmd" class="external-link"><code>vignettes/workspace.Rmd</code></a></small>
@@ -90,36 +90,114 @@
 
     
     
+<p>The <code>allofus</code> package includes several functions designed
+to help you manage and transfer files between your personal workspace
+and a shared bucket in Google BigQuery. Understanding the difference
+between these two storage locations is crucial:</p>
+<ul>
+<li>
+<strong>Workspace</strong>: This is your personal storage area.
+Files here are accessible only to you and will be deleted if you delete
+your environment.</li>
+<li>
+<strong>Bucket</strong> : This is a shared storage space. Files in
+the bucket can be accessed by collaborators on your project and are used
+for permanent storage.</li>
+</ul>
+<div class="section level2">
+<h2 id="listing-files">Listing Files<a class="anchor" aria-label="anchor" href="#listing-files"></a>
+</h2>
+<div class="section level3">
+<h3 id="in-your-workspace">In Your Workspace<a class="anchor" aria-label="anchor" href="#in-your-workspace"></a>
+</h3>
+<p>Use <code><a href="../reference/aou_ls_workspace.html">aou_ls_workspace()</a></code> to list files in your workspace.
+This function is handy for quickly checking which files you have stored
+locally.</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://roux-ohdsi.github.io/allofus/" class="external-link">allofus</a></span><span class="op">)</span></span></code></pre></div>
-<p>The <code>allofus</code> package also includes functions to help you
-manage storage in your workspace and bucket. Use
-<code><a href="../reference/aou_ls_workspace.html">aou_ls_workspace()</a></code> to list files in your workspace, and
-<code><a href="../reference/aou_ls_bucket.html">aou_ls_bucket()</a></code> to list files in your bucket. Once you have
-saved a file to your workspace, you can easily move it to the bucket
-using <code><a href="../reference/aou_workspace_to_bucket.html">aou_workspace_to_bucket()</a></code>.</p>
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/aou_ls_workspace.html">aou_ls_workspace</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
+</div>
+<div class="section level3">
+<h3 id="in-your-bucket">In Your Bucket<a class="anchor" aria-label="anchor" href="#in-your-bucket"></a>
+</h3>
+<p>Similarly, <code><a href="../reference/aou_ls_bucket.html">aou_ls_bucket()</a></code> lists files in your bucket.
+This function can be used to view files that you or your collaborators
+have saved for shared access.</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="../reference/aou_workspace_to_bucket.html">aou_workspace_to_bucket</a></span><span class="op">(</span><span class="st">"file1.csv"</span><span class="op">)</span></span></code></pre></div>
-<p>and then move it back to the workspace if you delete your
-environment, or if you want to use a file that a collaborator on your
-project has saved to the bucket:</p>
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/aou_ls_bucket.html">aou_ls_bucket</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
+<p>You can also use the <code>pattern</code> argument with these
+functions to filter the listed files based on a naming pattern.</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="../reference/aou_bucket_to_workspace.html">aou_bucket_to_workspace</a></span><span class="op">(</span><span class="st">"file2.csv"</span><span class="op">)</span></span></code></pre></div>
-<p>Files in your workspace are only accessible to you, but not your
-collaborators (see details on storage below). If you need to move a file
-from your workspace bucket to your personal workspace, use
-<code><a href="../reference/aou_bucket_to_workspace.html">aou_bucket_to_workspace()</a></code> to move files from your bucket to
-your workspace.</p>
-<pre><code><span><span class="fu"><a href="../reference/aou_bucket_to_workspace.html">aou_bucket_to_workspace</a></span><span class="op">(</span><span class="st">"file1.csv"</span><span class="op">)</span></span>
-<span><span class="va">data</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/utils/read.table.html" class="external-link">read.csv</a></span><span class="op">(</span><span class="st">"file1.csv"</span><span class="op">)</span></span></code></pre>
-<p>And when you want to save something from your workspace to your
-bucket so that your collaborators can use it (or so that you can shut
-down your workspace and save $$$), you can use
-<code><a href="../reference/aou_workspace_to_bucket.html">aou_workspace_to_bucket()</a></code> to move files from your workspace
-to your bucket for permanent storage.</p>
-<pre><code><span><span class="fu"><a href="https://rdrr.io/r/utils/write.table.html" class="external-link">write.csv</a></span><span class="op">(</span><span class="va">data</span>, <span class="st">"file1.csv"</span><span class="op">)</span></span>
-<span><span class="fu"><a href="../reference/aou_bucket_to_workspace.html">aou_bucket_to_workspace</a></span><span class="op">(</span><span class="st">"file1.csv"</span><span class="op">)</span></span></code></pre>
-  </main>
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/aou_ls_workspace.html">aou_ls_workspace</a></span><span class="op">(</span>pattern <span class="op">=</span> <span class="st">"*.csv"</span><span class="op">)</span></span>
+<span><span class="fu"><a href="../reference/aou_ls_bucket.html">aou_ls_bucket</a></span><span class="op">(</span>pattern <span class="op">=</span> <span class="st">"project_*.csv"</span><span class="op">)</span></span></code></pre></div>
+</div>
+</div>
+<div class="section level2">
+<h2 id="transferring-files">Transferring Files<a class="anchor" aria-label="anchor" href="#transferring-files"></a>
+</h2>
+<p>These functions are used in conjunction with R’s reading and writing
+functions. You can store any type of data in both the workspace and the
+bucket.</p>
+<div class="section level3">
+<h3 id="from-workspace-to-bucket">From Workspace to Bucket<a class="anchor" aria-label="anchor" href="#from-workspace-to-bucket"></a>
+</h3>
+<p>Once you’ve processed or created a file in your workspace, you might
+want to move it to the bucket for permanent storage or to share it with
+collaborators. Use <code><a href="../reference/aou_workspace_to_bucket.html">aou_workspace_to_bucket()</a></code> for this
+purpose.</p>
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/write.table.html" class="external-link">write.csv</a></span><span class="op">(</span><span class="va">data</span>, <span class="st">"file1.csv"</span><span class="op">)</span></span>
+<span><span class="fu"><a href="../reference/aou_workspace_to_bucket.html">aou_workspace_to_bucket</a></span><span class="op">(</span><span class="st">"file1.csv"</span><span class="op">)</span></span></code></pre></div>
+</div>
+<div class="section level3">
+<h3 id="from-bucket-to-workspace">From Bucket to Workspace<a class="anchor" aria-label="anchor" href="#from-bucket-to-workspace"></a>
+</h3>
+<p>If you need to use a file that a collaborator has saved to the
+bucket, or if you want to retrieve a file after deleting your
+environment, use <code><a href="../reference/aou_bucket_to_workspace.html">aou_bucket_to_workspace()</a></code>.</p>
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/aou_bucket_to_workspace.html">aou_bucket_to_workspace</a></span><span class="op">(</span><span class="st">"file2.csv"</span><span class="op">)</span></span>
+<span><span class="va">data</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/utils/read.table.html" class="external-link">read.csv</a></span><span class="op">(</span><span class="st">"file2.csv"</span><span class="op">)</span></span></code></pre></div>
+</div>
+</div>
+<div class="section level2">
+<h2 id="workflow-example">Workflow Example<a class="anchor" aria-label="anchor" href="#workflow-example"></a>
+</h2>
+<p>Here’s a typical workflow using these functions:</p>
+<ol style="list-style-type: decimal">
+<li>
+<strong>List files in your workspace</strong> : Check what files you
+currently have.</li>
+<li>
+<strong>Process or create files</strong> : Perform your data
+analysis or other work in R.</li>
+<li>
+<strong>Save files to your workspace</strong> : Use R’s file
+handling functions like <code><a href="https://rdrr.io/r/utils/write.table.html" class="external-link">write.csv()</a></code> or
+<code>write.rds()</code>.</li>
+<li>
+<strong>Transfer to the bucket for sharing or permanent
+storage</strong> : Use <code><a href="../reference/aou_workspace_to_bucket.html">aou_workspace_to_bucket()</a></code>.</li>
+<li>
+<strong>Access shared files from the bucket</strong> : Use
+<code><a href="../reference/aou_bucket_to_workspace.html">aou_bucket_to_workspace()</a></code> to bring files into your
+workspace as needed.</li>
+</ol>
+</div>
+<div class="section level2">
+<h2 id="important-considerations">Important Considerations<a class="anchor" aria-label="anchor" href="#important-considerations"></a>
+</h2>
+<ul>
+<li>
+<strong>Storage Hygiene</strong> : Regularly clean up your workspace
+to avoid clutter and manage storage costs.</li>
+<li>
+<strong>Backup Important Files</strong> : Use the bucket to backup
+important files. Files in your workspace (except for notebooks) are not
+secure against environment deletion.</li>
+</ul>
+</div>
+  </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>
+    </nav></aside>
 </div>
 
 

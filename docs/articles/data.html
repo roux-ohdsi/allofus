@@ -54,7 +54,7 @@
     <a class="dropdown-item" href="../articles/tips.html">Tips for using the All of Us Workbench</a>
     <a class="dropdown-item" href="../articles/web_only/data-browser.html">Using the Data Browser and AllofUs Database</a>
     <a class="dropdown-item" href="../articles/web_only/searchable_codebook.html">Searchable Codebook for AllofUs Surveys</a>
-    <a class="dropdown-item" href="../articles/workspace.html">Workspace helpers</a>
+    <a class="dropdown-item" href="../articles/workspace.html">Managing files with `allofus`</a>
   </div>
 </li>
       </ul>
@@ -116,13 +116,32 @@ concept id. Using the <code>allofus</code> <a href="https://roux-ohdsi.github.io
 codebook</a>, we find that the concept id for gender is 1585838 and for
 birthplace is 1586135.</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">svy_vars</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/aou_survey.html">aou_survey</a></span><span class="op">(</span>questions <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1585838</span>, <span class="fl">1586135</span><span class="op">)</span>, question_output <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"gender"</span>, <span class="st">"birthplace"</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="fu">count</span><span class="op">(</span><span class="va">svy_vars</span>, <span class="va">gender</span>, <span class="va">birthplace</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://roux-ohdsi.github.io/allofus/" class="external-link">allofus</a></span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://tidyverse.tidyverse.org" class="external-link">tidyverse</a></span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">svy_vars</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/aou_survey.html">aou_survey</a></span><span class="op">(</span>questions <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1585838</span>, <span class="fl">1586135</span><span class="op">)</span>, question_output <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"gender"</span>, <span class="st">"birthplace"</span><span class="op">)</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/count.html" class="external-link">count</a></span><span class="op">(</span><span class="va">svy_vars</span>, <span class="va">gender</span>, <span class="va">birthplace</span><span class="op">)</span></span></code></pre></div>
+<pre><code><span><span class="co">#&gt; # Source:   SQL [?? x 3]</span></span>
+<span><span class="co">#&gt; # Database: BigQueryConnection</span></span>
+<span><span class="co">#&gt;    gender            birthplace       n</span></span>
+<span><span class="co">#&gt;    &lt;chr&gt;             &lt;chr&gt;      &lt;int64&gt;</span></span>
+<span><span class="co">#&gt;  1 Skip              Skip          4449</span></span>
+<span><span class="co">#&gt;  2 NA                NA              97</span></span>
+<span><span class="co">#&gt;  3 Woman             USA         205440</span></span>
+<span><span class="co">#&gt;  4 Woman             Other        40348</span></span>
+<span><span class="co">#&gt;  5 Man               Skip          1484</span></span>
+<span><span class="co">#&gt;  6 Transgender       USA            504</span></span>
+<span><span class="co">#&gt;  7 PreferNotToAnswer USA            475</span></span>
+<span><span class="co">#&gt;  8 PreferNotToAnswer Other          112</span></span>
+<span><span class="co">#&gt;  9 Man               USA         131698</span></span>
+<span><span class="co">#&gt; 10 Man               Other        21059</span></span>
+<span><span class="co">#&gt; # ℹ more rows</span></span></code></pre>
 <p>To create our cohort, we can subset the data to the participants
 matching our criteria.</p>
-<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">cohort</span> <span class="op">&lt;-</span> <span class="va">svy_vars</span> <span class="op">|&gt;</span> </span>
-<span>  <span class="fu"><a href="https://rdrr.io/r/stats/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">gender</span> <span class="op">==</span> <span class="st">"Female"</span>, <span class="va">birthplace</span> <span class="op">!=</span> <span class="st">"United States"</span><span class="op">)</span></span></code></pre></div>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">gender</span> <span class="op">==</span> <span class="st">"Woman"</span>, <span class="va">birthplace</span> <span class="op">==</span> <span class="st">"Other"</span><span class="op">)</span></span></code></pre></div>
 <p>Now that we have our cohort, we want to create a dataset with data
 from these participants’ medical records. We first want to find the
 concept ids of the data we want to extract. There are a number of tools
@@ -151,6 +170,9 @@ the concept set to see them all.</p>
 <p><img src="../../../All%20of%20Us/allofus/articles/images/diabetes-workbench.png" width="600"></p>
 </li>
 </ol>
+<p>Here are some concepts we may want to include. Keep in mind that this
+is an example, and a real analysis would have a more thorough search for
+relevant concepts.</p>
 <table class="table">
 <colgroup>
 <col width="34%">
@@ -195,7 +217,7 @@ the concept set to see them all.</p>
 </tr>
 </tbody>
 </table>
-<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">t2dm</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/aou_concept_set.html">aou_concept_set</a></span><span class="op">(</span><span class="va">cohort</span>, concepts <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">201826</span>, <span class="fl">4193704</span><span class="op">)</span>, </span>
 <span>                        domains <span class="op">=</span> <span class="st">"condition"</span>, output <span class="op">=</span> <span class="st">"indicator"</span><span class="op">)</span></span>
 <span><span class="va">metformin</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/aou_concept_set.html">aou_concept_set</a></span><span class="op">(</span><span class="va">cohort</span>, concepts <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">40164929</span>, <span class="fl">40164897</span><span class="op">)</span>, </span>
@@ -205,15 +227,17 @@ the concept set to see them all.</p>
 <p>You can actually extract data from multiple domains at once – the
 default is to search all domains. However, it is helpful to specify the
 domain(s) when you can, for speed and clarity.</p>
-<p>There are several tools available for finding data to extract from
-the All of Us database. The <a href="https://databrowser.researchallofus.org/" class="external-link">Data Browser</a> is a
-useful, publicly available tool for exploring data (survey questions,
-conditions in the electronic health record, fitbit measurements etc.).
-However, it doesn’t necessarily contain the information needed to
-actually find the data in the database.</p>
-<p>Data dictionaries can be found <a href="https://support.researchallofus.org/hc/en-us/articles/360033200232-Data-Dictionaries-for-the-Curated-Data-Repositories-CDRs-" class="external-link">via
-this link</a> and <a href="https://support.researchallofus.org/hc/en-us/articles/6085114880148" class="external-link">this
-page</a> also has helpful information.</p>
+<p>Next, we want to combine these datasets into one. We can do this
+using the <code>aou_join</code> function. This function takes a list of
+datasets and joins them together using the participant id. The
+<code>aou_join</code> function also allows you to specify the type of
+join (inner, left, right, or full). Here we’ll perform repeated left
+joins into the cohort.</p>
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">combined_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://purrr.tidyverse.org/reference/reduce.html" class="external-link">reduce</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="va">cohort</span>, <span class="va">t2dm</span>, <span class="va">metformin</span>, <span class="va">a1c</span><span class="op">)</span>, </span>
+<span>                        <span class="va">aou_join</span>, type <span class="op">=</span> <span class="st">"left"</span>, by <span class="op">=</span> <span class="st">"person_id"</span><span class="op">)</span></span></code></pre></div>
+<!-- There are several tools available for finding data to extract from the All of Us database. The [Data Browser](https://databrowser.researchallofus.org/) is a useful, publicly available tool for exploring data (survey questions, conditions in the electronic health record, fitbit measurements etc.). However, it doesn't necessarily contain the information needed to actually find the data in the database. -->
+<!-- Data dictionaries can be found [via this link](https://support.researchallofus.org/hc/en-us/articles/360033200232-Data-Dictionaries-for-the-Curated-Data-Repositories-CDRs-) and [this page](https://support.researchallofus.org/hc/en-us/articles/6085114880148) also has helpful information. -->
   </main>
 </div>
 

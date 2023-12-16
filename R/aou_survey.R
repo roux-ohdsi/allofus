@@ -61,7 +61,7 @@
 #'           question_output = "osteoarthritis") %>%
 #'. dplyr::count(osteoarthritis)
 #' }
-aou_survey <- function(cohort,
+aou_survey <- function(cohort = NULL,
                        questions,
                        question_output = "text",
                        clean_answers = TRUE,
@@ -111,13 +111,15 @@ aou_survey <- function(cohort,
   }
   question_output <- if (length(question_output_arg) == 1 && question_output_arg[1] == "concept_id") "concept_id" else "value"
 
-  # ensure person_id is a column name in cohort
-  if (!"person_id" %in% colnames(cohort)) {
+  if (is.null(cohort)) {
+    cli::cli_warn(c("No cohort provided.", ">" = "Pulling survey data for entire All of Us cohort."))
+    function_cohort <- dplyr::tbl(con, "person")
+  } else if (!"person_id" %in% colnames(cohort)) {
+    # ensure person_id is a column name in cohort
+
     cli::cli_abort(c("{.code person_id} column not found in cohort.",
                      "i" = "Confirm that the cohort has a column named {.code person_id}"))
-  }
-
-  if (is.data.frame(cohort)) {
+  } else if (is.data.frame(cohort)) {
     function_cohort <- dplyr::tbl(con, "person") %>%
       dplyr::filter(.data$person_id %in% !!unique(cohort$person_id)) %>%
       dplyr::select('person_id')
