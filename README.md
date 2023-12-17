@@ -1,7 +1,7 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
-## `allofus` R Package
+# `allofus` R Package
 
 The goal of the `allofus` R package is to streamline the use of R within
 the [AllofUs Researcher
@@ -51,25 +51,25 @@ For example, you can use `tbl()` from
 the All of Us database:
 
 ``` r
-person <- tbl(con, "person")
+person <- dplyr::tbl(con, "person")
 ```
 
 You can then use `dplyr` functions on the table:
 
 ``` r
 person |> 
-  filter(gender_concept_id == 8507)
+  dplyr::filter(gender_concept_id == 8507)
 ```
 
 and join the table to other tables in the database:
 
 ``` r
 person |> 
-  left_join(tbl(con, "observation"), by = "person_id")
+  dplyr::left_join(dplyr::tbl(con, "observation"), by = "person_id")
 ```
 
-The `aou_join()` function is a wrapper around `dplyr::left_join()` that
-allows you to join tables more easily:
+The `aou_join()` function is a wrapper around the `dplyr` join functions
+that allows you to join tables more easily:
 
 ``` r
 person |> 

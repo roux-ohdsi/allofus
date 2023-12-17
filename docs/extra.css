@@ -9,3 +9,10 @@
 }
 
 
+.template-home .page-header {
+    min-height: 60px !important;
+}
+
+.page-header {
+    min-height: 60px !important;
+}

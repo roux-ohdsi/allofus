@@ -48,13 +48,13 @@
 <li class="nav-item dropdown">
   <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" role="button" aria-expanded="false" aria-haspopup="true" id="dropdown-articles">Articles</a>
   <div class="dropdown-menu" aria-labelledby="dropdown-articles">
-    <a class="dropdown-item" href="articles/atlas.html">Using ATLAS to create a cohort</a>
-    <a class="dropdown-item" href="articles/data.html">Extracting All of Us survey and EHR data</a>
     <a class="dropdown-item" href="articles/sql.html">SQL in R</a>
+    <a class="dropdown-item" href="articles/workspace.html">Managing files on the workbench</a>
+    <a class="dropdown-item" href="articles/data.html">Extracting All of Us survey and EHR data</a>
+    <a class="dropdown-item" href="articles/atlas.html">Using ATLAS to create a cohort</a>
     <a class="dropdown-item" href="articles/tips.html">Tips for using the All of Us Workbench</a>
     <a class="dropdown-item" href="articles/web_only/data-browser.html">Using the Data Browser and AllofUs Database</a>
     <a class="dropdown-item" href="articles/web_only/searchable_codebook.html">Searchable Codebook for AllofUs Surveys</a>
-    <a class="dropdown-item" href="articles/workspace.html">Managing files with `allofus`</a>
   </div>
 </li>
       </ul>
@@ -76,10 +76,10 @@
   </div>
 </nav><div class="container template-home">
 <div class="row">
-  <main id="main" class="col-md-9"><div class="section level2">
-<h2 id="allofus-r-package">
+  <main id="main" class="col-md-9"><div class="section level1">
+<div class="page-header"><h1 id="allofus-r-package">
 <code>allofus</code> R Package<a class="anchor" aria-label="anchor" href="#allofus-r-package"></a>
-</h2>
+</h1></div>
 <p>The goal of the <code>allofus</code> R package is to streamline the use of R within the <a href="https://www.researchallofus.org/data-tools/workbench/" class="external-link">AllofUs Researcher Workbench</a>.</p>
 <p><em>The <code>allofus</code> R package is a not affiliated with or endorsed by the All of Us Research Program.</em></p>
 <p>The <code>allofus</code> package helps researchers query the database and build transparent and reproducible analysed pipeline. The package allows researchers to easily use other database packages, such as <code>dbplyr</code> and <code>DBI</code>, with the AllofUs database. The package also includes functions to help researchers manage storage in their workspace and bucket, as well as take advantage of tools developed for <a href="https://www.researchallofus.org/faq/what-is-omop/" class="external-link">OMOP CDM</a> data.</p>
@@ -103,16 +103,16 @@
 <p>This connection object is a <a href="https://dbi.r-dbi.org/" class="external-link">DBI</a> connection object, so you can use it with other packages that use DBI connections, such as <a href="https://dbplyr.tidyverse.org/" class="external-link">dbplyr</a>.</p>
 <p>For example, you can use <code>tbl()</code> from <a href="https://dplyr.tidyverse.org/" class="external-link">dplyr</a> to access the person table from the All of Us database:</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">person</span> <span class="op">&lt;-</span> <span class="fu">tbl</span><span class="op">(</span><span class="va">con</span>, <span class="st">"person"</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">person</span> <span class="op">&lt;-</span> <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/tbl.html" class="external-link">tbl</a></span><span class="op">(</span><span class="va">con</span>, <span class="st">"person"</span><span class="op">)</span></span></code></pre></div>
 <p>You can then use <code>dplyr</code> functions on the table:</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">person</span> <span class="op">|&gt;</span> </span>
-<span>  <span class="fu"><a href="https://rdrr.io/r/stats/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">gender_concept_id</span> <span class="op">==</span> <span class="fl">8507</span><span class="op">)</span></span></code></pre></div>
+<span>  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">gender_concept_id</span> <span class="op">==</span> <span class="fl">8507</span><span class="op">)</span></span></code></pre></div>
 <p>and join the table to other tables in the database:</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">person</span> <span class="op">|&gt;</span> </span>
-<span>  <span class="fu">left_join</span><span class="op">(</span><span class="fu">tbl</span><span class="op">(</span><span class="va">con</span>, <span class="st">"observation"</span><span class="op">)</span>, by <span class="op">=</span> <span class="st">"person_id"</span><span class="op">)</span></span></code></pre></div>
-<p>The <code><a href="reference/aou_join.html">aou_join()</a></code> function is a wrapper around <code><a href="https://dplyr.tidyverse.org/reference/mutate-joins.html" class="external-link">dplyr::left_join()</a></code> that allows you to join tables more easily:</p>
+<span>  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate-joins.html" class="external-link">left_join</a></span><span class="op">(</span><span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/tbl.html" class="external-link">tbl</a></span><span class="op">(</span><span class="va">con</span>, <span class="st">"observation"</span><span class="op">)</span>, by <span class="op">=</span> <span class="st">"person_id"</span><span class="op">)</span></span></code></pre></div>
+<p>The <code><a href="reference/aou_join.html">aou_join()</a></code> function is a wrapper around the <code>dplyr</code> join functions that allows you to join tables more easily:</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">person</span> <span class="op">|&gt;</span> </span>
 <span>  <span class="fu"><a href="reference/aou_join.html">aou_join</a></span><span class="op">(</span><span class="st">"observation"</span>, type <span class="op">=</span> <span class="st">"left"</span><span class="op">)</span></span></code></pre></div>
@@ -144,13 +144,12 @@
 <!-- demo_collected <- demo %>% collect() -->
 <!-- ``` -->
 </div>
-</div>
 <div class="section level2">
 <h2 id="bugs">Bugs<a class="anchor" aria-label="anchor" href="#bugs"></a>
 </h2>
 <p>Please leave us comments, requests, and report bugs using the “Issues” tab on github located here: <a href="https://github.com/roux-ohdsi/allofus/issues" class="external-link uri">https://github.com/roux-ohdsi/allofus/issues</a>.</p>
 </div>
-
+</div>
   </main><aside class="col-md-3"><div class="links">
 <h2 data-toc-skip>Links</h2>
 <ul class="list-unstyled">

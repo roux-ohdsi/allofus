@@ -7,8 +7,8 @@
 #' @param exclude_aou_visits Whether to exclude All of Us clinical visits (i.e., for program-specific measurements,
 #' not part of the participants' typical EHR) from the observation period. Defaults to `FALSE`
 #' @param con Connection to the allofus SQL database. Defaults to getOption("aou.default.con"), which is set automatically if you use `aou_connect()`
-#' @param collect Whether to collect the data or keep as SQL query
-#' from the observation period. Defaults to `FALSE`.
+#' @param collect Whether to collect the data or keep as SQL query. Defaults to `FALSE`.
+#' @param ... Further arguments passed along to `collect()` if `collect = TRUE`
 #' @details
 #' Follows conventions described here: <https://ohdsi.github.io/CommonDataModel/ehrObsPeriods.html>
 #'
@@ -33,7 +33,8 @@ aou_observation_period <- function(cohort = NULL,
                                    end_date_buffer = 60,
                                    exclude_aou_visits = FALSE,
                                    con = getOption("aou.default.con"),
-                                   collect = FALSE) {
+                                   collect = FALSE,
+                                   ...) {
 
   if (is.null(con)) cli::cli_abort(c("No connection available.",
                                      "i" = "Provide a connection automatically by running {.code aou_connect()} before this function.",
@@ -84,7 +85,7 @@ aou_observation_period <- function(cohort = NULL,
 
   # collect if desired.
   if (isTRUE(collect)) {
-    obs_period <- dplyr::collect(obs_period)
+    obs_period <- dplyr::collect(obs_period, ...)
   }
 
   return(obs_period)

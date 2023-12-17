@@ -24,13 +24,13 @@
 <li class="nav-item dropdown">
   <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" role="button" aria-expanded="false" aria-haspopup="true" id="dropdown-articles">Articles</a>
   <div class="dropdown-menu" aria-labelledby="dropdown-articles">
-    <a class="dropdown-item" href="../articles/atlas.html">Using ATLAS to create a cohort</a>
-    <a class="dropdown-item" href="../articles/data.html">Extracting All of Us survey and EHR data</a>
     <a class="dropdown-item" href="../articles/sql.html">SQL in R</a>
+    <a class="dropdown-item" href="../articles/workspace.html">Managing files on the workbench</a>
+    <a class="dropdown-item" href="../articles/data.html">Extracting All of Us survey and EHR data</a>
+    <a class="dropdown-item" href="../articles/atlas.html">Using ATLAS to create a cohort</a>
     <a class="dropdown-item" href="../articles/tips.html">Tips for using the All of Us Workbench</a>
     <a class="dropdown-item" href="../articles/web_only/data-browser.html">Using the Data Browser and AllofUs Database</a>
     <a class="dropdown-item" href="../articles/web_only/searchable_codebook.html">Searchable Codebook for AllofUs Surveys</a>
-    <a class="dropdown-item" href="../articles/workspace.html">Managing files with `allofus`</a>
   </div>
 </li>
       </ul><form class="form-inline my-2 my-lg-0" role="search">
@@ -66,7 +66,8 @@
 <span>  end_date_buffer <span class="op">=</span> <span class="fl">60</span>,</span>
 <span>  exclude_aou_visits <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  con <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/options.html" class="external-link">getOption</a></span><span class="op">(</span><span class="st">"aou.default.con"</span><span class="op">)</span>,</span>
-<span>  collect <span class="op">=</span> <span class="cn">FALSE</span></span>
+<span>  collect <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  <span class="va">...</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -95,8 +96,11 @@ not part of the participants' typical EHR) from the observation period. Defaults
 
 
 <dt>collect</dt>
-<dd><p>Whether to collect the data or keep as SQL query
-from the observation period. Defaults to <code>FALSE</code>.</p></dd>
+<dd><p>Whether to collect the data or keep as SQL query. Defaults to <code>FALSE</code>.</p></dd>
+
+
+<dt>...</dt>
+<dd><p>Further arguments passed along to <code>collect()</code> if <code>collect = TRUE</code></p></dd>
 
 </dl></div>
     <div class="section level2">

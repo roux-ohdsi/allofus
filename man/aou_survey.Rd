@@ -10,7 +10,8 @@ aou_survey(
   question_output = "text",
   clean_answers = TRUE,
   con = getOption("aou.default.con"),
-  collect = FALSE
+  collect = FALSE,
+  ...
 )
 }
 \arguments{
@@ -26,6 +27,8 @@ aou_survey(
 \item{con}{connection to the allofus SQL database. Defaults to getOption("aou.default.con"), which is created automatically with \code{aou_connect()}}
 
 \item{collect}{whether to return the results as a local (TRUE) or database table}
+
+\item{...}{additional arguments passed to \code{collect()} when \code{collect = TRUE}}
 }
 \description{
 Because responses to the survey questions stored in the ds_survey table do not

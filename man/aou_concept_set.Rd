@@ -42,7 +42,7 @@ the number of matching concepts per person ("count"), or all info about the matc
 
 \item{collect}{lgl; whether to collect from the database}
 
-\item{...}{further arguments passed along to}
+\item{...}{further arguments passed along to \code{collect()} if \code{collect = TRUE}}
 }
 \value{
 a dataframe if collect = TRUE; a remote tbl if not

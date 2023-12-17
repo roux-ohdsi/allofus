@@ -28,7 +28,7 @@ not part of the participants' typical EHR) from the observation period. Defaults
 
 \item{debug}{Print the query to the console; useful for debugging.}
 
-\item{...}{All other arguments passed to \code{bigrquery::bq_table_download()}}
+\item{...}{Further arguments passed along to \code{collect()} if \code{collect = TRUE}}
 }
 \value{
 A dataframe with the resulting cohort. The SQL query used to generate the cohort is stored as an attribute.

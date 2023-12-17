@@ -31,6 +31,7 @@
 #' @param clean_answers whether to clean the answers to the survey questions. Defaults to TRUE.
 #' @param con connection to the allofus SQL database. Defaults to getOption("aou.default.con"), which is created automatically with `aou_connect()`
 #' @param collect whether to return the results as a local (TRUE) or database table
+#' @param ... additional arguments passed to `collect()` when `collect = TRUE`
 #'
 #' @export
 #' @examples
@@ -66,7 +67,8 @@ aou_survey <- function(cohort = NULL,
                        question_output = "text",
                        clean_answers = TRUE,
                        con = getOption("aou.default.con"),
-                       collect = FALSE) {
+                       collect = FALSE,
+                       ...) {
 
   if(packageVersion("dbplyr")<'2.3.0'){
     stop('
@@ -452,7 +454,7 @@ aou_survey <- function(cohort = NULL,
 
   # collect if indicated
   if (isTRUE(collect)) {
-    out <- dplyr::collect(out)
+    out <- dplyr::collect(out, ...)
   }
 
   return(out)

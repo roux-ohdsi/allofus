@@ -34,13 +34,13 @@ Please see the online vignette for additional details insert link here"><!-- mat
 <li class="nav-item dropdown">
   <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" role="button" aria-expanded="false" aria-haspopup="true" id="dropdown-articles">Articles</a>
   <div class="dropdown-menu" aria-labelledby="dropdown-articles">
-    <a class="dropdown-item" href="../articles/atlas.html">Using ATLAS to create a cohort</a>
-    <a class="dropdown-item" href="../articles/data.html">Extracting All of Us survey and EHR data</a>
     <a class="dropdown-item" href="../articles/sql.html">SQL in R</a>
+    <a class="dropdown-item" href="../articles/workspace.html">Managing files on the workbench</a>
+    <a class="dropdown-item" href="../articles/data.html">Extracting All of Us survey and EHR data</a>
+    <a class="dropdown-item" href="../articles/atlas.html">Using ATLAS to create a cohort</a>
     <a class="dropdown-item" href="../articles/tips.html">Tips for using the All of Us Workbench</a>
     <a class="dropdown-item" href="../articles/web_only/data-browser.html">Using the Data Browser and AllofUs Database</a>
     <a class="dropdown-item" href="../articles/web_only/searchable_codebook.html">Searchable Codebook for AllofUs Surveys</a>
-    <a class="dropdown-item" href="../articles/workspace.html">Managing files with `allofus`</a>
   </div>
 </li>
       </ul><form class="form-inline my-2 my-lg-0" role="search">
@@ -114,7 +114,7 @@ not part of the participants' typical EHR) from the observation period. Defaults
 
 
 <dt>...</dt>
-<dd><p>All other arguments passed to <code><a href="https://bigrquery.r-dbi.org/reference/bq_table_download.html" class="external-link">bigrquery::bq_table_download()</a></code></p></dd>
+<dd><p>Further arguments passed along to <code>collect()</code> if <code>collect = TRUE</code></p></dd>
 
 </dl></div>
     <div class="section level2">

@@ -10,7 +10,8 @@ aou_observation_period(
   end_date_buffer = 60,
   exclude_aou_visits = FALSE,
   con = getOption("aou.default.con"),
-  collect = FALSE
+  collect = FALSE,
+  ...
 )
 }
 \arguments{
@@ -26,8 +27,9 @@ not part of the participants' typical EHR) from the observation period. Defaults
 
 \item{con}{Connection to the allofus SQL database. Defaults to getOption("aou.default.con"), which is set automatically if you use \code{aou_connect()}}
 
-\item{collect}{Whether to collect the data or keep as SQL query
-from the observation period. Defaults to \code{FALSE}.}
+\item{collect}{Whether to collect the data or keep as SQL query. Defaults to \code{FALSE}.}
+
+\item{...}{Further arguments passed along to \code{collect()} if \code{collect = TRUE}}
 }
 \value{
 a sql query or local data frame

@@ -1,3 +1,4 @@
+url: ~
 template:
   bootstrap: 5
   bslib:
@@ -39,3 +40,14 @@ reference:
   - aou_health_history
 deploy:
   install_metadata: true
+articles:
+- title: Articles
+  navbar: ~
+  contents:
+  - sql
+  - workspace
+  - data
+  - atlas
+  - tips
+  - web_only/data-browser
+  - web_only/searchable_codebook

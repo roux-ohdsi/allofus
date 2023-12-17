@@ -1,5 +1,5 @@
 ---
-title: "Managing files with `allofus`"
+title: "Managing files on the workbench"
 output: rmarkdown::html_vignette
 ---
 
