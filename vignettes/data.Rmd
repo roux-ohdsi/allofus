@@ -11,7 +11,6 @@ knitr::opts_chunk$set(
 )
 ```
 
-
 The [Researcher Workbench](https://workbench.researchallofus.org/), available to registered All of Us researchers, provides tools for creating datasets using the All of Us database. Researchers first use the Workbench to create a cohort defined by values of survey variables (e.g., gender, race, age), observations from the electronic health record (e.g., diagnosis codes, lab values), data from wearable devices (e.g., fitbit), genomic data, and/or physical measurements. Data -- either predefined or user-specified [*concept sets*](https://www.researchallofus.org/faq/what-is-a-concept-set/) -- from each of the database tables can then be extracted for the cohort. More information on this process is available [here](https://support.researchallofus.org/hc/en-us/articles/4556645124244-Using-the-Concept-Set-Selector-and-Dataset-Builder-tools-to-build-your-dataset).
 
 The `allofus` package takes a programmatic approach to extracting data from the All of Us database. One advantage to this approach is that it is easier to document and share the process. This is especially important for reproducibility and transparency. To demonstrate, this vignette will walk through some examples of extracting data from the All of Us database.
@@ -28,7 +27,8 @@ svy_vars <- aou_survey(questions = c(1585838, 1586135), question_output = c("gen
 
 count(svy_vars, gender, birthplace)
 ```
-```
+
+```         
 #> # Source:   SQL [?? x 3]
 #> # Database: BigQueryConnection
 #>    gender            birthplace       n
@@ -55,11 +55,11 @@ cohort <- svy_vars |>
 
 Now that we have our cohort, we want to create a dataset with data from these participants' medical records. We first want to find the concept ids of the data we want to extract. There are a number of tools we could use to do so:
 
-1.  [Athena](https://athena.ohdsi.org/): a web-based tool for searching the entire OMOP vocabulary. The concept id for Type 2 diabetes mellitus can be found under ID. There are many results for this search, but we want only standard concepts when searching for EHR data. 
+1.  [Athena](https://athena.ohdsi.org/): a web-based tool for searching the entire OMOP vocabulary. The concept id for Type 2 diabetes mellitus can be found under ID. There are many results for this search, but we want only standard concepts when searching for EHR data.
 
     ![](images/diabetes-athena.png){width="600"}
 
-2.  [Data Browser](https://databrowser.researchallofus.org/): a tool for exploring data in the All of Us database. Finding the concept id for Type 2 diabetes mellitus requires searching for that concept and then clicking "Sources": 
+2.  [Data Browser](https://databrowser.researchallofus.org/): a tool for exploring data in the All of Us database. Finding the concept id for Type 2 diabetes mellitus requires searching for that concept and then clicking "Sources":
 
     ![](images/diabetes-browser.png){width="600"}
 
@@ -70,7 +70,7 @@ Now that we have our cohort, we want to create a dataset with data from these pa
 Here are some concepts we may want to include. Keep in mind that this is an example, and a real analysis would have a more thorough search for relevant concepts.
 
 | Concept ID | Concept Name                                     | Domain      |
-|-------------------------|-----------------------------|------------------|
+|------------|--------------------------------------------------|-------------|
 | 201826     | Type 2 diabetes mellitus                         | Condition   |
 | 4193704    | Type 2 diabetes mellitus without complication    | Condition   |
 | 40164929   | metformin hydrochloride 500 MG Oral Tablet       | Drug        |

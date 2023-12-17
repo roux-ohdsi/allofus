@@ -193,10 +193,11 @@ aou_concept_set <- function(cohort = NULL,
 #' @param tbl_name The name of the table containing the domain concepts
 #' @param date_column The name of the column containing the concept dates
 #' @param concept_id_column The name of the column containing the concept IDs
+#' @param ... Additional arguments not currently used
 #'
 #' @noRd
 
-get_domain_concepts <- function(cohort, concepts, start_date, end_date, tbl_name, date_column, concept_id_column, con = getOption("aou.default.con")) {
+get_domain_concepts <- function(cohort, concepts, start_date, end_date, tbl_name, date_column, concept_id_column, con = getOption("aou.default.con"), ...) {
 
   domain_tbl <- dplyr::tbl(con, tbl_name) %>%
     dplyr::select('person_id', concept_date = .data[[date_column]], concept_id = .data[[concept_id_column]], dplyr::starts_with("value_"))
