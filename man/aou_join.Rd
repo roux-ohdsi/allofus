@@ -54,7 +54,8 @@ the \code{by} argument which will result in a SQL error.
 \dontshow{if (on_workbench()) (if (getRversion() >= "3.4") withAutoprint else force)(\{ # examplesIf}
 
 con <- aou_connect()
-obs_tbl <- dplyr::tbl(con, "observation")
+obs_tbl <- dplyr::tbl(con, "observation") \%>\%
+  dplyr::select(-provider_id)
 obs_tbl \%>\%
   aou_join("person", type = "left", by = "person_id")
 \dontshow{\}) # examplesIf}

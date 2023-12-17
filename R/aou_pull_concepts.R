@@ -19,12 +19,13 @@
 #'
 #' @examplesIf on_workbench()
 #' # indicator for any aspirin at any time
-#' aspirin_users <- aou_concept_set(concepts = 1191, concept_set_name = "aspirin", domains = "drug")
+#' aspirin_users <- aou_concept_set(dplyr::tbl(con, "person"),
+#'    concepts = 1191, concept_set_name = "aspirin", domains = "drug")
 #'
 #' # starting with person table to create a cohort
-#' people <- tbl(con, "person") %>%
-#'   filter(person_id < 2000000) %>%
-#'   mutate(
+#' people <- dplyr::tbl(con, "person") %>%
+#'   dplyr::filter(person_id < 2000000) %>%
+#'   dplyr::mutate(
 #'     start = as.Date("2021-01-01"),
 #'     end = as.Date("2023-12-31")
 #'   )
@@ -66,12 +67,12 @@ aou_concept_set <- function(cohort = NULL,
       cli::cli_warn(c("No cohort provided.",
                       ">" = "Ignoring start and end date."))
     }
-    tmp <- dplyr::tbl(con, "person") %>% select('person_id')
+    tmp <- dplyr::tbl(con, "person") %>% dplyr::select('person_id')
   } else {
     if (is.data.frame(cohort)) {
       tmp <- dplyr::tbl(con, "person") %>%
         dplyr::filter(.data$person_id %in% !!cohort$person_id) %>%
-        select('person_id')
+        dplyr::select('person_id')
       if (!collect && (!is.null(start_date) || !is.null(end_date))) {
         # can't have these both because we can't join (on the dates) without collecting
         cli::cli_warn(c("Cannot have {.code collect = FALSE} and also provide start and end dates.",
@@ -80,7 +81,7 @@ aou_concept_set <- function(cohort = NULL,
         must_collect <- TRUE
       }
     } else {
-      tmp <- cohort %>% select('person_id', any_of(c(start_date, end_date)))
+      tmp <- cohort %>% dplyr::select('person_id', dplyr::any_of(c(start_date, end_date)))
     }
   }
 

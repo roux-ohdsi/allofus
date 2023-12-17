@@ -115,7 +115,7 @@ aou_survey <- function(cohort = NULL,
 
   if (is.null(cohort)) {
     cli::cli_warn(c("No cohort provided.", ">" = "Pulling survey data for entire All of Us cohort."))
-    function_cohort <- dplyr::tbl(con, "person") %>% select(person_id)
+    function_cohort <- dplyr::tbl(con, "person") %>% dplyr::select('person_id')
   } else if (!"person_id" %in% colnames(cohort)) {
     # ensure person_id is a column name in cohort
 
