@@ -17,8 +17,7 @@
 #' @return a dataframe if collect = TRUE; a remote tbl if not
 #' @export
 #'
-#' @examples
-#' \dontrun{
+#' @examplesIf on_workbench()
 #' # indicator for any aspirin at any time
 #' aspirin_users <- aou_concept_set(concepts = 1191, concept_set_name = "aspirin", domains = "drug")
 #'
@@ -38,7 +37,6 @@
 #'   concept_set_name = "CGM",
 #'   output = "all"
 #' )
-#' }
 #'
 aou_concept_set <- function(cohort = NULL,
                             concepts,
@@ -104,6 +102,11 @@ aou_concept_set <- function(cohort = NULL,
     end_date <- "end_date"
   }
 
+  # now no matter what there will be start_date and end_date columns
+  tmp <- dplyr::mutate(tmp,
+                       start_date = .data[[start_date]],
+                       end_date = .data[[end_date]])
+
   all_concepts <- data.frame(
     domain = c(
       "condition", "measurement", "observation",
@@ -134,12 +137,20 @@ aou_concept_set <- function(cohort = NULL,
   if (must_collect) {
     # collect to restrict the concepts between the given start and end dates
     all_concepts <- dplyr::collect(all_concepts) %>%
-      dplyr::right_join(cohort, by = dplyr::join_by('person_id', dplyr::between('concept_date', start_date, end_date)))
+      dplyr::right_join(cohort, by = dplyr::join_by('person_id', dplyr::between('concept_date', 'start_date', 'end_date')))
     cohort_w_concepts <- all_concepts
   } else {
     cohort_w_concepts <- dplyr::right_join(all_concepts, tmp,
-      by = dplyr::join_by('person_id', dplyr::between('concept_date', start_date, end_date))
+      by = dplyr::join_by('person_id', dplyr::between('concept_date', 'start_date', 'end_date'))
     )
+  }
+
+  # remove start_date and end_date columns if they were not there in the first place
+  if (!"start_date" %in% colnames(cohort)) {
+    cohort_w_concepts <- dplyr::select(cohort_w_concepts, -dplyr::any_of("start_date"))
+  }
+  if (!"end_date" %in% colnames(cohort)) {
+    cohort_w_concepts <- dplyr::select(cohort_w_concepts, -dplyr::any_of("end_date"))
   }
 
   if (output == "all") {
