@@ -51,7 +51,7 @@ a dataframe if collect = TRUE; a remote tbl if not
 Get occurrences of a concept set from AoU for a given cohort
 }
 \examples{
-\dontrun{
+\dontshow{if (on_workbench()) (if (getRversion() >= "3.4") withAutoprint else force)(\{ # examplesIf}
 # indicator for any aspirin at any time
 aspirin_users <- aou_concept_set(concepts = 1191, concept_set_name = "aspirin", domains = "drug")
 
@@ -71,6 +71,5 @@ dat <- aou_concept_set(
   concept_set_name = "CGM",
   output = "all"
 )
-}
-
+\dontshow{\}) # examplesIf}
 }

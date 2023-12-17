@@ -30,6 +30,7 @@
 #' @examplesIf on_workbench()
 #'
 #' con <- aou_connect()
+#' obs_tbl <- dplyr::tbl(con, "observation")
 #' obs_tbl %>%
 #'   aou_join("person", type = "left", by = "person_id")
 #'
