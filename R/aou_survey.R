@@ -26,8 +26,8 @@
 #'
 #' @param cohort tbl or dataframe with a cohort that includes a column called person_id
 #' @param questions either a vector of concept_ids or concept_codes for questions to return results
-#' @param question_output how to name the columns. Options include text format ("text"), as concept ids preceded by
-#' "x_" ("concept_id"), or using a custom vector of column names matching the vector of `questions`. Defaults to "text".
+#' @param question_output how to name the columns. Options include as the text of the concept code ("concept_code"), as concept ids preceded by
+#' "x_" ("concept_id"), or using a custom vector of column names matching the vector of `questions`. Defaults to "concept_code".
 #' @param clean_answers whether to clean the answers to the survey questions. Defaults to TRUE.
 #' @param con connection to the allofus SQL database. Defaults to getOption("aou.default.con"), which is created automatically with `aou_connect()`
 #' @param collect whether to return the results as a local (TRUE) or database table
@@ -44,7 +44,7 @@
 #' aou_survey(
 #'   cohort,
 #'   questions = c(1585375, 1586135),
-#'   question_output = "text"
+#'   question_output = "concept_code"
 #' )
 #' aou_survey(
 #'   cohort,
@@ -64,7 +64,7 @@
 #' }
 aou_survey <- function(cohort = NULL,
                        questions,
-                       question_output = "text",
+                       question_output = "concept_code",
                        clean_answers = TRUE,
                        con = getOption("aou.default.con"),
                        collect = FALSE,
@@ -89,9 +89,9 @@ aou_survey <- function(cohort = NULL,
                                      "i" = "You can also provide {.code con} as an argument or default with {.code options(aou.default.con = ...)}."))
 
   if (length(question_output) == length(questions)) { # either gave column names or happen to have a single question
-    if (length(question_output) == 1) { # gave one column name or "text" or "concept_id"
+    if (length(question_output) == 1) { # gave one column name or "concept_code" or "concept_id"
       # see if the matched argument matches the actual argument
-      question_output_arg <- tryCatch(match.arg(question_output, c("text", "concept_id")), error = function(e) question_output)
+      question_output_arg <- tryCatch(match.arg(question_output, c("concept_code", "concept_id")), error = function(e) question_output)
       # if not, print a message so that the user can spot their problem
       if (!identical(question_output, question_output_arg)) {
         cli::cli_inform("Using {question_output} as column name.",
@@ -102,20 +102,20 @@ aou_survey <- function(cohort = NULL,
       question_output_arg <- question_output
     }
     # didn't give the right number question_output and it doesn't match one of the options
-  } else if (is.null(tryCatch(match.arg(question_output, c("text", "concept_id")), error = function(e) NULL))) {
+  } else if (is.null(tryCatch(match.arg(question_output, c("concept_code", "concept_id")), error = function(e) NULL))) {
     cli::cli_abort(c("Length of argument {.code question_output} doesn't match {.code questions}.",
                      "i" = "Provide a vector of column names the same length as {.code questions}.",
-                     "i" = "Alternatively, set either {.code question_output = \"text\"} or {.code question_output = \"concept_id\"}"))
+                     "i" = "Alternatively, set either {.code question_output = \"concept_code\"} or {.code question_output = \"concept_id\"}"))
 
     # gave one value for question_output and multiple values for questions
   } else {
-    question_output_arg <- match.arg(question_output, c("text", "concept_id"))
+    question_output_arg <- match.arg(question_output, c("concept_code", "concept_id"))
   }
   question_output <- if (length(question_output_arg) == 1 && question_output_arg[1] == "concept_id") "concept_id" else "value"
 
   if (is.null(cohort)) {
     cli::cli_warn(c("No cohort provided.", ">" = "Pulling survey data for entire All of Us cohort."))
-    function_cohort <- dplyr::tbl(con, "person")
+    function_cohort <- dplyr::tbl(con, "person") %>% select(person_id)
   } else if (!"person_id" %in% colnames(cohort)) {
     # ensure person_id is a column name in cohort
 
@@ -288,7 +288,7 @@ aou_survey <- function(cohort = NULL,
       # this will be what the column is called
       if (question_output_arg[1] == "concept_id") {
         condition_name <- paste0("x", specific_concept_id)
-      } else if (question_output_arg[1] == "text") {
+      } else if (question_output_arg[1] == "concept_code") {
         condition_name <- concept_lookup %>%
           dplyr::filter(.data$concept_id == specific_concept_id) %>%
           dplyr::pull('concept_code')
@@ -418,7 +418,7 @@ aou_survey <- function(cohort = NULL,
       dplyr::select(dplyr::all_of(c("person_id", !!q, "value_source_value", "observation_date"))) %>%
       tidyr::pivot_wider(names_from = !!q, values_from = c('value_source_value', 'observation_date'), names_prefix = pref)
 
-    if (length(question_output_arg) == 1 && question_output_arg[1] %in% c("text", "concept_id")) {
+    if (length(question_output_arg) == 1 && question_output_arg[1] %in% c("concept_code", "concept_id")) {
       wide <- wide %>%
         dplyr::rename_with(.fn = gsub, pattern = "value_source_value_|value_source_concept_id", replacement = "") %>%
         dplyr::rename_with(.fn = gsub, pattern = "observation_date_(.+)", replacement = "\\1_date")

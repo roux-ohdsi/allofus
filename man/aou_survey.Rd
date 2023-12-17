@@ -7,7 +7,7 @@
 aou_survey(
   cohort = NULL,
   questions,
-  question_output = "text",
+  question_output = "concept_code",
   clean_answers = TRUE,
   con = getOption("aou.default.con"),
   collect = FALSE,
@@ -19,8 +19,8 @@ aou_survey(
 
 \item{questions}{either a vector of concept_ids or concept_codes for questions to return results}
 
-\item{question_output}{how to name the columns. Options include text format ("text"), as concept ids preceded by
-"x_" ("concept_id"), or using a custom vector of column names matching the vector of \code{questions}. Defaults to "text".}
+\item{question_output}{how to name the columns. Options include as the text of the concept code ("concept_code"), as concept ids preceded by
+"x_" ("concept_id"), or using a custom vector of column names matching the vector of \code{questions}. Defaults to "concept_code".}
 
 \item{clean_answers}{whether to clean the answers to the survey questions. Defaults to TRUE.}
 
@@ -64,7 +64,7 @@ cohort <- dplyr::tbl(con, "person") \%>\%
 aou_survey(
   cohort,
   questions = c(1585375, 1586135),
-  question_output = "text"
+  question_output = "concept_code"
 )
 aou_survey(
   cohort,
