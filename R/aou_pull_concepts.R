@@ -145,15 +145,16 @@ aou_concept_set <- function(cohort = NULL,
     )
   }
 
-  # remove start_date and end_date columns if they were not there in the first place
-  if (!"start_date" %in% colnames(cohort)) {
-    cohort_w_concepts <- dplyr::select(cohort_w_concepts, -dplyr::any_of("start_date"))
-  }
-  if (!"end_date" %in% colnames(cohort)) {
-    cohort_w_concepts <- dplyr::select(cohort_w_concepts, -dplyr::any_of("end_date"))
-  }
 
   if (output == "all") {
+    # remove start_date and end_date columns if they were not there in the first place
+    if (!"start_date" %in% colnames(cohort)) {
+      cohort_w_concepts <- dplyr::select(cohort_w_concepts, -dplyr::any_of("start_date"))
+    }
+    if (!"end_date" %in% colnames(cohort)) {
+      cohort_w_concepts <- dplyr::select(cohort_w_concepts, -dplyr::any_of("end_date"))
+    }
+
     if (collect && !must_collect) {
       # if must_collect, then it's already collected
       return(dplyr::collect(all_concepts, ...))
@@ -175,6 +176,14 @@ aou_concept_set <- function(cohort = NULL,
     counted <- counted %>%
       dplyr::rename(!!concept_set_name := 'n')
 
+    # remove start_date and end_date columns if they were not there in the first place
+    if (!"start_date" %in% colnames(cohort)) {
+      cohort_w_concepts <- dplyr::select(cohort_w_concepts, -dplyr::any_of("start_date"))
+    }
+    if (!"end_date" %in% colnames(cohort)) {
+      cohort_w_concepts <- dplyr::select(cohort_w_concepts, -dplyr::any_of("end_date"))
+    }
+
     if (collect && !must_collect) {
       return(dplyr::collect(counted, ...))
     } else {
@@ -187,6 +196,14 @@ aou_concept_set <- function(cohort = NULL,
   res <- counted %>%
     dplyr::mutate(!!concept_set_name := ifelse(.data$n >= !!min_n, 1, 0)) %>%
     dplyr::select(-'n')
+
+  # remove start_date and end_date columns if they were not there in the first place
+  if (!"start_date" %in% colnames(cohort)) {
+    cohort_w_concepts <- dplyr::select(cohort_w_concepts, -dplyr::any_of("start_date"))
+  }
+  if (!"end_date" %in% colnames(cohort)) {
+    cohort_w_concepts <- dplyr::select(cohort_w_concepts, -dplyr::any_of("end_date"))
+  }
 
   if (collect && !must_collect) {
     return(dplyr::collect(res, ...))

@@ -17,14 +17,21 @@ The `allofus` package takes a programmatic approach to extracting data from the 
 
 Suppose we want a cohort of the female All of Us participants who weren't born in the US. For this cohort, we want to extract data on their history of diabetes, their A1C lab values, and their use of metformin after joining All of Us.
 
-The first step is extracting gender and country of birth from the survey data. We can retrieve these variables either by concept code or concept id. Using the `allofus` [searchable codebook](https://roux-ohdsi.github.io/allofus/articles/searchable_codebook.html), we find that the concept id for gender is 1585838 and for birthplace is 1586135.
+The first step is extracting gender and country of birth from the survey data. We can retrieve these variables either by concept code or concept id. Using the `allofus` [searchable codebook](https://roux-ohdsi.github.io/allofus/articles/searchable_codebook.html), we find that the concept id for gender is 1585838 and for birthplace is 1586135. We can use the `aou_survey` function to extract these variables from the All of Us database. This function takes a vector of concept ids or codes, and returns a dataset with one row per participant and one column per variable. The `question_output` argument allows you to specify the names of the column in the output dataset. Alternatively, you can specify "concept_id" or "concept_code" to name the variables according to one of those options.
 
 ```{r}
 library(allofus)
 library(tidyverse)
 
 svy_vars <- aou_survey(questions = c(1585838, 1586135), question_output = c("gender", "birthplace"))
+```
+```{r, echo = FALSE, eval = TRUE}
+cli::cli_warn(c("No cohort provided.", ">" = "Pulling survey data for entire All of Us cohort."))
+```
+Note that the `aou_survey` function takes a cohort as an argument, with the only requirement that it contains a column called `person_id`. If no cohort is provided (e.g., if you are using survey data to define your cohort), the function will pull data for the entire All of Us cohort. 
 
+Because `aou_survey()` defaults to `collect = FALSE`, the query isn't fully executed yet, and we can continue to perform analyses, like cross-tabulating the two variables, on the database.
+```{r}
 count(svy_vars, gender, birthplace)
 ```
 
@@ -51,7 +58,28 @@ To create our cohort, we can subset the data to the participants matching our cr
 ```{r}
 cohort <- svy_vars |> 
   filter(gender == "Woman", birthplace == "Other")
+
+cohort
 ```
+```
+#> # Source:   SQL [?? x 5]
+#> # Database: BigQueryConnection
+#>    person_id birthplace gender birthplace_date gender_date
+#>      <int64>      <chr>  <chr>          <date>      <date>     
+#>  1   xxxxxxx      Other  Woman      2019-08-28  2019-08-28 
+#>  2   xxxxxxx      Other  Woman      2018-06-03  2018-06-03 
+#>  3   xxxxxxx      Other  Woman      2019-05-23  2019-05-23 
+#>  4   xxxxxxx      Other  Woman      2019-02-26  2019-02-26 
+#>  5   xxxxxxx      Other  Woman      2018-06-28  2018-06-28 
+#>  6   xxxxxxx      Other  Woman      2019-03-18  2019-03-18 
+#>  7   xxxxxxx      Other  Woman      2019-04-17  2019-04-17 
+#>  8   xxxxxxx      Other  Woman      2019-04-23  2019-04-23 
+#>  9   xxxxxxx      Other  Woman      2019-05-16  2019-05-16 
+#> 10   xxxxxxx      Other  Woman      2020-09-03  2020-09-03 
+#> # ℹ more rows
+```
+
+Note that the `aou_survey()` function automatically creates an additional column for every survey variable extracted, which contains the date the participant answered the question. These are automatically named by adding "_date" as a suffix to the column names.
 
 Now that we have our cohort, we want to create a dataset with data from these participants' medical records. We first want to find the concept ids of the data we want to extract. There are a number of tools we could use to do so:
 
@@ -78,11 +106,21 @@ Here are some concepts we may want to include. Keep in mind that this is an exam
 | 3004410    | Hemoglobin A1c/Hemoglobin.total in Blood         | Measurement |
 | 3005673    | Hemoglobin A1c/Hemoglobin.total in Blood by HPLC | Measurement |
 
+First, we'll extract data on diabetes diagnoses. We can use the `aou_concept_set` function to extract data from the All of Us database. This function takes a cohort, a vector of concepts, and a domain or set of domains. The `output` argument specifies the type of data to extract. Here, we'll extract an indicator variable for whether the participant has a diabetes diagnosis at any point in their medical record. We'll call that variable "t2dm".
 ```{r}
 t2dm <- aou_concept_set(cohort, concepts = c(201826, 4193704), 
-                        domains = "condition", output = "indicator")
+                        domains = "condition", output = "indicator", 
+                        concept_set_name = "t2dm)
+```
+
+We can also extract data within a certain time window. For example, if we only want to extract metformin use after joining All of Us, we can specify a start date as the date the participant answered the gender question (on the Basics survey).
+
+```{r}
 metformin <- aou_concept_set(cohort, concepts = c(40164929, 40164897), 
-                             domains = "drug", output = "count")
+                             domains = "drug", output = "count", start_date = "gender_date")
+```
+  
+```{r}
 a1c <- aou_concept_set(cohort, concepts = c(3004410, 3005673), 
                        domains = "measurement", output = "all")
 ```
@@ -95,6 +133,9 @@ Next, we want to combine these datasets into one. We can do this using the `aou_
 combined_data <- reduce(list(cohort, t2dm, metformin, a1c), 
                         aou_join, type = "left", by = "person_id")
 ```
+
+
+
 
 <!-- There are several tools available for finding data to extract from the All of Us database. The [Data Browser](https://databrowser.researchallofus.org/) is a useful, publicly available tool for exploring data (survey questions, conditions in the electronic health record, fitbit measurements etc.). However, it doesn't necessarily contain the information needed to actually find the data in the database. -->
 
