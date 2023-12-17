@@ -157,9 +157,9 @@ aou_concept_set <- function(cohort = NULL,
 
     if (collect && !must_collect) {
       # if must_collect, then it's already collected
-      return(dplyr::collect(all_concepts, ...))
+      return(dplyr::collect(cohort_w_concepts, ...))
     } else {
-      return(all_concepts)
+      return(cohort_w_concepts)
     }
   }
 
@@ -178,10 +178,10 @@ aou_concept_set <- function(cohort = NULL,
 
     # remove start_date and end_date columns if they were not there in the first place
     if (!"start_date" %in% colnames(cohort)) {
-      cohort_w_concepts <- dplyr::select(cohort_w_concepts, -dplyr::any_of("start_date"))
+      counted <- dplyr::select(counted, -dplyr::any_of("start_date"))
     }
     if (!"end_date" %in% colnames(cohort)) {
-      cohort_w_concepts <- dplyr::select(cohort_w_concepts, -dplyr::any_of("end_date"))
+      counted <- dplyr::select(counted, -dplyr::any_of("end_date"))
     }
 
     if (collect && !must_collect) {
@@ -199,10 +199,10 @@ aou_concept_set <- function(cohort = NULL,
 
   # remove start_date and end_date columns if they were not there in the first place
   if (!"start_date" %in% colnames(cohort)) {
-    cohort_w_concepts <- dplyr::select(cohort_w_concepts, -dplyr::any_of("start_date"))
+    res <- dplyr::select(res, -dplyr::any_of("start_date"))
   }
   if (!"end_date" %in% colnames(cohort)) {
-    cohort_w_concepts <- dplyr::select(cohort_w_concepts, -dplyr::any_of("end_date"))
+    res <- dplyr::select(res, -dplyr::any_of("end_date"))
   }
 
   if (collect && !must_collect) {
