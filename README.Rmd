@@ -14,112 +14,112 @@ knitr::opts_chunk$set(
 )
 ```
 
-</br> 
-</br> 
+# `allofus` R Package
 
-## {allofus} R Package
+The goal of the `allofus` R package is to streamline the use of R within the [AllofUs Researcher Workbench](https://www.researchallofus.org/data-tools/workbench/).
 
-The goal of the {allofus} R package is to streamline the use of R within the AllofUS Researcher Workbench.
+*The `allofus` R package is a not affiliated with or endorsed by the All of Us Research Program.*
 
-**The {allofus} R package is a not affiliated with or endorsed by the *All ofUs* Research Program.**
+The `allofus` package helps researchers query the database and build transparent and reproducible analysed pipeline. The package allows researchers to easily use other database packages, such as `dbplyr` and `DBI`, with the AllofUs database. The package also includes functions to help researchers manage storage in their workspace and bucket, as well as take advantage of tools developed for [OMOP CDM](https://www.researchallofus.org/faq/what-is-omop/) data.
 
-</br> 
+<!-- badges: start -->
+[![R-CMD-check](https://github.com/roux-ohdsi/allofus/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/roux-ohdsi/allofus/actions/workflows/R-CMD-check.yaml)
+```{r, echo = FALSE, results='asis', eval = TRUE}
+cat(
+	badger::badge_cran_release("allofus", "green"),
+	badger::badge_cran_download("allofus", "grand-total", "green")
+)
+```
+<!-- badges: end -->
 
 ### Installation
 
-```
+```{r}
 install.packages("remotes")
 remotes::install_github("roux-ohdsi/allofus")
 ```
 
 ### Use
 
-```
+```{r}
 library(allofus)
 ```
 
 Use `aou_connect()` to establish a database connection.
-```
+```{r}
 con <- aou_connect()
 ```
+This connection object is a [DBI](https://dbi.r-dbi.org/) connection object, so you can use it with other packages that use DBI connections, such as [dbplyr](https://dbplyr.tidyverse.org/).
 
-Then, you can use `aou_ls_bucket()` to list files in your bucket.
-
-```
-aou_ls_bucket()
-```
-
-Files in your workspace are only accessible to you, but not your collaborators (see details on storage below). If you need to move a file from your workspace bucket to your personal workspace, use `aou_bucket_to_workspace()` to move files from your bucket to your workspace.
-
-```
-aou_bucket_to_workspace("file1.csv")
-data <- read.csv("file1.csv")
+For example, you can use `tbl()` from [dplyr](https://dplyr.tidyverse.org/) to access the person table from the All of Us database:
+```{r}
+person <- dplyr::tbl(con, "person")
 ```
 
-And when you want to save something from your workspace to your bucket so that your collaborators can use it (or so that you can shut down your workspace and save \$\$\$), you can use `aou_workspace_to_bucket()` to move files from your workspace to your bucket for permanent storage.
-
-```
-write.csv(data, "file1.csv")
-aou_bucket_to_workspace("file1.csv")
-```
-
-There is also a function that you can use to load packages, and install them if
-they are not yet (or no longer) installed in your environment. 
-
-```
-bookstore(c("CohortGenerator", "tidyr")
+You can then use `dplyr` functions on the table:
+```{r}
+person |>
+  dplyr::filter(gender_concept_id == 8507)
 ```
 
-### Bugs
+and join the table to other tables in the database:
+
+```{r}
+person |>
+  dplyr::left_join(dplyr::tbl(con, "observation"), by = "person_id")
+```
+
+The `aou_join()` function is a wrapper around the `dplyr` join functions that allows you to join tables more easily:
+```{r}
+person |>
+  aou_join("observation", type = "left")
+```
+
+See `vignette("sql", package = "allofus")` for more examples.
+
+<!-- ## Example -->
+
+<!-- Suppose we want to create a cohort of All of Us participants who have experienced a stroke. There are a couple of ways we could go about this. -->
+
+
+
+<!-- ### Using the observation table -->
+
+
+
+
+
+<!-- The following code would start a query for the first survey date for the AllofUs survey "The Basics" (sometimes, but rarely, participants completed this survey over multiple dates). -->
+
+<!-- *While the ds_survey table is conveniently organized, it does not include the "skip" response for some surveys, so we don't recommend using it unless you're sure all potential responses have been recorded in the table. It's safest to use the observation table. You can see a detailed description of the survey ETL here: https://support.researchallofus.org/hc/en-us/articles/6085114880148.* -->
+
+<!-- ```{r, eval = FALSE} -->
+<!-- library(tidyverse) -->
+
+<!-- survey_dates = tbl(con, "ds_survey") %>% -->
+<!--   filter(survey == "The Basics") %>% -->
+<!--   group_by(person_id) %>% -->
+<!--   filter(survey_datetime == min(survey_datetime)) %>% -->
+<!--   distinct(person_id, survey_datetime) -->
+<!-- ``` -->
+
+<!-- And this code would start with the all of us specific person table and join that to the survey dates table to incorporate information about demographics. -->
+
+<!-- ```{r, eval = FALSE} -->
+<!-- demo <- tbl(con, "cb_search_person") %>% -->
+<!--   filter(age_at_consent >= 40 & age_at_consent <= 120, -->
+<!--          has_ehr_data == 1) %>% -->
+<!--   distinct(person_id, sex_at_birth, dob)  %>% -->
+<!--   inner_join(survey_dates, by = "person_id") %>% -->
+<!--   select(person_id, sex_at_birth, dob, survey_datetime) -->
+<!-- ``` -->
+
+<!-- We could leave this as a query, or we could pull the data into our local session: -->
+
+<!-- ```{r, eval = FALSE} -->
+<!-- demo_collected <- demo %>% collect() -->
+<!-- ``` -->
+
+## Bugs
 
 Please leave us comments, requests, and report bugs using the "Issues" tab on github located here: https://github.com/roux-ohdsi/allofus/issues.
-
-### Tips on using the AllofUs Workbench
-
-Working with data in AllofUs is similar to working with other OMOP CDM instances with a few important differences:
-
--   AllofUs includes data from most of the typical OMOP CDM tables, as well as a few additional AllofUs specific tables. The data dictionary for the registered tier can be found [here](https://docs.google.com/spreadsheets/d/1HNxLGGKCJFWi5dBXiFgu3nZlV6klMLiHVjqANCu03UY/edit#gid=183931508) and the controlled tier [here](https://docs.google.com/spreadsheets/d/1XLVq84LLd0VZMioF2sPwyiaPw3EFp5c8o1CTWGPH-Yc/edit#gid=183931508). For the most part, the additional tables hold data collected by AllofUs that is not typical of EHR or claims data (e.g., fitbit data).
-
--   We can write temporary tables on the database in AllofUs but dplyr/dbplyr won't write temporary tables with a bigquery db. 
-
-- Additionally, users do not have any permanent write access to their own schema on the database. Unfortunately, this means that many of the OHDSI R packages will not work on the allofus workbench. It also means that we can't use SQL/JSON code generated by ATLAS to pull a cohort (because this code also uses a user schema/write schema).
-
--   The workbench uses jupyter notebooks (though RStudio is coming).
-
--   It's important to understand where data is stored for AllofUs. Each user has a persistent disk ("your workspace") that is specific to that user. For a given Project Workspace, there is a shared "data bucket" that holds data that anyone with access to the Project workspace can access. Unless you're sure that no one else will need to see the data or the scripts that use the data, we currently recommend using only the bucket for storage that needs be permanent. However, unlike the persistent disk, we can't just run `read.csv("data.csv")` from the bucket. We have to move data from the bucket into the your persistent disk/your workspace (the current environment) first.
-
-    ![](https://support.researchallofus.org/hc/article_attachments/14431834598036)  
-    *source: https://support.researchallofus.org/hc/article_attachments/14431834598036*
-    
-### Example
-
-The following code would start a query for the first survey date for the AllofUs survey "The Basics" (sometimes, but rarely, participants completed this survey over multiple dates).
-
-*While the ds_survey table is conveniently organized, it does not include the "skip" response for some surveys, so we don't recommend using it unless you're sure all potential responses have been recorded in the table. It's safest to use the observation table. You can see a detailed description of the survey ETL here: https://support.researchallofus.org/hc/en-us/articles/6085114880148.*
-
-```{r, eval = FALSE}
-library(tidyverse)
-
-survey_dates = tbl(con, "ds_survey") %>%
-  filter(survey == "The Basics") %>%
-  group_by(person_id) %>%
-  filter(survey_datetime == min(survey_datetime)) %>%
-  distinct(person_id, survey_datetime)
-```
-
-And this code would start with the all of us specific person table and join that to the survey dates table to incorporate information about demographics.
-
-```{r, eval = FALSE}
-demo <- tbl(con, "cb_search_person") %>%
-  filter(age_at_consent >= 40 & age_at_consent <= 120,
-         has_ehr_data == 1) %>%
-  distinct(person_id, sex_at_birth, dob)  %>%
-  inner_join(survey_dates, by = "person_id") %>%
-  select(person_id, sex_at_birth, dob, survey_datetime)
-```
-
-We could leave this as a query, or we could pull the data into our local session:
-
-```{r, eval = FALSE}
-demo_collected <- demo %>% collect()
-```

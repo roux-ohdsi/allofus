@@ -1,0 +1,86 @@
+---
+title: "All of Us Surveys"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Codebook for AllofUs Surveys}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  echo = FALSE,
+  message = FALSE,
+  warning = FALSE,
+  comment = "#>"
+)
+```
+
+<style>
+.row>main {
+max-width: 100vw !important;
+width: 94vw !important;
+}
+.container .template_article {
+max-width: 94vw !important;
+}
+.container .row {
+justify-content: space-evenly;
+}
+</style>
+```{r setup, include = FALSE}
+library(allofus)
+library(dplyr)
+library(tidyr)
+library(purrr)
+library(forcats)
+library(tibble)
+library(DT)
+```
+
+This table consists of mapped rows from the [publicly available AllofUs Survey Codebook](https://docs.google.com/spreadsheets/d/1Ey8MScRYZ9QyS4izVYScISLMb62QEhSM-ErbG27dNtw/edit#gid=1832128489)
+to the AllofUs PPI Vocabulary available on [Athena](https://athena.ohdsi.org/search-terms/start). A small number of rows did not
+match between the codebook and the Athena PPI Vocabulary. The code to generate a full table can be found [here](https://github.com/roux-ohdsi/allofus/blob/main/data-raw/pkg_data.R). It can also be accessed in R using `allofus::aou_codebook`. 
+
+More information on the All of Us Surveys is available at the All of Us [Survey Explorer](https://www.researchallofus.org/data-tools/survey-explorer/). PDF versions of the individual surveys are linked in the table.
+
+```{r, echo = FALSE, out.width = "100%"}
+cols <- c(
+  "concept_code", "concept_id", "concept_name",
+  # "concept_class_id",
+  "form_name", "pdf", "field_type", "field_label", "choices"
+)
+
+df <- allofus::aou_codebook
+df$concept_id <- paste0("<a href=https://athena.ohdsi.org/search-terms/terms/", df$concept_id, ' target="_blank">', df$concept_id, "</a>")
+df$pdf <- paste0("<a href=", df$link, ' target="_blank">', df$form_name, "</a>")
+df$form_name <- as.factor(df$form_name)
+# df$concept_class_id = as.factor(df$concept_class_id)
+df$field_type <- as.factor(df$field_type)
+
+df <- df[, cols]
+
+DT::datatable(df,
+  rownames = FALSE,
+  filter = "top",
+  plugins = "ellipsis",
+  extensions = "Buttons",
+  escape = FALSE,
+  options = list(
+    # autoWidth = TRUE,
+    hover = TRUE,
+    dom = "Bfrtip",
+    buttons = c("copy", "csv", "excel", "pdf", "print"),
+    # scrollX = TRUE,
+    # scrollCollapse = TRUE,
+    columnDefs = list(list(
+      targets = c(2,6,7),
+      # targets = c(2, 5, 6),
+      render = DT::JS("$.fn.dataTable.render.ellipsis( 10, false )")
+    ))
+  )
+) |>
+  DT::formatStyle(table = _, columns = cols, fontSize = "80%")
+```
+

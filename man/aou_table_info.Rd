@@ -5,11 +5,11 @@
 \alias{aou_table_info}
 \title{Table of tables, columns, and use for researchers from the CT data dictionary}
 \format{
-`aou_table_info`
+\code{aou_table_info}
 \describe{
-  \item{table_name}{chr; name of the table}
-  \item{columns}{chr; columns in the table}
-  \item{recommended_for_research}{chr; whether the table is recomended for research}
+\item{table_name}{chr; name of the table}
+\item{columns}{chr; columns in the table}
+\item{recommended_for_research}{chr; whether the table is recomended for research}
 }
 }
 \usage{
@@ -20,7 +20,7 @@ A data frame containing tables and columns in the aou OMOP CDM created from
 https://docs.google.com/spreadsheets/d/1XLVq84LLd0VZMioF2sPwyiaPw3EFp5c8o1CTWGPH-Yc/edit#gid=1815943286.
 Note that the column 'value_source_value' has been manually added as it is missing from the data dictionary.
 \itemize{
-   \item{\href{https://github.com/roux-ohdsi/allofus/blob/main/data-raw/more_data.R}{Code to generate table}}
+\item{\href{https://github.com/roux-ohdsi/allofus/blob/main/data-raw/more_data.R}{Code to generate table}}
 }
 }
 \keyword{datasets}

@@ -7,27 +7,28 @@
 aou_connect(CDR = getOption("aou.default.cdr"), ...)
 }
 \arguments{
-\item{CDR}{The name of the "curated data repository" that will be used in any
-references of the form "{CDR}" or "{cdr}" in the query. Defaults to
-getOption("aou.default.cdr"), which is Sys.getenv('WORKSPACE_CDR') if not specified otherwise
-(the "mainline" CDR). On the controlled tier, specify the "base" CDR with
-`CDR = paste0(Sys.getenv('WORKSPACE_CDR'), "_base")`.}
+\item{CDR}{The name of the "curated data repository" to connect to. Defaults to
+\code{getOption("aou.default.cdr")}, which is \code{Sys.getenv('WORKSPACE_CDR')} if not specified otherwise
+(i.e., \href{https://support.researchallofus.org/hc/en-us/articles/4616869437204-Controlled-CDR-Directory}{the "mainline" CDR}).
+On the controlled tier, specify the "base" CDR with \code{CDR = paste0(Sys.getenv('WORKSPACE_CDR'), "_base")}.}
+
+\item{...}{Further arguments passed along to \code{DBI::dbConnect()}.}
 }
 \value{
-A `BigQueryConnection` object. This object is also saved as getOption("aou.default.con").
+A \code{BigQueryConnection} object. This object is also saved as an option (\code{getOption("aou.default.con")}).
 }
 \description{
-Use this function to create a `BigQueryConnection` object.
+Use this function to create a \code{BigQueryConnection} object.
 You can reference this object to connect to the All of Us database and run
-SQL code using, e.g., `dbplyr` or `DBI`. A message is printed with the connection
+SQL code using, e.g., \code{dbplyr} or \code{DBI}. A message is printed with the connection
 status (successful or not).
 }
 \examples{
-\dontrun{
+\dontshow{if (on_workbench()) (if (getRversion() >= "3.4") withAutoprint else force)(\{ # examplesIf}
 con <- aou_connect()
 # reference the observation table in the database
 dplyr::tbl(con, "observation")
 # print a list of the tables in the database
 DBI::dbListTables(con)
-}
+\dontshow{\}) # examplesIf}
 }

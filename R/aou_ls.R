@@ -6,13 +6,13 @@
 #'
 #' @param pattern Regular expression, such as "*.csv" or a single file name e.g., "mydata.csv".
 #' Default will find all files apart from notebooks (.ipynb files).
-#' @param silent Logical; whether to print the names of files found.
+#' @param silent Whether to omit the names of files found. Defaults to `FALSE`.
 #' @param ... Other arguments passed to `list.files()`
 #' @return A vector of file names
 #'
 #' @export
 #' @examples
-#' aou_ls_workspace()
+#' my_workspace_files <- aou_ls_workspace(silent = TRUE)
 #' aou_ls_workspace("*.csv")
 #' aou_ls_workspace(path = "data")
 #'
@@ -41,23 +41,22 @@ aou_ls_workspace <- function(pattern = "", silent = FALSE, ...) {
 #'
 #' @param pattern Regular expression, such as "*.csv" or a single file name e.g., "mydata.csv".
 #' Default will find all files apart from notebooks (.ipynb files).
-#' @param silent Logical; whether to print the names of files found.
+#' @param silent Whether to omit the names of files found. Defaults to `FALSE`.
+#' @param recursive Whether to search subdirectories. Defaults to `TRUE`.
 #' @param bucket Bucket to retrieve file from. Defaults to `getOption("aou.default.bucket")`,
 #' which is `Sys.getenv('WORKSPACE_BUCKET')` unless specified otherwise.
 #' @param gsutil_args A string containing other arguments passed to `gsutil ls`.
-#' See https://cloud.google.com/storage/docs/gsutil/commands/ls for details.
+#' See <https://cloud.google.com/storage/docs/gsutil/commands/ls> for details.
 #' @return A vector of file names
 #'
 #' @export
-#' @examples
-#' \dontrun{
+#' @examplesIf on_workbench()
 #' # list all files, including in subdirectories
 #' aou_ls_bucket()
 #' # list all csv files
 #' aou_ls_bucket("*.csv")
 #' # list all csv files in the data directory
 #' aou_ls_bucket("data/*.csv")
-#' }
 #'
 aou_ls_bucket <- function(pattern = "", silent = FALSE, recursive = TRUE, bucket = getOption("aou.default.bucket"), gsutil_args = "") {
   if (recursive) {
@@ -89,8 +88,8 @@ aou_ls_bucket <- function(pattern = "", silent = FALSE, recursive = TRUE, bucket
 #' which is `Sys.getenv('WORKSPACE_BUCKET')` unless specified otherwise.
 #'
 #' @description This function retrieves a file from your bucket and moves it
-#' into your workspace where it can be read into R, e.g., using a function like write.csv().
-#' See https://cloud.google.com/storage/docs/gsutil/commands/cp for details on the
+#' into your workspace where it can be read into R, e.g., using a function like `write.csv()`.
+#' See <https://cloud.google.com/storage/docs/gsutil/commands/cp> for details on the
 #' underlying function.
 #'
 #' @return Nothing
@@ -129,19 +128,19 @@ aou_bucket_to_workspace <- function(file, dir = "", bucket = getOption("aou.defa
   }
 }
 
-#' Save a file from your workspace to your bucket.
+#' Save a file from your workspace to your bucket
 #'
 #' @param file The name of a file in your bucket, a vector of multiple files, a directory,
 #' or a file pattern (e.g. ".csv"). See Details.
 #' @param dir Optional directory in the bucket to save files to.
-#' @param recursive description
+#' @param recursive Whether to include subdirectories. Defaults to `TRUE`.
 #' @param bucket Bucket to save files to. Defaults to `getOption("aou.default.bucket")`,
 #' which is `Sys.getenv('WORKSPACE_BUCKET')` unless specified otherwise.
 #'
 #' @description This function moves a file saved in a workspace
 #' to a bucket, where it can be retrieved even if the environment is deleted. To use, first save the desired
-#' object as a file to the workspace (e.g., write.csv(object, "filename.csv")) and then run this function
-#' (e.g., aou_workspace_to_bucket(files = "filename.csv")). See https://cloud.google.com/storage/docs/gsutil/commands/cp for details on the
+#' object as a file to the workspace (e.g., `write.csv(object, "filename.csv")`) and then run this function
+#' (e.g., `aou_workspace_to_bucket(files = "filename.csv")`). See <https://cloud.google.com/storage/docs/gsutil/commands/cp> for details on the
 #' underlying function.
 #' @export
 #' @examples
@@ -170,10 +169,11 @@ aou_workspace_to_bucket <- function(file, dir = "", recursive = TRUE,
   if (length(read.csv("cp.log")$Destination) == 0) {
     cli::cli_inform(c("!" = "Oops! No files were copied"))
   } else {
-    cli::cli_inform(c("v" =
-      "Saved to bucket:",
-      paste(gsub(paste0(my_bucket, "/"), "", read.csv("cp.log")$Destination), collapse = "\n"))
-    )
+    cli::cli_inform(c(
+      "v" =
+        "Saved to bucket:",
+      paste(gsub(paste0(bucket, "/"), "", read.csv("cp.log")$Destination), collapse = "\n")
+    ))
   }
   invisible(file.remove("cp.log"))
 }

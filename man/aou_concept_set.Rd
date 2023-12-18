@@ -38,9 +38,11 @@ the number of matching concepts per person ("count"), or all info about the matc
 
 \item{min_n}{dbl; If output = "indicator", the minimum number of occurrences per person to consider the indicator true. Defaults to 1.}
 
-\item{con}{connection to the allofus SQL database. Defaults to getOption("aou.default.con"), which is set automatically if you use `aou_connect()`}
+\item{con}{connection to the allofus SQL database. Defaults to getOption("aou.default.con"), which is set automatically if you use \code{aou_connect()}}
 
 \item{collect}{lgl; whether to collect from the database}
+
+\item{...}{further arguments passed along to \code{collect()} if \code{collect = TRUE}}
 }
 \value{
 a dataframe if collect = TRUE; a remote tbl if not
@@ -49,14 +51,16 @@ a dataframe if collect = TRUE; a remote tbl if not
 Get occurrences of a concept set from AoU for a given cohort
 }
 \examples{
-\dontrun{
+\dontshow{if (on_workbench()) (if (getRversion() >= "3.4") withAutoprint else force)(\{ # examplesIf}
 # indicator for any aspirin at any time
-aspirin_users <- aou_concept_set(concepts = 1191, concept_set_name = "aspirin", domains = "drug")
+aspirin_users <- aou_concept_set(dplyr::tbl(con, "person"),
+  concepts = 1191, concept_set_name = "aspirin", domains = "drug"
+)
 
 # starting with person table to create a cohort
-people <- tbl(con, "person") \%>\%
-  filter(person_id < 2000000) \%>\%
-  mutate(
+people <- dplyr::tbl(con, "person") \%>\%
+  dplyr::filter(person_id < 2000000) \%>\%
+  dplyr::mutate(
     start = as.Date("2021-01-01"),
     end = as.Date("2023-12-31")
   )
@@ -69,6 +73,5 @@ dat <- aou_concept_set(
   concept_set_name = "CGM",
   output = "all"
 )
-}
-
+\dontshow{\}) # examplesIf}
 }

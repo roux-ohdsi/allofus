@@ -16,16 +16,16 @@ or a file pattern (e.g. ".csv").}
 
 \item{dir}{Optional directory in the workspace to save files to.}
 
-\item{bucket}{Bucket to retrieve file from. Defaults to `getOption("aou.default.bucket")`,
-which is `Sys.getenv('WORKSPACE_BUCKET')` unless specified otherwise.}
+\item{bucket}{Bucket to retrieve file from. Defaults to \code{getOption("aou.default.bucket")},
+which is \code{Sys.getenv('WORKSPACE_BUCKET')} unless specified otherwise.}
 }
 \value{
 Nothing
 }
 \description{
 This function retrieves a file from your bucket and moves it
-into your workspace where it can be read into R, e.g., using a function like write.csv().
-See https://cloud.google.com/storage/docs/gsutil/commands/cp for details on the
+into your workspace where it can be read into R, e.g., using a function like \code{write.csv()}.
+See \url{https://cloud.google.com/storage/docs/gsutil/commands/cp} for details on the
 underlying function.
 }
 \examples{

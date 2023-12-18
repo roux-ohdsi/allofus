@@ -1,0 +1,436 @@
+---
+title: "SQL in R"
+output: rmarkdown::html_vignette
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  eval = FALSE
+)
+```
+
+## The Basics
+
+Before diving into the specifics, let's clarify some vocabulary: 
+
+- **SQL database** : A structured collection of data where information is stored in tables. Each table is like a spreadsheet with rows and columns. Data can be added, removed, or modified using SQL queries.
+- **SQL query** : A request for data from a database written in a language called SQL (Structured Query Language).
+- **Google BigQuery** : A cloud-based SQL database that is used to store the All of Us data.
+- **bigrquery** : An R package that allows you to interact with Google BigQuery from R.
+- **dplyr**: A part of the `tidyverse` in R, `dplyr` is a package for data manipulation. It provides a set of functions that can be used to filter, select, arrange, mutate, summarize, and join data.
+- **dbplyr** : Also a part of the `tidyverse` in R, `dbplyr` is a database backend for `dplyr`. It allows you to write R code that is then translated into SQL queries.
+
+## Accessing Data
+
+### Connecting to the database
+
+A connection to a database is an object that allows you to interact with it from R. The `allofus` package relies on the `bigrquery` R package to create a connection to the Google BigQuery database when you run `aou_connect()`. 
+
+```{r}
+library(allofus)
+con <- aou_connect()
+```
+
+The object `con` is used to refer to the connection to the All of Us database. When you run the `aou_connect()` function, it also gets stored as the default connection for a session, so you don't need to include it in other functions from the `allofus` package. For instance, you can run `aou_tables()` to see a list of tables in the database:
+
+```{r}
+aou_tables()
+```
+```{r, echo = FALSE, eval = TRUE}
+library(tibble)
+structure(list(table_name = c(
+  "concept_ancestor", "cb_criteria_ancestor",
+  "attribute_definition", "cdm_source", "concept_class", "concept",
+  "concept_synonym", "cb_criteria_relationship", "concept_relationship",
+  "condition_occurrence", "activity_summary", "heart_rate_minute_level",
+  "steps_intraday", "device_exposure", "fact_relationship", "domain",
+  "drug_strength", "drug_exposure", "cb_criteria_attribute", "ds_linking",
+  "ds_data_dictionary", "cb_criteria_menu", "cb_criteria", "cb_survey_attribute",
+  "measurement", "observation", "observation_period", "ds_condition_occurrence",
+  "cb_review_survey", "cb_review_all_events", "ds_activity_summary",
+  "ds_heart_rate_summary", "heart_rate_summary", "ds_heart_rate_minute_level",
+  "ds_steps_intraday", "death", "ds_device", "ds_drug_exposure",
+  "cb_search_all_events", "cb_search_person", "ds_person", "person",
+  "ds_measurement", "ds_observation", "ds_zip_code_socioeconomic",
+  "ds_procedure_occurrence", "ds_sleep_level", "sleep_daily_summary",
+  "sleep_level", "ds_survey", "ds_visit_occurrence", "procedure_occurrence",
+  "relationship", "specimen", "condition_occurrence_ext", "device_exposure_ext",
+  "drug_exposure_ext", "measurement_ext", "observation_ext", "procedure_occurrence_ext",
+  "visit_occurrence_ext", "person_ext", "survey_conduct", "survey_conduct_ext",
+  "cb_survey_version", "visit_detail", "visit_occurrence", "vocabulary"
+), columns = c(
+  "ancestor_concept_id, descendant_concept_id, min_levels_of_separation, max_levels_of_separation",
+  "ancestor_id, descendant_id", "attribute_definition_id, attribute_name, attribute_description, attribute_type_concept_id, attribute_syntax",
+  "cdm_source_name, cdm_source_abbreviation, cdm_holder, source_description, source_documentation_reference, cdm_etl_reference, source_release_date, cdm_release_date, cdm_version, vocabulary_version",
+  "concept_class_id, concept_class_name, concept_class_concept_id",
+  "concept_id, concept_name, domain_id, vocabulary_id, concept_class_id, standard_concept, concept_code, valid_start_date, valid_end_date, invalid_reason",
+  "concept_id, concept_synonym_name, language_concept_id", "concept_id_1, concept_id_2",
+  "concept_id_1, concept_id_2, relationship_id, valid_start_date, valid_end_date, invalid_reason",
+  "condition_occurrence_id, person_id, condition_concept_id, condition_start_date, condition_start_datetime, condition_end_date, condition_end_datetime, condition_type_concept_id, stop_reason, provider_id, visit_occurrence_id, condition_source_value, condition_source_concept_id, condition_status_source_value, condition_status_concept_id",
+  "date, activity_calories, calories_bmr, calories_out, elevation, fairly_active_minutes, floors, lightly_active_minutes, marginal_calories, sedentary_minutes, steps, very_active_minutes, person_id",
+  "datetime, person_id, heart_rate_value", "datetime, steps, person_id",
+  "device_exposure_id, person_id, device_concept_id, device_exposure_start_date, device_exposure_start_datetime, device_exposure_end_date, device_exposure_end_datetime, device_type_concept_id, unique_device_id, quantity, provider_id, visit_occurrence_id, visit_detail_id, device_source_value, device_source_concept_id",
+  "domain_concept_id_1, fact_id_1, domain_concept_id_2, fact_id_2, relationship_concept_id",
+  "domain_id, domain_name, domain_concept_id", "drug_concept_id, ingredient_concept_id, amount_value, amount_unit_concept_id, numerator_value, numerator_unit_concept_id, denominator_value, denominator_unit_concept_id, box_size, valid_start_date, valid_end_date, invalid_reason",
+  "drug_exposure_id, person_id, drug_concept_id, drug_exposure_start_date, drug_exposure_start_datetime, drug_exposure_end_date, drug_exposure_end_datetime, verbatim_end_date, drug_type_concept_id, stop_reason, refills, quantity, days_supply, sig, route_concept_id, lot_number, provider_id, visit_occurrence_id, visit_detail_id, drug_source_value, drug_source_concept_id, route_source_value, dose_unit_source_value",
+  "id, concept_id, value_as_concept_id, concept_name, type, est_count",
+  "id, denormalized_name, omop_sql, join_value, domain", "id, field_name, relevant_omop_table, description, field type, omop_cdm_standard_or_custom_field, data_provenance, source_ppi_module, domain",
+  "id, parent_id, category, domain_id, type, name, is_group, sort_order",
+  "id, parent_id, domain_id, is_standard, type, subtype, concept_id, code, name, value, est_count, is_group, is_selectable, has_attribute, has_hierarchy, has_ancestor_data, path, synonyms, rollup_count, item_count, full_text, display_synonyms",
+  "id, question_concept_id, answer_concept_id, survey_version_concept_id, item_count",
+  "measurement_id, person_id, measurement_concept_id, measurement_date, measurement_datetime, measurement_type_concept_id, operator_concept_id, value_as_number, value_as_concept_id, unit_concept_id, range_low, range_high, provider_id, visit_occurrence_id, visit_detail_id, measurement_source_value, measurement_source_concept_id, unit_source_value, value_source_value",
+  "observation_id, person_id, observation_concept_id, observation_date, observation_datetime, observation_type_concept_id, value_as_number, value_as_string, value_as_concept_id, qualifier_concept_id, unit_concept_id, provider_id, visit_occurrence_id, visit_detail_id, observation_source_value, observation_source_concept_id, value_source_concept_id, unit_source_value, qualifier_source_value, value_source_value",
+  "observation_period_id, person_id, observation_period_start_date, observation_period_end_date, period_type_concept_id",
+  "person_id, condition_concept_id, standard_concept_name, standard_concept_code, standard_vocabulary, condition_start_datetime, condition_end_datetime, condition_type_concept_id, condition_type_concept_name, stop_reason, visit_occurrence_id, visit_occurrence_concept_name, condition_source_value, condition_source_concept_id, source_concept_name, source_concept_code, source_vocabulary, condition_status_source_value, condition_status_concept_id, condition_status_concept_name",
+  "person_id, data_id, start_datetime, survey, question, answer",
+  "person_id, data_id, start_datetime, visit_type, standard_code, standard_vocabulary, standard_name, standard_concept_id, source_code, source_vocabulary, source_name, source_concept_id, route, dose, strength, value_as_number, unit, ref_range, domain, age_at_event, num_mentions, first_mention, last_mention",
+  "person_id, date, activity_calories, calories_bmr, calories_out, elevation, fairly_active_minutes, floors, lightly_active_minutes, marginal_calories, sedentary_minutes, steps, very_active_minutes",
+  "person_id, date, zone_name, min_heart_rate, max_heart_rate, minute_in_zone, calorie_count",
+  "person_id, date, zone_name, min_heart_rate, max_heart_rate, minute_in_zone, calorie_count",
+  "person_id, datetime, heart_rate_value", "person_id, datetime, steps",
+  "person_id, death_date, death_datetime, death_type_concept_id, cause_concept_id, cause_source_value, cause_source_concept_id",
+  "person_id, device_concept_id, standard_concept_name, standard_concept_code, standard_vocabulary, device_exposure_start_datetime, device_exposure_end_datetime, device_type_concept_id, device_type_concept_name, visit_occurrence_id, visit_occurrence_concept_name, device_source_value, device_source_concept_id, source_concept_name, source_concept_code, source_vocabulary",
+  "person_id, drug_concept_id, standard_concept_name, standard_concept_code, standard_vocabulary, drug_exposure_start_datetime, drug_exposure_end_datetime, verbatim_end_date, drug_type_concept_id, drug_type_concept_name, stop_reason, refills, quantity, days_supply, sig, route_concept_id, route_concept_name, lot_number, visit_occurrence_id, visit_occurrence_concept_name, drug_source_value, drug_source_concept_id, source_concept_name, source_concept_code, source_vocabulary, route_source_value, dose_unit_source_value",
+  "person_id, entry_date, is_standard, concept_id, domain, age_at_event, visit_concept_id, visit_occurrence_id, value_as_number, value_as_concept_id, entry_datetime, value_source_concept_id, systolic, diastolic, survey_version_concept_id, survey_concept_id, cati_concept_id",
+  "person_id, gender, sex_at_ birth, race, ethnicity, dob, age_at_consent, age_at_cdr, has_ehr_data, has_ppi_survey_data, has_physical_measurement_data, is_deceased, has_fitbit, has_fitbit_activity_summary, has_fitbit_heart_rate_summary, has_fitbit_heart_rate_level, has_fitbit_steps_intraday, has_fitbit_sleep_daily_summary, has_fitbit_sleep_level, has_whole_genome_variant, has_array_data, has_lr_whole_genome_variant, has_structural_variant_data, state_of_residence",
+  "person_id, gender_concept_id, gender, date_of_birth, race_concept_id, race, ethnicity_concept_id, ethnicity, sex_at_birth_concept_id, sex_at_birth",
+  "person_id, gender_concept_id, year_of_birth, month_of_birth, day_of_birth, birth_datetime, race_concept_id, ethnicity_concept_id, location_id, provider_id, care_site_id, person_source_value, gender_source_value, gender_source_concept_id, race_source_value, race_source_concept_id, ethnicity_source_value, ethnicity_source_concept_id, sex_at_birth_concept_id, sex_at_birth_source_value, sex_at_birth_source_concept_id",
+  "person_id, measurement_concept_id, standard_concept_name, standard_concept_code, standard_vocabulary, measurement_datetime, measurement_type_concept_id, measurement_type_concept_name, operator_concept_id, operator_concept_name, value_as_number, value_as_concept_id, value_as_concept_name, unit_concept_id, unit_concept_name, range_low, range_high, visit_occurrence_id, visit_occurrence_concept_name, measurement_source_value, measurement_source_concept_id, source_concept_name, source_concept_code, source_vocabulary, unit_source_value, value_source_value",
+  "person_id, observation_concept_id, standard_concept_name, standard_concept_code, standard_vocabulary, observation_datetime, observation_type_concept_id, observation_type_concept_name, value_as_number, value_as_string, value_as_concept_id, value_as_concept_name, qualifier_concept_id, qualifier_concept_name, unit_concept_id, unit_concept_name, visit_occurrence_id, visit_occurrence_concept_name, observation_source_value, observation_source_concept_id, source_concept_name, source_concept_code, source_vocabulary, unit_source_value, qualifier_source_value, value_source_concept_id, value_source_value, questionnaire_response_id",
+  "person_id, observation_datetime, zip3_as_string, fraction_assisted_income, fraction_high_school_edu, median_income, fraction_no_health_ins, fraction_poverty, fraction_vacant_housing, deprivation_index, acs",
+  "person_id, procedure_concept_id, standard_concept_name, standard_concept_code, standard_vocabulary, procedure_datetime, procedure_type_concept_id, procedure_type_concept_name, modifier_concept_id, modifier_concept_name, quantity, visit_occurrence_id, visit_occurrence_concept_name, procedure_source_value, procedure_source_concept_id, source_concept_name, source_concept_code, source_vocabulary, modifier_source_value, person_id, procedure_concept_id, standard_concept_name, standard_concept_code, standard_vocabulary, procedure_datetime, procedure_type_concept_id, procedure_type_concept_name, modifier_concept_id, modifier_concept_name, quantity, visit_occurrence_id, visit_occurrence_concept_name, procedure_source_value, procedure_source_concept_id, source_concept_name, source_concept_code, source_vocabulary, qualifier_source_value",
+  "person_id, sleep_date, is_main_sleep, level, start_datetime, duration_in_min",
+  "person_id, sleep_date, is_main_sleep, minute_in_bed, minute_asleep, minute_after_wakeup, minute_awake, minute_restless, minute_deep, minute_light, minute_rem, minute_wake",
+  "person_id, sleep_date, start_datetime, is_main_sleep, level, duration_in_min",
+  "person_id, survey_datetime, survey, question_concept_id, question, answer_concept_id, answer, survey_version_concept_id, survey_version_name",
+  "person_id, visit_concept_id, standard_concept_name, standard_concept_code, standard_vocabulary, visit_start_datetime, visit_end_datetime, visit_type_concept_id, visit_type_concept_name, visit_source_value, visit_source_concept_id, source_concept_name, source_concept_code, source_vocabulary, admitting_source_concept_id, admitting_source_concept_name, admitting_source_value, discharge_to_concept_id, discharge_to_concept_name, discharge_to_source_value",
+  "procedure_occurrence_id, person_id, procedure_concept_id, procedure_date, procedure_datetime, procedure_type_concept_id, modifier_concept_id, quantity, provider_id, visit_occurrence_id, procedure_source_value, procedure_source_concept_id, qualifier_source_value",
+  "relationship_id, relationship_name, is_hierarchical, defines_ancestry, reverse_relationship_id, relationship_concept_id",
+  "specimen_id, person_id, specimen_concept_id, specimen_type_concept_id, specimen_date, specimen_datetime, quantity, unit_concept_id, anatomic_site_concept_id, disease_status_concept_id, specimen_source_id, specimen_source_value, unit_source_value, anatomic_site_source_value, disease_status_source_value",
+  "src_id, condition_occurrence_id", "src_id, device_exposure_id",
+  "src_id, drug_exposure_id", "src_id, measurement_id", "src_id, observation_id",
+  "src_id, procedure_occurrence_id", "src_id, visit_occurrence_id",
+  "state_of_residence_concept_id, state_of_residence_source_value",
+  "survey_conduct_id, person_id, survey_concept_id, survey_start_date, survey_start_datetime, survey_end_date, survey_end_datetime, survey_source_value, provider_id, respondent_type_concept_id, timing_concept_id, respondent_type_source_value, timing_source_value, survey_source_concept_id, survey_source_identifier, assisted_concept_id, assisted_source_value, collection_method_concept_id, collection_method_source_value, validated_survey_concept_id, validated_survey_source_value, survey_version_number, visit_occurrence_id, response_visit_occurrence_id",
+  "survey_conduct_id, src_id, language", "survey_version_concept_id, survey_concept_id, display_name, display_order",
+  "visit_detail_id, person_id, visit_detail_concept_id, visit_detail_start_date, visit_detail_start_datetime, visit_detail_end_date, visit_detail_end_datetime, visit_detail_type_concept_id, provider_id, care_site_id, visit_detail_source_value, visit_detail_source_concept_id, admitting_source_value, admitting_source_concept_id, discharge_to_source_value, discharge_to_concept_id, preceding_visit_detail_id, visit_detail_parent_id, visit_occurrence_id",
+  "visit_occurrence_id, person_id, visit_concept_id, visit_start_date, visit_start_datetime, visit_end_date, visit_end_datetime, visit_type_concept_id, provider_id, care_site_id, visit_source_value, visit_source_concept_id, admitting_source_concept_id, admitting_source_value, discharge_to_concept_id, discharge_to_source_value, preceding_visit_occurrence_id",
+  "vocabulary_id, vocabulary_name, vocabulary_reference, vocabulary_version, vocabulary_concept_id"
+)), class = c("tbl_df", "tbl", "data.frame"), row.names = c(
+  NA,
+  -68L
+))
+```
+
+### Accessing a table
+
+To access a table in the database, use `tbl(con, "tablename")`. The resulting object is reference to a table in a database that allows you to interact with it from R. In order to connect to a table in the database, you must first create the database connection (`con`). For example, to create a reference to the person table:
+
+```{r}
+person_tbl <- tbl(con, "person")
+```
+
+Although the `person_tbl` object behaves similarly to a data frame, it is not actually a data frame. Instead, it is actually a SQL query that only gets run when you need to access the data. This is a feature of the `dbplyr` package that allows you to manipulate data without actually retrieving it. The SQL query behind the `person_tbl` object is:
+```{sql}
+SELECT *
+FROM `person`
+```
+
+When you print `person_tbl`, you'll get something like this:
+```{r}
+person_tbl
+```
+```
+#> # Source:   table<person> [?? x 23]
+#> # Database: BigQueryConnection
+#>    person_id gender_concept_id year_of_birth month_of_birth day_of_birth
+#>      <int64>           <int64>       <int64>        <int64>      <int64>
+#>  1   xxxxxxx            903096          1955             NA           NA
+#>  2   xxxxxxx            903096          1978             NA           NA
+#>  3   xxxxxxx            903096          2000             NA           NA
+#>  4   xxxxxxx            903096          1988             NA           NA
+#>  5   xxxxxxx            903096          1993             NA           NA
+#>  6   xxxxxxx            903096          1959             NA           NA
+#>  7   xxxxxxx            903096          1976             NA           NA
+#>  8   xxxxxxx            903096          1961             NA           NA
+#>  9   xxxxxxx            903096          1952             NA           NA
+#> 10   xxxxxxx            903096          1980             NA           NA
+#> # ℹ more rows
+#> # ℹ 18 more variables: birth_datetime <dttm>, race_concept_id <int64>,
+#> #   ethnicity_concept_id <int64>, location_id <int64>, provider_id <int64>,
+#> #   care_site_id <int64>, person_source_value <chr>, gender_source_value <chr>,
+#> #   gender_source_concept_id <int64>, race_source_value <chr>,
+#> #   race_source_concept_id <int64>, ethnicity_source_value <chr>,
+#> #   ethnicity_source_concept_id <int64>, …
+```
+You'll only see the first 10 rows of the person table (person ids were omitted from the output). This allows you to see what the data looks like without loading the entire table into R, which can be slow or even crash your session.
+
+Instead, you want to perform as much data manipulation as possible on the database. This is more efficient because the operations are translated into SQL and executed on the server, which is faster and requires less memory than processing in R.
+
+## Data manipulation on the database
+
+Before bringing data into R, you can manipulate it on the database using the `dplyr` functions. This allows you to perform operations on the database without bringing the data into R's memory.
+
+For example, you can subset the person table to women born after 1980:
+```{r}
+young_women <- person_tbl %>%
+  filter(gender_concept_id == 45878463, year_of_birth > 1980)
+```
+
+Before we print out `young_women`, the SQL query has not actually been run. In fact, `person_tbl` is not run either. When we do print it, it will run the following SQL:
+```{sql}
+SELECT `person`.*
+FROM `person`
+WHERE (`gender_concept_id` = 45878463.0) AND (`year_of_birth` > 1980.0)
+```
+and print the first 10 rows:
+```{r}
+young_women
+```
+```
+#> # Source:   SQL [?? x 23]
+#> # Database: BigQueryConnection
+#>    person_id gender_concept_id year_of_birth month_of_birth day_of_birth
+#>      <int64>           <int64>       <int64>        <int64>      <int64>
+#>  1   xxxxxxx          45878463          1992             NA           NA
+#>  2   xxxxxxx          45878463          1989             NA           NA
+#>  3   xxxxxxx          45878463          1981             NA           NA
+#>  4   xxxxxxx          45878463          1990             NA           NA
+#>  5   xxxxxxx          45878463          1990             NA           NA
+#>  6   xxxxxxx          45878463          1985             NA           NA
+#>  7   xxxxxxx          45878463          1987             NA           NA
+#>  8   xxxxxxx          45878463          1986             NA           NA
+#>  9   xxxxxxx          45878463          1983             NA           NA
+#> 10   xxxxxxx          45878463          1998             NA           NA
+# ℹ more rows
+# ℹ 18 more variables: birth_datetime <dttm>, race_concept_id <int64>,
+#   ethnicity_concept_id <int64>, location_id <int64>, provider_id <int64>,
+#   care_site_id <int64>, person_source_value <chr>, gender_source_value <chr>,
+#   gender_source_concept_id <int64>, race_source_value <chr>,
+#   race_source_concept_id <int64>, ethnicity_source_value <chr>,
+#   ethnicity_source_concept_id <int64>, …
+```
+Note that we don't know how many observations match these conditions yet (the dimensions are `[?? x 23]`), because it hasn't been fully executed -- only the first 10 rows. To get the total number of observations, we can use `tally()`:
+```{r}
+tally(young_women)
+```
+```
+#> # Source:   SQL [1 x 1]
+#> # Database: BigQueryConnection
+#>         n
+#>   <int64>
+#> 1   76135
+```
+This is actually a SQL query that only results in 1 row, so we do get to see the entire thing. It's much faster to run than to bring the entire table into R and then count the number of rows, because the code is executed on the database:
+```{sql}
+SELECT count(*) AS `n`
+FROM (
+  SELECT `person`.*
+  FROM `person`
+  WHERE (`gender_concept_id` = 45878463.0) AND (`year_of_birth` > 1980.0)
+)
+```
+
+### The `collect()` Function
+
+We can bring the result of a query into the local R session using `collect()`:
+```{r}
+young_women %>% collect()
+```
+This brings the table into your local R workspace as a tibble, or dataframe. This is useful for performing operations that cannot be performed directly on the database, such as certain statistical analyses or plotting. For example, if you're planning to run a regression analysis on the filtered data, you would first use `collect()` to bring the data into R.
+
+We can bring in the result of `tally()` as well:
+```{r}
+tally(young_women) %>% collect()
+```
+```
+#> A tibble: 1 × 1
+#>       n
+#> <int64>
+#>   76135
+```
+Or even the entire person table, although that's not recommended because it's so large!
+```{r}
+person_data <- person_tbl %>% collect()
+person_data
+```
+```
+#> # A tibble: 413457 × 23
+#> person_id	gender_concept_id	year_of_birth	month_of_birth	day_of_birth	
+#>   <int64>	          <int64>	      <int64>	       <int64>	     <int64>
+#>   xxxxxxx	           903096	         1955	            NA	          NA	
+#>   xxxxxxx	           903096	         1978	            NA	          NA
+#>   xxxxxxx	           903096	         2000	            NA	          NA
+#>   xxxxxxx	           903096	         1988	            NA	          NA
+#>   xxxxxxx	           903096	         1993	            NA	          NA
+#>   xxxxxxx	           903096	         1959	            NA	          NA
+#>   xxxxxxx	           903096	         1976	            NA	          NA
+#>   xxxxxxx	           903096	         1961	            NA	          NA
+#>   xxxxxxx	           903096	         1952	            NA	          NA
+#>   xxxxxxx	           903096	         1980	            NA	          NA    
+```
+
+## Data manipulation with multiple tables
+
+The All of Us data is spread across multiple tables, for the most part corresponding to the OMOP Common Data Model. This allows for efficient storage and retrieval of data, but it can be a bit tricky to work with at first. Fortunately, `dbplyr` makes it easy to join tables together.
+
+For example, how did we know that `gender_concept_id == 45878463` referred to women? We can look up the names of concept ids in the `concept` table:
+```{r}
+concept_tbl <- tbl(con, "concept") %>%
+  select(concept_id, concept_name)
+concept_tbl
+```
+```
+#> # Source:   SQL [?? x 2]
+#> # Database: BigQueryConnection
+#>    concept_id concept_name                                      
+#>       <int64> <chr>                                             
+#>  1   38003166 Durable Medical Equipment - General Classification
+#>  2   35805830 DexaBEAM                                          
+#>  3   38003221 Blood - Plasma                                    
+#>  4    1147839 survey_conduct.survey_start_date                  
+#>  5       8623 log reduction                                     
+#>  6   38004063 Rehabilitation Practitioner                       
+#>  7   38003186 Radiology - Diagnostic - General Classification   
+#>  8   35805115 VNCOP-B                                           
+#>  9   35805457 VAdCA                                             
+#> 10       8581 heartbeat                                         
+#> # ℹ more rows
+```
+We just want to extract the names of the gender concept ids. To do this, we can join the `person` table with the `concept` table. So that we can see the full range of gender ids, first we will count them:
+```{r}
+genders_in_aou <- person_tbl %>%
+  count(gender_concept_id) %>%
+  left_join(concept_tbl, by = join_by(gender_concept_id == concept_id))
+genders_in_aou
+```
+```
+#> # Source:   SQL [9 x 3]
+#> # Database: BigQueryConnection
+#>   gender_concept_id       n concept_name                                        
+#>             <int64> <int64> <chr>                                               
+#> 1           1177221     602 I prefer not to answer                              
+#> 2                 0      97 No matching concept                                 
+#> 3          45878463  247453 Female                                              
+#> 4           1585843     407 Gender Identity: Additional Options                 
+#> 5            903096    7356 PMI: Skip                                           
+#> 6          45880669  154241 Male                                                
+#> 7           1585842     562 Gender Identity: Transgender                        
+#> 8           1585841    1213 Gender Identity: Non Binary                         
+#> 9        2000000002    1526 Not man only, not woman only, prefer not to answer,…
+```
+The result of this SQL query is just 9 rows, so we get to see all of them. Both the counting and the joining were done directly on the database, so this was very efficient.
+
+### `aou_join()`
+
+The `allofus` package includes a function called `aou_join()` that makes it easy to join tables together. It includes some additional checks to help avoid mistakes in joining. For example, if we wanted to join the `person` table with the `observation` table, dropping people with no observations, we could do it like this:
+```{r}
+obs <- person_tbl %>%
+  aou_join("observation", type = "inner", by = "person_id")
+```
+```
+Warning message:
+“There are shared column names not specified in the `by` argument.
+→ These column names now end in '_x' and '_y'.
+ℹ You can change these suffixes using the `suffix` argument but it cannot
+  contain periods (`.`).
+→ Consider specifing all shared columns in the `by` argument.
+→ Or if these additional shared columns are `NA`, remove them prior to joining.”
+```
+The warning message tells us that the `person` and `observation` tables share some column names
+that we didn't specify as part of the join argument. That is because both tables have a column called `provider_id`. We can see this by looking at the column names of the `obs` table that have the default added suffix, "_x" and "_y":
+```{r}
+obs %>%
+  select(ends_with("_x"), ends_with("_y")) %>%
+  colnames()
+```
+```{r, echo = FALSE, eval = TRUE}
+c("provider_id_x", "provider_id_y")
+```
+Because this is often a mistake occurring because we are not working with the tables directly, `aou_join()` warns us about this. We can avoid this warning by specifying all of the columns that we want to join on and removing the columns that we don't want to join on. For example, we could remove the `provider_id` column from the `person` table before joining:
+```{r}
+obs <- person_tbl %>%
+  select(-provider_id) %>%
+  aou_join("observation", type = "inner", by = "person_id")
+```
+
+## Viewing the Underlying SQL with `show_query()`
+
+Understanding the SQL code that `dbplyr` generates can be insightful, especially if you're debugging or simply curious about the translation from R to SQL. To view the SQL query that corresponds to your `dbplyr` operations, use the `show_query()` function:
+
+```{r}
+obs %>%
+  show_query()
+```
+```
+SELECT
+  `edjnngldox`.`person_id` AS `person_id`,
+  `gender_concept_id`,
+  `year_of_birth`,
+  `month_of_birth`,
+  `day_of_birth`,
+  `birth_datetime`,
+  `race_concept_id`,
+  `ethnicity_concept_id`,
+  `location_id`,
+  `care_site_id`,
+  `person_source_value`,
+  `gender_source_value`,
+  `gender_source_concept_id`,
+  `race_source_value`,
+  `race_source_concept_id`,
+  `ethnicity_source_value`,
+  `ethnicity_source_concept_id`,
+  `state_of_residence_concept_id`,
+  `state_of_residence_source_value`,
+  `sex_at_birth_concept_id`,
+  `sex_at_birth_source_concept_id`,
+  `sex_at_birth_source_value`,
+  `observation_id`,
+  `observation_concept_id`,
+  `observation_date`,
+  `observation_datetime`,
+  `observation_type_concept_id`,
+  `value_as_number`,
+  `value_as_string`,
+  `value_as_concept_id`,
+  `qualifier_concept_id`,
+  `unit_concept_id`,
+  `zwcwezaowf`.`provider_id` AS `provider_id`,
+  `visit_occurrence_id`,
+  `visit_detail_id`,
+  `observation_source_value`,
+  `observation_source_concept_id`,
+  `unit_source_value`,
+  `qualifier_source_value`,
+  `value_source_concept_id`,
+  `value_source_value`,
+  `questionnaire_response_id`
+FROM `person` `edjnngldox`
+INNER JOIN `observation` `zwcwezaowf`
+  ON (`edjnngldox`.`person_id` = `zwcwezaowf`.`person_id`)
+```
+
+This function prints the SQL query that would be sent to the database. It's a great way to learn SQL and understand how `dbplyr` optimizes data manipulation. (Why the gibberish table names? Bugs in previous versions of `dbplyr` resulted in table names that would break the query, and giving them unique names is a workaround.)
+
+## Running SQL code directly
+
+Another approach to working with the data is to write SQL code directly. This is especially useful for complex queries that are difficult to express in `dplyr` syntax. The `allofus` package includes a function called `aou_sql()` that makes it easy to run SQL code directly on the database. For example, we could count the number of people in the `person` table like this:
+```{r}
+aou_sql("SELECT COUNT(*) AS n FROM {CDR}.person")
+```
+There are a few important things to note about this code. First, the `CDR` variable is a special variable referring to what All of Us calls the "curated data repository". When writing SQL code directly, we don't need the database connection object `con`, instead we need to direct the code to the correct tables by preceding the table names with "{CDR}". This means we can't run the code we get from `show_query()` without modification. For example, we could count the number of young women in the dataset, as we did above with the `dbplyr` approach, like this:
+```{r}
+aou_sql("
+SELECT count(*) AS `n`
+FROM (
+  SELECT `person`.*
+  FROM {CDR}.`person`
+  WHERE (`gender_concept_id` = 45878463.0) AND (`year_of_birth` > 1980.0)
+)
+")
+```
+
+Second, the `aou_sql()` function returns a dataframe -- the entire result of the SQL query is brought into memory. This means that we want to run an entire query at once, instead of breaking it into multiple steps like we did with `dbplyr`.

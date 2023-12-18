@@ -10,19 +10,64 @@
     <loc>/LICENSE.html</loc>
   </url>
   <url>
-    <loc>/articles/data-browser.html</loc>
+    <loc>/articles/allofus.html</loc>
+  </url>
+  <url>
+    <loc>/articles/atlas.html</loc>
+  </url>
+  <url>
+    <loc>/articles/data.html</loc>
   </url>
   <url>
     <loc>/articles/index.html</loc>
   </url>
   <url>
-    <loc>/articles/searchable_codebook.html</loc>
+    <loc>/articles/pkgdown_only/data-browser.html</loc>
+  </url>
+  <url>
+    <loc>/articles/pkgdown_only/searchable_codebook.html</loc>
+  </url>
+  <url>
+    <loc>/articles/sql.html</loc>
+  </url>
+  <url>
+    <loc>/articles/tips.html</loc>
+  </url>
+  <url>
+    <loc>/articles/web_only/data-browser.html</loc>
+  </url>
+  <url>
+    <loc>/articles/web_only/health_codebook.html</loc>
+  </url>
+  <url>
+    <loc>/articles/web_only/searchable_codebook.html</loc>
+  </url>
+  <url>
+    <loc>/articles/workspace-helpers.html</loc>
+  </url>
+  <url>
+    <loc>/articles/workspace.html</loc>
   </url>
   <url>
     <loc>/authors.html</loc>
   </url>
   <url>
     <loc>/index.html</loc>
+  </url>
+  <url>
+    <loc>/reference/CAST.html</loc>
+  </url>
+  <url>
+    <loc>/reference/DATE_ADD.html</loc>
+  </url>
+  <url>
+    <loc>/reference/DATE_DIFF.html</loc>
+  </url>
+  <url>
+    <loc>/reference/STRING_AGG.html</loc>
+  </url>
+  <url>
+    <loc>/reference/allofus-package.html</loc>
   </url>
   <url>
     <loc>/reference/aou_atlas_cohort.html</loc>
@@ -32,6 +77,9 @@
   </url>
   <url>
     <loc>/reference/aou_codebook.html</loc>
+  </url>
+  <url>
+    <loc>/reference/aou_cohort_example.html</loc>
   </url>
   <url>
     <loc>/reference/aou_concept_set.html</loc>
@@ -116,6 +164,9 @@
   </url>
   <url>
     <loc>/reference/omop_join.html</loc>
+  </url>
+  <url>
+    <loc>/reference/on_workbench.html</loc>
   </url>
   <url>
     <loc>/reference/pipe.html</loc>

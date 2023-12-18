@@ -10,9 +10,9 @@ aou_ls_workspace(pattern = "", silent = FALSE, ...)
 \item{pattern}{Regular expression, such as "*.csv" or a single file name e.g., "mydata.csv".
 Default will find all files apart from notebooks (.ipynb files).}
 
-\item{silent}{Logical; whether to print the names of files found.}
+\item{silent}{Whether to omit the names of files found. Defaults to \code{FALSE}.}
 
-\item{...}{Other arguments passed to `list.files()`}
+\item{...}{Other arguments passed to \code{list.files()}}
 }
 \value{
 A vector of file names
@@ -22,7 +22,7 @@ The files stored in a workspace are not easily visible from a notebook. List
 all files in the workspace (apart from notebooks) or files matching a certain pattern.
 }
 \examples{
-aou_ls_workspace()
+my_workspace_files <- aou_ls_workspace(silent = TRUE)
 aou_ls_workspace("*.csv")
 aou_ls_workspace(path = "data")
 

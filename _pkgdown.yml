@@ -38,3 +38,17 @@ reference:
   - aou_codebook
   - aou_table_info
   - aou_health_history
+deploy:
+  install_metadata: true
+articles:
+- title: Articles
+  navbar: ~
+  contents:
+  - workspace
+  - data
+  - atlas
+- title: Codebooks
+  navbar: Codebooks
+  contents:
+  - web_only/searchable_codebook
+  - web_only/health_codebook
