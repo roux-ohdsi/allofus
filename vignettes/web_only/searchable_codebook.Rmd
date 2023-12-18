@@ -1,8 +1,8 @@
 ---
-title: "Searchable Codebook for AllofUs Surveys"
+title: "All of Us Surveys"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{Searchable Codebook for AllofUs Surveys}
+  %\VignetteIndexEntry{Codebook for AllofUs Surveys}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
@@ -49,12 +49,12 @@ More information on the All of Us Surveys is available at the All of Us [Survey 
 cols <- c(
   "concept_code", "concept_id", "concept_name",
   # "concept_class_id",
-  "form_name", "field_type", "field_label", "choices"
+  "form_name", "pdf", "field_type", "field_label", "choices"
 )
 
 df <- allofus::aou_codebook
 df$concept_id <- paste0("<a href=https://athena.ohdsi.org/search-terms/terms/", df$concept_id, ' target="_blank">', df$concept_id, "</a>")
-df$form_name <- paste0("<a href=", df$link, ' target="_blank">', df$form_name, "</a>")
+df$pdf <- paste0("<a href=", df$link, ' target="_blank">', df$form_name, "</a>")
 df$form_name <- as.factor(df$form_name)
 # df$concept_class_id = as.factor(df$concept_class_id)
 df$field_type <- as.factor(df$field_type)
@@ -76,8 +76,8 @@ DT::datatable(df,
     # scrollX = TRUE,
     # scrollCollapse = TRUE,
     columnDefs = list(list(
-      # targets = c(2,6,7),
-      targets = c(2, 5, 6),
+      targets = c(2,6,7),
+      # targets = c(2, 5, 6),
       render = DT::JS("$.fn.dataTable.render.ellipsis( 20, false )")
     ))
   )
@@ -85,214 +85,3 @@ DT::datatable(df,
   DT::formatStyle(table = _, columns = cols, fontSize = "80%")
 ```
 
-## Codebook for health history surveys
-
-```{r}
-# code from https://laustep.github.io/stlahblog/posts/DT_childTables.html
-NestedData <- function(dat, children) {
-  stopifnot(length(children) == nrow(dat))
-  g <- function(d) {
-    if (is.data.frame(d)) {
-      purrr::transpose(d)
-    } else {
-      purrr::transpose(NestedData(d[[1]], children = d$children))
-    }
-  }
-  subdats <- lapply(children, g)
-  oplus <- ifelse(lengths(subdats), "&oplus;", "")
-  cbind(
-    " " = oplus, dat, "_details" = I(subdats),
-    stringsAsFactors = FALSE
-  )
-}
-
-nested_data <- allofus::aou_health_history %>%
-  dplyr::select(-c(concept_id_question, form_name)) %>%
-  dplyr::distinct() %>%
-  dplyr::rename(concept_id = concept_id_specific) %>%
-  dplyr::mutate(relative = forcats::fct_relevel(relative, "self", "daughter", "son", "sibling", "mother", "father", "grandparent")) %>%
-  dplyr::arrange(category, relative) %>%
-  dplyr::mutate(relative = as.character(relative)) %>%
-  tidyr::nest(data = -c(question, condition, concept_id_overall, category))
-
-dat0 <- dplyr::select(
-  nested_data, category,
-  question, condition
-)
-
-dat1 <- dplyr::select(nested_data, data) %>%
-  purrr::pluck(1)
-
-Dat <- NestedData(dat = dat0, children = dat1)
-## whether to show row names
-rowNames <- FALSE
-colIdx <- as.integer(rowNames)
-
-## the callback
-parentRows <- which(Dat[, 1] != "")
-
-callback <- JS(
-  sprintf("var parentRows = [%s];", toString(parentRows - 1)),
-  sprintf("var j0 = %d;", colIdx),
-  "var nrows = table.rows().count();",
-  "for(let i = 0; i < nrows; ++i){",
-  "  var $cell = table.cell(i,j0).nodes().to$();",
-  "  if(parentRows.indexOf(i) > -1){",
-  "    $cell.css({cursor: 'pointer'});",
-  "  }else{",
-  "    $cell.removeClass('details-control');",
-  "  }",
-  "}",
-  "",
-  "// --- make the table header of the nested table --- //",
-  "var formatHeader = function(d, childId){",
-  "  if(d !== null){",
-  "    var html = ",
-  "      '<table class=\"display compact hover\" ' + ",
-  "      'style=\"padding-left: 30px;\" id=\"' + childId + ",
-  "      '\"><thead><tr>';",
-  "    var data = d[d.length-1] || d._details;",
-  "    for(let key in data[0]){",
-  "      html += '<th>' + key + '</th>';",
-  "    }",
-  "    html += '</tr></thead></table>'",
-  "    return html;",
-  "  } else {",
-  "    return '';",
-  "  }",
-  "};",
-  "",
-  "// --- row callback to style rows of child tables --- //",
-  "var rowCallback = function(row, dat, displayNum, index){",
-  "  if($(row).hasClass('odd')){",
-  "    $(row).css('background-color', 'papayawhip');",
-  "    $(row).hover(function(){",
-  "      $(this).css('background-color', '#E6FF99');",
-  "    }, function(){",
-  "      $(this).css('background-color', 'papayawhip');",
-  "    });",
-  "  } else {",
-  "    $(row).css('background-color', 'lemonchiffon');",
-  "    $(row).hover(function(){",
-  "      $(this).css('background-color', '#DDFF75');",
-  "    }, function(){",
-  "      $(this).css('background-color', 'lemonchiffon');",
-  "    });",
-  "  }",
-  "};",
-  "",
-  "// --- header callback to style header of child tables --- //",
-  "var headerCallback = function(thead, data, start, end, display){",
-  "  $('th', thead).css({",
-  "    'border-top': '3px solid indigo',",
-  "    'color': 'indigo',",
-  "    'background-color': '#fadadd'",
-  "  });",
-  "};",
-  "",
-  "// --- make the datatable --- //",
-  "var formatDatatable = function(d, childId){",
-  "  var data = d[d.length-1] || d._details;",
-  "  var colNames = Object.keys(data[0]);",
-  "  var columns = colNames.map(function(x){",
-  "    return {data: x.replace(/\\./g, '\\\\\\.'), title: x};",
-  "  });",
-  "  var id = 'table#' + childId;",
-  "  if(colNames.indexOf('_details') === -1){",
-  "    var subtable = $(id).DataTable({",
-  "      'data': data,",
-  "      'columns': columns,",
-  "      'autoWidth': true,",
-  "      'deferRender': true,",
-  "      'info': false,",
-  "      'lengthChange': false,",
-  "      'ordering': data.length > 1,",
-  "      'order': [],",
-  "      'paging': false,",
-  "      'scrollX': false,",
-  "      'scrollY': false,",
-  "      'searching': false,",
-  "      'sortClasses': false,",
-  "      'rowCallback': rowCallback,",
-  "      'headerCallback': headerCallback,",
-  "      'columnDefs': [{targets: '_all', className: 'dt-center'}]",
-  "    });",
-  "  } else {",
-  "    var subtable = $(id).DataTable({",
-  "      'data': data,",
-  "      'columns': columns,",
-  "      'autoWidth': true,",
-  "      'deferRender': true,",
-  "      'info': false,",
-  "      'lengthChange': false,",
-  "      'ordering': data.length > 1,",
-  "      'order': [],",
-  "      'paging': false,",
-  "      'scrollX': false,",
-  "      'scrollY': false,",
-  "      'searching': false,",
-  "      'sortClasses': false,",
-  "      'rowCallback': rowCallback,",
-  "      'headerCallback': headerCallback,",
-  "      'columnDefs': [",
-  "        {targets: -1, visible: false},",
-  "        {targets: 0, orderable: false, className: 'details-control'},",
-  "        {targets: '_all', className: 'dt-center'}",
-  "      ]",
-  "    }).column(0).nodes().to$().css({cursor: 'pointer'});",
-  "  }",
-  "};",
-  "",
-  "// --- display the child table on click --- //",
-  "// array to store id's of already created child tables",
-  "var children = [];",
-  "table.on('click', 'td.details-control', function(){",
-  "  var tbl = $(this).closest('table'),",
-  "      tblId = tbl.attr('id'),",
-  "      td = $(this),",
-  "      row = $(tbl).DataTable().row(td.closest('tr')),",
-  "      rowIdx = row.index();",
-  "  if(row.child.isShown()){",
-  "    row.child.hide();",
-  "    td.html('&oplus;');",
-  "  } else {",
-  "    var childId = tblId + '-child-' + rowIdx;",
-  "    if(children.indexOf(childId) === -1){",
-  "      // this child has not been created yet",
-  "      children.push(childId);",
-  "      row.child(formatHeader(row.data(), childId)).show();",
-  "      td.html('&CircleMinus;');",
-  "      formatDatatable(row.data(), childId, rowIdx);",
-  "    }else{",
-  "      // this child has already been created",
-  "      row.child(true);",
-  "      td.html('&CircleMinus;');",
-  "    }",
-  "  }",
-  "});"
-)
-
-DT::datatable(
-  Dat,
-  callback = callback, rownames = rowNames, escape = -colIdx - 1,
-  options = list(
-    paging = FALSE,
-    searching = FALSE,
-    columnDefs = list(
-      list(
-        visible = FALSE,
-        targets = ncol(Dat) - 1 + colIdx
-      ),
-      list(
-        orderable = FALSE,
-        className = "details-control",
-        targets = colIdx
-      ),
-      list(
-        className = "dt-center",
-        targets = "_all"
-      )
-    )
-  )
-)
-```

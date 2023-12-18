@@ -44,8 +44,11 @@ articles:
 - title: Articles
   navbar: ~
   contents:
-  - sql
   - workspace
   - data
   - atlas
+- title: Codebooks
+  navbar: Codebooks
+  contents:
   - web_only/searchable_codebook
+  - web_only/health_codebook

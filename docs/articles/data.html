@@ -43,16 +43,21 @@
     <div id="navbar" class="collapse navbar-collapse ms-3">
       <ul class="navbar-nav me-auto">
 <li class="nav-item">
+  <a class="nav-link" href="../articles/allofus.html">Get started</a>
+</li>
+<li class="nav-item">
   <a class="nav-link" href="../reference/index.html">Reference</a>
 </li>
 <li class="active nav-item dropdown">
   <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" role="button" aria-expanded="false" aria-haspopup="true" id="dropdown-articles">Articles</a>
   <div class="dropdown-menu" aria-labelledby="dropdown-articles">
-    <a class="dropdown-item" href="../articles/sql.html">SQL in R</a>
     <a class="dropdown-item" href="../articles/workspace.html">Managing files on the workbench</a>
     <a class="dropdown-item" href="../articles/data.html">Extracting All of Us survey and EHR data</a>
     <a class="dropdown-item" href="../articles/atlas.html">Using ATLAS to create a cohort</a>
-    <a class="dropdown-item" href="../articles/web_only/searchable_codebook.html">Searchable Codebook for AllofUs Surveys</a>
+    <div class="dropdown-divider"></div>
+    <h6 class="dropdown-header" data-toc-skip>Codebooks</h6>
+    <a class="dropdown-item" href="../articles/web_only/searchable_codebook.html">All of Us Surveys</a>
+    <a class="dropdown-item" href="../articles/web_only/health_codebook.html">Health History Surveys</a>
   </div>
 </li>
       </ul>
@@ -366,7 +371,7 @@ before bringing the table off the database and into R. For example, we
 may want to summarize the A1C measurements as the highest value for each
 participant. We can continue to manipulate the data using
 <code>dplyr</code> functions (see
-<code><a href="../articles/sql.html">vignette("sql", package = "allofus")</a></code>).</p>
+<code>vignette("sql", package = "allofus")</code>).</p>
 <div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">final_data</span> <span class="op">&lt;-</span> <span class="va">combined_data</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html" class="external-link">group_by</a></span><span class="op">(</span><span class="va">person_id</span>, <span class="va">birthplace</span>, <span class="va">t2dm</span>, <span class="va">metformin</span>, <span class="va">t2dm_survey</span><span class="op">)</span> <span class="op">|&gt;</span></span>
