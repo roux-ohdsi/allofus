@@ -23,7 +23,6 @@ CDM](https://www.researchallofus.org/faq/what-is-omop/) data.
 [![R-CMD-check](https://github.com/roux-ohdsi/allofus/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/roux-ohdsi/allofus/actions/workflows/R-CMD-check.yaml)
 [![](https://www.r-pkg.org/badges/version/allofus?color=green)](https://cran.r-project.org/package=allofus)
 [![](http://cranlogs.r-pkg.org/badges/grand-total/allofus?color=green)](https://cran.r-project.org/package=allofus)
-[![](https://codecov.io/gh/roux-ohdsi/allofus/branch/cran/graph/badge.svg)](https://codecov.io/gh/roux-ohdsi/allofus)
 <!-- badges: end -->
 
 ### Installation
