@@ -4,7 +4,7 @@
 .navbar-brand, .nav-link {
   color: white;
 }
-.navbar-brand:hover, nav-link:hover {
+.navbar-brand:hover, .nav-link:hover, .nav-link.active, .nav-link.show {
   color: #C8102E;
 }
 
@@ -15,4 +15,8 @@
 
 .page-header {
     min-height: 60px !important;
+}
+
+.navbar-nav, .nav-link.active, .navbar-nav .nav-link.show {
+   --bs-navbar-active-color: #C8102E;
 }
