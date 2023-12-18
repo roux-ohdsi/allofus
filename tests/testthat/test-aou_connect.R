@@ -23,10 +23,9 @@ test_that("aou_sql returns a dataframe", {
 test_that("aou_sql correctly evaluates expressions enclosed with braces", {
   skip_workbench()
 
-  query <- "SELECT * FROM `{CDR}.person` WHERE person_id = {person_id}"
   person_id <- 2150822
-  result <- aou_sql(query)
-  expect_equal(nrow(result), 1)
+  query <- "SELECT * FROM `{CDR}.person` WHERE person_id = {person_id}"
+  expect_equal(nrow(aou_sql(query)), 1)
 })
 
 test_that("aou_sql correctly evaluates references to `CDR` when specified", {

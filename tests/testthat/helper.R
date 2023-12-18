@@ -1,4 +1,5 @@
 library(testthat)
+library(allofus)
 
 if (on_workbench()) {
   con <- aou_connect()
