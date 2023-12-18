@@ -34,8 +34,8 @@
 #' @param ... additional arguments passed to `collect()` when `collect = TRUE`
 #'
 #' @export
-#' @examples
-#' \dontrun{
+#' @examplesIf on_workbench()
+#'
 #' con <- aou_connect()
 #' cohort <- dplyr::tbl(con, "person") %>%
 #'   dplyr::filter(person_id > 5000000) %>%
@@ -58,9 +58,9 @@
 #'   collect = FALSE
 #' )
 #'
-#'aou_survey(cohort = dplyr::tbl(con, "person"), questions = 1384452,
+#'aou_survey(cohort, questions = 1384452,
 #'           question_output = "osteoarthritis") %>%
-#'. dplyr::count(osteoarthritis)
+#'   dplyr::count(osteoarthritis)
 #' }
 aou_survey <- function(cohort = NULL,
                        questions,

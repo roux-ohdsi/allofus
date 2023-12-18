@@ -35,10 +35,12 @@ aou_observation_period <- function(cohort = NULL,
                                    con = getOption("aou.default.con"),
                                    collect = FALSE,
                                    ...) {
-
-  if (is.null(con)) cli::cli_abort(c("No connection available.",
-                                     "i" = "Provide a connection automatically by running {.code aou_connect()} before this function.",
-                                     "i" = "You can also provide {.code con} as an argument or default with {.code options(aou.default.con = ...)}."))
+  if (is.null(con)) {
+    cli::cli_abort(c("No connection available.",
+      "i" = "Provide a connection automatically by running {.code aou_connect()} before this function.",
+      "i" = "You can also provide {.code con} as an argument or default with {.code options(aou.default.con = ...)}."
+    ))
+  }
   if (is.null(cohort)) {
     cli::cli_warn(c("No cohort provided.", ">" = "Creating observation periods for entire All of Us cohort."))
     tmp <- dplyr::tbl(con, "visit_occurrence")
@@ -59,7 +61,7 @@ aou_observation_period <- function(cohort = NULL,
 
   obs_period <-
     tmp %>%
-    dplyr::select('person_id', 'visit_start_date', 'visit_end_date') %>%
+    dplyr::select("person_id", "visit_start_date", "visit_end_date") %>%
     dplyr::distinct() %>%
     dplyr::group_by(.data$person_id) %>%
     # use window order instead of arrange. because arrange == ORDER BY which is executed last in sql

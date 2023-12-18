@@ -12,17 +12,16 @@
 #'
 #' @examplesIf on_workbench()
 #' allofus::aou_session_info()
-
-aou_session_info <- function(CDR = getOption("aou.default.cdr")){
+aou_session_info <- function(CDR = getOption("aou.default.cdr")) {
   suppressWarnings({
     # a warning about timezone is annoying and always appears on workbench
-  si = sessioninfo::session_info()
+    si <- sessioninfo::session_info()
   })
-  si1 = si$platform
-  si2 = allofus::aou_sql(query = "SELECT * FROM {CDR}._cdr_metadata")
-  si3 = si$packages
+  si1 <- si$platform
+  si2 <- allofus::aou_sql(query = "SELECT * FROM {CDR}._cdr_metadata")
+  si3 <- si$packages
 
-  out = list(si1, si2, si3)
-  names(out) = c("Platform", "AoU_Release", "Packages")
+  out <- list(si1, si2, si3)
+  names(out) <- c("Platform", "AoU_Release", "Packages")
   return(out)
 }

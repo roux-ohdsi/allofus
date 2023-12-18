@@ -1,4 +1,3 @@
-
 # Coe to generate package data is here: https://gist.github.com/rbcavanaugh/f0ac2520ed08521b1fc8d463e80dca83
 
 # ## code to prepare `pkg_data` dataset goes here

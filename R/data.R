@@ -83,6 +83,3 @@
 #'   \item{cd_sql}{SQL query for cohort definition}
 #' }
 "aou_cohort_example"
-
-
-

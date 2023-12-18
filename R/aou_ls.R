@@ -169,10 +169,11 @@ aou_workspace_to_bucket <- function(file, dir = "", recursive = TRUE,
   if (length(read.csv("cp.log")$Destination) == 0) {
     cli::cli_inform(c("!" = "Oops! No files were copied"))
   } else {
-    cli::cli_inform(c("v" =
-      "Saved to bucket:",
-      paste(gsub(paste0(bucket, "/"), "", read.csv("cp.log")$Destination), collapse = "\n"))
-    )
+    cli::cli_inform(c(
+      "v" =
+        "Saved to bucket:",
+      paste(gsub(paste0(bucket, "/"), "", read.csv("cp.log")$Destination), collapse = "\n")
+    ))
   }
   invisible(file.remove("cp.log"))
 }

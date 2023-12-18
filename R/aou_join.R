@@ -44,13 +44,16 @@ aou_join <- function(data,
                      x_as = NULL,
                      y_as = NULL,
                      ...) {
-  if (is.null(con)) cli::cli_abort(c("No connection available.",
-                                     "i" = "Provide a connection automatically by running {.code aou_connect()} before this function.",
-                                     "i" = "You can also provide {.code con} as an argument or default with {.code options(aou.default.con = ...)}."))
+  if (is.null(con)) {
+    cli::cli_abort(c("No connection available.",
+      "i" = "Provide a connection automatically by running {.code aou_connect()} before this function.",
+      "i" = "You can also provide {.code con} as an argument or default with {.code options(aou.default.con = ...)}."
+    ))
+  }
 
   if (is.character(table)) y_table <- dplyr::tbl(con, table) else y_table <- table
 
- res <- get(paste(type, "join", sep = "_"))(data, y_table,
+  res <- get(paste(type, "join", sep = "_"))(data, y_table,
     x_as = if (missing(x_as)) {
       paste(sample(letters, 10, TRUE), collapse = "")
     } else {
@@ -65,15 +68,14 @@ aou_join <- function(data,
     suffix = suffix,
     ...)
 
- if (any(paste0(colnames(data), "_x") %in% colnames(res)) || any(paste0(colnames(y_table), "_y") %in% colnames(res))) {
-   cli::cli_warn(c("There are shared column names not specified in the {.code by} argument.",
-                   ">" = "These column names now end in '_x' and '_y'.",
-                   "i" = "You can change these suffixes using the {.code suffix} argument but it cannot contain periods (`.`).",
-                   ">" = "Consider specifing all shared columns in the {.code by} argument.",
-                   ">" = "Or if these additional shared columns are `NA`, remove them prior to joining."))
- }
+  if (any(paste0(colnames(data), "_x") %in% colnames(res)) || any(paste0(colnames(y_table), "_y") %in% colnames(res))) {
+    cli::cli_warn(c("There are shared column names not specified in the {.code by} argument.",
+      ">" = "These column names now end in '_x' and '_y'.",
+      "i" = "You can change these suffixes using the {.code suffix} argument but it cannot contain periods (`.`).",
+      ">" = "Consider specifing all shared columns in the {.code by} argument.",
+      ">" = "Or if these additional shared columns are `NA`, remove them prior to joining."
+    ))
+  }
 
- return(res)
-
-
+  return(res)
 }

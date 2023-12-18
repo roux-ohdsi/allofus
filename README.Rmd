@@ -52,20 +52,20 @@ person <- dplyr::tbl(con, "person")
 
 You can then use `dplyr` functions on the table:
 ```{r}
-person |> 
+person |>
   dplyr::filter(gender_concept_id == 8507)
 ```
 
 and join the table to other tables in the database:
 
 ```{r}
-person |> 
+person |>
   dplyr::left_join(dplyr::tbl(con, "observation"), by = "person_id")
 ```
 
 The `aou_join()` function is a wrapper around the `dplyr` join functions that allows you to join tables more easily:
 ```{r}
-person |> 
+person |>
   aou_join("observation", type = "left")
 ```
 

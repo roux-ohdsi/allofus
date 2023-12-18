@@ -34,10 +34,8 @@ on_workbench <- function() {
 #' dplyr::tbl(con, "observation")
 #' # print a list of the tables in the database
 #' DBI::dbListTables(con)
-
 aou_connect <- function(CDR = getOption("aou.default.cdr"), ...) {
-
-  if (packageVersion("dbplyr") == '2.4.0') {
+  if (packageVersion("dbplyr") == "2.4.0") {
     stop('
          dbplyr v2.4.0 is not compatible with the AllofUs database (bigquery).
          Please install either dbplyr v2.3.4 or the development version of dbplyr.
@@ -183,7 +181,6 @@ aou_connect <- function(CDR = getOption("aou.default.cdr"), ...) {
 #'   N DESC
 #' ', debug = TRUE)
 aou_sql <- function(query, CDR = getOption("aou.default.cdr"), debug = FALSE, ...) {
-
   .cdr_objs <- ls(envir = .GlobalEnv, pattern = "^CDR$|^cdr$")
   if (length(.cdr_objs) == 0) {
     CDR <- CDR
@@ -198,23 +195,30 @@ aou_sql <- function(query, CDR = getOption("aou.default.cdr"), debug = FALSE, ..
 
   if (Sys.getenv("GOOGLE_PROJECT") == "") {
     cli::cli_abort(c('This function only works on the Researcher Workbench. Please ensure you have a valid Google Cloud project set up by checking {.code Sys.getenv("GOOGLE_PROJECT")}.'),
-                   call = NULL)
+      call = NULL
+    )
   }
 
-  res <- tryCatch({
-    q <- bigrquery::bq_project_query(
-      Sys.getenv("GOOGLE_PROJECT"),
-      query = glue::glue(query)
-    )
+  res <- tryCatch(
+    {
+      q <- bigrquery::bq_project_query(
+        Sys.getenv("GOOGLE_PROJECT"),
+        query = glue::glue(query)
+      )
 
-    bigrquery::bq_table_download(q, ...)
-  },
-  error = function(e) {
-    cli::cli_abort(c("SQL query did not result in a table. Please check to make sure SQL code is valid.",
-                     "To print the query, run {.code aou_sql(query, debug = TRUE)}"),
-                   call = NULL)
-    return(e)
-  })
+      bigrquery::bq_table_download(q, ...)
+    },
+    error = function(e) {
+      cli::cli_abort(
+        c(
+          "SQL query did not result in a table. Please check to make sure SQL code is valid.",
+          "To print the query, run {.code aou_sql(query, debug = TRUE)}"
+        ),
+        call = NULL
+      )
+      return(e)
+    }
+  )
 
   res
 }
@@ -242,11 +246,11 @@ aou_tables <- function(con = getOption("aou.default.con"), remove_na = TRUE) {
 
   tbls <- tibble::tibble(table_name = tbls) %>%
     dplyr::left_join(allofus::aou_table_info, by = "table_name") %>%
-    dplyr::select('table_name', 'columns') %>%
+    dplyr::select("table_name", "columns") %>%
     dplyr::arrange(.data$columns)
 
   if (isTRUE(remove_na)) {
-    tbls <- tbls %>% tidyr::drop_na('columns')
+    tbls <- tbls %>% tidyr::drop_na("columns")
   }
 
   cli::cli_inform(c("i" = "Tables not referenced in the Data Dictionary are omitted. View them by setting {.code remove_na = FALSE}."))

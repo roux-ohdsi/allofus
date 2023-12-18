@@ -61,7 +61,7 @@ count(svy_vars, gender, birthplace)
 To create our cohort, we can subset the data to the participants matching our criteria.
 
 ```{r}
-cohort <- svy_vars |> 
+cohort <- svy_vars |>
   filter(gender == "Woman", birthplace == "Other")
 
 cohort
@@ -117,24 +117,30 @@ Here are some concepts we may want to include. Keep in mind that this is an exam
 First, we'll extract data on diabetes diagnoses. We can use the `aou_concept_set` function to extract data from the All of Us database. This function takes a cohort, a vector of concepts, and a domain or set of domains. You can actually extract data from multiple domains at once -- the default is to search all domains. However, it is helpful to specify the domain(s) when you can, for speed and clarity. The `output =` argument specifies the type of data to extract. Here, we'll extract an indicator variable for whether the participant has a diabetes diagnosis at any point in their medical record. We'll call that variable "t2dm".
 
 ```{r}
-t2dm <- aou_concept_set(cohort, concepts = c(201826, 4193704), 
-                        domains = "condition", output = "indicator",
-                       concept_set_name = "t2dm")
+t2dm <- aou_concept_set(cohort,
+  concepts = c(201826, 4193704),
+  domains = "condition", output = "indicator",
+  concept_set_name = "t2dm"
+)
 ```
 
 We can also extract data within a certain time window. For example, if we only want to extract metformin use after joining All of Us, we can specify a start date as the date the participant answered the gender question (on the Basics survey). We'll count how many times the participant was prescribed metformin after that time point.
 
 ```{r}
-metformin <- aou_concept_set(cohort, concepts = c(40164929, 40164897), 
-                             domains = "drug", output = "count", 
-                             start_date = "gender_date", concept_set_name = "metformin")
+metformin <- aou_concept_set(cohort,
+  concepts = c(40164929, 40164897),
+  domains = "drug", output = "count",
+  start_date = "gender_date", concept_set_name = "metformin"
+)
 ```
 
 For a concept set in the measurement domain, we likely want to set `output = "all"` because we are interested in the values of the measurements, not whether they had any or how many they had.
 
 ```{r}
-a1c <- aou_concept_set(cohort, concepts = c(3004410, 3005673), 
-                       domains = "measurement", output = "all", start_date = "gender_date")
+a1c <- aou_concept_set(cohort,
+  concepts = c(3004410, 3005673),
+  domains = "measurement", output = "all", start_date = "gender_date"
+)
 ```
 
 The output to this is a dataset with one row per measurement. We can see that the second participant in the output has had 4 A1C measurements since joining All of Us, while the fifth had 1 and the rest had none.
@@ -176,16 +182,18 @@ t2dm_self <- aou_survey(cohort, questions = 43529932, question_output = "t2dm_su
 Next, we want to combine these datasets into one. We can do this using the `aou_join` function. This function takes a list of datasets and joins them together using the participant id. The `aou_join` function also allows you to specify the type of join (inner, left, right, or full). Here we'll perform repeated left joins into the cohort using the `reduce()` function from the `purrr` package.
 
 ```{r}
-combined_data <- reduce(list(cohort, t2dm, metformin, a1c, t2dm_self), 
-                        aou_join, type = "left")
+combined_data <- reduce(list(cohort, t2dm, metformin, a1c, t2dm_self),
+  aou_join,
+  type = "left"
+)
 ```
 
 Our combined dataset has columns for the diabetes diagnosis indicator from the EHR data, the number of metformin prescriptions, the self-reported diabetes diagnosis from the health history survey and the date that survey was completed, as well as complete data on the A1C measurements. Participants with multiple measurements therefore have multiple rows in the dataset. We may want to do some additional analyses before bringing the table off the database and into R. For example, we may want to summarize the A1C measurements as the highest value for each participant. We can continue to manipulate the data using `dplyr` functions (see `vignette("sql", package = "allofus")`).
 
 ```{r}
-final_data <- combined_data |> 
-    group_by(person_id, birthplace, t2dm, metformin, t2dm_survey) |> 
-    summarize(max_a1c = max(value_as_number, na.rm = TRUE), .groups = "drop")
+final_data <- combined_data |>
+  group_by(person_id, birthplace, t2dm, metformin, t2dm_survey) |>
+  summarize(max_a1c = max(value_as_number, na.rm = TRUE), .groups = "drop")
 ```
 
 This final query may take a few seconds to run -- it is the accumulation of all the queries we've run so far (use `show_query()` to see the SQL query that will be run). For that reason, it is often helpful to print the result of each individual query to make sure it is what you expect before moving on to the next step.
