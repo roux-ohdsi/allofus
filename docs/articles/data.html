@@ -159,7 +159,7 @@ variables, on the database.</p>
 <p>To create our cohort, we can subset the data to the participants
 matching our criteria.</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">cohort</span> <span class="op">&lt;-</span> <span class="va">svy_vars</span> <span class="op">|&gt;</span> </span>
+<code class="sourceCode R"><span><span class="va">cohort</span> <span class="op">&lt;-</span> <span class="va">svy_vars</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">gender</span> <span class="op">==</span> <span class="st">"Woman"</span>, <span class="va">birthplace</span> <span class="op">==</span> <span class="st">"Other"</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">cohort</span></span></code></pre></div>
@@ -273,24 +273,30 @@ extract. Here, we’ll extract an indicator variable for whether the
 participant has a diabetes diagnosis at any point in their medical
 record. We’ll call that variable “t2dm”.</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">t2dm</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/aou_concept_set.html">aou_concept_set</a></span><span class="op">(</span><span class="va">cohort</span>, concepts <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">201826</span>, <span class="fl">4193704</span><span class="op">)</span>, </span>
-<span>                        domains <span class="op">=</span> <span class="st">"condition"</span>, output <span class="op">=</span> <span class="st">"indicator"</span>,</span>
-<span>                       concept_set_name <span class="op">=</span> <span class="st">"t2dm"</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">t2dm</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/aou_concept_set.html">aou_concept_set</a></span><span class="op">(</span><span class="va">cohort</span>,</span>
+<span>  concepts <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">201826</span>, <span class="fl">4193704</span><span class="op">)</span>,</span>
+<span>  domains <span class="op">=</span> <span class="st">"condition"</span>, output <span class="op">=</span> <span class="st">"indicator"</span>,</span>
+<span>  concept_set_name <span class="op">=</span> <span class="st">"t2dm"</span></span>
+<span><span class="op">)</span></span></code></pre></div>
 <p>We can also extract data within a certain time window. For example,
 if we only want to extract metformin use after joining All of Us, we can
 specify a start date as the date the participant answered the gender
 question (on the Basics survey). We’ll count how many times the
 participant was prescribed metformin after that time point.</p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">metformin</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/aou_concept_set.html">aou_concept_set</a></span><span class="op">(</span><span class="va">cohort</span>, concepts <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">40164929</span>, <span class="fl">40164897</span><span class="op">)</span>, </span>
-<span>                             domains <span class="op">=</span> <span class="st">"drug"</span>, output <span class="op">=</span> <span class="st">"count"</span>, </span>
-<span>                             start_date <span class="op">=</span> <span class="st">"gender_date"</span>, concept_set_name <span class="op">=</span> <span class="st">"metformin"</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">metformin</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/aou_concept_set.html">aou_concept_set</a></span><span class="op">(</span><span class="va">cohort</span>,</span>
+<span>  concepts <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">40164929</span>, <span class="fl">40164897</span><span class="op">)</span>,</span>
+<span>  domains <span class="op">=</span> <span class="st">"drug"</span>, output <span class="op">=</span> <span class="st">"count"</span>,</span>
+<span>  start_date <span class="op">=</span> <span class="st">"gender_date"</span>, concept_set_name <span class="op">=</span> <span class="st">"metformin"</span></span>
+<span><span class="op">)</span></span></code></pre></div>
 <p>For a concept set in the measurement domain, we likely want to set
 <code>output = "all"</code> because we are interested in the values of
 the measurements, not whether they had any or how many they had.</p>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">a1c</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/aou_concept_set.html">aou_concept_set</a></span><span class="op">(</span><span class="va">cohort</span>, concepts <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">3004410</span>, <span class="fl">3005673</span><span class="op">)</span>, </span>
-<span>                       domains <span class="op">=</span> <span class="st">"measurement"</span>, output <span class="op">=</span> <span class="st">"all"</span>, start_date <span class="op">=</span> <span class="st">"gender_date"</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">a1c</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/aou_concept_set.html">aou_concept_set</a></span><span class="op">(</span><span class="va">cohort</span>,</span>
+<span>  concepts <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">3004410</span>, <span class="fl">3005673</span><span class="op">)</span>,</span>
+<span>  domains <span class="op">=</span> <span class="st">"measurement"</span>, output <span class="op">=</span> <span class="st">"all"</span>, start_date <span class="op">=</span> <span class="st">"gender_date"</span></span>
+<span><span class="op">)</span></span></code></pre></div>
 <p>The output to this is a dataset with one row per measurement. We can
 see that the second participant in the output has had 4 A1C measurements
 since joining All of Us, while the fifth had 1 and the rest had
@@ -346,8 +352,10 @@ join (inner, left, right, or full). Here we’ll perform repeated left
 joins into the cohort using the <code><a href="https://purrr.tidyverse.org/reference/reduce.html" class="external-link">reduce()</a></code> function from the
 <code>purrr</code> package.</p>
 <div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">combined_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://purrr.tidyverse.org/reference/reduce.html" class="external-link">reduce</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="va">cohort</span>, <span class="va">t2dm</span>, <span class="va">metformin</span>, <span class="va">a1c</span>, <span class="va">t2dm_self</span><span class="op">)</span>, </span>
-<span>                        <span class="va">aou_join</span>, type <span class="op">=</span> <span class="st">"left"</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">combined_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://purrr.tidyverse.org/reference/reduce.html" class="external-link">reduce</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="va">cohort</span>, <span class="va">t2dm</span>, <span class="va">metformin</span>, <span class="va">a1c</span>, <span class="va">t2dm_self</span><span class="op">)</span>,</span>
+<span>  <span class="va">aou_join</span>,</span>
+<span>  type <span class="op">=</span> <span class="st">"left"</span></span>
+<span><span class="op">)</span></span></code></pre></div>
 <p>Our combined dataset has columns for the diabetes diagnosis indicator
 from the EHR data, the number of metformin prescriptions, the
 self-reported diabetes diagnosis from the health history survey and the
@@ -360,9 +368,9 @@ participant. We can continue to manipulate the data using
 <code>dplyr</code> functions (see
 <code><a href="../articles/sql.html">vignette("sql", package = "allofus")</a></code>).</p>
 <div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">final_data</span> <span class="op">&lt;-</span> <span class="va">combined_data</span> <span class="op">|&gt;</span> </span>
-<span>    <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html" class="external-link">group_by</a></span><span class="op">(</span><span class="va">person_id</span>, <span class="va">birthplace</span>, <span class="va">t2dm</span>, <span class="va">metformin</span>, <span class="va">t2dm_survey</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
-<span>    <span class="fu"><a href="https://dplyr.tidyverse.org/reference/summarise.html" class="external-link">summarize</a></span><span class="op">(</span>max_a1c <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Extremes.html" class="external-link">max</a></span><span class="op">(</span><span class="va">value_as_number</span>, na.rm <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>, .groups <span class="op">=</span> <span class="st">"drop"</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">final_data</span> <span class="op">&lt;-</span> <span class="va">combined_data</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html" class="external-link">group_by</a></span><span class="op">(</span><span class="va">person_id</span>, <span class="va">birthplace</span>, <span class="va">t2dm</span>, <span class="va">metformin</span>, <span class="va">t2dm_survey</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/summarise.html" class="external-link">summarize</a></span><span class="op">(</span>max_a1c <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Extremes.html" class="external-link">max</a></span><span class="op">(</span><span class="va">value_as_number</span>, na.rm <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>, .groups <span class="op">=</span> <span class="st">"drop"</span><span class="op">)</span></span></code></pre></div>
 <p>This final query may take a few seconds to run – it is the
 accumulation of all the queries we’ve run so far (use
 <code><a href="https://dplyr.tidyverse.org/reference/explain.html" class="external-link">show_query()</a></code> to see the SQL query that will be run). For

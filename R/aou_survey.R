@@ -61,7 +61,7 @@
 #'aou_survey(cohort, questions = 1384452,
 #'           question_output = "osteoarthritis") %>%
 #'   dplyr::count(osteoarthritis)
-#' }
+#'
 aou_survey <- function(cohort = NULL,
                        questions,
                        question_output = "concept_code",

@@ -55,7 +55,8 @@ did not have that condition (or omitted it when selecting from related condition
 skip response if the question was skipped, and NA if the respondent did not answer the question.
 }
 \examples{
-\dontrun{
+\dontshow{if (on_workbench()) (if (getRversion() >= "3.4") withAutoprint else force)(\{ # examplesIf}
+
 con <- aou_connect()
 cohort <- dplyr::tbl(con, "person") \%>\%
   dplyr::filter(person_id > 5000000) \%>\%
@@ -78,8 +79,8 @@ aou_survey(
   collect = FALSE
 )
 
-aou_survey(cohort = dplyr::tbl(con, "person"), questions = 1384452,
+aou_survey(cohort, questions = 1384452,
           question_output = "osteoarthritis") \%>\%
-. dplyr::count(osteoarthritis)
-}
+  dplyr::count(osteoarthritis)
+\dontshow{\}) # examplesIf}
 }

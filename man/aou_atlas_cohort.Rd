@@ -52,12 +52,12 @@ Follows conventions described here: \url{https://ohdsi.github.io/CommonDataModel
 # cd <- ROhdsiWebApi::getCohortDefinition(1788061, "https://atlas-demo.ohdsi.org/WebAPI")
 # cd_sql <- ROhdsiWebApi::getCohortSql(cd, "https://atlas-demo.ohdsi.org/WebAPI")
 
-cohort <- aou_atlas_cohort(cohort_definition = aou_cohort_example$cd,
-                          cohort_sql = aou_cohort_example$cd_sql)
+cohort <- aou_atlas_cohort(
+  cohort_definition = aou_cohort_example$cd,
+  cohort_sql = aou_cohort_example$cd_sql
+)
 
 # print query that was executed
 cat(attr(cohort, "query"))
-
-
 \dontshow{\}) # examplesIf}
 }

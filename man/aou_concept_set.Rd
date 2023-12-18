@@ -54,7 +54,8 @@ Get occurrences of a concept set from AoU for a given cohort
 \dontshow{if (on_workbench()) (if (getRversion() >= "3.4") withAutoprint else force)(\{ # examplesIf}
 # indicator for any aspirin at any time
 aspirin_users <- aou_concept_set(dplyr::tbl(con, "person"),
-   concepts = 1191, concept_set_name = "aspirin", domains = "drug")
+  concepts = 1191, concept_set_name = "aspirin", domains = "drug"
+)
 
 # starting with person table to create a cohort
 people <- dplyr::tbl(con, "person") \%>\%

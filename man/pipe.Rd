@@ -18,6 +18,6 @@ The result of calling \code{rhs(lhs)}.
 See \code{magrittr::\link[magrittr:pipe]{\%>\%}} for details.
 }
 \examples{
-1:10 \%>\% sum
+1:10 \%>\% sum()
 }
 \keyword{internal}
