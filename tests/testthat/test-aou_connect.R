@@ -9,8 +9,7 @@ test_that("aou_connect connects to the database successfully", {
 test_that("aou_connect returns an error message when unable to connect", {
   skip_workbench()
 
-  con <- aou_connect(CDR = "nonexistent.dataset")
-  expect_false(inherits(con, "BigQueryConnection"))
+  expect_error(aou_connect(CDR = "nonexistent.dataset"))
 })
 
 test_that("aou_sql returns a dataframe", {
