@@ -27,15 +27,15 @@ aou_codebook
 }
 \description{
 This table consists of mapped rows from the
-publicly available AllofUs Survey Codebook
-to the AllofUs PPI Vocabulary available on Athena . A small number of rows did not
+publicly available All of Us Survey Codebook
+to the All of Us PPI Vocabulary available on Athena . A small number of rows did not
 match between the codebook and the Athena PPI Vocabulary. It can also be accessed in R using \code{allofus::aou_codebook}.
 }
 \details{
 Questions relating to specific conditions are not included as part of this table.
 They are instead available in the \code{aou_health_history} table.
 \itemize{
-\item{\href{https://docs.google.com/spreadsheets/d/1Ey8MScRYZ9QyS4izVYScISLMb62QEhSM-ErbG27dNtw/edit#gid=1832128489}{AllofUs codebook}}
+\item{\href{https://docs.google.com/spreadsheets/d/1Ey8MScRYZ9QyS4izVYScISLMb62QEhSM-ErbG27dNtw/edit#gid=1832128489}{All of Us codebook}}
 \item{\href{https://github.com/roux-ohdsi/allofus/blob/main/data-raw/pkg_data.R}{Code to generate table}}
 }
 }

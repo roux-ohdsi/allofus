@@ -1,5 +1,5 @@
 ---
-title: "SQL in R"
+title: "All of Us in R"
 output: rmarkdown::html_vignette
 ---
 
@@ -354,6 +354,21 @@ Because this is often a mistake occurring because we are not working with the ta
 obs <- person_tbl %>%
   select(-provider_id) %>%
   aou_join("observation", type = "inner", by = "person_id")
+```
+
+## Joins from different sources?
+
+Unfortunately, we can't join a table on the database with a dataframe in R. If you end up with one of each, you have a couple of options:
+
+1. See if you can avoid collecting the dataframe into R. Most `allofus` functions have a `collect = FALSE` argument, but sometimes it's unavoidable.
+2. Bring the table from the database into R using `collect()` and then join it with the dataframe in R. This can be inefficient if part of the reason for joining is to subset the table down to only data you care about.
+3. First subset the table on the database, then bring it into R and join it with the dataframe in R. For example, if you have a cohort of participants as a dataframe, e.g., as created by `aou_atlas_cohort()`, and you want to bring in activity data for those participants, you could run:
+```{r}
+# instead of aou_join(cohort, "activity_summary", type = "left", by = "person_id")
+activity_data <- tbl(con, "activity_summary") %>%
+  filter(person_id %in% !!cohort$person_id) %>%
+  collect() %>%
+  right_join(cohort, by = "person_id")
 ```
 
 ## Viewing the Underlying SQL with `show_query()`

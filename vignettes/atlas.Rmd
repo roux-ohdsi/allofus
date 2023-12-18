@@ -11,10 +11,10 @@ knitr::opts_chunk$set(
 )
 ```
 
-It is often useful to build more complex cohort definitions using ATLAS, a web-based application that allows users to define cohorts and run analyses on the OHDSI network. While most of the features of ATLAS are not compatible with the AllofUS researcher workbench, the AllofUs R package includes a 
-function to download a cohort definition from ATLAS and generate the cohort in the AllofUs database.
+It is often useful to build more complex cohort definitions using ATLAS, a web-based application that allows users to define cohorts and run analyses on the OHDSI network. While most of the features of ATLAS are not compatible with the AllofUS researcher workbench, the All of Us R package includes a 
+function to download a cohort definition from ATLAS and generate the cohort in the All of Us database.
 
-To use this feature of the allofus package, you'll also need to install the `ROhdsiWebApi` package from GitHub. This package is used to query the ATLAS API and download the cohort definition and SQL query. The package is not available on CRAN (and is therefore not included with the allofus package), but it can be installed using the `pak` package:
+To use this feature of the `allofus `package, you'll also need to install the [`ROhdsiWebApi`](https://github.com/OHDSI/ROhdsiWebApi) package from GitHub. This package is used to query the ATLAS API and download the cohort definition and SQL query. The package is not available on CRAN (and is therefore not included with the `allofus package`), but it can be installed using the `pak` package:
 
 ```{r install}
 install.packages("pak")
@@ -28,9 +28,10 @@ library(allofus)
 library(ROhdsiWebApi)
 ```
 
-If you haven't already, this is the time to build your cohort definition in ATLAS. You can use the demo version of ATLAS which is publicly 
-available at https://atlas-demo.ohdsi.org. The demo version of ATLAS is pre-populated with many sample cohort definitions You can also use an ATLAS instance
-in your organization's OMOP CDM. In this case, we'll use the cohort definition for id 1788061 which is a simple stroke cohort definition.
+If you haven't already, this is the time to build your cohort definition in ATLAS. You can use the publicly available [demo version of ATLAS](https://atlas-demo.ohdsi.org) which is pre-populated with many sample cohort definitions (though keep in mind that they are not validated). You can also use an ATLAS instance
+in your organization's OMOP CDM. (A free, instructional course for using ATLAS is available through [EHDEN Academy](https://academy.ehden.eu/).)
+
+In this case, we'll use the cohort definition 1788061, which is a simple stroke cohort definition.
 
 Using `ROhdsiWebApi`, we can download the cohort definition and SQL query from ATLAS:
 
@@ -39,7 +40,7 @@ cd <- ROhdsiWebApi::getCohortDefinition(1788061, "https://atlas-demo.ohdsi.org/W
 cd_sql <- ROhdsiWebApi::getCohortSql(cd, "https://atlas-demo.ohdsi.org/WebAPI")
 ```
 
-Then, we can use the `allofus::aou_atlas_cohort()` functino to generate the cohort in the AllofUs database.
+Then, we can use the `aou_atlas_cohort()` function to generate the cohort in the All of Us database.
 
 ```{r cohort}
 cohort <- aou_atlas_cohort(
@@ -48,28 +49,27 @@ cohort <- aou_atlas_cohort(
 )
 ```
 
-Because the AllofUs program does not use the typical hueristics for the `observation_period` table (see https://ohdsi.github.io/CommonDataModel/ehrObsPeriods.html), observation periods are first generated for each subject using the `allofus::aou_observation_period()` function. After generating a new `observation_period` table, the SQL from `ROhdsiWebApi::getCohortSql` will extract a cohort from the AllofUs database - resulting in a *local* dataframe with the cohort start and end dates for each subject who fell within the cohort definition. The function is based on code from https://github.com/cmayer2/r4aou with some tweaks to generate the appropriate observation periods and incorporate other package functions.
+Because the All of Us program does not use the [typical heuristics](https://ohdsi.github.io/CommonDataModel/ehrObsPeriods.html) for the `observation_period` table, observation periods are first generated for each subject using the `aou_observation_period()` function. After generating a new `observation_period` table, the SQL from `ROhdsiWebApi::getCohortSql()` will extract a cohort from the All of Us database - resulting in a *local* dataframe with the cohort start and end dates for each subject who fell within the cohort definition. (The function is based on code from https://github.com/cmayer2/r4aou with some tweaks to generate the appropriate observation periods and incorporate other package functions.)
 
 ```{r}
 head(cohort)
 ```
+```
+#> # A tibble: 6 × 4
+#>   cohort_definition_id person_id cohort_start_date cohort_end_date
+#>                  <int> <int>     <date>            <date>         
+#> 1              1788061 xxxxxxx   1995-03-27        1995-03-27     
+#> 2              1788061 xxxxxxx   2012-01-07        2012-01-21     
+#> 3              1788061 xxxxxxx   2010-06-17        2016-04-05     
+#> 4              1788061 xxxxxxx   2015-08-12        2017-08-30     
+#> 5              1788061 xxxxxxx   2017-01-24        2019-01-24     
+#> 6              1788061 xxxxxxx   2008-07-09        2019-01-24
+```
 
-| cohort_definition_id | person_id | cohort_start_date | cohort_end_date |
-|---------------------:|----------:|------------------:|----------------:|
-|                <int> |     <chr> |            <date> |          <date> |
-|              1788061 |    xxxxxx |        2019-02-04 |      2022-02-21 |
-|              1788061 |    xxxxxx |        2016-12-04 |      2022-01-22 |
-|              1788061 |    xxxxxx |        2019-08-24 |      2021-11-30 |
-|              1788061 |    xxxxxx |        2018-01-03 |      2021-07-01 |
-|              1788061 |    xxxxxx |        2021-07-09 |      2021-11-20 |
-|              1788061 |    xxxxxx |        2018-04-26 |      2021-08-21 |
-
-To use this cohort table further, you can join it to other tables from the AllofUs database (after they have been "collected"). Or, 
+To use this cohort table further, you can join it to other tables from the All of Us database (after they have been "collected"). Or, 
 to use this table to limit the person table (or other OMOP CDM tables) to only your cohort, filter for the values in the `cohort$person_id` column:
 
 ```{r}
-tbl(con, "person") %>%
-  filter(person_id %in% cohort$person_id)
+dplyr::tbl(con, "person") %>%
+  dplyr::filter(person_id %in% !!cohort$person_id)
 ```
-
-More information on the `ROhdsiWebApi` can be found at https://github.com/OHDSI/ROhdsiWebApi. A free, instructional course for using ATLAS is available through EHDEN Academy: https://academy.ehden.eu/.

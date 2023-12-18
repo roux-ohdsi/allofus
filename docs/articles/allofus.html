@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <meta name="description" content="allofus">
-<title>SQL in R • allofus</title>
+<title>All of Us in R • allofus</title>
 <!-- favicons --><link rel="icon" type="image/png" sizes="16x16" href="../favicon-16x16.png">
 <link rel="icon" type="image/png" sizes="32x32" href="../favicon-32x32.png">
 <link rel="apple-touch-icon" type="image/png" sizes="180x180" href="../apple-touch-icon.png">
@@ -18,7 +18,7 @@
 <script src="../deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/v4-shims.min.css" integrity="sha256-wZjR52fzng1pJHwx4aV2AO3yyTOXrcDW7jBpJtTwVxw=" crossorigin="anonymous">
 <!-- bootstrap-toc --><script src="https://cdn.jsdelivr.net/gh/afeld/bootstrap-toc@v1.0.1/dist/bootstrap-toc.min.js" integrity="sha256-4veVQbu7//Lk5TSmc7YV48MxtMy98e26cf5MrgZYnwo=" crossorigin="anonymous"></script><!-- headroom.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/headroom.min.js" integrity="sha256-AsUX4SJE1+yuDu5+mAVzJbuYNPHj/WroHuZ8Ir/CkE0=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script><!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><!-- search --><script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/6.4.6/fuse.js" integrity="sha512-zv6Ywkjyktsohkbp9bb45V6tEMoWhzFzXis+LrMehmJZZSys19Yxf1dopHx7WzIKxr5tK2dVcYmaCk2uqdjF4A==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/autocomplete.js/0.38.0/autocomplete.jquery.min.js" integrity="sha512-GU9ayf+66Xx2TmpxqJpliWbT5PiGYxpaG8rfnBEk1LL8l1KGkRShhngwdXK1UgqhAzWpZHSiYPc09/NwDQIGyg==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.11.1/mark.min.js" integrity="sha512-5CYOlHXGh6QpOFA/TeTylKLWfB3ftPsde7AnmhuitiTX4K5SqCLBeKro6sPS8ilsz1Q4NRx3v8Ko2IBiszzdww==" crossorigin="anonymous"></script><!-- pkgdown --><script src="../pkgdown.js"></script><link href="../extra.css" rel="stylesheet">
-<meta property="og:title" content="SQL in R">
+<meta property="og:title" content="All of Us in R">
 <meta property="og:description" content="allofus">
 <!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js" integrity="sha256-nvJJv9wWKEm88qvoQl9ekL2J+k/RWIsaSScxxlsrv8k=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/config/TeX-AMS-MML_HTMLorMML.js" integrity="sha256-84DKXVJXs0/F8OTMzX4UR909+jtl4G7SPypPavF+GfA=" crossorigin="anonymous"></script><!--[if lt IE 9]>
 <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
@@ -33,7 +33,7 @@
     <div style="height:40px;display:inline;margin:0 10px;"><a href="https://ohdsi.northeastern.edu/" class="external-link"><img src="https://roux-ohdsi.github.io/allofus/articles/logo.png" style="width:auto;height:100%;"></a></div>
     <a class="navbar-brand me-2" href="../index.html">allofus</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.0.0</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -84,7 +84,7 @@
 
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
-      <img src="" class="logo" alt=""><h1>SQL in R</h1>
+      <img src="" class="logo" alt=""><h1>All of Us in R</h1>
             
       
       <small class="dont-index">Source: <a href="https://github.com/roux-ohdsi/allofus/blob/HEAD/vignettes/allofus.Rmd" class="external-link"><code>vignettes/allofus.Rmd</code></a></small>
@@ -416,6 +416,32 @@ example, we could remove the <code>provider_id</code> column from the
 </div>
 </div>
 <div class="section level2">
+<h2 id="joins-from-different-sources">Joins from different sources?<a class="anchor" aria-label="anchor" href="#joins-from-different-sources"></a>
+</h2>
+<p>Unfortunately, we can’t join a table on the database with a dataframe
+in R. If you end up with one of each, you have a couple of options:</p>
+<ol style="list-style-type: decimal">
+<li>See if you can avoid collecting the dataframe into R. Most
+<code>allofus</code> functions have a <code>collect = FALSE</code>
+argument, but sometimes it’s unavoidable.</li>
+<li>Bring the table from the database into R using
+<code>collect()</code> and then join it with the dataframe in R. This
+can be inefficient if part of the reason for joining is to subset the
+table down to only data you care about.</li>
+<li>First subset the table on the database, then bring it into R and
+join it with the dataframe in R. For example, if you have a cohort of
+participants as a dataframe, e.g., as created by
+<code><a href="../reference/aou_atlas_cohort.html">aou_atlas_cohort()</a></code>, and you want to bring in activity data
+for those participants, you could run:</li>
+</ol>
+<div class="sourceCode" id="cb29"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># instead of aou_join(cohort, "activity_summary", type = "left", by = "person_id")</span></span>
+<span><span class="va">activity_data</span> <span class="op">&lt;-</span> <span class="fu">tbl</span><span class="op">(</span><span class="va">con</span>, <span class="st">"activity_summary"</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/stats/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">person_id</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span> <span class="op">!</span><span class="op">!</span><span class="va">cohort</span><span class="op">$</span><span class="va">person_id</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu">collect</span><span class="op">(</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu">right_join</span><span class="op">(</span><span class="va">cohort</span>, by <span class="op">=</span> <span class="st">"person_id"</span><span class="op">)</span></span></code></pre></div>
+</div>
+<div class="section level2">
 <h2 id="viewing-the-underlying-sql-with-show_query">Viewing the Underlying SQL with <code>show_query()</code><a class="anchor" aria-label="anchor" href="#viewing-the-underlying-sql-with-show_query"></a>
 </h2>
 <p>Understanding the SQL code that <code>dbplyr</code> generates can be
@@ -423,7 +449,7 @@ insightful, especially if you’re debugging or simply curious about the
 translation from R to SQL. To view the SQL query that corresponds to
 your <code>dbplyr</code> operations, use the <code>show_query()</code>
 function:</p>
-<div class="sourceCode" id="cb29"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb30"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">obs</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
 <span>  <span class="fu">show_query</span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 <pre><code>SELECT
@@ -489,7 +515,7 @@ difficult to express in <code>dplyr</code> syntax. The
 <code><a href="../reference/aou_sql.html">aou_sql()</a></code> that makes it easy to run SQL code directly on
 the database. For example, we could count the number of people in the
 <code>person</code> table like this:</p>
-<div class="sourceCode" id="cb31"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb32"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/aou_sql.html">aou_sql</a></span><span class="op">(</span><span class="st">"SELECT COUNT(*) AS n FROM {CDR}.person"</span><span class="op">)</span></span></code></pre></div>
 <p>There are a few important things to note about this code. First, the
 <code>CDR</code> variable is a special variable referring to what All of
@@ -500,7 +526,7 @@ names with “{CDR}”. This means we can’t run the code we get from
 <code>show_query()</code> without modification. For example, we could
 count the number of young women in the dataset, as we did above with the
 <code>dbplyr</code> approach, like this:</p>
-<div class="sourceCode" id="cb32"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb33"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/aou_sql.html">aou_sql</a></span><span class="op">(</span><span class="st">"</span></span>
 <span><span class="st">SELECT count(*) AS `n`</span></span>
 <span><span class="st">FROM (</span></span>

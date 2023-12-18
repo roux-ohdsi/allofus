@@ -37,7 +37,7 @@ on_workbench <- function() {
 aou_connect <- function(CDR = getOption("aou.default.cdr"), ...) {
   if (packageVersion("dbplyr") == "2.4.0") {
     stop('
-         dbplyr v2.4.0 is not compatible with the AllofUs database (bigquery).
+         dbplyr v2.4.0 is not compatible with the All of Us database (bigquery).
          Please install either dbplyr v2.3.4 or the development version of dbplyr.
          # Install {pak}
          install.packages("pak")
@@ -68,6 +68,8 @@ aou_connect <- function(CDR = getOption("aou.default.cdr"), ...) {
         stop()
       }
 
+      # also let it fail if there's no person_table
+      test_table <- dplyr::tbl(connection, "person")
 
       cli::cli_inform(c("v" = "Connected successfully!"))
       options(aou.default.con = connection)

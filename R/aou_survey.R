@@ -332,7 +332,7 @@ aou_survey <- function(cohort = NULL,
         cli::cli_inform(c("i" = "The question associated with concept id {specific_concept_id} was added to the later version of the family health history survey so earlier All of Us participants may not have answered it."))
       }
 
-      obs <- tbl(con, "observation") %>%
+      obs <- dplyr::tbl(con, "observation") %>%
         dplyr::inner_join(dplyr::select(function_cohort, "person_id"), by = "person_id") %>%
         dplyr::filter(.data$observation_source_concept_id %in% !!c(osci_overall, osci_specific)) %>%
         dplyr::select("person_id", "observation_source_concept_id", "value_source_concept_id", "value_source_value", "observation_date") %>%
