@@ -126,7 +126,8 @@ aou_survey <- function(cohort = NULL,
       dplyr::filter(.data$person_id %in% !!unique(cohort$person_id)) %>%
       dplyr::select('person_id')
   } else {
-    function_cohort <- cohort
+    function_cohort <- cohort %>%
+      dplyr::select('person_id')
   }
 
   # pivot longer to inclde the rx, on_txt, and age_diagnosis columns

@@ -110,18 +110,39 @@ data from the All of Us database.</p>
 weren’t born in the US. For this cohort, we want to extract data on
 their history of diabetes, their A1C lab values, and their use of
 metformin after joining All of Us.</p>
+<div class="section level2">
+<h2 id="survey-data">Survey data<a class="anchor" aria-label="anchor" href="#survey-data"></a>
+</h2>
 <p>The first step is extracting gender and country of birth from the
 survey data. We can retrieve these variables either by concept code or
 concept id. Using the <code>allofus</code> <a href="https://roux-ohdsi.github.io/allofus/articles/searchable_codebook.html" class="external-link">searchable
 codebook</a>, we find that the concept id for gender is 1585838 and for
-birthplace is 1586135.</p>
+birthplace is 1586135. We can use the <code>aou_survey</code> function
+to extract these variables from the All of Us database. This function
+takes a vector of concept ids or codes, and returns a dataset with one
+row per participant and one column per variable. The
+<code>question_output</code> argument allows you to specify the names of
+the column in the output dataset. Alternatively, you can specify
+“concept_id” or “concept_code” to name the variables according to one of
+those options.</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://roux-ohdsi.github.io/allofus/" class="external-link">allofus</a></span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://tidyverse.tidyverse.org" class="external-link">tidyverse</a></span><span class="op">)</span></span>
 <span></span>
-<span><span class="va">svy_vars</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/aou_survey.html">aou_survey</a></span><span class="op">(</span>questions <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1585838</span>, <span class="fl">1586135</span><span class="op">)</span>, question_output <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"gender"</span>, <span class="st">"birthplace"</span><span class="op">)</span><span class="op">)</span></span>
-<span></span>
-<span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/count.html" class="external-link">count</a></span><span class="op">(</span><span class="va">svy_vars</span>, <span class="va">gender</span>, <span class="va">birthplace</span><span class="op">)</span></span></code></pre></div>
+<span><span class="va">svy_vars</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/aou_survey.html">aou_survey</a></span><span class="op">(</span>questions <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1585838</span>, <span class="fl">1586135</span><span class="op">)</span>, question_output <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"gender"</span>, <span class="st">"birthplace"</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+<pre><code><span><span class="co">#&gt; Warning: No cohort provided.</span></span>
+<span><span class="co">#&gt; → Pulling survey data for entire All of Us cohort.</span></span></code></pre>
+<p>Note that the <code>aou_survey</code> function takes a cohort as an
+argument, with the only requirement that it contains a column called
+<code>person_id</code>. If no cohort is provided (e.g., if you are using
+survey data to define your cohort), the function will pull data for the
+entire All of Us cohort.</p>
+<p>Because <code><a href="../reference/aou_survey.html">aou_survey()</a></code> defaults to
+<code>collect = FALSE</code>, the query isn’t fully executed yet, and we
+can continue to perform analyses, like cross-tabulating the two
+variables, on the database.</p>
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/count.html" class="external-link">count</a></span><span class="op">(</span><span class="va">svy_vars</span>, <span class="va">gender</span>, <span class="va">birthplace</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">#&gt; # Source:   SQL [?? x 3]</span></span>
 <span><span class="co">#&gt; # Database: BigQueryConnection</span></span>
 <span><span class="co">#&gt;    gender            birthplace       n</span></span>
@@ -139,9 +160,35 @@ birthplace is 1586135.</p>
 <span><span class="co">#&gt; # ℹ more rows</span></span></code></pre>
 <p>To create our cohort, we can subset the data to the participants
 matching our criteria.</p>
-<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">cohort</span> <span class="op">&lt;-</span> <span class="va">svy_vars</span> <span class="op">|&gt;</span> </span>
-<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">gender</span> <span class="op">==</span> <span class="st">"Woman"</span>, <span class="va">birthplace</span> <span class="op">==</span> <span class="st">"Other"</span><span class="op">)</span></span></code></pre></div>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">gender</span> <span class="op">==</span> <span class="st">"Woman"</span>, <span class="va">birthplace</span> <span class="op">==</span> <span class="st">"Other"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">cohort</span></span></code></pre></div>
+<pre><code><span><span class="co">#&gt; # Source:   SQL [?? x 5]</span></span>
+<span><span class="co">#&gt; # Database: BigQueryConnection</span></span>
+<span><span class="co">#&gt;    person_id birthplace gender birthplace_date gender_date</span></span>
+<span><span class="co">#&gt;      &lt;int64&gt; &lt;chr&gt;      &lt;chr&gt;  &lt;date&gt;          &lt;date&gt;     </span></span>
+<span><span class="co">#&gt;  1   xxxxxxx Other      Woman  2019-08-xx      2019-08-xx </span></span>
+<span><span class="co">#&gt;  2   xxxxxxx Other      Woman  2018-06-xx      2018-06-xx </span></span>
+<span><span class="co">#&gt;  3   xxxxxxx Other      Woman  2019-05-xx      2019-05-xx </span></span>
+<span><span class="co">#&gt;  4   xxxxxxx Other      Woman  2019-02-xx      2019-02-xx </span></span>
+<span><span class="co">#&gt;  5   xxxxxxx Other      Woman  2018-06-xx      2018-06-xx </span></span>
+<span><span class="co">#&gt;  6   xxxxxxx Other      Woman  2019-03-xx      2019-03-xx </span></span>
+<span><span class="co">#&gt;  7   xxxxxxx Other      Woman  2019-04-xx      2019-04-xx </span></span>
+<span><span class="co">#&gt;  8   xxxxxxx Other      Woman  2019-04-xx      2019-04-xx </span></span>
+<span><span class="co">#&gt;  9   xxxxxxx Other      Woman  2019-05-xx      2019-05-xx </span></span>
+<span><span class="co">#&gt; 10   xxxxxxx Other      Woman  2020-09-xx      2020-09-xx </span></span>
+<span><span class="co">#&gt; # ℹ more rows</span></span></code></pre>
+<p>Note that the <code><a href="../reference/aou_survey.html">aou_survey()</a></code> function automatically
+creates an additional column for every survey variable extracted, which
+contains the date the participant answered the question. These are
+automatically named by adding “_date” as a suffix to the column
+names.</p>
+</div>
+<div class="section level2">
+<h2 id="ehr-data">EHR data<a class="anchor" aria-label="anchor" href="#ehr-data"></a>
+</h2>
 <p>Now that we have our cohort, we want to create a dataset with data
 from these participants’ medical records. We first want to find the
 concept ids of the data we want to extract. There are a number of tools
@@ -175,9 +222,9 @@ is an example, and a real analysis would have a more thorough search for
 relevant concepts.</p>
 <table class="table">
 <colgroup>
-<col width="34%">
-<col width="40%">
-<col width="25%">
+<col width="16%">
+<col width="66%">
+<col width="17%">
 </colgroup>
 <thead><tr class="header">
 <th>Concept ID</th>
@@ -217,28 +264,133 @@ relevant concepts.</p>
 </tr>
 </tbody>
 </table>
-<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<p>First, we’ll extract data on diabetes diagnoses. We can use the
+<code>aou_concept_set</code> function to extract data from the All of Us
+database. This function takes a cohort, a vector of concepts, and a
+domain or set of domains. You can actually extract data from multiple
+domains at once – the default is to search all domains. However, it is
+helpful to specify the domain(s) when you can, for speed and clarity.
+The <code>output =</code> argument specifies the type of data to
+extract. Here, we’ll extract an indicator variable for whether the
+participant has a diabetes diagnosis at any point in their medical
+record. We’ll call that variable “t2dm”.</p>
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">t2dm</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/aou_concept_set.html">aou_concept_set</a></span><span class="op">(</span><span class="va">cohort</span>, concepts <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">201826</span>, <span class="fl">4193704</span><span class="op">)</span>, </span>
-<span>                        domains <span class="op">=</span> <span class="st">"condition"</span>, output <span class="op">=</span> <span class="st">"indicator"</span><span class="op">)</span></span>
-<span><span class="va">metformin</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/aou_concept_set.html">aou_concept_set</a></span><span class="op">(</span><span class="va">cohort</span>, concepts <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">40164929</span>, <span class="fl">40164897</span><span class="op">)</span>, </span>
-<span>                             domains <span class="op">=</span> <span class="st">"drug"</span>, output <span class="op">=</span> <span class="st">"count"</span><span class="op">)</span></span>
-<span><span class="va">a1c</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/aou_concept_set.html">aou_concept_set</a></span><span class="op">(</span><span class="va">cohort</span>, concepts <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">3004410</span>, <span class="fl">3005673</span><span class="op">)</span>, </span>
-<span>                       domains <span class="op">=</span> <span class="st">"measurement"</span>, output <span class="op">=</span> <span class="st">"all"</span><span class="op">)</span></span></code></pre></div>
-<p>You can actually extract data from multiple domains at once – the
-default is to search all domains. However, it is helpful to specify the
-domain(s) when you can, for speed and clarity.</p>
+<span>                        domains <span class="op">=</span> <span class="st">"condition"</span>, output <span class="op">=</span> <span class="st">"indicator"</span>,</span>
+<span>                       concept_set_name <span class="op">=</span> <span class="st">"t2dm"</span><span class="op">)</span></span></code></pre></div>
+<p>We can also extract data within a certain time window. For example,
+if we only want to extract metformin use after joining All of Us, we can
+specify a start date as the date the participant answered the gender
+question (on the Basics survey). We’ll count how many times the
+participant was prescribed metformin after that time point.</p>
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">metformin</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/aou_concept_set.html">aou_concept_set</a></span><span class="op">(</span><span class="va">cohort</span>, concepts <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">40164929</span>, <span class="fl">40164897</span><span class="op">)</span>, </span>
+<span>                             domains <span class="op">=</span> <span class="st">"drug"</span>, output <span class="op">=</span> <span class="st">"count"</span>, </span>
+<span>                             start_date <span class="op">=</span> <span class="st">"gender_date"</span>, concept_set_name <span class="op">=</span> <span class="st">"metformin"</span><span class="op">)</span></span></code></pre></div>
+<p>For a concept set in the measurement domain, we likely want to set
+<code>output = "all"</code> because we are interested in the values of
+the measurements, not whether they had any or how many they had.</p>
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">a1c</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/aou_concept_set.html">aou_concept_set</a></span><span class="op">(</span><span class="va">cohort</span>, concepts <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">3004410</span>, <span class="fl">3005673</span><span class="op">)</span>, </span>
+<span>                       domains <span class="op">=</span> <span class="st">"measurement"</span>, output <span class="op">=</span> <span class="st">"all"</span>, start_date <span class="op">=</span> <span class="st">"gender_date"</span><span class="op">)</span></span></code></pre></div>
+<p>The output to this is a dataset with one row per measurement. We can
+see that the second participant in the output has had 4 A1C measurements
+since joining All of Us, while the fifth had 1 and the rest had
+none.</p>
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">a1c</span></span></code></pre></div>
+<pre><code><span><span class="co">#&gt; # Source:   SQL [?? x 9]</span></span>
+<span><span class="co">#&gt; # Database: BigQueryConnection</span></span>
+<span><span class="co">#&gt;    person_id concept_date concept_id concept_name concept_domain value_as_number</span></span>
+<span><span class="co">#&gt;      &lt;int64&gt; &lt;date&gt;          &lt;int64&gt; &lt;chr&gt;        &lt;chr&gt;                    &lt;dbl&gt;</span></span>
+<span><span class="co">#&gt;  1   xxxxxx1 NA                   NA NA           NA                        NA  </span></span>
+<span><span class="co">#&gt;  2   xxxxxx2 2022-03-xx      3004410 Hemoglobin … Measurement                5.6</span></span>
+<span><span class="co">#&gt;  3   xxxxxx2 2021-07-xx      3004410 Hemoglobin … Measurement                5.6</span></span>
+<span><span class="co">#&gt;  4   xxxxxx2 2021-05-xx      3004410 Hemoglobin … Measurement                5.5</span></span>
+<span><span class="co">#&gt;  5   xxxxxx2 2020-10-xx      3004410 Hemoglobin … Measurement                6  </span></span>
+<span><span class="co">#&gt;  6   xxxxxx3 NA                   NA NA           NA                        NA  </span></span>
+<span><span class="co">#&gt;  7   xxxxxx4 NA                   NA NA           NA                        NA  </span></span>
+<span><span class="co">#&gt;  8   xxxxxx5 2019-04-xx      3005673 Hemoglobin … Measurement                5.9</span></span>
+<span><span class="co">#&gt;  9   xxxxxx6 NA                   NA NA           NA                        NA  </span></span>
+<span><span class="co">#&gt; 10   xxxxxx7 NA                   NA NA           NA                        NA  </span></span>
+<span><span class="co">#&gt; # ℹ more rows</span></span>
+<span><span class="co">#&gt; # ℹ 3 more variables: value_as_concept_id &lt;int64&gt;, value_source_value &lt;chr&gt;,</span></span>
+<span><span class="co">#&gt; #   gender_date &lt;date&gt;</span></span></code></pre>
+</div>
+<div class="section level2">
+<h2 id="health-history-survey-data">Health history survey data<a class="anchor" aria-label="anchor" href="#health-history-survey-data"></a>
+</h2>
+<p>Suppose we want to compare the EHR data to self-reported survey data
+on diabetes diagnoses. Returning again to the <code><a href="../reference/aou_survey.html">aou_survey()</a></code>
+function, we need to first find the concept id for the question asking
+about diabetes diagnoses. Wuestions from the health history surveys are
+more complex than others like gender and birthplace: there are branching
+questions and complex skip patterns for each question, which were also
+asked about family members, and groups of diagnoses were asked about
+together. The searchable health history codebook is a useful tool for
+finding the concept id for these questions. We can search for “diabetes”
+and find the concept id for the question asking about type 2 diabetes
+diagnoses for the respondent: 43529932. We can also use the <a href="https://databrowser.researchallofus.org/" class="external-link">Data Browser</a> to find
+the same concept id: <img src="../../../All%20of%20Us/allofus/articles/images/diabetes-self.png" width="600"></p>
+<p>Data from the health history surveys is returned as “Yes”, “No”, or
+“Skip”. An observation will have a value of “No” if the participant
+answered that someone in their family had the condition, but did not
+self-identify as having the condition, or if they responded that no one
+in their family had the condition. If they skipped either part of the
+question, the value will be “Skip”.</p>
+<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">t2dm_self</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/aou_survey.html">aou_survey</a></span><span class="op">(</span><span class="va">cohort</span>, questions <span class="op">=</span> <span class="fl">43529932</span>, question_output <span class="op">=</span> <span class="st">"t2dm_survey"</span><span class="op">)</span></span></code></pre></div>
 <p>Next, we want to combine these datasets into one. We can do this
 using the <code>aou_join</code> function. This function takes a list of
 datasets and joins them together using the participant id. The
 <code>aou_join</code> function also allows you to specify the type of
 join (inner, left, right, or full). Here we’ll perform repeated left
-joins into the cohort.</p>
-<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">combined_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://purrr.tidyverse.org/reference/reduce.html" class="external-link">reduce</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="va">cohort</span>, <span class="va">t2dm</span>, <span class="va">metformin</span>, <span class="va">a1c</span><span class="op">)</span>, </span>
-<span>                        <span class="va">aou_join</span>, type <span class="op">=</span> <span class="st">"left"</span>, by <span class="op">=</span> <span class="st">"person_id"</span><span class="op">)</span></span></code></pre></div>
-<!-- There are several tools available for finding data to extract from the All of Us database. The [Data Browser](https://databrowser.researchallofus.org/) is a useful, publicly available tool for exploring data (survey questions, conditions in the electronic health record, fitbit measurements etc.). However, it doesn't necessarily contain the information needed to actually find the data in the database. -->
-<!-- Data dictionaries can be found [via this link](https://support.researchallofus.org/hc/en-us/articles/360033200232-Data-Dictionaries-for-the-Curated-Data-Repositories-CDRs-) and [this page](https://support.researchallofus.org/hc/en-us/articles/6085114880148) also has helpful information. -->
-  </main>
+joins into the cohort using the <code><a href="https://purrr.tidyverse.org/reference/reduce.html" class="external-link">reduce()</a></code> function from the
+<code>purrr</code> package.</p>
+<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">combined_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://purrr.tidyverse.org/reference/reduce.html" class="external-link">reduce</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="va">cohort</span>, <span class="va">t2dm</span>, <span class="va">metformin</span>, <span class="va">a1c</span>, <span class="va">t2dm_self</span><span class="op">)</span>, </span>
+<span>                        <span class="va">aou_join</span>, type <span class="op">=</span> <span class="st">"left"</span><span class="op">)</span></span></code></pre></div>
+<p>Our combined dataset has columns for the diabetes diagnosis indicator
+from the EHR data, the number of metformin prescriptions, the
+self-reported diabetes diagnosis from the health history survey and the
+date that survey was completed, as well as complete data on the A1C
+measurements. Participants with multiple measurements therefore have
+multiple rows in the dataset. We may want to do some additional analyses
+before bringing the table off the database and into R. For example, we
+may want to summarize the A1C measurements as the highest value for each
+participant. We can continue to manipulate the data using
+<code>dplyr</code> functions (see
+<code><a href="../articles/sql.html">vignette("sql", package = "allofus")</a></code>).</p>
+<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">final_data</span> <span class="op">&lt;-</span> <span class="va">combined_data</span> <span class="op">|&gt;</span> </span>
+<span>    <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html" class="external-link">group_by</a></span><span class="op">(</span><span class="va">person_id</span>, <span class="va">birthplace</span>, <span class="va">t2dm</span>, <span class="va">metformin</span>, <span class="va">t2dm_survey</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
+<span>    <span class="fu"><a href="https://dplyr.tidyverse.org/reference/summarise.html" class="external-link">summarize</a></span><span class="op">(</span>max_a1c <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Extremes.html" class="external-link">max</a></span><span class="op">(</span><span class="va">value_as_number</span>, na.rm <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>, .groups <span class="op">=</span> <span class="st">"drop"</span><span class="op">)</span></span></code></pre></div>
+<p>This final query may take a few seconds to run – it is the
+accumulation of all the queries we’ve run so far (use
+<code><a href="https://dplyr.tidyverse.org/reference/explain.html" class="external-link">show_query()</a></code> to see the SQL query that will be run). For
+that reason, it is often helpful to print the result of each individual
+query to make sure it is what you expect before moving on to the next
+step.</p>
+<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">final_data</span></span></code></pre></div>
+<pre><code><span><span class="co">#&gt; # Source:   SQL [?? x 5]</span></span>
+<span><span class="co">#&gt; # Database: BigQueryConnection</span></span>
+<span><span class="co">#&gt;    person_id  t2dm metformin t2dm_survey max_a1c</span></span>
+<span><span class="co">#&gt;      &lt;int64&gt; &lt;dbl&gt;     &lt;dbl&gt; &lt;chr&gt;         &lt;dbl&gt;</span></span>
+<span><span class="co">#&gt;  1   xxxxxxx     0         0 NA             NA  </span></span>
+<span><span class="co">#&gt;  2   xxxxxxx     0         0 DontKnow       NA  </span></span>
+<span><span class="co">#&gt;  3   xxxxxxx     0         0 NA             NA  </span></span>
+<span><span class="co">#&gt;  4   xxxxxxx     0         0 No             NA  </span></span>
+<span><span class="co">#&gt;  5   xxxxxxx     0         0 NA             NA  </span></span>
+<span><span class="co">#&gt;  6   xxxxxxx     0         0 NA             NA  </span></span>
+<span><span class="co">#&gt;  7   xxxxxxx     0         0 NA             NA  </span></span>
+<span><span class="co">#&gt;  8   xxxxxxx     0         0 No             NA  </span></span>
+<span><span class="co">#&gt;  9   xxxxxxx     0         0 NA             NA  </span></span>
+<span><span class="co">#&gt; 10   xxxxxxx     0         0 No              5.4</span></span>
+<span><span class="co">#&gt; # ℹ more rows</span></span></code></pre>
+</div>
+  </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>
+    </nav></aside>
 </div>
 
 
