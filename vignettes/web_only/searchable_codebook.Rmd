@@ -2,7 +2,7 @@
 title: "All of Us Surveys"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{Codebook for AllofUs Surveys}
+  %\VignetteIndexEntry{All of Us Surveys}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
@@ -39,8 +39,8 @@ library(tibble)
 library(DT)
 ```
 
-This table consists of mapped rows from the [publicly available AllofUs Survey Codebook](https://docs.google.com/spreadsheets/d/1Ey8MScRYZ9QyS4izVYScISLMb62QEhSM-ErbG27dNtw/edit#gid=1832128489)
-to the AllofUs PPI Vocabulary available on [Athena](https://athena.ohdsi.org/search-terms/start). A small number of rows did not
+This table consists of mapped rows from the [publicly available All of Us Survey Codebook](https://docs.google.com/spreadsheets/d/1Ey8MScRYZ9QyS4izVYScISLMb62QEhSM-ErbG27dNtw/edit#gid=1832128489)
+to the All of Us PPI Vocabulary available on [Athena](https://athena.ohdsi.org/search-terms/start). A small number of rows did not
 match between the codebook and the Athena PPI Vocabulary. The code to generate a full table can be found [here](https://github.com/roux-ohdsi/allofus/blob/main/data-raw/pkg_data.R). It can also be accessed in R using `allofus::aou_codebook`. 
 
 More information on the All of Us Surveys is available at the All of Us [Survey Explorer](https://www.researchallofus.org/data-tools/survey-explorer/). PDF versions of the individual surveys are linked in the table.
@@ -75,12 +75,12 @@ DT::datatable(df,
     # scrollX = TRUE,
     # scrollCollapse = TRUE,
     columnDefs = list(list(
-      targets = c(2,6,7),
+      targets = c(2, 6, 7),
       # targets = c(2, 5, 6),
       render = DT::JS("$.fn.dataTable.render.ellipsis( 10, false )")
     ))
   )
-) |>
-  DT::formatStyle(table = _, columns = cols, fontSize = "80%")
+) %>%
+  DT::formatStyle(table = ., columns = cols, fontSize = "80%")
 ```
 

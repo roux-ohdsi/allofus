@@ -2,7 +2,7 @@
 title: "Health History Surveys"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{Codebook for Health History Surveys}
+  %\VignetteIndexEntry{Health History Surveys}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
@@ -248,6 +248,6 @@ DT::datatable(
       )
     )
   )
-) |>
-  DT::formatStyle(table = _, columns = colnames(Dat), fontSize = "80%")
+) %>%
+  DT::formatStyle(table = ., columns = colnames(Dat), fontSize = "80%")
 ```

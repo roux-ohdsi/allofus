@@ -1,4 +1,4 @@
-#' Function to test all of us package on AllofUs Researcher Workbench using documented examples
+#' Function to test all of us package on All of Us Researcher Workbench using documented examples
 #' @keywords internal
 #' @noRd
 aou_test_examples <- function() {
@@ -16,12 +16,11 @@ aou_test_examples <- function() {
   }
 }
 
-#' Function to test all of us package on AllofUs Researcher Workbench using testthat tests
+#' Function to test all of us package on All of Us Researcher Workbench using testthat tests
 #' @keywords internal
 #' @noRd
-aou_test_examples <- function() {
-
+aou_test_tests <- function() {
   gh::gh("https://api.github.com/repos/roux-ohdsi/allofus/contents/tests/testthat", ref = "cran") %>%
+    purrr::map_chr(purrr::pluck, "download_url") %>%
     purrr::walk(source)
-
 }

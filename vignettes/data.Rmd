@@ -61,7 +61,7 @@ count(svy_vars, gender, birthplace)
 To create our cohort, we can subset the data to the participants matching our criteria.
 
 ```{r}
-cohort <- svy_vars |>
+cohort <- svy_vars %>%
   filter(gender == "Woman", birthplace == "Other")
 
 cohort
@@ -106,7 +106,7 @@ Now that we have our cohort, we want to create a dataset with data from these pa
 Here are some concepts we may want to include. Keep in mind that this is an example, and a real analysis would have a more thorough search for relevant concepts.
 
 | Concept ID | Concept Name                                     | Domain      |
-|------------|--------------------------------------------------|-------------|
+|---------------|-------------------------------------------|---------------|
 | 201826     | Type 2 diabetes mellitus                         | Condition   |
 | 4193704    | Type 2 diabetes mellitus without complication    | Condition   |
 | 40164929   | metformin hydrochloride 500 MG Oral Tablet       | Drug        |
@@ -191,8 +191,8 @@ combined_data <- reduce(list(cohort, t2dm, metformin, a1c, t2dm_self),
 Our combined dataset has columns for the diabetes diagnosis indicator from the EHR data, the number of metformin prescriptions, the self-reported diabetes diagnosis from the health history survey and the date that survey was completed, as well as complete data on the A1C measurements. Participants with multiple measurements therefore have multiple rows in the dataset. We may want to do some additional analyses before bringing the table off the database and into R. For example, we may want to summarize the A1C measurements as the highest value for each participant. We can continue to manipulate the data using `dplyr` functions (see `vignette("sql", package = "allofus")`).
 
 ```{r}
-final_data <- combined_data |>
-  group_by(person_id, birthplace, t2dm, metformin, t2dm_survey) |>
+final_data <- combined_data %>%
+  group_by(person_id, birthplace, t2dm, metformin, t2dm_survey) %>%
   summarize(max_a1c = max(value_as_number, na.rm = TRUE), .groups = "drop")
 ```
 

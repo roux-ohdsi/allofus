@@ -1,4 +1,4 @@
-#' Retrieve a cohort from ATLAS for use in AllofUs
+#' Retrieve a cohort from ATLAS for use in All of Us
 #'
 #' This function retrieves a cohort definition from ATLAS and generates the cohort in All of Us.
 #' Observation periods are first generated for each subject using the [aou_observation_period()] function.

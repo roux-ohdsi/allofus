@@ -33,7 +33,7 @@
     <div style="height:40px;display:inline;margin:0 10px;"><a href="https://ohdsi.northeastern.edu/" class="external-link"><img src="https://roux-ohdsi.github.io/allofus/articles/logo.png" style="width:auto;height:100%;"></a></div>
     <a class="navbar-brand me-2" href="../index.html">allofus</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.0.0</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -96,14 +96,15 @@
 <p>It is often useful to build more complex cohort definitions using
 ATLAS, a web-based application that allows users to define cohorts and
 run analyses on the OHDSI network. While most of the features of ATLAS
-are not compatible with the AllofUS researcher workbench, the AllofUs R
-package includes a function to download a cohort definition from ATLAS
-and generate the cohort in the AllofUs database.</p>
-<p>To use this feature of the allofus package, you’ll also need to
-install the <code>ROhdsiWebApi</code> package from GitHub. This package
-is used to query the ATLAS API and download the cohort definition and
-SQL query. The package is not available on CRAN (and is therefore not
-included with the allofus package), but it can be installed using the
+are not compatible with the AllofUS researcher workbench, the All of Us
+R package includes a function to download a cohort definition from ATLAS
+and generate the cohort in the All of Us database.</p>
+<p>To use this feature of the <code>allofus</code>package, you’ll also
+need to install the <a href="https://github.com/OHDSI/ROhdsiWebApi" class="external-link"><code>ROhdsiWebApi</code></a>
+package from GitHub. This package is used to query the ATLAS API and
+download the cohort definition and SQL query. The package is not
+available on CRAN (and is therefore not included with the
+<code>allofus package</code>), but it can be installed using the
 <code>pak</code> package:</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"pak"</span><span class="op">)</span></span>
@@ -115,106 +116,56 @@ package:</p>
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://roux-ohdsi.github.io/allofus/" class="external-link">allofus</a></span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://ohdsi.github.io/ROhdsiWebApi/" class="external-link">ROhdsiWebApi</a></span><span class="op">)</span></span></code></pre></div>
 <p>If you haven’t already, this is the time to build your cohort
-definition in ATLAS. You can use the demo version of ATLAS which is
-publicly available at <a href="https://atlas-demo.ohdsi.org" class="external-link uri">https://atlas-demo.ohdsi.org</a>. The demo version of ATLAS
-is pre-populated with many sample cohort definitions You can also use an
-ATLAS instance in your organization’s OMOP CDM. In this case, we’ll use
-the cohort definition for id 1788061 which is a simple stroke cohort
-definition.</p>
+definition in ATLAS. You can use the publicly available <a href="https://atlas-demo.ohdsi.org" class="external-link">demo version of ATLAS</a> which is
+pre-populated with many sample cohort definitions (though keep in mind
+that they are not validated). You can also use an ATLAS instance in your
+organization’s OMOP CDM. (A free, instructional course for using ATLAS
+is available through <a href="https://academy.ehden.eu/" class="external-link">EHDEN
+Academy</a>.)</p>
+<p>In this case, we’ll use the cohort definition 1788061, which is a
+simple stroke cohort definition.</p>
 <p>Using <code>ROhdsiWebApi</code>, we can download the cohort
 definition and SQL query from ATLAS:</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">cd</span> <span class="op">&lt;-</span> <span class="fu">ROhdsiWebApi</span><span class="fu">::</span><span class="fu"><a href="https://ohdsi.github.io/ROhdsiWebApi/reference/getCohortDefinition.html" class="external-link">getCohortDefinition</a></span><span class="op">(</span><span class="fl">1788061</span>, <span class="st">"https://atlas-demo.ohdsi.org/WebAPI"</span><span class="op">)</span></span>
 <span><span class="va">cd_sql</span> <span class="op">&lt;-</span> <span class="fu">ROhdsiWebApi</span><span class="fu">::</span><span class="fu"><a href="https://ohdsi.github.io/ROhdsiWebApi/reference/getCohortSql.html" class="external-link">getCohortSql</a></span><span class="op">(</span><span class="va">cd</span>, <span class="st">"https://atlas-demo.ohdsi.org/WebAPI"</span><span class="op">)</span></span></code></pre></div>
-<p>Then, we can use the <code><a href="../reference/aou_atlas_cohort.html">allofus::aou_atlas_cohort()</a></code>
-functino to generate the cohort in the AllofUs database.</p>
+<p>Then, we can use the <code><a href="../reference/aou_atlas_cohort.html">aou_atlas_cohort()</a></code> function to
+generate the cohort in the All of Us database.</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">cohort</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/aou_atlas_cohort.html">aou_atlas_cohort</a></span><span class="op">(</span></span>
 <span>  cohort_definition <span class="op">=</span> <span class="va">cd</span>,</span>
 <span>  cohort_sql <span class="op">=</span> <span class="va">cd_sql</span></span>
 <span><span class="op">)</span></span></code></pre></div>
-<p>Because the AllofUs program does not use the typical hueristics for
-the <code>observation_period</code> table (see <a href="https://ohdsi.github.io/CommonDataModel/ehrObsPeriods.html" class="external-link uri">https://ohdsi.github.io/CommonDataModel/ehrObsPeriods.html</a>),
+<p>Because the All of Us program does not use the <a href="https://ohdsi.github.io/CommonDataModel/ehrObsPeriods.html" class="external-link">typical
+heuristics</a> for the <code>observation_period</code> table,
 observation periods are first generated for each subject using the
-<code><a href="../reference/aou_observation_period.html">allofus::aou_observation_period()</a></code> function. After
-generating a new <code>observation_period</code> table, the SQL from
-<code><a href="https://ohdsi.github.io/ROhdsiWebApi/reference/getCohortSql.html" class="external-link">ROhdsiWebApi::getCohortSql</a></code> will extract a cohort from the
-AllofUs database - resulting in a <em>local</em> dataframe with the
+<code><a href="../reference/aou_observation_period.html">aou_observation_period()</a></code> function. After generating a new
+<code>observation_period</code> table, the SQL from
+<code><a href="https://ohdsi.github.io/ROhdsiWebApi/reference/getCohortSql.html" class="external-link">ROhdsiWebApi::getCohortSql()</a></code> will extract a cohort from the
+All of Us database - resulting in a <em>local</em> dataframe with the
 cohort start and end dates for each subject who fell within the cohort
-definition. The function is based on code from <a href="https://github.com/cmayer2/r4aou" class="external-link uri">https://github.com/cmayer2/r4aou</a> with some tweaks to
+definition. (The function is based on code from <a href="https://github.com/cmayer2/r4aou" class="external-link uri">https://github.com/cmayer2/r4aou</a> with some tweaks to
 generate the appropriate observation periods and incorporate other
-package functions.</p>
+package functions.)</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">cohort</span><span class="op">)</span></span></code></pre></div>
-<table class="table">
-<colgroup>
-<col width="31%">
-<col width="15%">
-<col width="27%">
-<col width="24%">
-</colgroup>
-<thead><tr class="header">
-<th align="right">cohort_definition_id</th>
-<th align="right">person_id</th>
-<th align="right">cohort_start_date</th>
-<th align="right">cohort_end_date</th>
-</tr></thead>
-<tbody>
-<tr class="odd">
-<td align="right"><int></int></td>
-<td align="right"><chr></chr></td>
-<td align="right"><date></date></td>
-<td align="right"><date></date></td>
-</tr>
-<tr class="even">
-<td align="right">1788061</td>
-<td align="right">xxxxxx</td>
-<td align="right">2019-02-04</td>
-<td align="right">2022-02-21</td>
-</tr>
-<tr class="odd">
-<td align="right">1788061</td>
-<td align="right">xxxxxx</td>
-<td align="right">2016-12-04</td>
-<td align="right">2022-01-22</td>
-</tr>
-<tr class="even">
-<td align="right">1788061</td>
-<td align="right">xxxxxx</td>
-<td align="right">2019-08-24</td>
-<td align="right">2021-11-30</td>
-</tr>
-<tr class="odd">
-<td align="right">1788061</td>
-<td align="right">xxxxxx</td>
-<td align="right">2018-01-03</td>
-<td align="right">2021-07-01</td>
-</tr>
-<tr class="even">
-<td align="right">1788061</td>
-<td align="right">xxxxxx</td>
-<td align="right">2021-07-09</td>
-<td align="right">2021-11-20</td>
-</tr>
-<tr class="odd">
-<td align="right">1788061</td>
-<td align="right">xxxxxx</td>
-<td align="right">2018-04-26</td>
-<td align="right">2021-08-21</td>
-</tr>
-</tbody>
-</table>
+<pre><code><span><span class="co">#&gt; # A tibble: 6 × 4</span></span>
+<span><span class="co">#&gt;   cohort_definition_id person_id cohort_start_date cohort_end_date</span></span>
+<span><span class="co">#&gt;                  &lt;int&gt; &lt;int&gt;     &lt;date&gt;            &lt;date&gt;         </span></span>
+<span><span class="co">#&gt; 1              1788061 xxxxxxx   1995-03-27        1995-03-27     </span></span>
+<span><span class="co">#&gt; 2              1788061 xxxxxxx   2012-01-07        2012-01-21     </span></span>
+<span><span class="co">#&gt; 3              1788061 xxxxxxx   2010-06-17        2016-04-05     </span></span>
+<span><span class="co">#&gt; 4              1788061 xxxxxxx   2015-08-12        2017-08-30     </span></span>
+<span><span class="co">#&gt; 5              1788061 xxxxxxx   2017-01-24        2019-01-24     </span></span>
+<span><span class="co">#&gt; 6              1788061 xxxxxxx   2008-07-09        2019-01-24</span></span></code></pre>
 <p>To use this cohort table further, you can join it to other tables
-from the AllofUs database (after they have been “collected”). Or, to use
-this table to limit the person table (or other OMOP CDM tables) to only
-your cohort, filter for the values in the <code>cohort$person_id</code>
-column:</p>
-<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu">tbl</span><span class="op">(</span><span class="va">con</span>, <span class="st">"person"</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
-<span>  <span class="fu"><a href="https://rdrr.io/r/stats/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">person_id</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span> <span class="va">cohort</span><span class="op">$</span><span class="va">person_id</span><span class="op">)</span></span></code></pre></div>
-<p>More information on the <code>ROhdsiWebApi</code> can be found at <a href="https://github.com/OHDSI/ROhdsiWebApi" class="external-link uri">https://github.com/OHDSI/ROhdsiWebApi</a>. A free,
-instructional course for using ATLAS is available through EHDEN Academy:
-<a href="https://academy.ehden.eu/" class="external-link uri">https://academy.ehden.eu/</a>.</p>
+from the All of Us database (after they have been “collected”). Or, to
+use this table to limit the person table (or other OMOP CDM tables) to
+only your cohort, filter for the values in the
+<code>cohort$person_id</code> column:</p>
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/tbl.html" class="external-link">tbl</a></span><span class="op">(</span><span class="va">con</span>, <span class="st">"person"</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">person_id</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span> <span class="op">!</span><span class="op">!</span><span class="va">cohort</span><span class="op">$</span><span class="va">person_id</span><span class="op">)</span></span></code></pre></div>
   </main>
 </div>
 

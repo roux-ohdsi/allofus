@@ -16,8 +16,8 @@ greet_startup <- function() {
   msg <- paste0(
     c(
       "{cli::symbol$heart} Thank you for using the {.pkg allofus} R package! {cli::symbol$heart}",
-      "{cli::symbol$warning} This package is currently in beta. Please report any issues to {.url https://github.com/roux-ohdsi/allofus/issues}.",
-      "{cli::symbol$info} The {.pkg allofus} R package is not affiliated with or endorsed by the AllofUs Research Program. \n\n"
+      "{cli::symbol$warning} This package continues to be developed as All of Us grows and changes. Please report any issues to {.url https://github.com/roux-ohdsi/allofus/issues}.",
+      "{cli::symbol$info} The {.pkg allofus} R package is not affiliated with or endorsed by the All of Us Research Program. \n\n"
     ),
     collapse = "\n"
   )

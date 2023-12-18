@@ -2,7 +2,7 @@
 % Please edit documentation in R/aou_atlas_cohort.R
 \name{aou_atlas_cohort}
 \alias{aou_atlas_cohort}
-\title{Retrieve a cohort from ATLAS for use in AllofUs}
+\title{Retrieve a cohort from ATLAS for use in All of Us}
 \usage{
 aou_atlas_cohort(
   cohort_definition,
