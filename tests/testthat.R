@@ -9,4 +9,4 @@
 library(testthat)
 library(allofus)
 
-# test_check("allofus")
+test_check("allofus")
