@@ -32,7 +32,7 @@
 #' @param con connection to the allofus SQL database. Defaults to getOption("aou.default.con"), which is created automatically with `aou_connect()`
 #' @param collect whether to return the results as a local (TRUE) or database table
 #' @param ... additional arguments passed to `collect()` when `collect = TRUE`
-#'
+#' @return a dataframe if collect = TRUE; a remote tbl if not
 #' @export
 #' @examplesIf on_workbench()
 #'

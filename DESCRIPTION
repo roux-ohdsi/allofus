@@ -1,13 +1,13 @@
 Package: allofus
 Type: Package
-Title: Tools for the All of Us Researcher Workbench 
+Title: Tools for the 'All of Us' Researcher Workbench 
 Version: 1.0.0
 Authors@R: 
     c(
       person("Louisa", "Smith", email = "l.smith@northeastern.edu", role = c("aut", "cph"), comment = c(ORCID = "0000-0001-9029-4644")),
       person("Rob", "Cavanaugh", email = "r.cavanaugh@northeastern.edu", role = c("aut", "cre", "cph"), comment = c(ORCID = "0000-0002-2114-6565"))
     )
-Description: Streamlining use of the All of Us Researcher Workbench and increasing interoperability with the OHDSI toolstack.
+Description: Streamline use of the 'All of Us' Researcher Workbench with tools to extract and manipulate data from the 'All of Us' database. Increase interoperability with the OHDSI toolstack by decreasing reliance of 'All of Us' tools and allowing for cohort creation via Atlas. Improve reproducibility and transparency of 'All of Us' research.
 License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true

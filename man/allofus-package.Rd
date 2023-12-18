@@ -4,9 +4,9 @@
 \name{allofus-package}
 \alias{allofus}
 \alias{allofus-package}
-\title{allofus: Tools for the All of Us Researcher Workbench}
+\title{allofus: Tools for the 'All of Us' Researcher Workbench}
 \description{
-Streamlining use of the All of Us Researcher Workbench and increasing interoperability with the OHDSI toolstack.
+Streamline use of the 'All of Us' Researcher Workbench with tools to extract and manipulate data from the 'All of Us' database. Increase interoperability with the OHDSI toolstack by decreasing reliance of 'All of Us' tools and allowing for cohort creation via Atlas. Improve reproducibility and transparency of 'All of Us' research.
 }
 \seealso{
 Useful links:

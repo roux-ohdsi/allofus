@@ -13,23 +13,24 @@ of Us Research Program.*
 The `allofus` package helps researchers query the database and build
 transparent and reproducible analysed pipeline. The package allows
 researchers to easily use other database packages, such as `dbplyr` and
-`DBI`, with the All of Us database. The package also includes functions to
-help researchers manage storage in their workspace and bucket, as well
-as take advantage of tools developed for [OMOP
+`DBI`, with the All of Us database. The package also includes functions
+to help researchers manage storage in their workspace and bucket, as
+well as take advantage of tools developed for [OMOP
 CDM](https://www.researchallofus.org/faq/what-is-omop/) data.
 
 <!-- badges: start -->
 
 [![R-CMD-check](https://github.com/roux-ohdsi/allofus/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/roux-ohdsi/allofus/actions/workflows/R-CMD-check.yaml)
-[![CRAN
-status](https://www.r-pkg.org/badges/version/allofus)](https://CRAN.R-project.org/package=allofus)
-[![](http://cranlogs.r-pkg.org/badges/grand-total/allofus)](https://cran.r-project.org/package=allofus)
+<!-- add when on cran -->
+<!-- [![CRAN status](https://www.r-pkg.org/badges/version/allofus)](https://CRAN.R-project.org/package=allofus) -->
+<!-- [![](http://cranlogs.r-pkg.org/badges/grand-total/allofus)](https://cran.r-project.org/package=allofus) -->
 <!-- badges: end -->
 
 ### Installation
 
 ``` r
 install.packages("remotes")
+# or install dev version from GitHub
 remotes::install_github("roux-ohdsi/allofus")
 ```
 

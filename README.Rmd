@@ -24,14 +24,16 @@ The `allofus` package helps researchers query the database and build transparent
 
 <!-- badges: start -->
 [![R-CMD-check](https://github.com/roux-ohdsi/allofus/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/roux-ohdsi/allofus/actions/workflows/R-CMD-check.yaml)
-[![CRAN status](https://www.r-pkg.org/badges/version/allofus)](https://CRAN.R-project.org/package=allofus)
-[![](http://cranlogs.r-pkg.org/badges/grand-total/allofus)](https://cran.r-project.org/package=allofus)
+<!-- add when on cran -->
+<!-- [![CRAN status](https://www.r-pkg.org/badges/version/allofus)](https://CRAN.R-project.org/package=allofus) -->
+<!-- [![](http://cranlogs.r-pkg.org/badges/grand-total/allofus)](https://cran.r-project.org/package=allofus) -->
 <!-- badges: end -->
 
 ### Installation
 
 ```{r}
 install.packages("remotes")
+# or install dev version from GitHub
 remotes::install_github("roux-ohdsi/allofus")
 ```
 

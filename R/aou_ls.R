@@ -142,6 +142,7 @@ aou_bucket_to_workspace <- function(file, dir = "", bucket = getOption("aou.defa
 #' object as a file to the workspace (e.g., `write.csv(object, "filename.csv")`) and then run this function
 #' (e.g., `aou_workspace_to_bucket(files = "filename.csv")`). See <https://cloud.google.com/storage/docs/gsutil/commands/cp> for details on the
 #' underlying function.
+#' @return Nothing
 #' @export
 #' @examples
 #' \dontrun{

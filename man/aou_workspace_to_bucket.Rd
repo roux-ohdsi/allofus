@@ -22,6 +22,9 @@ or a file pattern (e.g. ".csv"). See Details.}
 \item{bucket}{Bucket to save files to. Defaults to \code{getOption("aou.default.bucket")},
 which is \code{Sys.getenv('WORKSPACE_BUCKET')} unless specified otherwise.}
 }
+\value{
+Nothing
+}
 \description{
 This function moves a file saved in a workspace
 to a bucket, where it can be retrieved even if the environment is deleted. To use, first save the desired
