@@ -248,5 +248,6 @@ DT::datatable(
       )
     )
   )
-)
+) |>
+  DT::formatStyle(table = _, columns = colnames(Dat), fontSize = "80%")
 ```
