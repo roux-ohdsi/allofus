@@ -58,8 +58,10 @@
 #'   collect = FALSE
 #' )
 #'
-#'aou_survey(cohort, questions = 1384452,
-#'           question_output = "osteoarthritis") %>%
+#' aou_survey(cohort,
+#'   questions = 1384452,
+#'   question_output = "osteoarthritis"
+#' ) %>%
 #'   dplyr::count(osteoarthritis)
 #'
 aou_survey <- function(cohort = NULL,
@@ -69,8 +71,7 @@ aou_survey <- function(cohort = NULL,
                        con = getOption("aou.default.con"),
                        collect = FALSE,
                        ...) {
-
-  if(packageVersion("dbplyr")<'2.3.0'){
+  if (packageVersion("dbplyr") < "2.3.0") {
     stop('
           Older versions of dbplyr are not supported by the aou_survey() function.
           Please install either v2.3.4 or the development version of dbplyr.
@@ -84,9 +85,12 @@ aou_survey <- function(cohort = NULL,
           # restart your R kernel')
   }
 
-  if (is.null(con)) cli::cli_abort(c("No connection available.",
-                                     "i" = "Provide a connection automatically by running {.code aou_connect()} before this function.",
-                                     "i" = "You can also provide {.code con} as an argument or default with {.code options(aou.default.con = ...)}."))
+  if (is.null(con)) {
+    cli::cli_abort(c("No connection available.",
+      "i" = "Provide a connection automatically by running {.code aou_connect()} before this function.",
+      "i" = "You can also provide {.code con} as an argument or default with {.code options(aou.default.con = ...)}."
+    ))
+  }
 
   if (length(question_output) == length(questions)) { # either gave column names or happen to have a single question
     if (length(question_output) == 1) { # gave one column name or "concept_code" or "concept_id"
@@ -95,7 +99,8 @@ aou_survey <- function(cohort = NULL,
       # if not, print a message so that the user can spot their problem
       if (!identical(question_output, question_output_arg)) {
         cli::cli_inform("Using {question_output} as column name.",
-                        ">" = "Did you really mean {question_output_arg}?")
+          ">" = "Did you really mean {question_output_arg}?"
+        )
         question_output_arg <- question_output
       }
     } else {
@@ -104,8 +109,9 @@ aou_survey <- function(cohort = NULL,
     # didn't give the right number question_output and it doesn't match one of the options
   } else if (is.null(tryCatch(match.arg(question_output, c("concept_code", "concept_id")), error = function(e) NULL))) {
     cli::cli_abort(c("Length of argument {.code question_output} doesn't match {.code questions}.",
-                     "i" = "Provide a vector of column names the same length as {.code questions}.",
-                     "i" = "Alternatively, set either {.code question_output = \"concept_code\"} or {.code question_output = \"concept_id\"}"))
+      "i" = "Provide a vector of column names the same length as {.code questions}.",
+      "i" = "Alternatively, set either {.code question_output = \"concept_code\"} or {.code question_output = \"concept_id\"}"
+    ))
 
     # gave one value for question_output and multiple values for questions
   } else {
@@ -115,29 +121,30 @@ aou_survey <- function(cohort = NULL,
 
   if (is.null(cohort)) {
     cli::cli_warn(c("No cohort provided.", ">" = "Pulling survey data for entire All of Us cohort."))
-    function_cohort <- dplyr::tbl(con, "person") %>% dplyr::select('person_id')
+    function_cohort <- dplyr::tbl(con, "person") %>% dplyr::select("person_id")
   } else if (!"person_id" %in% colnames(cohort)) {
     # ensure person_id is a column name in cohort
 
     cli::cli_abort(c("{.code person_id} column not found in cohort.",
-                     "i" = "Confirm that the cohort has a column named {.code person_id}"))
+      "i" = "Confirm that the cohort has a column named {.code person_id}"
+    ))
   } else if (is.data.frame(cohort)) {
     function_cohort <- dplyr::tbl(con, "person") %>%
       dplyr::filter(.data$person_id %in% !!unique(cohort$person_id)) %>%
-      dplyr::select('person_id')
+      dplyr::select("person_id")
   } else {
     function_cohort <- cohort %>%
-      dplyr::select('person_id')
+      dplyr::select("person_id")
   }
 
   # pivot longer to inclde the rx, on_txt, and age_diagnosis columns
   aou_health_history_long <- allofus::aou_health_history %>%
     dplyr::filter(.data$relative == "self") %>%
-    dplyr::rename(concept_code_overall = 'concept_code') %>%
+    dplyr::rename(concept_code_overall = "concept_code") %>%
     tidyr::pivot_longer(
       cols = c(
-        'concept_id_rx_meds', 'concept_id_on_txt', 'concept_id_age_diagnosis',
-        'concept_code_rx_meds', 'concept_code_on_txt', 'concept_code_age_diagnosis'
+        "concept_id_rx_meds", "concept_id_on_txt", "concept_id_age_diagnosis",
+        "concept_code_rx_meds", "concept_code_on_txt", "concept_code_age_diagnosis"
       ),
       names_pattern = "(.+_.+)_(.+_.+)",
       names_to = c(".value", "question_sub"), values_to = c("concept_id_sub")
@@ -163,18 +170,19 @@ aou_survey <- function(cohort = NULL,
     missing_qs <- questions[!questions %in% c(regular_survey_qs, health_survey_qs)]
     if (length(missing_qs) > 0) {
       cli::cli_abort(c(paste("Concept codes", paste(missing_qs, collapse = ", "), "not found in codebook."),
-                       "i" = "Check spelling and confirm that concept codes appear in the codebook at {.url https://roux-ohdsi.github.io/allofus/articles/searchable_codebook.html}."))
+        "i" = "Check spelling and confirm that concept codes appear in the codebook at {.url https://roux-ohdsi.github.io/allofus/articles/searchable_codebook.html}."
+      ))
     }
 
     # get the concept_ids for the regular survey questions
     regular_survey_concept_ids <- allofus::aou_codebook %>%
       dplyr::filter(.data$concept_code %in% regular_survey_qs) %>%
-      dplyr::pull('concept_id') %>%
+      dplyr::pull("concept_id") %>%
       unique()
 
     health_survey_concept_ids <- aou_health_history_long %>%
       dplyr::filter(.data$concept_code %in% health_survey_qs) %>%
-      dplyr::pull('concept_id_specific')
+      dplyr::pull("concept_id_specific")
 
     # there are some concept_ids in the regular codebook that are there for reference
     # not to search -- make sure those are not included
@@ -182,8 +190,8 @@ aou_survey <- function(cohort = NULL,
     if (length(too_general) > 0) {
       too_general <- regular_survey_qs[regular_survey_concept_ids %in% aou_health_history_long$concept_id_overall]
       cli::cli_abort(c(paste("Concept code(s) ", paste0(too_general, collapse = ", "), "is/are too general."),
-                       "i" = "Health history codes must refer to a specific condition and person pairing.",
-                       "i" = "Look for a specific condition in the health history codebook at {.url https://roux-ohdsi.github.io/allofus/articles/searchable_codebook.html}."
+        "i" = "Health history codes must refer to a specific condition and person pairing.",
+        "i" = "Look for a specific condition in the health history codebook at {.url https://roux-ohdsi.github.io/allofus/articles/searchable_codebook.html}."
       ))
     }
 
@@ -200,12 +208,13 @@ aou_survey <- function(cohort = NULL,
       too_general <- missing_qs[missing_qs %in% aou_health_history_long$concept_id_overall]
       if (length(too_general) > 0) {
         cli::cli_abort(c(paste("Concept ID(s) ", paste0(too_general, collapse = ", "), "is/are too general."),
-                         "i" = "Health history codes must refer to a specific condition and person pairing.",
+          "i" = "Health history codes must refer to a specific condition and person pairing.",
           "i" = "Look for a specific condition in the health history codebook at {.url https://roux-ohdsi.github.io/allofus/articles/searchable_codebook.html}."
         ))
       } else {
         cli::cli_abort(c(paste("Concept ids", paste(missing_qs, collapse = ", "), "not found in codebook."),
-                         "i" = "Confirm that concept codes appear in the codebook at {.url https://roux-ohdsi.github.io/allofus/articles/searchable_codebook.html}."))
+          "i" = "Confirm that concept codes appear in the codebook at {.url https://roux-ohdsi.github.io/allofus/articles/searchable_codebook.html}."
+        ))
       }
     }
 
@@ -233,16 +242,17 @@ aou_survey <- function(cohort = NULL,
         cli::cli_inform(
           c(
             "i" = "One or more of the requested questions were only asked of people who responded that they had certain conditions. ",
-            ">" = "The top-level question(s) will be added to the output to provide context about missing data as column(s) {paste0(new_cols, collapse = ', ')}.")
+            ">" = "The top-level question(s) will be added to the output to provide context about missing data as column(s) {paste0(new_cols, collapse = ', ')}."
           )
+        )
 
         # health_survey_concept_ids <- c(health_survey_concept_ids, missing_qs$concept_id_for_sub)
         names_for_lookup <- dplyr::bind_rows(
           names_for_lookup,
           dplyr::tibble(
-              concept_id = missing_qs$concept_id_for_sub,
-              concept_code = missing_qs$concept_code_overall,
-              cn = missing_qs$concept_code_overall,
+            concept_id = missing_qs$concept_id_for_sub,
+            concept_code = missing_qs$concept_code_overall,
+            cn = missing_qs$concept_code_overall,
             type = "health"
           )
         )
@@ -257,7 +267,7 @@ aou_survey <- function(cohort = NULL,
 
   health_survey_concept_codes <- aou_health_history_long %>%
     dplyr::filter(.data$concept_id_specific %in% health_survey_concept_ids) %>%
-    dplyr::select('concept_code', concept_id = 'concept_id_specific') %>%
+    dplyr::select("concept_code", concept_id = "concept_id_specific") %>%
     dplyr::distinct(.data$concept_code, .data$concept_id) %>%
     dplyr::mutate(type = "health")
 
@@ -272,7 +282,7 @@ aou_survey <- function(cohort = NULL,
   })
 
   all_health_survey_concept_ids <- dplyr::filter(concept_lookup, .data$type == "health") %>%
-    dplyr::pull('concept_id')
+    dplyr::pull("concept_id")
 
   health_survey_concept_ids <- all_health_survey_concept_ids[all_health_survey_concept_ids %in% allofus::aou_health_history$concept_id_specific]
   # the sub questions for the conditions can just be treated like regular survey questions
@@ -292,11 +302,11 @@ aou_survey <- function(cohort = NULL,
       } else if (question_output_arg[1] == "concept_code") {
         condition_name <- concept_lookup %>%
           dplyr::filter(.data$concept_id == specific_concept_id) %>%
-          dplyr::pull('concept_code')
+          dplyr::pull("concept_code")
       } else {
         condition_name <- concept_lookup %>%
           dplyr::filter(.data$concept_id == specific_concept_id) %>%
-          dplyr::pull('cn')
+          dplyr::pull("cn")
       }
 
       condition_date <- paste0(condition_name, "_date")
@@ -304,37 +314,36 @@ aou_survey <- function(cohort = NULL,
 
       osci_specific <- aou_health_history_long %>%
         dplyr::filter(.data$concept_id_specific == specific_concept_id) %>%
-        dplyr::pull('concept_id_question') %>%
+        dplyr::pull("concept_id_question") %>%
         unique()
 
       osci_overall <- allofus::aou_health_history %>%
         dplyr::filter(.data$concept_id_specific == specific_concept_id) %>%
-        dplyr::pull('concept_id_overall') %>%
+        dplyr::pull("concept_id_overall") %>%
         unique()
 
       if (length(osci_specific) == 0) {
         cli::cli_abort(c(paste("Concept id ", specific_concept_id, "is too general."),
-                         "i" = "Health history codes must refer to a specific condition and person pairing.",
-                         "i" = "Look for a specific condition in the health history codebook at {.url https://roux-ohdsi.github.io/allofus/articles/searchable_codebook.html}."
+          "i" = "Health history codes must refer to a specific condition and person pairing.",
+          "i" = "Look for a specific condition in the health history codebook at {.url https://roux-ohdsi.github.io/allofus/articles/searchable_codebook.html}."
         ))
       }
       if (length(osci_specific) == 1 & !is.na(osci_overall)) { # this is not the case if an infectious disease question
-        cli::cli_inform(c("i" = "The question associated with concept id {specific_concept_id} was added to the later version of the family health history survey so earlier All of Us participants may not have answered it."
-        ))
+        cli::cli_inform(c("i" = "The question associated with concept id {specific_concept_id} was added to the later version of the family health history survey so earlier All of Us participants may not have answered it."))
       }
 
       obs <- tbl(con, "observation") %>%
-        dplyr::inner_join(dplyr::select(function_cohort, 'person_id'), by = "person_id") %>%
+        dplyr::inner_join(dplyr::select(function_cohort, "person_id"), by = "person_id") %>%
         dplyr::filter(.data$observation_source_concept_id %in% !!c(osci_overall, osci_specific)) %>%
-        dplyr::select('person_id', 'observation_source_concept_id', 'value_source_concept_id', 'value_source_value', 'observation_date') %>%
+        dplyr::select("person_id", "observation_source_concept_id", "value_source_concept_id", "value_source_value", "observation_date") %>%
         dplyr::mutate(type = dplyr::case_when(.data$observation_source_concept_id %in% osci_specific ~ "Specific", TRUE ~ "Overall")) %>%
         tidyr::pivot_wider(
-          id_cols = c('person_id', 'observation_date', 'type'), names_from = 'value_source_value',
-          values_from = 'value_source_concept_id'
+          id_cols = c("person_id", "observation_date", "type"), names_from = "value_source_value",
+          values_from = "value_source_concept_id"
         ) %>%
         dplyr::group_by(.data$person_id, .data$type) %>%
         dbplyr::window_order(.data$observation_date) %>%
-        tidyr::fill(-c('person_id', 'observation_date', 'type'), .direction = "down") %>%
+        tidyr::fill(-c("person_id", "observation_date", "type"), .direction = "down") %>%
         dplyr::slice_max(order_by = observation_date, n = 1, with_ties = FALSE) %>%
         dplyr::ungroup()
 
@@ -354,18 +363,18 @@ aou_survey <- function(cohort = NULL,
 
       obs %>%
         dplyr::mutate(condition = dplyr::case_when(
-          dplyr::if_any(-c('person_id', 'observation_date', 'type'), ~ .x == !!specific_concept_id) ~ "Yes",
-          .data$type == "Specific" & dplyr::if_any(-c('person_id', 'observation_date', 'type'), ~ !.x %in% c(903079, 903096, 903087)) ~ "No",
-          dplyr::if_any(-c('person_id', 'observation_date', 'type'), ~ .x == 903079) ~ pnta,
-          dplyr::if_any(-c('person_id', 'observation_date', 'type'), ~ .x == 903096) ~ sk,
-          dplyr::if_any(-c('person_id', 'observation_date', 'type'), ~ .x == 903087) ~ dk,
+          dplyr::if_any(-c("person_id", "observation_date", "type"), ~ .x == !!specific_concept_id) ~ "Yes",
+          .data$type == "Specific" & dplyr::if_any(-c("person_id", "observation_date", "type"), ~ !.x %in% c(903079, 903096, 903087)) ~ "No",
+          dplyr::if_any(-c("person_id", "observation_date", "type"), ~ .x == 903079) ~ pnta,
+          dplyr::if_any(-c("person_id", "observation_date", "type"), ~ .x == 903096) ~ sk,
+          dplyr::if_any(-c("person_id", "observation_date", "type"), ~ .x == 903087) ~ dk,
           TRUE ~ "No"
         )) %>%
-        dplyr::select('person_id', 'type', 'condition', 'observation_date') %>%
+        dplyr::select("person_id", "type", "condition", "observation_date") %>%
         dplyr::group_by(.data$person_id) %>%
         dplyr::slice_max(order_by = type, n = 1) %>%
         dplyr::ungroup() %>%
-        dplyr::select('person_id', !!condition_name := 'condition', !!condition_date := 'observation_date')
+        dplyr::select("person_id", !!condition_name := "condition", !!condition_date := "observation_date")
     }) %>%
       purrr::reduce(dplyr::left_join, by = "person_id")
 
@@ -385,7 +394,7 @@ aou_survey <- function(cohort = NULL,
     tmp <- dplyr::tbl(con, "observation") %>%
       dplyr::filter(.data$observation_source_concept_id %in% regular_survey_concept_ids) %>%
       # this is necessary because there may be multiple rows for a single person (hence full_join later)
-      dplyr::inner_join(dplyr::select(function_cohort, 'person_id'), by = "person_id")
+      dplyr::inner_join(dplyr::select(function_cohort, "person_id"), by = "person_id")
 
     # for retrieving columns and pivoting
     q <- paste0("observation_source_", question_output)
@@ -414,10 +423,12 @@ aou_survey <- function(cohort = NULL,
       dplyr::mutate(value_source_value = dplyr::coalesce(.data$value_source_value, CAST(dplyr::sql("value_as_number AS STRING")))) %>%
       # first combine all rows for a single person and question (e.g., multiple races)
       dplyr::group_by(.data$person_id, .data$observation_date, dplyr::across(dplyr::all_of(q))) %>%
-      dplyr::summarise(value_source_value = STRING_AGG(dplyr::sql("value_source_value order by value_source_value")),
-                .groups = "drop") %>%
+      dplyr::summarise(
+        value_source_value = STRING_AGG(dplyr::sql("value_source_value order by value_source_value")),
+        .groups = "drop"
+      ) %>%
       dplyr::select(dplyr::all_of(c("person_id", !!q, "value_source_value", "observation_date"))) %>%
-      tidyr::pivot_wider(names_from = !!q, values_from = c('value_source_value', 'observation_date'), names_prefix = pref)
+      tidyr::pivot_wider(names_from = !!q, values_from = c("value_source_value", "observation_date"), names_prefix = pref)
 
     if (length(question_output_arg) == 1 && question_output_arg[1] %in% c("concept_code", "concept_id")) {
       wide <- wide %>%
@@ -427,7 +438,7 @@ aou_survey <- function(cohort = NULL,
       # named vector to rename the columns if needed
       concept_codes <- concept_lookup %>%
         dplyr::filter(.data$concept_id %in% regular_survey_concept_ids) %>%
-        dplyr::select('concept_code', 'cn')
+        dplyr::select("concept_code", "cn")
       nm <- c(
         paste0("value_source_value_", concept_codes$concept_code),
         paste0("observation_date_", concept_codes$concept_code)
@@ -435,7 +446,8 @@ aou_survey <- function(cohort = NULL,
       names(nm) <- c(concept_codes$cn, paste0(concept_codes$cn, "_date"))
       if (!all(nm %in% tolower(colnames(wide)))) {
         cli::cli_abort(c("Wrong column names.",
-                         "i" = "Try one question at a time, and report this issue at {.url https://github.com/roux-ohdsi/allofus/issues}"))
+          "i" = "Try one question at a time, and report this issue at {.url https://github.com/roux-ohdsi/allofus/issues}"
+        ))
       }
 
       # change to lower, then rename

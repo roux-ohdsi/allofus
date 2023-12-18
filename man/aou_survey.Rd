@@ -79,8 +79,10 @@ aou_survey(
   collect = FALSE
 )
 
-aou_survey(cohort, questions = 1384452,
-          question_output = "osteoarthritis") \%>\%
+aou_survey(cohort,
+  questions = 1384452,
+  question_output = "osteoarthritis"
+) \%>\%
   dplyr::count(osteoarthritis)
 \dontshow{\}) # examplesIf}
 }
