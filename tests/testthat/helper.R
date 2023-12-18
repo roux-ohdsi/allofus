@@ -1,5 +1,4 @@
 library(testthat)
-library(dplyr)
 
 if (on_workbench()) {
   con <- aou_connect()

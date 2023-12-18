@@ -13,20 +13,20 @@ test_that("aou_concept_set() returns counts correctly", {
 
   expect_gt(
     {
-      tbl(con, "person") %>%
-        mutate(
+      dplyr::tbl(con, "person") %>%
+        dplyr::mutate(
           start_date = as.Date("2018-01-01"),
           end_date = as.Date("2022-01-01")
         ) %>%
-        filter(person_id < 10000000) %>%
+        dplyr::filter(person_id < 10000000) %>%
         aou_concept_set(
           concepts = 4324693, start_date = "start_date", end_date = "end_date",
           concept_set_name = "mammogram",
           domains = "procedure", output = "count"
         ) %>%
-        count(mammogram) %>%
-        tally() %>%
-        pull(1)
+        dplyr::count(mammogram) %>%
+        dplyr::tally() %>%
+        dplyr::pull(1)
     },
     5
   )
