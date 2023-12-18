@@ -21,6 +21,8 @@ CDM](https://www.researchallofus.org/faq/what-is-omop/) data.
 <!-- badges: start -->
 
 [![R-CMD-check](https://github.com/roux-ohdsi/allofus/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/roux-ohdsi/allofus/actions/workflows/R-CMD-check.yaml)
+[![](https://www.r-pkg.org/badges/version/allofus?color=green)](https://cran.r-project.org/package=allofus)
+[![](http://cranlogs.r-pkg.org/badges/grand-total/allofus?color=green)](https://cran.r-project.org/package=allofus)
 <!-- badges: end -->
 
 ### Installation
@@ -57,14 +59,14 @@ person <- dplyr::tbl(con, "person")
 You can then use `dplyr` functions on the table:
 
 ``` r
-person |> 
+person |>
   dplyr::filter(gender_concept_id == 8507)
 ```
 
 and join the table to other tables in the database:
 
 ``` r
-person |> 
+person |>
   dplyr::left_join(dplyr::tbl(con, "observation"), by = "person_id")
 ```
 
@@ -72,7 +74,7 @@ The `aou_join()` function is a wrapper around the `dplyr` join functions
 that allows you to join tables more easily:
 
 ``` r
-person |> 
+person |>
   aou_join("observation", type = "left")
 ```
 

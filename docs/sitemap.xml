@@ -10,6 +10,9 @@
     <loc>/LICENSE.html</loc>
   </url>
   <url>
+    <loc>/articles/allofus.html</loc>
+  </url>
+  <url>
     <loc>/articles/atlas.html</loc>
   </url>
   <url>
@@ -32,6 +35,9 @@
   </url>
   <url>
     <loc>/articles/web_only/data-browser.html</loc>
+  </url>
+  <url>
+    <loc>/articles/web_only/health_codebook.html</loc>
   </url>
   <url>
     <loc>/articles/web_only/searchable_codebook.html</loc>

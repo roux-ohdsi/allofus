@@ -24,6 +24,12 @@ The `allofus` package helps researchers query the database and build transparent
 
 <!-- badges: start -->
 [![R-CMD-check](https://github.com/roux-ohdsi/allofus/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/roux-ohdsi/allofus/actions/workflows/R-CMD-check.yaml)
+```{r, echo = FALSE, results='asis', eval = TRUE}
+cat(
+	badger::badge_cran_release("allofus", "green"),
+	badger::badge_cran_download("allofus", "grand-total", "green")
+)
+```
 <!-- badges: end -->
 
 ### Installation
