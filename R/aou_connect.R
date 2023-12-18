@@ -68,6 +68,8 @@ aou_connect <- function(CDR = getOption("aou.default.cdr"), ...) {
         stop()
       }
 
+      # also let it fail if there's no person_table
+      test_table <- dplyr::tbl(connection, "person")
 
       cli::cli_inform(c("v" = "Connected successfully!"))
       options(aou.default.con = connection)

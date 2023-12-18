@@ -6,7 +6,6 @@ test_that("aou_connect connects to the database successfully", {
   expect_true(isTRUE(con@dataset == strsplit(getOption("aou.default.cdr"), split = "\\.")[[1]][2]))
 })
 
-# THIS FAIL!
 test_that("aou_connect returns an error message when unable to connect", {
   skip_workbench()
 

@@ -18,11 +18,11 @@ Useful links:
 
 }
 \author{
-\strong{Maintainer}: Rob Cavanaugh \email{r.cavanaugh@northeastern.edu} [copyright holder]
+\strong{Maintainer}: Rob Cavanaugh \email{r.cavanaugh@northeastern.edu} (\href{https://orcid.org/0000-0002-2114-6565}{ORCID}) [copyright holder]
 
 Authors:
 \itemize{
-  \item Louisa Smith \email{l.smith@northeastern.edu} [copyright holder]
+  \item Louisa Smith \email{l.smith@northeastern.edu} (\href{https://orcid.org/0000-0001-9029-4644}{ORCID}) [copyright holder]
 }
 
 }

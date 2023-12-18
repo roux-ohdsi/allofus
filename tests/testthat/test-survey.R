@@ -15,7 +15,7 @@ test_that("aou_survey throws error if person_id column not found in cohort", {
 # test that the function returns the expected output when using concept_id for question_output
 test_that("aou_survey returns expected output question_output", {
   skip_workbench()
-
+  cohort <- dplyr::tbl(con, "person") %>% dplyr::filter(person_id == 2150822)
   result_id <- aou_survey(cohort, 43529932, question_output = "concept_id")
   result_code <- aou_survey(cohort, 43529932, question_output = "concept_code")
   result <- aou_survey(cohort, 43529932, question_output = "t2dm")
