@@ -6,6 +6,7 @@ output: rmarkdown::html_vignette
 ```{r, include = FALSE}
 knitr::opts_chunk$set(
   collapse = TRUE,
+  eval = FALSE,
   comment = "#>"
 )
 ```
@@ -15,14 +16,14 @@ function to download a cohort definition from ATLAS and generate the cohort in t
 
 To use this feature of the allofus package, you'll also need to install the `ROhdsiWebApi` package from GitHub. This package is used to query the ATLAS API and download the cohort definition and SQL query. The package is not available on CRAN (and is therefore not included with the allofus package), but it can be installed using the `pak` package:
 
-```{r setup}
+```{r install}
 install.packages("pak")
 pak::pak("ohdsi/ROhdsiWebApi")
 ```
 
 After installing the `ROhdsiWebApi` package, load the `allofus` package and the `ROhdsiWebApi` package:
 
-```{r setup}
+```{r load}
 library(allofus)
 library(ROhdsiWebApi)
 ```
@@ -33,14 +34,14 @@ in your organization's OMOP CDM. In this case, we'll use the cohort definition f
 
 Using `ROhdsiWebApi`, we can download the cohort definition and SQL query from ATLAS:
 
-```{r}
+```{r ohdsiweb}
 cd <- ROhdsiWebApi::getCohortDefinition(1788061, "https://atlas-demo.ohdsi.org/WebAPI")
 cd_sql <- ROhdsiWebApi::getCohortSql(cd, "https://atlas-demo.ohdsi.org/WebAPI")
 ```
 
 Then, we can use the `allofus::aou_atlas_cohort()` functino to generate the cohort in the AllofUs database.
 
-```{r}
+```{r cohort}
 cohort <- aou_atlas_cohort(
   cohort_definition = cd,
   cohort_sql = cd_sql
@@ -49,17 +50,26 @@ cohort <- aou_atlas_cohort(
 
 Because the AllofUs program does not use the typical hueristics for the `observation_period` table (see https://ohdsi.github.io/CommonDataModel/ehrObsPeriods.html), observation periods are first generated for each subject using the `allofus::aou_observation_period()` function. After generating a new `observation_period` table, the SQL from `ROhdsiWebApi::getCohortSql` will extract a cohort from the AllofUs database - resulting in a *local* dataframe with the cohort start and end dates for each subject who fell within the cohort definition. The function is based on code from https://github.com/cmayer2/r4aou with some tweaks to generate the appropriate observation periods and incorporate other package functions.
 
-```
-#> # Source:   table<person> [6 x 23]
-#> # Database: BigQueryConnection
-#>    person_id cohort_start_date cohort_end_Date month_of_birth day_of_birth
-#>      <int64>           <int64>         <int64>        <int64>      <int64>
-#>  1   xxxxxxx            903096            1955             NA           NA
-#>  2   xxxxxxx            903096            1978             NA           NA
-#>  3   xxxxxxx            903096            2000             NA           NA
-#>  4   xxxxxxx            903096            1988             NA           NA
-#>  5   xxxxxxx            903096            1993             NA           NA
-#>  6   xxxxxxx            903096            1959             NA           NA
+```{r}
+head(cohort)
 ```
 
+| cohort_definition_id | person_id | cohort_start_date | cohort_end_date |
+|---------------------:|----------:|------------------:|----------------:|
+|                <int> |     <chr> |            <date> |          <date> |
+|              1788061 |    xxxxxx |        2019-02-04 |      2022-02-21 |
+|              1788061 |    xxxxxx |        2016-12-04 |      2022-01-22 |
+|              1788061 |    xxxxxx |        2019-08-24 |      2021-11-30 |
+|              1788061 |    xxxxxx |        2018-01-03 |      2021-07-01 |
+|              1788061 |    xxxxxx |        2021-07-09 |      2021-11-20 |
+|              1788061 |    xxxxxx |        2018-04-26 |      2021-08-21 |
 
+To use this cohort table further, you can join it to other tables from the AllofUs database (after they have been "collected"). Or, 
+to use this table to limit the person table (or other OMOP CDM tables) to only your cohort, filter for the values in the `cohort$person_id` column:
+
+```{r}
+tbl(con, "person") %>%
+  filter(person_id %in% cohort$person_id)
+```
+
+More information on the `ROhdsiWebApi` can be found at https://github.com/OHDSI/ROhdsiWebApi. A free, instructional course for using ATLAS is available through EHDEN Academy: https://academy.ehden.eu/.
