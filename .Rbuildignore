@@ -7,7 +7,6 @@
 ^README\.Rmd$
 ^data-raw$
 ^cran-comments\.md$
-^vignettes$
 ^\.github$
 ^doc$
 ^Meta$

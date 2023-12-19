@@ -1,6 +1,10 @@
 ---
 title: "Managing files on the workbench"
 output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteIndexEntry{Managing files on the workbench}
+  %\VignetteEncoding{UTF-8}
 ---
 
 ```{r, include = FALSE}

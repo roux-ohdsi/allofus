@@ -7,7 +7,7 @@ Authors@R:
       person("Louisa", "Smith", email = "l.smith@northeastern.edu", role = c("aut", "cph"), comment = c(ORCID = "0000-0001-9029-4644")),
       person("Rob", "Cavanaugh", email = "r.cavanaugh@northeastern.edu", role = c("aut", "cre", "cph"), comment = c(ORCID = "0000-0002-2114-6565"))
     )
-Description: Streamline use of the 'All of Us' Researcher Workbench with tools to extract and manipulate data from the 'All of Us' database. Increase interoperability with the Observational Health Data Science and Informatics (OHDSI) tool stack by decreasing reliance of 'All of Us' tools and allowing for cohort creation via Atlas. Improve reproducible and transparent research using 'All of Us'.
+Description: Streamline use of the 'All of Us' Researcher Workbench with tools to extract and manipulate data from the 'All of Us' database. Increase interoperability with the Observational Health Data Science and Informatics ('OHDSI') tool stack by decreasing reliance of 'All of Us' tools and allowing for cohort creation via Atlas. Improve reproducible and transparent research using 'All of Us'.
 License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true

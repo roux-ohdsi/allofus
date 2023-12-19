@@ -10,19 +10,10 @@
     <loc>/LICENSE.html</loc>
   </url>
   <url>
-    <loc>/articles/allofus 2.html</loc>
-  </url>
-  <url>
     <loc>/articles/allofus.html</loc>
   </url>
   <url>
-    <loc>/articles/atlas 2.html</loc>
-  </url>
-  <url>
     <loc>/articles/atlas.html</loc>
-  </url>
-  <url>
-    <loc>/articles/data 2.html</loc>
   </url>
   <url>
     <loc>/articles/data.html</loc>
@@ -31,52 +22,25 @@
     <loc>/articles/index.html</loc>
   </url>
   <url>
-    <loc>/articles/pkgdown_only/data-browser 2.html</loc>
-  </url>
-  <url>
     <loc>/articles/pkgdown_only/data-browser.html</loc>
-  </url>
-  <url>
-    <loc>/articles/pkgdown_only/searchable_codebook 2.html</loc>
   </url>
   <url>
     <loc>/articles/pkgdown_only/searchable_codebook.html</loc>
   </url>
   <url>
-    <loc>/articles/sql 2.html</loc>
-  </url>
-  <url>
     <loc>/articles/sql.html</loc>
-  </url>
-  <url>
-    <loc>/articles/tips 2.html</loc>
   </url>
   <url>
     <loc>/articles/tips.html</loc>
   </url>
   <url>
-    <loc>/articles/web_only/data-browser 2.html</loc>
-  </url>
-  <url>
     <loc>/articles/web_only/data-browser.html</loc>
-  </url>
-  <url>
-    <loc>/articles/web_only/health_codebook 2.html</loc>
   </url>
   <url>
     <loc>/articles/web_only/health_codebook.html</loc>
   </url>
   <url>
-    <loc>/articles/web_only/searchable_codebook 2.html</loc>
-  </url>
-  <url>
     <loc>/articles/web_only/searchable_codebook.html</loc>
-  </url>
-  <url>
-    <loc>/articles/workspace 2.html</loc>
-  </url>
-  <url>
-    <loc>/articles/workspace-helpers 2.html</loc>
   </url>
   <url>
     <loc>/articles/workspace-helpers.html</loc>
@@ -88,37 +52,19 @@
     <loc>/authors.html</loc>
   </url>
   <url>
-    <loc>/cran-comments 2.html</loc>
-  </url>
-  <url>
     <loc>/index.html</loc>
-  </url>
-  <url>
-    <loc>/reference/CAST 2.html</loc>
   </url>
   <url>
     <loc>/reference/CAST.html</loc>
   </url>
   <url>
-    <loc>/reference/DATE_ADD 2.html</loc>
-  </url>
-  <url>
     <loc>/reference/DATE_ADD.html</loc>
-  </url>
-  <url>
-    <loc>/reference/DATE_DIFF 2.html</loc>
   </url>
   <url>
     <loc>/reference/DATE_DIFF.html</loc>
   </url>
   <url>
-    <loc>/reference/STRING_AGG 2.html</loc>
-  </url>
-  <url>
     <loc>/reference/STRING_AGG.html</loc>
-  </url>
-  <url>
-    <loc>/reference/allofus-package 2.html</loc>
   </url>
   <url>
     <loc>/reference/allofus-package.html</loc>
@@ -131,9 +77,6 @@
   </url>
   <url>
     <loc>/reference/aou_codebook.html</loc>
-  </url>
-  <url>
-    <loc>/reference/aou_cohort_example 2.html</loc>
   </url>
   <url>
     <loc>/reference/aou_cohort_example.html</loc>
@@ -221,9 +164,6 @@
   </url>
   <url>
     <loc>/reference/omop_join.html</loc>
-  </url>
-  <url>
-    <loc>/reference/on_workbench 2.html</loc>
   </url>
   <url>
     <loc>/reference/on_workbench.html</loc>
