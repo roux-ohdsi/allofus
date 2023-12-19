@@ -22,7 +22,7 @@ on_workbench <- function() {
 #' status (successful or not).
 #' @param CDR The name of the "curated data repository" to connect to. Defaults to
 #' `getOption("aou.default.cdr")`, which is `Sys.getenv('WORKSPACE_CDR')` if not specified otherwise
-#' (i.e., [the "mainline" CDR](https://support.researchallofus.org/hc/en-us/articles/4616869437204-Controlled-CDR-Directory)).
+#' (i.e., the "mainline" CDR).
 #' On the controlled tier, specify the "base" CDR with `CDR = paste0(Sys.getenv('WORKSPACE_CDR'), "_base")`.
 #' @param ... Further arguments passed along to `DBI::dbConnect()`.
 #'
@@ -93,7 +93,7 @@ aou_connect <- function(CDR = getOption("aou.default.cdr"), ...) {
 #' @param CDR The name of the "curated data repository" that will be used in any
 #' references of the form `"{CDR}"` or `"{cdr}"` in the query (see examples). Defaults to
 #' `getOption("aou.default.cdr")`, which is `Sys.getenv('WORKSPACE_CDR')` if not specified otherwise
-#' (i.e., [the "mainline" CDR](https://support.researchallofus.org/hc/en-us/articles/4616869437204-Controlled-CDR-Directory)).
+#' (i.e., the "mainline" CDR).
 #' On the controlled tier, specify the "base" CDR with `CDR = paste0(Sys.getenv('WORKSPACE_CDR'), "_base")`.
 #' @param debug Print the query to the console; useful for debugging.
 #' @param ... All other arguments passed to `bigrquery::bq_table_download()`

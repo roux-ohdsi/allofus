@@ -106,7 +106,7 @@ Now that we have our cohort, we want to create a dataset with data from these pa
 Here are some concepts we may want to include. Keep in mind that this is an example, and a real analysis would have a more thorough search for relevant concepts.
 
 | Concept ID | Concept Name                                     | Domain      |
-|---------------|-------------------------------------------|---------------|
+|------------|--------------------------------------------------|-------------|
 | 201826     | Type 2 diabetes mellitus                         | Condition   |
 | 4193704    | Type 2 diabetes mellitus without complication    | Condition   |
 | 40164929   | metformin hydrochloride 500 MG Oral Tablet       | Drug        |

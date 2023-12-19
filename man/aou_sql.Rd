@@ -14,7 +14,7 @@ References to \code{"{CDR}"} or \code{"{cdr}"} will be evaluated automatically (
 \item{CDR}{The name of the "curated data repository" that will be used in any
 references of the form \code{"{CDR}"} or \code{"{cdr}"} in the query (see examples). Defaults to
 \code{getOption("aou.default.cdr")}, which is \code{Sys.getenv('WORKSPACE_CDR')} if not specified otherwise
-(i.e., \href{https://support.researchallofus.org/hc/en-us/articles/4616869437204-Controlled-CDR-Directory}{the "mainline" CDR}).
+(i.e., the "mainline" CDR).
 On the controlled tier, specify the "base" CDR with \code{CDR = paste0(Sys.getenv('WORKSPACE_CDR'), "_base")}.}
 
 \item{debug}{Print the query to the console; useful for debugging.}

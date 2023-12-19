@@ -9,7 +9,7 @@ aou_connect(CDR = getOption("aou.default.cdr"), ...)
 \arguments{
 \item{CDR}{The name of the "curated data repository" to connect to. Defaults to
 \code{getOption("aou.default.cdr")}, which is \code{Sys.getenv('WORKSPACE_CDR')} if not specified otherwise
-(i.e., \href{https://support.researchallofus.org/hc/en-us/articles/4616869437204-Controlled-CDR-Directory}{the "mainline" CDR}).
+(i.e., the "mainline" CDR).
 On the controlled tier, specify the "base" CDR with \code{CDR = paste0(Sys.getenv('WORKSPACE_CDR'), "_base")}.}
 
 \item{...}{Further arguments passed along to \code{DBI::dbConnect()}.}
