@@ -60,6 +60,11 @@ aou_concept_set <- function(cohort = NULL,
     ))
   }
 
+
+  if(is.Date({{start_date}}) | is.Date({{end_date}})){
+    cli::cli_abort(c("If used, start_date and end_date must be strings that refer to columns in your cohort table, not dates."))
+  }
+
   # keep track of whether we are forced to collect
   # due to start and end dates provided with cohort as dataframe
   must_collect <- FALSE
