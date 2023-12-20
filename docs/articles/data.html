@@ -102,7 +102,8 @@ health record (e.g., diagnosis codes, lab values), data from wearable
 devices (e.g., fitbit), genomic data, and/or physical measurements. Data
 – either predefined or user-specified <a href="https://www.researchallofus.org/faq/what-is-a-concept-set/" class="external-link"><em>concept
 sets</em></a> – from each of the database tables can then be extracted
-for the cohort. More information on this process is available <a href="https://support.researchallofus.org/hc/en-us/articles/4556645124244-Using-the-Concept-Set-Selector-and-Dataset-Builder-tools-to-build-your-dataset" class="external-link">here</a>.</p>
+for the cohort.</p>
+<!-- More information on this process is available [here](https://support.researchallofus.org/hc/en-us/articles/4556645124244-Using-the-Concept-Set-Selector-and-Dataset-Builder-tools-to-build-your-dataset). -->
 <p>The <code>allofus</code> package takes a programmatic approach to
 extracting data from the All of Us database. One advantage to this
 approach is that it is easier to document and share the process. This is
@@ -118,7 +119,7 @@ metformin after joining All of Us.</p>
 </h2>
 <p>The first step is extracting gender and country of birth from the
 survey data. We can retrieve these variables either by concept code or
-concept id. Using the <code>allofus</code> <a href="https://roux-ohdsi.github.io/allofus/articles/searchable_codebook.html" class="external-link">searchable
+concept id. Using the <code>allofus</code> <a href="https://roux-ohdsi.github.io/allofus/articles/web_only/searchable_codebook.html" class="external-link">searchable
 codebook</a>, we find that the concept id for gender is 1585838 and for
 birthplace is 1586135. We can use the <code>aou_survey</code> function
 to extract these variables from the All of Us database. This function
