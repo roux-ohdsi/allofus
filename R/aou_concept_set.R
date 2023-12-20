@@ -86,7 +86,7 @@ aou_concept_set <- function(cohort = NULL,
         must_collect <- TRUE
       }
     } else {
-      tmp <- cohort %>% dplyr::select("person_id", dplyr::any_of(c('start_date', 'end_date')))
+      tmp <- cohort %>% dplyr::select("person_id", dplyr::any_of(c({{start_date}}, {{end_date}})))
     }
   }
 
@@ -114,8 +114,8 @@ aou_concept_set <- function(cohort = NULL,
 
   # now no matter what there will be start_date and end_date columns
   tmp <- dplyr::mutate(tmp,
-    start_date = .data[[start_date]],
-    end_date = .data[[end_date]]
+    start_date = .data[[{{start_date}}]],
+    end_date = .data[[{{end_date}}]]
   )
 
   all_concepts <- data.frame(
