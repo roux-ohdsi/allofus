@@ -55,8 +55,6 @@ aou_ls_workspace <- function(pattern = "", silent = FALSE, ...) {
 #' aou_ls_bucket()
 #' # list all csv files
 #' aou_ls_bucket("*.csv")
-#' # list all csv files in the data directory
-#' aou_ls_bucket("data/*.csv")
 #'
 aou_ls_bucket <- function(pattern = "", silent = FALSE, recursive = TRUE, bucket = getOption("aou.default.bucket"), gsutil_args = "") {
   if (recursive) {
@@ -70,10 +68,9 @@ aou_ls_bucket <- function(pattern = "", silent = FALSE, recursive = TRUE, bucket
   if (length(files) == 0) {
     cli::cli_inform(c("!" = "No files found with that pattern."))
   } else {
+    files <- sub(paste0(bucket, "\\/"), "", files)
     if (!silent) {
-      for (i in seq_along(files)) {
-        cat(files[i], "\n")
-      }
+      cat(files, sep = "\n")
     }
     invisible(files)
   }
@@ -111,18 +108,22 @@ aou_ls_bucket <- function(pattern = "", silent = FALSE, recursive = TRUE, bucket
 #' read.csv("data/data3.csv")
 #'
 #'
-aou_bucket_to_workspace <- function(file, dir = "", bucket = getOption("aou.default.bucket")) {
+aou_bucket_to_workspace <- function(file, dir = FALSE, bucket = getOption("aou.default.bucket")) {
   # # Copy the file from current workspace to the bucket
   bucket_files <- allofus::aou_ls_bucket(silent = TRUE)
 
   missing_files <- list()
 
+  if (dir) {
+    file <- paste0(file, "/:")
+    gs_args <- "gsutil cp -r"
+  } else gs_args <- "gsutil cp"
+
   for (i in seq_along(file)) {
     if (!(file[i] %in% bucket_files)) {
-      cli::cli_inform(c("!" = "Oops! ", file[i], " not found in bucket."))
       missing_files <- append(missing_files, file[i])
     } else {
-      system(paste0("gsutil cp ", bucket, "/", file[i], " ."), intern = TRUE)
+      system(paste0(gs_args, bucket, "/", file[i], " ."), intern = TRUE)
       cli::cli_inform(c("v" = "Retrieved ", file[i], " from bucket."))
     }
   }
@@ -137,8 +138,7 @@ aou_bucket_to_workspace <- function(file, dir = "", bucket = getOption("aou.defa
 #'
 #' @param file The name of a file in your bucket, a vector of multiple files, a directory,
 #' or a file pattern (e.g. ".csv"). See Details.
-#' @param dir Optional directory in the bucket to save files to.
-#' @param recursive Whether to include subdirectories. Defaults to `TRUE`.
+#' @param dir Whether `file` refers to an entire directory you want to move.
 #' @param bucket Bucket to save files to. Defaults to `getOption("aou.default.bucket")`,
 #' which is `Sys.getenv('WORKSPACE_BUCKET')` unless specified otherwise.
 #'
@@ -152,12 +152,12 @@ aou_bucket_to_workspace <- function(file, dir = "", bucket = getOption("aou.defa
 #' @examplesIf on_workbench()
 #' # create test files in a temporary directory
 #' tmp <- tempdir()
-#' write.csv(data.frame(x = 1), file.path(tmp,"testdata5.csv"))
-#' write.csv(data.frame(y = 2), file.path(tmp,"testdata6.csv"))
+#' write.csv(data.frame(x = 1), file.path(tmp,"testdata1.csv"))
+#' write.csv(data.frame(y = 2), file.path(tmp,"testdata2.csv"))
 #' # save a file to the bucket
-#' aou_workspace_to_bucket(file.path(tmp, "testdata5.csv"))
+#' aou_workspace_to_bucket(file.path(tmp, "testdata1.csv"))
 #' # save multiple files at once
-#' aou_workspace_to_bucket(c(file.path(tmp, "testdata5.csv"), file.path(tmp, "testdata6.csv")))
+#' aou_workspace_to_bucket(c(file.path(tmp, "testdata1.csv"), file.path(tmp, "testdata2.csv")))
 #' # save an entire directory
 #' aou_workspace_to_bucket(tmp, directory = TRUE)
 

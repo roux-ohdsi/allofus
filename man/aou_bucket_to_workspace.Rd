@@ -6,7 +6,7 @@
 \usage{
 aou_bucket_to_workspace(
   file,
-  dir = "",
+  dir = FALSE,
   bucket = getOption("aou.default.bucket")
 )
 }

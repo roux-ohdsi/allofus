@@ -17,9 +17,7 @@ or a file pattern (e.g. ".csv"). See Details.}
 \item{bucket}{Bucket to save files to. Defaults to \code{getOption("aou.default.bucket")},
 which is \code{Sys.getenv('WORKSPACE_BUCKET')} unless specified otherwise.}
 
-\item{dir}{Optional directory in the bucket to save files to.}
-
-\item{recursive}{Whether to include subdirectories. Defaults to \code{TRUE}.}
+\item{dir}{Whether \code{file} refers to an entire directory you want to move.}
 }
 \value{
 Nothing
@@ -35,12 +33,12 @@ underlying function.
 \dontshow{if (on_workbench()) (if (getRversion() >= "3.4") withAutoprint else force)(\{ # examplesIf}
 # create test files in a temporary directory
 tmp <- tempdir()
-write.csv(data.frame(x = 1), file.path(tmp,"testdata5.csv"))
-write.csv(data.frame(y = 2), file.path(tmp,"testdata6.csv"))
+write.csv(data.frame(x = 1), file.path(tmp,"testdata1.csv"))
+write.csv(data.frame(y = 2), file.path(tmp,"testdata2.csv"))
 # save a file to the bucket
-aou_workspace_to_bucket(file.path(tmp, "testdata5.csv"))
+aou_workspace_to_bucket(file.path(tmp, "testdata1.csv"))
 # save multiple files at once
-aou_workspace_to_bucket(c(file.path(tmp, "testdata5.csv"), file.path(tmp, "testdata6.csv")))
+aou_workspace_to_bucket(c(file.path(tmp, "testdata1.csv"), file.path(tmp, "testdata2.csv")))
 # save an entire directory
 aou_workspace_to_bucket(tmp, directory = TRUE)
 \dontshow{\}) # examplesIf}
