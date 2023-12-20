@@ -94,17 +94,22 @@ aou_ls_bucket <- function(pattern = "", silent = FALSE, recursive = TRUE, bucket
 #'
 #' @return Nothing
 #' @export
-#' @examples
-#' \dontrun{
-#' aou_bucket_to_workspace("data1.csv")
-#' read.csv("data1.csv")
+#' @examplesIf on_workbench()
+#' # save a file to the bucket
+#' tmp <- tempdir()
+#' write.csv(data.frame(x = 1), file.path(tmp,"testdata.csv"))
+#' aou_workspace_to_bucket(file.path(tmp,"testdata.csv"))
+#' # read the file back into the workspace
+#' aou_bucket_to_workspace("testdata.csv")
+#' # read in to your local environment
+#' read.csv("testdata.csv")
 #' # a file to a specific directory in the workspace
-#' aou_bucket_to_workspace("data2.csv", dir = "data")
+#' aou_bucket_to_workspace("testdata.csv", dir = "data")
 #' read.csv("data/data2.csv")
 #' # all of the files in this directory
 #' aou_bucket_to_workspace("data/")
 #' read.csv("data/data3.csv")
-#' }
+#'
 #'
 aou_bucket_to_workspace <- function(file, dir = "", bucket = getOption("aou.default.bucket")) {
   # # Copy the file from current workspace to the bucket
@@ -144,37 +149,43 @@ aou_bucket_to_workspace <- function(file, dir = "", bucket = getOption("aou.defa
 #' underlying function.
 #' @return Nothing
 #' @export
-#' @examples
-#' \dontrun{
-#' aou_workspace_to_bucket("data1.csv")
-#' # a file to a specific directory in the bucket
-#' aou_workspace_to_bucket("data2.csv", dir = "data")
-#' # all of the files in this directory
-#' aou_workspace_to_bucket("data/")
-#' # multiple specific files
-#' aou_workspace_to_bucket(c("data1.csv", "data2.csv"))
-#' }
-#'
-aou_workspace_to_bucket <- function(file, dir = "", recursive = TRUE,
+#' @examplesIf on_workbench()
+#' # create test files in a temporary directory
+#' tmp <- tempdir()
+#' write.csv(data.frame(x = 1), file.path(tmp,"testdata5.csv"))
+#' write.csv(data.frame(y = 2), file.path(tmp,"testdata6.csv"))
+#' # save a file to the bucket
+#' aou_workspace_to_bucket(file.path(tmp, "testdata5.csv"))
+#' # save multiple files at once
+#' aou_workspace_to_bucket(c(file.path(tmp, "testdata5.csv"), file.path(tmp, "testdata6.csv")))
+#' # save an entire directory
+#' aou_workspace_to_bucket(tmp, directory = TRUE)
+
+aou_workspace_to_bucket <- function(file, directory = FALSE,
                                     bucket = getOption("aou.default.bucket")) {
-  gsutil_args <- "-L gsutil_copy_to_bucket.log"
-  if (recursive) {
+  tmp <- tempdir()
+  tmp_log <- file.path(tmp, "cp.log")
+  gsutil_args <- paste("-L", tmp_log)
+
+  if (directory) {
     gsutil_args <- paste("-r", gsutil_args)
   }
 
   # Copy the file from current workspace to the bucket
   for (i in seq_along(file)) {
-    system(paste0("gsutil cp", gsutil_args, " ./", file[i], " ", file.path(bucket, dir)), intern = TRUE)
+    system(
+      paste("gsutil cp", gsutil_args, file[i], bucket)
+      , intern = TRUE)
   }
   # Check which files were copied
-  if (length(read.csv("cp.log")$Destination) == 0) {
+  if (length(read.csv(tmp_log)$Destination) == 0) {
     cli::cli_inform(c("!" = "Oops! No files were copied"))
   } else {
     cli::cli_inform(c(
       "v" =
         "Saved to bucket:",
-      paste(gsub(paste0(bucket, "/"), "", read.csv("cp.log")$Destination), collapse = "\n")
+      paste(gsub(paste0(bucket, "/"), "", read.csv(tmp_log)$Destination), collapse = "\n")
     ))
   }
-  invisible(file.remove("cp.log"))
+  invisible(file.remove(tmp_log))
 }

@@ -29,15 +29,21 @@ See \url{https://cloud.google.com/storage/docs/gsutil/commands/cp} for details o
 underlying function.
 }
 \examples{
-\dontrun{
-aou_bucket_to_workspace("data1.csv")
-read.csv("data1.csv")
+\dontshow{if (on_workbench()) (if (getRversion() >= "3.4") withAutoprint else force)(\{ # examplesIf}
+# save a file to the bucket
+tmp <- tempdir()
+write.csv(data.frame(x = 1), file.path(tmp,"testdata.csv"))
+aou_workspace_to_bucket(file.path(tmp,"testdata.csv"))
+# read the file back into the workspace
+aou_bucket_to_workspace("testdata.csv")
+# read in to your local environment
+read.csv("testdata.csv")
 # a file to a specific directory in the workspace
-aou_bucket_to_workspace("data2.csv", dir = "data")
+aou_bucket_to_workspace("testdata.csv", dir = "data")
 read.csv("data/data2.csv")
 # all of the files in this directory
 aou_bucket_to_workspace("data/")
 read.csv("data/data3.csv")
-}
 
+\dontshow{\}) # examplesIf}
 }

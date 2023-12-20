@@ -15,7 +15,7 @@ knitr::opts_chunk$set(
 )
 ```
 
-The [Researcher Workbench](https://workbench.researchallofus.org/), available to registered All of Us researchers, provides tools for creating datasets using the All of Us database. Researchers first use the Workbench to create a cohort defined by values of survey variables (e.g., gender, race, age), observations from the electronic health record (e.g., diagnosis codes, lab values), data from wearable devices (e.g., fitbit), genomic data, and/or physical measurements. Data -- either predefined or user-specified [*concept sets*](https://www.researchallofus.org/faq/what-is-a-concept-set/) -- from each of the database tables can then be extracted for the cohort. 
+The [Researcher Workbench](https://workbench.researchallofus.org/), available to registered All of Us researchers, provides tools for creating datasets using the All of Us database. Researchers first use the Workbench to create a cohort defined by values of survey variables (e.g., gender, race, age), observations from the electronic health record (e.g., diagnosis codes, lab values), data from wearable devices (e.g., fitbit), genomic data, and/or physical measurements. Data -- either predefined or user-specified [*concept sets*](https://www.researchallofus.org/faq/what-is-a-concept-set/) -- from each of the database tables can then be extracted for the cohort.
 
 <!-- More information on this process is available [here](https://support.researchallofus.org/hc/en-us/articles/4556645124244-Using-the-Concept-Set-Selector-and-Dataset-Builder-tools-to-build-your-dataset). -->
 

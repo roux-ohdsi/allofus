@@ -10,3 +10,4 @@ dev
 errorReportSql.txt
 /doc/
 /Meta/
+* [1-9].*
