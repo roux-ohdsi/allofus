@@ -63,7 +63,6 @@ aou_ls_bucket <- function(pattern = "", silent = FALSE, recursive = TRUE, bucket
 
   # Check if file is in the bucket
   files <- suppressWarnings(system(paste0("gsutil ls ", gsutil_args, " ", bucket, "/", pattern), intern = TRUE))
-  files <- gsub(".*/data/", "", files)
 
   if (length(files) == 0) {
     cli::cli_inform(c("!" = "No files found with that pattern."))
@@ -80,7 +79,7 @@ aou_ls_bucket <- function(pattern = "", silent = FALSE, recursive = TRUE, bucket
 #'
 #' @param file The name of a file in your bucket, a vector of multiple files, a directory,
 #' or a file pattern (e.g. ".csv").
-#' @param dir Optional directory in the workspace to save files to.
+#' @param directory Whether `file` refers to an entire directory you want to move.
 #' @param bucket Bucket to retrieve file from. Defaults to `getOption("aou.default.bucket")`,
 #' which is `Sys.getenv('WORKSPACE_BUCKET')` unless specified otherwise.
 #'
@@ -100,24 +99,18 @@ aou_ls_bucket <- function(pattern = "", silent = FALSE, recursive = TRUE, bucket
 #' aou_bucket_to_workspace("testdata.csv")
 #' # read in to your local environment
 #' read.csv("testdata.csv")
-#' # a file to a specific directory in the workspace
-#' aou_bucket_to_workspace("testdata.csv", dir = "data")
-#' read.csv("data/data2.csv")
-#' # all of the files in this directory
-#' aou_bucket_to_workspace("data/")
-#' read.csv("data/data3.csv")
 #'
 #'
-aou_bucket_to_workspace <- function(file, dir = FALSE, bucket = getOption("aou.default.bucket")) {
+aou_bucket_to_workspace <- function(file, directory = FALSE, bucket = getOption("aou.default.bucket")) {
   # # Copy the file from current workspace to the bucket
   bucket_files <- allofus::aou_ls_bucket(silent = TRUE)
 
   missing_files <- list()
 
-  if (dir) {
+  if (directory) {
     file <- paste0(file, "/:")
-    gs_args <- "gsutil cp -r"
-  } else gs_args <- "gsutil cp"
+    gs_args <- "gsutil cp -r "
+  } else gs_args <- "gsutil cp "
 
   for (i in seq_along(file)) {
     if (!(file[i] %in% bucket_files)) {
@@ -138,7 +131,7 @@ aou_bucket_to_workspace <- function(file, dir = FALSE, bucket = getOption("aou.d
 #'
 #' @param file The name of a file in your bucket, a vector of multiple files, a directory,
 #' or a file pattern (e.g. ".csv"). See Details.
-#' @param dir Whether `file` refers to an entire directory you want to move.
+#' @param directory Whether `file` refers to an entire directory you want to move.
 #' @param bucket Bucket to save files to. Defaults to `getOption("aou.default.bucket")`,
 #' which is `Sys.getenv('WORKSPACE_BUCKET')` unless specified otherwise.
 #'

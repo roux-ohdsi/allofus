@@ -6,7 +6,7 @@
 \usage{
 aou_bucket_to_workspace(
   file,
-  dir = FALSE,
+  directory = FALSE,
   bucket = getOption("aou.default.bucket")
 )
 }
@@ -14,7 +14,7 @@ aou_bucket_to_workspace(
 \item{file}{The name of a file in your bucket, a vector of multiple files, a directory,
 or a file pattern (e.g. ".csv").}
 
-\item{dir}{Optional directory in the workspace to save files to.}
+\item{directory}{Whether \code{file} refers to an entire directory you want to move.}
 
 \item{bucket}{Bucket to retrieve file from. Defaults to \code{getOption("aou.default.bucket")},
 which is \code{Sys.getenv('WORKSPACE_BUCKET')} unless specified otherwise.}
@@ -38,12 +38,6 @@ aou_workspace_to_bucket(file.path(tmp,"testdata.csv"))
 aou_bucket_to_workspace("testdata.csv")
 # read in to your local environment
 read.csv("testdata.csv")
-# a file to a specific directory in the workspace
-aou_bucket_to_workspace("testdata.csv", dir = "data")
-read.csv("data/data2.csv")
-# all of the files in this directory
-aou_bucket_to_workspace("data/")
-read.csv("data/data3.csv")
 
 \dontshow{\}) # examplesIf}
 }

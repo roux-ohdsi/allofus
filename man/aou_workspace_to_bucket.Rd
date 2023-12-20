@@ -14,10 +14,10 @@ aou_workspace_to_bucket(
 \item{file}{The name of a file in your bucket, a vector of multiple files, a directory,
 or a file pattern (e.g. ".csv"). See Details.}
 
+\item{directory}{Whether \code{file} refers to an entire directory you want to move.}
+
 \item{bucket}{Bucket to save files to. Defaults to \code{getOption("aou.default.bucket")},
 which is \code{Sys.getenv('WORKSPACE_BUCKET')} unless specified otherwise.}
-
-\item{dir}{Whether \code{file} refers to an entire directory you want to move.}
 }
 \value{
 Nothing
