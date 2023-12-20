@@ -61,7 +61,7 @@ aou_concept_set <- function(cohort = NULL,
   }
 
 
-  if(is.Date({{start_date}}) | is.Date({{end_date}})){
+  if(is.date({{start_date}}) | is.date({{end_date}})){
     cli::cli_abort(c("If used, start_date and end_date must be strings that refer to columns in your cohort table, not dates."))
   }
 
