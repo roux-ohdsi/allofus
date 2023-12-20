@@ -86,7 +86,7 @@ aou_concept_set <- function(cohort = NULL,
         must_collect <- TRUE
       }
     } else {
-      tmp <- cohort %>% dplyr::select("person_id", dplyr::any_of(c(start_date, end_date)))
+      tmp <- cohort %>% dplyr::select("person_id", dplyr::any_of(c('start_date', 'end_date')))
     }
   }
 
