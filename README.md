@@ -24,6 +24,7 @@ CDM](https://www.researchallofus.org/faq/what-is-omop/) data.
 [![CRAN
 status](https://www.r-pkg.org/badges/version/allofus)](https://CRAN.R-project.org/package=allofus)
 [![](http://cranlogs.r-pkg.org/badges/grand-total/allofus)](https://cran.r-project.org/package=allofus)
+[![DOI](https://zenodo.org/badge/659848534.svg)](https://zenodo.org/doi/10.5281/zenodo.10420610)
 <!-- badges: end -->
 
 ### Installation
@@ -46,6 +47,22 @@ pak::pak("roux-ohdsi/allofus")
 Read through the [getting
 started](https://roux-ohdsi.github.io/allofus/articles/allofus.html)
 vignette to learn how to use the package.
+
+### Citation
+
+Please cite the `allofus` package as:
+<p>
+Smith L, Cavanaugh R (2021). <em>allofus: Interface for ‘All of Us’
+Researcher Workbench</em>.
+<a href="https://doi.org/10.5281/zenodo.10420610">doi:10.5281/zenodo.10420610</a>,
+<a href="https://roux-ohdsi.github.io/allofus/">https://roux-ohdsi.github.io/allofus/</a>.
+</p>
+
+or with
+
+``` r
+citation("allofus")
+```
 
 ### Bugs
 

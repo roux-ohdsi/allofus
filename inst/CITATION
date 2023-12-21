@@ -1,0 +1,8 @@
+bibentry(
+  bibtype  = "Manual",
+  title    = "allofus: Interface for 'All of Us' Researcher Workbench",
+  author   = "Louisa Smith and Rob Cavanaugh",
+  year     = "2021",
+  url      = "https://roux-ohdsi.github.io/allofus/",
+  doi      = "10.5281/zenodo.10420610"
+)
