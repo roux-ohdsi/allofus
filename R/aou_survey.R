@@ -96,8 +96,6 @@ aou_survey <- function(cohort = NULL,
   # check for NA values or empty strings in questions or question_output
   if(any(is.na(c(questions, question_output))) | any(c(questions, question_output) == "")){
     cli::cli_abort("NA values or empty string detected in {.code questions} or {.code question_output}")
-  } else {
-    print("works")
   }
 
   if (length(question_output) == length(questions)) { # either gave column names or happen to have a single question
