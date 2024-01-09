@@ -83,7 +83,8 @@ aou_observation_period <- function(cohort = NULL,
     dplyr::group_by(.data$person_id) %>%
     # pad the end date
     dplyr::mutate(observation_end_date = DATE_ADD(.data$observation_period_end_date, dplyr::sql(paste0("INTERVAL ", end_date_buffer, " day")))) %>%
-    dbplyr::window_order(.data$person_id, .data$obs_period)
+    dbplyr::window_order(.data$person_id, .data$obs_period) %>%
+    dplyr::ungroup()
 
   # collect if desired.
   if (isTRUE(collect)) {
