@@ -156,11 +156,11 @@ aou_concept_set <- function(cohort = NULL,
   if (must_collect) {
     # collect to restrict the concepts between the given start and end dates
     all_concepts <- dplyr::collect(all_concepts) %>%
-      dplyr::right_join(cohort, by = dplyr::join_by("person_id", dplyr::between("concept_date", "start_date", "end_date")))
+      dplyr::right_join(cohort, by = dplyr::join_by("person_id", between("concept_date", "start_date", "end_date")))
     cohort_w_concepts <- all_concepts
   } else {
     cohort_w_concepts <- dplyr::right_join(all_concepts, tmp,
-      by = dplyr::join_by("person_id", dplyr::between("concept_date", "start_date", "end_date"))
+      by = dplyr::join_by("person_id", between("concept_date", "start_date", "end_date"))
     )
   }
 
@@ -272,7 +272,7 @@ get_domain_concepts <- function(cohort, concepts, start_date, end_date, tbl_name
     # suffix is needed because the cohort and domain tables have the same column names
     dplyr::left_join(domain_tbl, by = "person_id", suffix = c(tbl_name, "")) %>%
     dplyr::filter(.data$concept_id %in% concepts) %>%
-    dplyr::filter(dplyr::between(.data$concept_date, .data$start_date, .data$end_date)) %>%
+    dplyr::filter(between(.data$concept_date, .data$start_date, .data$end_date)) %>%
     dplyr::left_join(dplyr::select(dplyr::tbl(con, "concept"), "concept_id", "concept_name", "domain_id"),
       by = "concept_id"
     ) %>%
