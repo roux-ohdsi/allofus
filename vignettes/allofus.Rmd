@@ -1,6 +1,10 @@
 ---
 title: "All of Us in R"
 output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteIndexEntry{All of Us in R}
+  %\VignetteEncoding{UTF-8}
 ---
 
 ```{r, include = FALSE}

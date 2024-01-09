@@ -44,6 +44,9 @@ underlying function.'><!-- mathjax --><script src="https://cdnjs.cloudflare.com/
     <a class="dropdown-item" href="../articles/web_only/health_codebook.html">Health History Surveys</a>
   </div>
 </li>
+<li class="nav-item">
+  <a class="nav-link" href="../news/index.html">Changelog</a>
+</li>
       </ul><form class="form-inline my-2 my-lg-0" role="search">
         <input type="search" class="form-control me-sm-2" aria-label="Toggle navigation" name="search-input" data-search-index="../search.json" id="search-input" placeholder="Search for" autocomplete="off"></form>
 
@@ -77,8 +80,7 @@ underlying function.</p>
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">aou_workspace_to_bucket</span><span class="op">(</span></span>
 <span>  <span class="va">file</span>,</span>
-<span>  dir <span class="op">=</span> <span class="st">""</span>,</span>
-<span>  recursive <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  directory <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  bucket <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/options.html" class="external-link">getOption</a></span><span class="op">(</span><span class="st">"aou.default.bucket"</span><span class="op">)</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
@@ -90,12 +92,8 @@ underlying function.</p>
 or a file pattern (e.g. ".csv"). See Details.</p></dd>
 
 
-<dt>dir</dt>
-<dd><p>Optional directory in the bucket to save files to.</p></dd>
-
-
-<dt>recursive</dt>
-<dd><p>Whether to include subdirectories. Defaults to <code>TRUE</code>.</p></dd>
+<dt>directory</dt>
+<dd><p>Whether <code>file</code> refers to an entire directory you want to move.</p></dd>
 
 
 <dt>bucket</dt>
@@ -103,19 +101,27 @@ or a file pattern (e.g. ".csv"). See Details.</p></dd>
 which is <code>Sys.getenv('WORKSPACE_BUCKET')</code> unless specified otherwise.</p></dd>
 
 </dl></div>
+    <div class="section level2">
+    <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
+    
+
+<p>Nothing</p>
+    </div>
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span></span></span>
-<span class="r-in"><span><span class="fu">aou_workspace_to_bucket</span><span class="op">(</span><span class="st">"data1.csv"</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="co"># a file to a specific directory in the bucket</span></span></span>
-<span class="r-in"><span><span class="fu">aou_workspace_to_bucket</span><span class="op">(</span><span class="st">"data2.csv"</span>, dir <span class="op">=</span> <span class="st">"data"</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="co"># all of the files in this directory</span></span></span>
-<span class="r-in"><span><span class="fu">aou_workspace_to_bucket</span><span class="op">(</span><span class="st">"data/"</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="co"># multiple specific files</span></span></span>
-<span class="r-in"><span><span class="fu">aou_workspace_to_bucket</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"data1.csv"</span>, <span class="st">"data2.csv"</span><span class="op">)</span><span class="op">)</span></span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span> <span class="co"># on_workbench()</span></span></span>
+<span class="r-in"><span><span class="co"># create test files in a temporary directory</span></span></span>
+<span class="r-in"><span><span class="va">tmp</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/tempfile.html" class="external-link">tempdir</a></span><span class="op">(</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/write.table.html" class="external-link">write.csv</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>x <span class="op">=</span> <span class="fl">1</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/file.path.html" class="external-link">file.path</a></span><span class="op">(</span><span class="va">tmp</span>,<span class="st">"testdata1.csv"</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/write.table.html" class="external-link">write.csv</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>y <span class="op">=</span> <span class="fl">2</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/file.path.html" class="external-link">file.path</a></span><span class="op">(</span><span class="va">tmp</span>,<span class="st">"testdata2.csv"</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="co"># save a file to the bucket</span></span></span>
+<span class="r-in"><span><span class="fu">aou_workspace_to_bucket</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/file.path.html" class="external-link">file.path</a></span><span class="op">(</span><span class="va">tmp</span>, <span class="st">"testdata1.csv"</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="co"># save multiple files at once</span></span></span>
+<span class="r-in"><span><span class="fu">aou_workspace_to_bucket</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/file.path.html" class="external-link">file.path</a></span><span class="op">(</span><span class="va">tmp</span>, <span class="st">"testdata1.csv"</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/file.path.html" class="external-link">file.path</a></span><span class="op">(</span><span class="va">tmp</span>, <span class="st">"testdata2.csv"</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="co"># save an entire directory</span></span></span>
+<span class="r-in"><span><span class="fu">aou_workspace_to_bucket</span><span class="op">(</span><span class="va">tmp</span>, directory <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="op">}</span></span></span>
-<span class="r-in"><span></span></span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>

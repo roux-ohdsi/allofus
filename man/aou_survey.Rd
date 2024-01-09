@@ -30,6 +30,9 @@ aou_survey(
 
 \item{...}{additional arguments passed to \code{collect()} when \code{collect = TRUE}}
 }
+\value{
+a dataframe if collect = TRUE; a remote tbl if not
+}
 \description{
 Because responses to the survey questions stored in the ds_survey table do not
 include skipped questions (i.e., missing data!), this function makes it easier to

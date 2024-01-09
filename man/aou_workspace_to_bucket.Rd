@@ -6,8 +6,7 @@
 \usage{
 aou_workspace_to_bucket(
   file,
-  dir = "",
-  recursive = TRUE,
+  directory = FALSE,
   bucket = getOption("aou.default.bucket")
 )
 }
@@ -15,12 +14,13 @@ aou_workspace_to_bucket(
 \item{file}{The name of a file in your bucket, a vector of multiple files, a directory,
 or a file pattern (e.g. ".csv"). See Details.}
 
-\item{dir}{Optional directory in the bucket to save files to.}
-
-\item{recursive}{Whether to include subdirectories. Defaults to \code{TRUE}.}
+\item{directory}{Whether \code{file} refers to an entire directory you want to move.}
 
 \item{bucket}{Bucket to save files to. Defaults to \code{getOption("aou.default.bucket")},
 which is \code{Sys.getenv('WORKSPACE_BUCKET')} unless specified otherwise.}
+}
+\value{
+Nothing
 }
 \description{
 This function moves a file saved in a workspace
@@ -30,14 +30,16 @@ object as a file to the workspace (e.g., \code{write.csv(object, "filename.csv")
 underlying function.
 }
 \examples{
-\dontrun{
-aou_workspace_to_bucket("data1.csv")
-# a file to a specific directory in the bucket
-aou_workspace_to_bucket("data2.csv", dir = "data")
-# all of the files in this directory
-aou_workspace_to_bucket("data/")
-# multiple specific files
-aou_workspace_to_bucket(c("data1.csv", "data2.csv"))
-}
-
+\dontshow{if (on_workbench()) (if (getRversion() >= "3.4") withAutoprint else force)(\{ # examplesIf}
+# create test files in a temporary directory
+tmp <- tempdir()
+write.csv(data.frame(x = 1), file.path(tmp,"testdata1.csv"))
+write.csv(data.frame(y = 2), file.path(tmp,"testdata2.csv"))
+# save a file to the bucket
+aou_workspace_to_bucket(file.path(tmp, "testdata1.csv"))
+# save multiple files at once
+aou_workspace_to_bucket(c(file.path(tmp, "testdata1.csv"), file.path(tmp, "testdata2.csv")))
+# save an entire directory
+aou_workspace_to_bucket(tmp, directory = TRUE)
+\dontshow{\}) # examplesIf}
 }

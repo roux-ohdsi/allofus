@@ -14,3 +14,11 @@
 #' @examples
 #' 1:10 %>% sum()
 NULL
+
+
+#' Check if a value is a date
+#' @keywords internal
+#' @noRd
+is.date <- function(x){
+ inherits(x, 'Date')
+}

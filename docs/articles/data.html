@@ -60,6 +60,9 @@
     <a class="dropdown-item" href="../articles/web_only/health_codebook.html">Health History Surveys</a>
   </div>
 </li>
+<li class="nav-item">
+  <a class="nav-link" href="../news/index.html">Changelog</a>
+</li>
       </ul>
 <form class="form-inline my-2 my-lg-0" role="search">
         <input type="search" class="form-control me-sm-2" aria-label="Toggle navigation" name="search-input" data-search-index="../search.json" id="search-input" placeholder="Search for" autocomplete="off">
@@ -102,7 +105,8 @@ health record (e.g., diagnosis codes, lab values), data from wearable
 devices (e.g., fitbit), genomic data, and/or physical measurements. Data
 – either predefined or user-specified <a href="https://www.researchallofus.org/faq/what-is-a-concept-set/" class="external-link"><em>concept
 sets</em></a> – from each of the database tables can then be extracted
-for the cohort. More information on this process is available <a href="https://support.researchallofus.org/hc/en-us/articles/4556645124244-Using-the-Concept-Set-Selector-and-Dataset-Builder-tools-to-build-your-dataset" class="external-link">here</a>.</p>
+for the cohort.</p>
+<!-- More information on this process is available [here](https://support.researchallofus.org/hc/en-us/articles/4556645124244-Using-the-Concept-Set-Selector-and-Dataset-Builder-tools-to-build-your-dataset). -->
 <p>The <code>allofus</code> package takes a programmatic approach to
 extracting data from the All of Us database. One advantage to this
 approach is that it is easier to document and share the process. This is
@@ -118,7 +122,7 @@ metformin after joining All of Us.</p>
 </h2>
 <p>The first step is extracting gender and country of birth from the
 survey data. We can retrieve these variables either by concept code or
-concept id. Using the <code>allofus</code> <a href="https://roux-ohdsi.github.io/allofus/articles/searchable_codebook.html" class="external-link">searchable
+concept id. Using the <code>allofus</code> <a href="https://roux-ohdsi.github.io/allofus/articles/web_only/searchable_codebook.html" class="external-link">searchable
 codebook</a>, we find that the concept id for gender is 1585838 and for
 birthplace is 1586135. We can use the <code>aou_survey</code> function
 to extract these variables from the All of Us database. This function
@@ -225,9 +229,9 @@ is an example, and a real analysis would have a more thorough search for
 relevant concepts.</p>
 <table class="table">
 <colgroup>
-<col width="20%">
-<col width="58%">
-<col width="20%">
+<col width="16%">
+<col width="66%">
+<col width="17%">
 </colgroup>
 <thead><tr class="header">
 <th>Concept ID</th>

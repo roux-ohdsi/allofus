@@ -39,7 +39,5 @@ all files in the bucket or files matching a certain pattern.
 aou_ls_bucket()
 # list all csv files
 aou_ls_bucket("*.csv")
-# list all csv files in the data directory
-aou_ls_bucket("data/*.csv")
 \dontshow{\}) # examplesIf}
 }

@@ -60,6 +60,11 @@ aou_concept_set <- function(cohort = NULL,
     ))
   }
 
+
+  if(is.date({{start_date}}) | is.date({{end_date}})){
+    cli::cli_abort(c("If used, start_date and end_date must be strings that refer to columns in your cohort table, not dates."))
+  }
+
   # keep track of whether we are forced to collect
   # due to start and end dates provided with cohort as dataframe
   must_collect <- FALSE
@@ -86,7 +91,7 @@ aou_concept_set <- function(cohort = NULL,
         must_collect <- TRUE
       }
     } else {
-      tmp <- cohort %>% dplyr::select("person_id", dplyr::any_of(c(start_date, end_date)))
+      tmp <- cohort %>% dplyr::select("person_id", dplyr::any_of(c({{start_date}}, {{end_date}})))
     }
   }
 
@@ -114,8 +119,8 @@ aou_concept_set <- function(cohort = NULL,
 
   # now no matter what there will be start_date and end_date columns
   tmp <- dplyr::mutate(tmp,
-    start_date = .data[[start_date]],
-    end_date = .data[[end_date]]
+    start_date = .data[[{{start_date}}]],
+    end_date = .data[[{{end_date}}]]
   )
 
   all_concepts <- data.frame(
@@ -151,11 +156,11 @@ aou_concept_set <- function(cohort = NULL,
   if (must_collect) {
     # collect to restrict the concepts between the given start and end dates
     all_concepts <- dplyr::collect(all_concepts) %>%
-      dplyr::right_join(cohort, by = dplyr::join_by("person_id", dplyr::between("concept_date", "start_date", "end_date")))
+      dplyr::right_join(cohort, by = dplyr::join_by("person_id", between("concept_date", "start_date", "end_date")))
     cohort_w_concepts <- all_concepts
   } else {
     cohort_w_concepts <- dplyr::right_join(all_concepts, tmp,
-      by = dplyr::join_by("person_id", dplyr::between("concept_date", "start_date", "end_date"))
+      by = dplyr::join_by("person_id", between("concept_date", "start_date", "end_date"))
     )
   }
 
@@ -267,7 +272,7 @@ get_domain_concepts <- function(cohort, concepts, start_date, end_date, tbl_name
     # suffix is needed because the cohort and domain tables have the same column names
     dplyr::left_join(domain_tbl, by = "person_id", suffix = c(tbl_name, "")) %>%
     dplyr::filter(.data$concept_id %in% concepts) %>%
-    dplyr::filter(dplyr::between(.data$concept_date, .data[[start_date]], .data[[end_date]])) %>%
+    dplyr::filter(between(.data$concept_date, .data$start_date, .data$end_date)) %>%
     dplyr::left_join(dplyr::select(dplyr::tbl(con, "concept"), "concept_id", "concept_name", "domain_id"),
       by = "concept_id"
     ) %>%

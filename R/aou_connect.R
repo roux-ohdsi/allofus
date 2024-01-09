@@ -22,7 +22,7 @@ on_workbench <- function() {
 #' status (successful or not).
 #' @param CDR The name of the "curated data repository" to connect to. Defaults to
 #' `getOption("aou.default.cdr")`, which is `Sys.getenv('WORKSPACE_CDR')` if not specified otherwise
-#' (i.e., [the "mainline" CDR](https://support.researchallofus.org/hc/en-us/articles/4616869437204-Controlled-CDR-Directory)).
+#' (i.e., the "mainline" CDR).
 #' On the controlled tier, specify the "base" CDR with `CDR = paste0(Sys.getenv('WORKSPACE_CDR'), "_base")`.
 #' @param ... Further arguments passed along to `DBI::dbConnect()`.
 #'
@@ -36,16 +36,19 @@ on_workbench <- function() {
 #' DBI::dbListTables(con)
 aou_connect <- function(CDR = getOption("aou.default.cdr"), ...) {
   if (packageVersion("dbplyr") == "2.4.0") {
-    stop('
-         dbplyr v2.4.0 is not compatible with the All of Us database (bigquery).
-         Please install either dbplyr v2.3.4 or the development version of dbplyr.
-         # Install {pak}
-         install.packages("pak")
-         # Install dbplyr v2.3.4
-         pak::pkg_install("tidyverse/dbplyr@v2.3.4")
-         # Or install development version of dbplyr
-         pak::pkg_install("tidyverse/dbplyr")
-         # restart your R kernel')
+    cli::cli_abort(c(
+      'dbplyr v2.4.0 is not compatible with the All of Us database (bigquery).;',
+     i = 'Please install either dbplyr v2.3.4 or the development version of dbplyr:',
+      '# Install pak',
+      'install.packages("pak")',
+      '# Install dbplyr v2.3.4',
+      'pak::pkg_install("tidyverse/dbplyr@v2.3.4")',
+      '# Or install development version of dbplyr',
+      'pak::pkg_install("tidyverse/dbplyr")',
+      '# restart your R kernel'
+    ), call = NULL)
+
+    stop()
   }
 
 
@@ -93,7 +96,7 @@ aou_connect <- function(CDR = getOption("aou.default.cdr"), ...) {
 #' @param CDR The name of the "curated data repository" that will be used in any
 #' references of the form `"{CDR}"` or `"{cdr}"` in the query (see examples). Defaults to
 #' `getOption("aou.default.cdr")`, which is `Sys.getenv('WORKSPACE_CDR')` if not specified otherwise
-#' (i.e., [the "mainline" CDR](https://support.researchallofus.org/hc/en-us/articles/4616869437204-Controlled-CDR-Directory)).
+#' (i.e., the "mainline" CDR).
 #' On the controlled tier, specify the "base" CDR with `CDR = paste0(Sys.getenv('WORKSPACE_CDR'), "_base")`.
 #' @param debug Print the query to the console; useful for debugging.
 #' @param ... All other arguments passed to `bigrquery::bq_table_download()`

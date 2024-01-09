@@ -32,7 +32,7 @@
 #' @param con connection to the allofus SQL database. Defaults to getOption("aou.default.con"), which is created automatically with `aou_connect()`
 #' @param collect whether to return the results as a local (TRUE) or database table
 #' @param ... additional arguments passed to `collect()` when `collect = TRUE`
-#'
+#' @return a dataframe if collect = TRUE; a remote tbl if not
 #' @export
 #' @examplesIf on_workbench()
 #'
@@ -85,11 +85,17 @@ aou_survey <- function(cohort = NULL,
           # restart your R kernel')
   }
 
+  # check for connection
   if (is.null(con)) {
     cli::cli_abort(c("No connection available.",
       "i" = "Provide a connection automatically by running {.code aou_connect()} before this function.",
       "i" = "You can also provide {.code con} as an argument or default with {.code options(aou.default.con = ...)}."
     ))
+  }
+
+  # check for NA values or empty strings in questions or question_output
+  if(any(is.na(c(questions, question_output))) | any(c(questions, question_output) == "")){
+    cli::cli_abort("NA values or empty string detected in {.code questions} or {.code question_output}")
   }
 
   if (length(question_output) == length(questions)) { # either gave column names or happen to have a single question

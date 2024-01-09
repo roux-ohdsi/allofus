@@ -1,6 +1,10 @@
 ---
 title: "Extracting All of Us survey and EHR data"
 output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteIndexEntry{Extracting All of Us survey and EHR data}
+  %\VignetteEncoding{UTF-8}
 ---
 
 ```{r, include = FALSE}
@@ -11,7 +15,9 @@ knitr::opts_chunk$set(
 )
 ```
 
-The [Researcher Workbench](https://workbench.researchallofus.org/), available to registered All of Us researchers, provides tools for creating datasets using the All of Us database. Researchers first use the Workbench to create a cohort defined by values of survey variables (e.g., gender, race, age), observations from the electronic health record (e.g., diagnosis codes, lab values), data from wearable devices (e.g., fitbit), genomic data, and/or physical measurements. Data -- either predefined or user-specified [*concept sets*](https://www.researchallofus.org/faq/what-is-a-concept-set/) -- from each of the database tables can then be extracted for the cohort. More information on this process is available [here](https://support.researchallofus.org/hc/en-us/articles/4556645124244-Using-the-Concept-Set-Selector-and-Dataset-Builder-tools-to-build-your-dataset).
+The [Researcher Workbench](https://workbench.researchallofus.org/), available to registered All of Us researchers, provides tools for creating datasets using the All of Us database. Researchers first use the Workbench to create a cohort defined by values of survey variables (e.g., gender, race, age), observations from the electronic health record (e.g., diagnosis codes, lab values), data from wearable devices (e.g., fitbit), genomic data, and/or physical measurements. Data -- either predefined or user-specified [*concept sets*](https://www.researchallofus.org/faq/what-is-a-concept-set/) -- from each of the database tables can then be extracted for the cohort.
+
+<!-- More information on this process is available [here](https://support.researchallofus.org/hc/en-us/articles/4556645124244-Using-the-Concept-Set-Selector-and-Dataset-Builder-tools-to-build-your-dataset). -->
 
 The `allofus` package takes a programmatic approach to extracting data from the All of Us database. One advantage to this approach is that it is easier to document and share the process. This is especially important for reproducibility and transparency. To demonstrate, this vignette will walk through some examples of extracting data from the All of Us database.
 
@@ -19,7 +25,7 @@ Suppose we want a cohort of the female All of Us participants who weren't born i
 
 ## Survey data
 
-The first step is extracting gender and country of birth from the survey data. We can retrieve these variables either by concept code or concept id. Using the `allofus` [searchable codebook](https://roux-ohdsi.github.io/allofus/articles/searchable_codebook.html), we find that the concept id for gender is 1585838 and for birthplace is 1586135. We can use the `aou_survey` function to extract these variables from the All of Us database. This function takes a vector of concept ids or codes, and returns a dataset with one row per participant and one column per variable. The `question_output` argument allows you to specify the names of the column in the output dataset. Alternatively, you can specify "concept_id" or "concept_code" to name the variables according to one of those options.
+The first step is extracting gender and country of birth from the survey data. We can retrieve these variables either by concept code or concept id. Using the `allofus` [searchable codebook](https://roux-ohdsi.github.io/allofus/articles/web_only/searchable_codebook.html), we find that the concept id for gender is 1585838 and for birthplace is 1586135. We can use the `aou_survey` function to extract these variables from the All of Us database. This function takes a vector of concept ids or codes, and returns a dataset with one row per participant and one column per variable. The `question_output` argument allows you to specify the names of the column in the output dataset. Alternatively, you can specify "concept_id" or "concept_code" to name the variables according to one of those options.
 
 ```{r}
 library(allofus)
@@ -106,7 +112,7 @@ Now that we have our cohort, we want to create a dataset with data from these pa
 Here are some concepts we may want to include. Keep in mind that this is an example, and a real analysis would have a more thorough search for relevant concepts.
 
 | Concept ID | Concept Name                                     | Domain      |
-|---------------|-------------------------------------------|---------------|
+|------------|--------------------------------------------------|-------------|
 | 201826     | Type 2 diabetes mellitus                         | Condition   |
 | 4193704    | Type 2 diabetes mellitus without complication    | Condition   |
 | 40164929   | metformin hydrochloride 500 MG Oral Tablet       | Drug        |
