@@ -74,7 +74,7 @@ aou_survey <- function(cohort = NULL,
   if (packageVersion("dbplyr") < "2.3.0") {
     cli::cli_abort(c(
       'Older versions of dbplyr are not supported by the {.code aou_survey()} function.',
-      i = "Note: v.2.4.0 is alsonot compatible with the AllofUS Database"
+      i = "Note: v.2.4.0 is also not compatible with the AllofUS Database",
       i = 'Please install either dbplyr v2.3.4 or the development version of dbplyr:',
 
       '# Install pak',
