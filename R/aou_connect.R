@@ -47,8 +47,6 @@ aou_connect <- function(CDR = getOption("aou.default.cdr"), ...) {
       'pak::pkg_install("tidyverse/dbplyr")',
       '# restart your R kernel'
     ), call = NULL)
-
-    stop()
   }
 
 

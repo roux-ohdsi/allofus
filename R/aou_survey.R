@@ -72,17 +72,20 @@ aou_survey <- function(cohort = NULL,
                        collect = FALSE,
                        ...) {
   if (packageVersion("dbplyr") < "2.3.0") {
-    stop('
-          Older versions of dbplyr are not supported by the aou_survey() function.
-          Please install either v2.3.4 or the development version of dbplyr.
-          note: v.2.4.0 is not compatible with the AllofUS Database
-          # Install {pak}
-          install.packages("pak")
-          # Install dbplyr v2.3.4
-          pak::pkg_install("tidyverse/dbplyr@v2.3.4")
-          # Or install development version of dbplyr
-          pak::pkg_install("tidyverse/dbplyr")
-          # restart your R kernel')
+    cli::cli_abort(c(
+      'Older versions of dbplyr are not supported by the {.code aou_survey()} function.',
+      i = "Note: v.2.4.0 is alsonot compatible with the AllofUS Database"
+      i = 'Please install either dbplyr v2.3.4 or the development version of dbplyr:',
+
+      '# Install pak',
+      'install.packages("pak")',
+      '# Install dbplyr v2.3.4',
+      'pak::pkg_install("tidyverse/dbplyr@v2.3.4")',
+      '# Or install development version of dbplyr',
+      'pak::pkg_install("tidyverse/dbplyr")',
+      '# restart your R kernel'
+    ), call = NULL)
+
   }
 
   # check for connection
