@@ -52,10 +52,9 @@ vignette to learn how to use the package.
 
 Please cite the `allofus` package as:
 <p>
-Smith L, Cavanaugh R (2021). <em>allofus: Interface for ‘All of Us’
-Researcher Workbench</em>.
-<a href="https://doi.org/10.5281/zenodo.10420610">doi:10.5281/zenodo.10420610</a>,
-<a href="https://roux-ohdsi.github.io/allofus/">https://roux-ohdsi.github.io/allofus/</a>.
+Smith L, Cavanaugh R (2023). <em>allofus: Interface for ‘All of Us’
+Researcher Workbench</em>. R package version 1.0.0,
+<a href="https://CRAN.R-project.org/package=allofus">https://CRAN.R-project.org/package=allofus</a>.
 </p>
 
 or with
