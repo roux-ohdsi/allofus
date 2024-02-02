@@ -8,7 +8,11 @@
 #' not part of the participants' typical EHR) from the observation period. Defaults to `FALSE`
 #' @param con Connection to the allofus SQL database. Defaults to getOption("aou.default.con"), which is set automatically if you use `aou_connect()`
 #' @param collect Whether to collect the data or keep as SQL query. Defaults to `FALSE`.
+#' @param max_visit_length max visit length for all visits
+#' @param max_op_visit_length max visit length for outpatient visits
+#' @param max_er_visit_length max visit length for emergency room visits
 #' @param ... Further arguments passed along to `collect()` if `collect = TRUE`
+#'
 #' @details
 #' Follows conventions described here: <https://ohdsi.github.io/CommonDataModel/ehrObsPeriods.html>
 #'

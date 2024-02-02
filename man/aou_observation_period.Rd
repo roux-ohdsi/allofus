@@ -11,6 +11,9 @@ aou_observation_period(
   exclude_aou_visits = FALSE,
   con = getOption("aou.default.con"),
   collect = FALSE,
+  max_visit_length = 1095,
+  max_op_visit_length = 7,
+  max_er_visit_length = 30,
   ...
 )
 }
@@ -28,6 +31,12 @@ not part of the participants' typical EHR) from the observation period. Defaults
 \item{con}{Connection to the allofus SQL database. Defaults to getOption("aou.default.con"), which is set automatically if you use \code{aou_connect()}}
 
 \item{collect}{Whether to collect the data or keep as SQL query. Defaults to \code{FALSE}.}
+
+\item{max_visit_length}{max visit length for all visits}
+
+\item{max_op_visit_length}{max visit length for outpatient visits}
+
+\item{max_er_visit_length}{max visit length for emergency room visits}
 
 \item{...}{Further arguments passed along to \code{collect()} if \code{collect = TRUE}}
 }
