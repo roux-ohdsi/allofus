@@ -83,9 +83,9 @@ aou_observation_period <- function(cohort = NULL,
     # some visits have ridiculous lengths - this is a fix for this for now.
     dplyr::filter(
       dplyr::case_when(
-        visit_length > 3 & visit_concept_id %in% op_visits ~ FALSE,
-        visit_length > 30 & visit_concept_id %in% er_visits ~ FALSE,
-        visit_length > 365 ~ FALSE,
+        visit_length > max_op_visit_length & visit_concept_id %in% op_visits ~ FALSE,
+        visit_length > max_er_visit_length & visit_concept_id %in% er_visits ~ FALSE,
+        visit_length > max_visit_length ~ FALSE,
         TRUE ~ TRUE
       )) %>% # filter out visits that are too long
     dplyr::group_by(.data$person_id) %>%
