@@ -34,6 +34,9 @@ aou_observation_period <- function(cohort = NULL,
                                    exclude_aou_visits = FALSE,
                                    con = getOption("aou.default.con"),
                                    collect = FALSE,
+                                   max_visit_length = 1095, # 3 years
+                                   max_op_visit_length = 7, # 7 days
+                                   max_er_visit_length = 30, # 30 days
                                    ...) {
   if (is.null(con)) {
     cli::cli_abort(c("No connection available.",
@@ -59,10 +62,19 @@ aou_observation_period <- function(cohort = NULL,
       dplyr::filter(.data$visit_type_concept_id != 44818519)
   }
 
+  visit_concepts <- tbl(con, "concept") %>% select(concept_id, concept_name)
+  op_visits <- c(9202, 581477,38004207)
+  er_visits <- c(9203, 262)
+
   obs_period <-
     tmp %>%
-    dplyr::select("person_id", "visit_start_date", "visit_end_date") %>%
+    dplyr::select("person_id", "visit_start_date", "visit_end_date", "visit_concept_id") %>%
     dplyr::distinct() %>%
+    mutate(visit_length = DATE_DIFF(.data$visit_end_date, .data$visit_start_date, dplyr::sql("day"))) %>%
+    # some visits have ridiculous lengths - this is a fix for this for now.
+    filter(visit_length < max_visit_length,
+           visit_length < max_op_visit_length & visit_concept_id %in% op_visits,
+           visit_length < max_er_visit_length & visit_concept_id %in% er_visits) %>% # filter out visits that are too long
     dplyr::group_by(.data$person_id) %>%
     # use window order instead of arrange. because arrange == ORDER BY which is executed last in sql
     dbplyr::window_order(.data$person_id, .data$visit_start_date, .data$visit_end_date) %>%
@@ -82,7 +94,7 @@ aou_observation_period <- function(cohort = NULL,
     ) %>%
     dplyr::group_by(.data$person_id) %>%
     # pad the end date
-    dplyr::mutate(observation_end_date = DATE_ADD(.data$observation_period_end_date, dplyr::sql(paste0("INTERVAL ", end_date_buffer, " day")))) %>%
+    dplyr::mutate(observation_period_end_date = DATE_ADD(.data$observation_period_end_date, dplyr::sql(paste0("INTERVAL ", end_date_buffer, " day")))) %>%
     dbplyr::window_order(.data$person_id, .data$obs_period) %>%
     dplyr::ungroup()
 
