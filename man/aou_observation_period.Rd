@@ -8,9 +8,12 @@ aou_observation_period(
   cohort = NULL,
   persistence_window = 548,
   end_date_buffer = 60,
-  exclude_aou_visits = FALSE,
+  exclude_aou_visits = TRUE,
   con = getOption("aou.default.con"),
   collect = FALSE,
+  max_visit_length = 1095,
+  max_op_visit_length = 7,
+  max_er_visit_length = 30,
   ...
 )
 }
@@ -29,6 +32,12 @@ not part of the participants' typical EHR) from the observation period. Defaults
 
 \item{collect}{Whether to collect the data or keep as SQL query. Defaults to \code{FALSE}.}
 
+\item{max_visit_length}{max visit length for all visits}
+
+\item{max_op_visit_length}{max visit length for outpatient visits}
+
+\item{max_er_visit_length}{max visit length for emergency room visits}
+
 \item{...}{Further arguments passed along to \code{collect()} if \code{collect = TRUE}}
 }
 \value{
@@ -38,7 +47,19 @@ a sql query or local data frame
 Generate an observation period table based on OMOP Conventions
 }
 \details{
-Follows conventions described here: \url{https://ohdsi.github.io/CommonDataModel/ehrObsPeriods.html}
+The visit_occurrence table
+\url{https://ohdsi.github.io/CommonDataModel/ehrObsPeriods.html}. The visit_occurrence table in the
+All of Us OMOP CDM contains dates from participant data collection visits which are excluded by default but can be included. Some of the
+visit lengths in the visit_occurrence table are unrealistically long for EHR data. These visits can be constrained
+by setting the \code{max_visit_length}, \code{max_op_visit_length}, and \code{max_er_visit_length} parameters. >99\% of these visits are of the outpatient
+visit type, so its likely these are errors in the data. However, assuming these are errors, there's no way to determine whether the
+visit_start_date or visit_end_date are the actual visit date. Therefore, the function will exclude these visits when generating the
+observation period table.
+
+Users should note that the aou_observation_period function will only generate observation periods for
+participants who have at least one visit in the visit_occurrence table. If participant in the AllofUs research
+program who did not include electronic health record data are included in the cohort argument, they will not be included in the
+generated observation period table.
 }
 \examples{
 \dontshow{if (on_workbench()) (if (getRversion() >= "3.4") withAutoprint else force)(\{ # examplesIf}
