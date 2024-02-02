@@ -57,7 +57,8 @@ aou_observation_period <- function(cohort = NULL,
       tmp <- dplyr::tbl(con, "visit_occurrence") %>%
         dplyr::inner_join(cohort, by = "person_id")
 
-      n = tally(cohort %>% dplyr::distinct("person_id"))
+      n = tally(cohort %>% dplyr::distinct("person_id")) %>% collect()
+      n = n[[1,1]]
     }
   }
 
@@ -106,7 +107,8 @@ aou_observation_period <- function(cohort = NULL,
     dbplyr::window_order(.data$person_id, .data$obs_period) %>%
     dplyr::ungroup()
 
-  n_obs_period <- tally(obs_period %>% distinct("person_id"))
+  n_obs_period <- tally(obs_period %>% distinct("person_id")) %>% collect()
+  n_obs_period <- n_obs_period[[1,1]]
 
   if(n != n_obs_period){warning("warning for different number of people in obs period table")}
 
