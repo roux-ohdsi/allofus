@@ -114,7 +114,7 @@ aou_observation_period <- function(cohort = NULL,
   n_obs_period <- tally(obs_period %>% distinct("person_id")) %>% collect()
   n_obs_period <- n_obs_period[[1,1]]
 
-  if(n != n_obs_period){warning("warning for different number of people in obs period table")}
+  if(n != n_obs_period){cli::cli_inform("warning for different number of people in obs period table")}
 
   # collect if desired.
   if (isTRUE(collect)) {
