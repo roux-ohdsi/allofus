@@ -64,7 +64,7 @@ aou_observation_period <- function(cohort = NULL,
 
   visit_concepts <- tbl(con, "concept") %>% select(concept_id, concept_name)
   op_visits <- c(9202, 581477,38004207)
-  er_visits <- c(9203, 262)
+  er_visits <- c(9203, 262, 8870)
 
   obs_period <-
     tmp %>%
