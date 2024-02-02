@@ -64,17 +64,21 @@ aou_observation_period <- function(cohort = NULL,
 
   visit_concepts <- tbl(con, "concept") %>% select(concept_id, concept_name)
   op_visits <- c(9202, 581477,38004207)
-  er_visits <- c(9203, 262, 8870)
+  er_visits <- c(9203, 581381, 8870)
 
   obs_period <-
     tmp %>%
     dplyr::select("person_id", "visit_start_date", "visit_end_date", "visit_concept_id") %>%
     dplyr::distinct() %>%
-    mutate(visit_length = DATE_DIFF(.data$visit_end_date, .data$visit_start_date, dplyr::sql("day"))) %>%
+    dplyr::mutate(visit_length = DATE_DIFF(.data$visit_end_date, .data$visit_start_date, dplyr::sql("day"))) %>%
     # some visits have ridiculous lengths - this is a fix for this for now.
-    filter(visit_length < max_visit_length,
-           visit_length < max_op_visit_length & visit_concept_id %in% op_visits,
-           visit_length < max_er_visit_length & visit_concept_id %in% er_visits) %>% # filter out visits that are too long
+    dplyr::filter(
+      dplyr::case_when(
+        visit_length > 3 & visit_concept_id %in% op_visits ~ FALSE,
+        visit_length > 30 & visit_concept_id %in% er_visits ~ FALSE,
+        visit_length > 365 ~ FALSE,
+        TRUE ~ TRUE
+      )) %>% # filter out visits that are too long
     dplyr::group_by(.data$person_id) %>%
     # use window order instead of arrange. because arrange == ORDER BY which is executed last in sql
     dbplyr::window_order(.data$person_id, .data$visit_start_date, .data$visit_end_date) %>%
