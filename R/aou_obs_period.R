@@ -127,7 +127,7 @@ aou_observation_period <- function(cohort = NULL,
   n_obs_period <- tally(obs_period %>% dplyr::select("person_id") %>% dplyr::distinct()) %>% dplyr::collect()
   n_obs_period <- n_obs_period[[1,1]]
 
-  if(n != n_obs_period){cli::cli_inform("Warning: The number of participants in the cohort is different from the number of participants in the observation period.
+  if(n != n_obs_period){cli::cli_inform("Warning: The number of participants in the cohort is different from the number of participants in the observation period table.
                                         This may be because not everyone in the cohort contributed electronic health record data.")}
 
   # collect if desired.
