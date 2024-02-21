@@ -8,7 +8,10 @@
 #' not part of the participants' typical EHR) from the observation period. Defaults to `FALSE`
 #' @param con Connection to the allofus SQL database. Defaults to getOption("aou.default.con"), which is set automatically if you use `aou_connect()`
 #' @param collect Whether to collect the data or keep as SQL query. Defaults to `FALSE`.
+#' @param start_date_boundary All visits starting before this date are excluded. Defaults to 1950.
+#' @param end_date_boundary All visits from after this date are excluded. defaults to "2022-07-01", the last end date of the V7 data.
 #' @param ... Further arguments passed along to `collect()` if `collect = TRUE`
+#'
 #' @details
 #' Follows conventions described here: <https://ohdsi.github.io/CommonDataModel/ehrObsPeriods.html>
 #'
@@ -34,6 +37,8 @@ aou_observation_period <- function(cohort = NULL,
                                    exclude_aou_visits = FALSE,
                                    con = getOption("aou.default.con"),
                                    collect = FALSE,
+                                   start_date_boundary = as.Date("1950-01-01"),
+                                   end_date_boundary = as.Date("2022-07-01"),
                                    ...) {
   if (is.null(con)) {
     cli::cli_abort(c("No connection available.",
@@ -63,6 +68,7 @@ aou_observation_period <- function(cohort = NULL,
     tmp %>%
     dplyr::select("person_id", "visit_start_date", "visit_end_date") %>%
     dplyr::distinct() %>%
+    filter(visit_start_date >= start_date_boundary, visit_start_date <= end_date_boundary) %>%
     dplyr::group_by(.data$person_id) %>%
     # use window order instead of arrange. because arrange == ORDER BY which is executed last in sql
     dbplyr::window_order(.data$person_id, .data$visit_start_date, .data$visit_end_date) %>%
