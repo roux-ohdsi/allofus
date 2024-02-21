@@ -30,7 +30,7 @@ aou_enrollment_date <- function(
   # check connection
   check_connection()
   # check cohort
-  function_cohort = validate_cohort_sql()
+  function_cohort = validate_cohort_sql(cohort = cohort)
 
   tmp = dplyr::tbl(con, "concept") %>%
     dplyr::filter(.data$concept_name == "Consent PII", .data$concept_class_id == "Module") %>%
