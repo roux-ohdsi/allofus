@@ -23,7 +23,7 @@ check_connection <- function(con = getOption("aou.default.con")){
 #' @return NULL
 #' @keywords internal
 #' @export
-validate_cohort_sql_df <- function(cohort, con = getOption("aou.default.con")){
+validate_cohort_sql_df <- function(cohort = NULL, con = getOption("aou.default.con")){
 
   if (is.null(cohort)) {
     cli::cli_warn(c("No cohort provided.", ">" = "Pulling enrollment dates for entire All of Us cohort."))
@@ -52,7 +52,7 @@ validate_cohort_sql_df <- function(cohort, con = getOption("aou.default.con")){
 #' @return NULL
 #' @keywords internal
 #' @export
-validate_cohort_sql <- function(cohort){
+validate_cohort_sql <- function(cohort = NULL){
 
   if (is.null(cohort)) {
     cli::cli_warn(c("No cohort provided.", ">" = "Pulling enrollment dates for entire All of Us cohort."))
