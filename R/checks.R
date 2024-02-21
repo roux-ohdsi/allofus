@@ -55,7 +55,7 @@ validate_cohort_sql_df <- function(cohort = NULL, con = getOption("aou.default.c
 validate_cohort_sql <- function(cohort = NULL){
 
   if (is.null(cohort)) {
-    cli::cli_warn(c("No cohort provided.", ">" = "Pulling enrollment dates for entire All of Us cohort."))
+    cli::cli_warn(c("No cohort provided.", ">" = "Pulling data for entire All of Us cohort."))
   } else if (!"person_id" %in% colnames(cohort)) {
     # ensure person_id is a column name in cohort
     cli::cli_abort(c("{.code person_id} column not found in cohort.",
