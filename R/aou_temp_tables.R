@@ -33,6 +33,8 @@ aou_create_temp_table <- function(df){
   # change factor to character and add single quotes as needed to character
   df <- df %>% dplyr::mutate(
     dplyr::across(dplyr::where(is.factor), ~as.character(.x)),
+    dplyr::across(dplyr::where(is.character), ~stringr::str_replace_all(.x, "\\'", "\\\\'")),
+    dplyr::across(dplyr::where(is.character), ~stringr::str_replace_all(.x, '\\"', '\\\\"')),
     dplyr::across(dplyr::where(is.character), ~add_q(.x))
   )
 
@@ -46,6 +48,10 @@ aou_create_temp_table <- function(df){
     "factor" = "STRING",
     "Date" = "DATE")
   )
+  
+  df <- df %>% dplyr::mutate(
+    dplyr::across(dplyr::everything(), ~replace_na(as.character(.x), "NULL"))
+  )
 
   # add the data into the table within the
   # create temp table text
@@ -58,7 +64,7 @@ aou_create_temp_table <- function(df){
   s2 = stringr::str_glue('INSERT INTO dataset ({paste(cn, collapse =", ")})')
 
   l = list()
-  for(i in 1:nrow(df)){l[[i]] = paste0("(", paste(as.character(df[i, ]), collapse = ", "), ")")}
+  for(i in 1:nrow(df)){l[[i]] = paste0("(", paste(df[i, ], collapse = ", "), ")")}
 
   s3 = stringr::str_glue('VALUES{paste(l, collapse = ",\n")};')
   s4 = 'SELECT * FROM dataset'
