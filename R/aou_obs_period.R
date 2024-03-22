@@ -74,7 +74,7 @@ aou_observation_period <- function(cohort = NULL,
       tmp <- dplyr::tbl(con, "visit_occurrence") %>%
         dplyr::inner_join(cohort, by = "person_id")
 
-      n = tally(cohort %>% dplyr::select("person_id") %>% distinct()) %>% dplyr::collect()
+      n = dplyr::tally(cohort %>% dplyr::select("person_id") %>% dplyr::distinct()) %>% dplyr::collect()
       n = n[[1,1]]
     }
   }
@@ -84,7 +84,7 @@ aou_observation_period <- function(cohort = NULL,
       dplyr::filter(.data$visit_type_concept_id != 44818519)
   }
 
-  visit_concepts <- tbl(con, "concept") %>% select(concept_id, concept_name)
+  visit_concepts <- dplyr::tbl(con, "concept") %>% dplyr::select("concept_id", "concept_name")
   op_visits <- c(9202, 581477,38004207)
   er_visits <- c(9203, 581381, 8870)
 
@@ -124,7 +124,7 @@ aou_observation_period <- function(cohort = NULL,
     dbplyr::window_order(.data$person_id, .data$obs_period) %>%
     dplyr::ungroup()
 
-  n_obs_period <- tally(obs_period %>% dplyr::select("person_id") %>% dplyr::distinct()) %>% dplyr::collect()
+  n_obs_period <- dplyr::tally(obs_period %>% dplyr::select("person_id") %>% dplyr::distinct()) %>% dplyr::collect()
   n_obs_period <- n_obs_period[[1,1]]
 
   if(n != n_obs_period){cli::cli_inform("Warning: The number of participants in the cohort is different from the number of participants in the observation period table.

@@ -23,9 +23,10 @@ Imports:
     utils,
     dbplyr,
     sessioninfo,
-    rlang
+    rlang,
+    stringr,
+    DBI
 Suggests:
-    DBI,
     knitr,
     rmarkdown,
     testthat (>= 3.0.0),
