@@ -8,22 +8,29 @@
 #' generally will need to be small in size (<1500 rows). The table will only
 #' exist for the current connection session and will need to be created again
 #' in a new session.
-#' @return a name to a temporary table in the database.
+#' @return a reference to a temporary table in the database with the data from `df`
 #' @export
 #'
 #' @examplesIf on_workbench()
 #' con <- aou_connect()
-#' df = tibble(
-#'   category = c("DELIV", "ECT", "AB", "LB", "SB", "SA"),
-#'   max_term = as.integer(c(301, 84, 168, 301, 301, 139)),
-#'   min_term = as.integer(c(140, 42, 42, 161, 140, 28)),
-#'   retry =    as.integer(c(28, 14, 14, 28, 28, 14))
-#' )
+#' df <- data.frame(concept_id = c(439331, 4290245, 42535816, 46269813, 
+#'                  2784565, 45765502, 434112, 4128031, 435640, 45876808), 
+#'                  category = c("AB", "DELIV", "DELIV", "SA", "DELIV", 
+#'                  "LB", "DELIV", "DELIV", "PREG", "SA"), 
+#'                  gest_value = c(NA, NA, NA, NA, NA, NA, NA, NA, 25, NA))
 #' tmp_tbl = aou_create_temp_table(df)
-#' tbl(con, tmp_tbl)
+#' 
 #'
 #'
-aou_create_temp_table <- function(df){
+aou_create_temp_table <- function(df, con = getOption("aou.default.con")){
+
+    # check for connection
+  if (is.null(con)) {
+    cli::cli_abort(c("No connection available.",
+      "i" = "Provide a connection automatically by running {.code aou_connect()} before this function.",
+      "i" = "You can also provide {.code con} as an argument or default with {.code options(aou.default.con = ...)}."
+    ))
+  }
 
   # VALUES
   add_q = function(s){
@@ -81,7 +88,7 @@ aou_create_temp_table <- function(df){
   )
   # get the table name to return to the user
   name = paste(tmptbl_object$project, tmptbl_object$dataset, tmptbl_object$table, sep = ("."))
-  return(name)
+  return(dplyr::tbl(con, name))
 }
 
 
