@@ -20,7 +20,7 @@
 #'   retry =    as.integer(c(28, 14, 14, 28, 28, 14))
 #' )
 #' tmp_tbl = aou_create_temp_table(df)
-#' tbl(con, "tmp_tbl")
+#' tbl(con, tmp_tbl)
 #'
 #'
 aou_create_temp_table <- function(df){
@@ -31,15 +31,15 @@ aou_create_temp_table <- function(df){
   }
 
   # change factor to character and add single quotes as needed to character
-  df <- df %>% mutate(
-    across(where(is.factor), ~as.character(.x)),
-    across(where(is.character), ~add_q(.x))
+  df <- df %>% dplyr::mutate(
+    dplyr::across(dplyr::where(is.factor), ~as.character(.x)),
+    dplyr::across(dplyr::where(is.character), ~add_q(.x))
   )
 
   # column names
   cn = colnames(df)
   # column types
-  ct = str_replace_all(sapply(df, class), c(
+  ct = stringr::str_replace_all(sapply(df, class), c(
     "character" = "STRING",
     "integer" = "INT64",
     "double" = "NUMERIC",
@@ -49,18 +49,18 @@ aou_create_temp_table <- function(df){
 
   # add the data into the table within the
   # create temp table text
-  l2 = lst()
+  l2 = list()
   for(i in 1:length(cn)){
     l2[[i]] = paste(cn[i], ct[i])
   }
   s1_str = paste(l2, collapse = ",\n")
-  s1 = str_glue('CREATE TEMP TABLE dataset  (\n{s1_str}\n);')
-  s2 = str_glue('INSERT INTO dataset ({paste(cn, collapse =", ")})')
+  s1 = stringr::str_glue('CREATE TEMP TABLE dataset  (\n{s1_str}\n);')
+  s2 = stringr::str_glue('INSERT INTO dataset ({paste(cn, collapse =", ")})')
 
-  l = lst()
+  l = list()
   for(i in 1:nrow(df)){l[[i]] = paste0("(", paste(as.character(df[i, ]), collapse = ", "), ")")}
 
-  s3 = str_glue('VALUES{paste(l, collapse = ",\n")};')
+  s3 = stringr::str_glue('VALUES{paste(l, collapse = ",\n")};')
   s4 = 'SELECT * FROM dataset'
 
   # put it all together
@@ -109,7 +109,7 @@ aou_create_temp_table <- function(df){
 aou_compute <- function(.data, con = getOption('aou.default.con')){
 
   # get the query as a character vector
-  q = as.character(db_sql_render(con, .data))
+  q = as.character(dbplyr::db_sql_render(con, .data))
 
   # add the create temp table text before and after
   tmp1 = 'CREATE TEMP TABLE table1 AS'
@@ -122,10 +122,10 @@ aou_compute <- function(.data, con = getOption('aou.default.con')){
   # of the tables in the dplyr query so that the table
   # references point to the right place.
   # replaces any references to current tables from dbListTables
-  without_cdr = paste0("`",dbListTables(con), "`")
-  with_cdr = paste("`{CDR}",dbListTables(con),"`", sep = ".")
+  without_cdr = paste0("`",DBI::dbListTables(con), "`")
+  with_cdr = paste("`{CDR}",DBI::dbListTables(con),"`", sep = ".")
   names(with_cdr) = without_cdr
-  out = str_replace_all(out, pattern = with_cdr)
+  out = stringr::str_replace_all(out, pattern = with_cdr)
   CDR = getOption("aou.default.cdr")
   out = stringr::str_glue(out)
 

@@ -29,7 +29,7 @@ df = tibble(
   retry =    as.integer(c(28, 14, 14, 28, 28, 14))
 )
 tmp_tbl = aou_create_temp_table(df)
-tbl(con, "tmp_tbl")
+tbl(con, tmp_tbl)
 
 \dontshow{\}) # examplesIf}
 }
