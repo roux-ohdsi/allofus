@@ -150,6 +150,6 @@ aou_compute <- function(.data, con = getOption('aou.default.con')){
   # get the tbale name to return for future reference.
   tbl_name = paste(tbl_obj$project, tbl_obj$dataset, tbl_obj$table, sep = ("."))
 
-  return(tbl_name)
+  return(dplyr::tbl(con, tbl_name))
 
 }
