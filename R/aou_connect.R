@@ -49,6 +49,11 @@ aou_connect <- function(CDR = getOption("aou.default.cdr"), ...) {
     ), call = NULL)
   }
 
+  if(!is.null(getOption("aou.default.con")) & isTRUE(reuse)) {
+    cli::cli_inform(c("v" = "Reusing Existing Connection. Set reuse = FALSE to force a new connection."))
+    connection <- getOption("aou.default.con")
+    return(connection)
+  }
 
   out <- tryCatch(
     {

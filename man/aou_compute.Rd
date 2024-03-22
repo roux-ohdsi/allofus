@@ -12,7 +12,7 @@ aou_compute(.data, con = getOption("aou.default.con"))
 \item{con}{connection from aou_connect(). Set by default}
 }
 \value{
-a name to a temporary table in the database.
+a query result from a temporary table that can further be referenced by dplyr pipe
 }
 \description{
 Experimental function that computes a temporary table from a tbl(con, "table")

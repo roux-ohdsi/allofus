@@ -13,13 +13,13 @@
 #'
 #' @examplesIf on_workbench()
 #' con <- aou_connect()
-#' df <- data.frame(concept_id = c(439331, 4290245, 42535816, 46269813, 
-#'                  2784565, 45765502, 434112, 4128031, 435640, 45876808), 
-#'                  category = c("AB", "DELIV", "DELIV", "SA", "DELIV", 
-#'                  "LB", "DELIV", "DELIV", "PREG", "SA"), 
+#' df <- data.frame(concept_id = c(439331, 4290245, 42535816, 46269813,
+#'                  2784565, 45765502, 434112, 4128031, 435640, 45876808),
+#'                  category = c("AB", "DELIV", "DELIV", "SA", "DELIV",
+#'                  "LB", "DELIV", "DELIV", "PREG", "SA"),
 #'                  gest_value = c(NA, NA, NA, NA, NA, NA, NA, NA, 25, NA))
 #' tmp_tbl = aou_create_temp_table(df)
-#' 
+#'
 #'
 #'
 aou_create_temp_table <- function(df, con = getOption("aou.default.con")){
@@ -55,7 +55,7 @@ aou_create_temp_table <- function(df, con = getOption("aou.default.con")){
     "factor" = "STRING",
     "Date" = "DATE")
   )
-  
+
   df <- df %>% dplyr::mutate(
     dplyr::across(dplyr::everything(), ~replace_na(as.character(.x), "NULL"))
   )
@@ -105,7 +105,7 @@ aou_create_temp_table <- function(df, con = getOption("aou.default.con")){
 #' exist for the current connection session and will need to be created again
 #' in a new session.
 #'
-#' @return  a name to a temporary table in the database.
+#' @return  a query result from a temporary table that can further be referenced by dplyr pipe
 #' @export
 #'
 #' @examplesIf on_workbench()
