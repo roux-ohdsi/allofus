@@ -2,6 +2,8 @@
 #' Creates a temporary table from a local data frame or tibble
 #'
 #' @param df a local dataframe or tibble
+#' @param nchar_batch approximate number of characters per sql query
+#' @param con connection
 #' @description
 #'  Experimental function that builds a local tibble into an SQL query and
 #'  generates a temporary table. Tables
@@ -22,74 +24,65 @@
 #' 
 #'
 #'
-aou_create_temp_table <- function(df, con = getOption("aou.default.con")){
+aou_create_temp_table <- function(df, nchar_batch = 1000000, con = getOption("aou.default.con")) {
+    if (is.null(con)) {
+        cli::cli_abort(c("No connection available.", i = "Provide a connection automatically by running {.code aou_connect()} before this function.", 
+                         i = "You can also provide {.code con} as an argument or default with {.code options(aou.default.con = ...)}."))
+    }
+    add_q = function(s) {
+        paste0("'", s, "'")
+    }
+    add_date <- function(d) {
+        paste0("DATE '", as.character(d), "'")
+    }
+    df <- df %>% dplyr::mutate(dplyr::across(dplyr::where(is.factor), as.character), 
+                               dplyr::across(dplyr::where(is.character), 
+                                             ~stringr::str_replace_all(.x, "\\'", "\\\\'")), 
+                               dplyr::across(dplyr::where(is.character), 
+                                             ~stringr::str_replace_all(.x, "\\\"", "\\\\\"")), 
+                               dplyr::across(dplyr::where(is.character), add_q))
+    cn = colnames(df)
+    ct = stringr::str_replace_all(sapply(df, class), c(character = "STRING", 
+                                                       integer64 = "INT64",
+                                                       integer = "INT64", 
+                                                       double = "FLOAT64", 
+                                                       numeric = "FLOAT64",
+                                                       factor = "STRING", 
+                                                       Date = "DATE"))
+    df <- df %>% dplyr::mutate(dplyr::across(dplyr::where(is.Date), ~ifelse(is.na(.x), "NULL", add_date(.x))),
+                               dplyr::across(dplyr::everything(), 
+                                             ~replace_na(as.character(.x), "NULL")))
+    
+    l2 = purrr::map2_chr(cn, ct, paste)
+    s1_str = paste(l2, collapse = ",\n")
 
-    # check for connection
-  if (is.null(con)) {
-    cli::cli_abort(c("No connection available.",
-      "i" = "Provide a connection automatically by running {.code aou_connect()} before this function.",
-      "i" = "You can also provide {.code con} as an argument or default with {.code options(aou.default.con = ...)}."
-    ))
-  }
+    l = map_chr(transpose(df), ~paste0("(", paste(.x, collapse = ", "), ")"))
 
-  # VALUES
-  add_q = function(s){
-    paste0("'", s, "'")
-  }
+    values <- split(l, ceiling(cumsum(map_dbl(l, nchar)) / nchar_batch))
+    batches <- map_chr(values, ~stringr::str_glue("VALUES{paste(.x, collapse = \",\n\")};"))
 
-  # change factor to character and add single quotes as needed to character
-  df <- df %>% dplyr::mutate(
-    dplyr::across(dplyr::where(is.factor), ~as.character(.x)),
-    dplyr::across(dplyr::where(is.character), ~stringr::str_replace_all(.x, "\\'", "\\\\'")),
-    dplyr::across(dplyr::where(is.character), ~stringr::str_replace_all(.x, '\\"', '\\\\"')),
-    dplyr::across(dplyr::where(is.character), ~add_q(.x))
-  )
-
-  # column names
-  cn = colnames(df)
-  # column types
-  ct = stringr::str_replace_all(sapply(df, class), c(
-    "character" = "STRING",
-    "integer" = "INT64",
-    "double" = "NUMERIC",
-    "factor" = "STRING",
-    "Date" = "DATE")
-  )
-  
-  df <- df %>% dplyr::mutate(
-    dplyr::across(dplyr::everything(), ~replace_na(as.character(.x), "NULL"))
-  )
-
-  # add the data into the table within the
-  # create temp table text
-  l2 = list()
-  for(i in 1:length(cn)){
-    l2[[i]] = paste(cn[i], ct[i])
-  }
-  s1_str = paste(l2, collapse = ",\n")
-  s1 = stringr::str_glue('CREATE TEMP TABLE dataset  (\n{s1_str}\n);')
-  s2 = stringr::str_glue('INSERT INTO dataset ({paste(cn, collapse =", ")})')
-
-  l = list()
-  for(i in 1:nrow(df)){l[[i]] = paste0("(", paste(df[i, ], collapse = ", "), ")")}
-
-  s3 = stringr::str_glue('VALUES{paste(l, collapse = ",\n")};')
-  s4 = 'SELECT * FROM dataset'
-
-  # put it all together
-  q = paste(
-    s1, s2, s3, s4
-  )
-
-  # compute the table
-  tmptbl_object = bigrquery::bq_project_query(
-    Sys.getenv("GOOGLE_PROJECT"),
-    query = q
-  )
-  # get the table name to return to the user
-  name = paste(tmptbl_object$project, tmptbl_object$dataset, tmptbl_object$table, sep = ("."))
-  return(dplyr::tbl(con, name))
+    datasets <- do.call(paste0, replicate(10, sample(LETTERS, length(batches), TRUE), FALSE))
+    n <- list()
+    
+    for (i in seq_along(batches)) {
+        dataset <- datasets[i]
+        s1 = stringr::str_glue("CREATE TEMP TABLE {dataset} (\n{s1_str}\n);")
+        s2 = stringr::str_glue("INSERT INTO {dataset} ({paste(cn, collapse =\", \")})")
+        s3 = batches[i]
+        s4 = stringr::str_glue("SELECT * FROM {dataset};")
+        q = paste(s1, s2, s3, s4)
+        tmptbl_object = bigrquery::bq_project_query(Sys.getenv("GOOGLE_PROJECT"),
+                                                    query = q)
+        n[[i]] <- dplyr::tbl(con, paste(tmptbl_object$project, tmptbl_object$dataset, 
+                        tmptbl_object$table, sep = (".")))
+    }
+    
+    final_tbl <- reduce(n, union_all)
+    
+    return(final_tbl)
 }
+
+
 
 
 #' Compute a dplyr tbl SQL query into a temp table
