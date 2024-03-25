@@ -4,13 +4,21 @@
 \alias{aou_create_temp_table}
 \title{Creates a temporary table from a local data frame or tibble}
 \usage{
-aou_create_temp_table(df)
+aou_create_temp_table(
+  df,
+  nchar_batch = 1e+06,
+  con = getOption("aou.default.con")
+)
 }
 \arguments{
 \item{df}{a local dataframe or tibble}
+
+\item{nchar_batch}{approximate number of characters per sql query}
+
+\item{con}{connection}
 }
 \value{
-a name to a temporary table in the database.
+a reference to a temporary table in the database with the data from \code{df}
 }
 \description{
 Experimental function that builds a local tibble into an SQL query and
@@ -22,14 +30,13 @@ in a new session.
 \examples{
 \dontshow{if (on_workbench()) (if (getRversion() >= "3.4") withAutoprint else force)(\{ # examplesIf}
 con <- aou_connect()
-df = tibble(
-  category = c("DELIV", "ECT", "AB", "LB", "SB", "SA"),
-  max_term = as.integer(c(301, 84, 168, 301, 301, 139)),
-  min_term = as.integer(c(140, 42, 42, 161, 140, 28)),
-  retry =    as.integer(c(28, 14, 14, 28, 28, 14))
-)
+df <- data.frame(concept_id = c(439331, 4290245, 42535816, 46269813,
+                 2784565, 45765502, 434112, 4128031, 435640, 45876808),
+                 category = c("AB", "DELIV", "DELIV", "SA", "DELIV",
+                 "LB", "DELIV", "DELIV", "PREG", "SA"),
+                 gest_value = c(NA, NA, NA, NA, NA, NA, NA, NA, 25, NA))
 tmp_tbl = aou_create_temp_table(df)
-tbl(con, tmp_tbl)
+
 
 \dontshow{\}) # examplesIf}
 }

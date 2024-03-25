@@ -15,18 +15,18 @@
 #'
 #' @examplesIf on_workbench()
 #' con <- aou_connect()
-#' df <- data.frame(concept_id = c(439331, 4290245, 42535816, 46269813, 
-#'                  2784565, 45765502, 434112, 4128031, 435640, 45876808), 
-#'                  category = c("AB", "DELIV", "DELIV", "SA", "DELIV", 
-#'                  "LB", "DELIV", "DELIV", "PREG", "SA"), 
+#' df <- data.frame(concept_id = c(439331, 4290245, 42535816, 46269813,
+#'                  2784565, 45765502, 434112, 4128031, 435640, 45876808),
+#'                  category = c("AB", "DELIV", "DELIV", "SA", "DELIV",
+#'                  "LB", "DELIV", "DELIV", "PREG", "SA"),
 #'                  gest_value = c(NA, NA, NA, NA, NA, NA, NA, NA, 25, NA))
 #' tmp_tbl = aou_create_temp_table(df)
-#' 
+#'
 #'
 #'
 aou_create_temp_table <- function(df, nchar_batch = 1000000, con = getOption("aou.default.con")) {
     if (is.null(con)) {
-        cli::cli_abort(c("No connection available.", i = "Provide a connection automatically by running {.code aou_connect()} before this function.", 
+        cli::cli_abort(c("No connection available.", i = "Provide a connection automatically by running {.code aou_connect()} before this function.",
                          i = "You can also provide {.code con} as an argument or default with {.code options(aou.default.con = ...)}."))
     }
     add_q = function(s) {
@@ -35,35 +35,35 @@ aou_create_temp_table <- function(df, nchar_batch = 1000000, con = getOption("ao
     add_date <- function(d) {
         paste0("DATE '", as.character(d), "'")
     }
-    df <- df %>% dplyr::mutate(dplyr::across(dplyr::where(is.factor), as.character), 
-                               dplyr::across(dplyr::where(is.character), 
-                                             ~stringr::str_replace_all(.x, "\\'", "\\\\'")), 
-                               dplyr::across(dplyr::where(is.character), 
-                                             ~stringr::str_replace_all(.x, "\\\"", "\\\\\"")), 
+    df <- df %>% dplyr::mutate(dplyr::across(dplyr::where(is.factor), as.character),
+                               dplyr::across(dplyr::where(is.character),
+                                             ~stringr::str_replace_all(.x, "\\'", "\\\\'")),
+                               dplyr::across(dplyr::where(is.character),
+                                             ~stringr::str_replace_all(.x, "\\\"", "\\\\\"")),
                                dplyr::across(dplyr::where(is.character), add_q))
     cn = colnames(df)
-    ct = stringr::str_replace_all(sapply(df, class), c(character = "STRING", 
+    ct = stringr::str_replace_all(sapply(df, class), c(character = "STRING",
                                                        integer64 = "INT64",
-                                                       integer = "INT64", 
-                                                       double = "FLOAT64", 
+                                                       integer = "INT64",
+                                                       double = "FLOAT64",
                                                        numeric = "FLOAT64",
-                                                       factor = "STRING", 
+                                                       factor = "STRING",
                                                        Date = "DATE"))
-    df <- df %>% dplyr::mutate(dplyr::across(dplyr::where(is.Date), ~ifelse(is.na(.x), "NULL", add_date(.x))),
-                               dplyr::across(dplyr::everything(), 
+    df <- df %>% dplyr::mutate(dplyr::across(dplyr::where(is.date), ~ifelse(is.na(.x), "NULL", add_date(.x))),
+                               dplyr::across(dplyr::everything(),
                                              ~replace_na(as.character(.x), "NULL")))
-    
+
     l2 = purrr::map2_chr(cn, ct, paste)
     s1_str = paste(l2, collapse = ",\n")
 
-    l = map_chr(transpose(df), ~paste0("(", paste(.x, collapse = ", "), ")"))
+    l = purrr::map_chr(purrr::transpose(df), ~paste0("(", paste(.x, collapse = ", "), ")"))
 
-    values <- split(l, ceiling(cumsum(map_dbl(l, nchar)) / nchar_batch))
-    batches <- map_chr(values, ~stringr::str_glue("VALUES{paste(.x, collapse = \",\n\")};"))
+    values <- split(l, ceiling(cumsum(purrr::map_dbl(l, nchar)) / nchar_batch))
+    batches <- purrr::map_chr(values, ~stringr::str_glue("VALUES{paste(.x, collapse = \",\n\")};"))
 
     datasets <- do.call(paste0, replicate(10, sample(LETTERS, length(batches), TRUE), FALSE))
     n <- list()
-    
+
     for (i in seq_along(batches)) {
         dataset <- datasets[i]
         s1 = stringr::str_glue("CREATE TEMP TABLE {dataset} (\n{s1_str}\n);")
@@ -73,12 +73,12 @@ aou_create_temp_table <- function(df, nchar_batch = 1000000, con = getOption("ao
         q = paste(s1, s2, s3, s4)
         tmptbl_object = bigrquery::bq_project_query(Sys.getenv("GOOGLE_PROJECT"),
                                                     query = q)
-        n[[i]] <- dplyr::tbl(con, paste(tmptbl_object$project, tmptbl_object$dataset, 
+        n[[i]] <- dplyr::tbl(con, paste(tmptbl_object$project, tmptbl_object$dataset,
                         tmptbl_object$table, sep = (".")))
     }
-    
-    final_tbl <- reduce(n, union_all)
-    
+
+    final_tbl <- purrr::reduce(n, dplyr::union_all)
+
     return(final_tbl)
 }
 

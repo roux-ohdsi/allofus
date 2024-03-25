@@ -15,7 +15,7 @@ Imports:
     cli,
     tidyr,
     magrittr,
-    dplyr (>= 1.1.0),
+    dplyr (>= 1.1.4),
     glue,
     bigrquery (>= 1.5.1),
     purrr,
@@ -25,8 +25,7 @@ Imports:
     sessioninfo,
     rlang,
     stringr,
-    DBI,
-    vctrs (>= 0.6.4)
+    DBI
 Suggests:
     knitr,
     rmarkdown,
