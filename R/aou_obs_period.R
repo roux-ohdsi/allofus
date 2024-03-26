@@ -57,7 +57,8 @@
 #'   dplyr::filter(has_ehr_data == 1) %>%
 #'   inner_join(index_date_tbl, by = "person_id") %>%
 #'   inner_join(observation_period_tbl, by = "person_id") %>%
-#'   filter(observation_period_end_date >= DATE_ADD(index_date, dplyr::sql(paste0("INTERVAL ", 1, " year"))),
+#'   filter(observation_period_end_date >= DATE_ADD(index_date,
+#'                                                  dplyr::sql(paste0("INTERVAL ", 1, " year"))),
 #'          observation_period_start_date <= index_date) %>%
 #'   select(person_id, gender, sex_at_birth, race, ethnicity, age_at_consent)
 #'
@@ -171,7 +172,7 @@ aou_observation_period <- function(con = getOption("aou.default.con"),
     out = paste0(tmp1, "\n", q, ";\n", tmp2)
 
     CDR = getOption("aou.default.cdr")
-    out = str_glue(out)
+    out = stringr::str_glue(out)
 
     #cat(out)
     # execute the query
@@ -182,7 +183,7 @@ aou_observation_period <- function(con = getOption("aou.default.con"),
     # get the tbale name to return for future reference.
     tbl_name = paste(tbl_obj$project, tbl_obj$dataset, tbl_obj$table, sep = ("."))
 
-    obs_period = dplyr::tbl(con, tbl_name) %>% select(-col_remove)
+    obs_period = dplyr::tbl(con, tbl_name) %>% dplyr::select(-"col_remove")
 
     # collect if desired.
     if (isTRUE(collect)) {
