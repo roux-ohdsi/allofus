@@ -12,7 +12,9 @@
 #'
 #' This function generates an observation period table from the first occurrence of
 #' a clinical event in the EHR tables to the last clinical event in the EHR tables.
-#' It will only return a single observation period per person_id in the database.
+#' It will only return a single observation period per person_id in the database. If
+#' `collect = FALSE`, the function returns a query to a temporary table in the database
+#' which can be referenced by typical dplyr functions.
 #'
 #' Normal OMOP conventions for EHR suggest that long lapses of time bewteen clinical
 #' events may indicate that the person was not "observed" during this period. However,
