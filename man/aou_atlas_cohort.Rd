@@ -13,7 +13,9 @@ aou_atlas_cohort(cohort_definition, cohort_sql, debug = FALSE, ...)
 
 \item{debug}{Print the query to the console; useful for debugging.}
 
-\item{...}{Further arguments passed along to \code{collect()} if \code{collect = TRUE}}
+\item{...}{Further arguments passed along to \code{collect()} if \code{collect = TRUE}
+
+\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#experimental}{\figure{lifecycle-experimental.svg}{options: alt='[Experimental]'}}}{\strong{[Experimental]}}}
 }
 \value{
 A dataframe with the resulting cohort. The SQL query used to generate the cohort is stored as an attribute.

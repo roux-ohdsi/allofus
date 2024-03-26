@@ -17,6 +17,7 @@
 #' @examplesIf on_workbench()
 #' # generate a simple stroke cohort
 #' # see https://atlas-demo.ohdsi.org/#/cohortdefinition/1788061
+#' # If this cohort is not available, you can create one, or choose one already made.
 #' # aou_cohort_example contains the results of
 #' # cd <- ROhdsiWebApi::getCohortDefinition(1788061, "https://atlas-demo.ohdsi.org/WebAPI")
 #' # cd_sql <- ROhdsiWebApi::getCohortSql(cd, "https://atlas-demo.ohdsi.org/WebAPI")

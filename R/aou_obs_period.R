@@ -4,6 +4,8 @@
 #' @param collect Whether to collect the data or keep as SQL query. Defaults to `FALSE`.
 #' @param ... Further arguments passed along to `collect()` if `collect = TRUE`
 #'
+#' `r lifecycle::badge('experimental')`
+#'
 #' @details
 #'
 #' The current observation period table in the All of Us OMOP CDM is not always
