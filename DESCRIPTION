@@ -1,7 +1,7 @@
 Package: allofus
 Type: Package
 Title: Interface for 'All of Us' Researcher Workbench 
-Version: 1.0.0
+Version: 1.0.0.9000
 Authors@R: 
     c(
       person("Louisa", "Smith", email = "l.smith@northeastern.edu", role = c("aut", "cph"), comment = c(ORCID = "0000-0001-9029-4644")),
@@ -15,17 +15,18 @@ Imports:
     cli,
     tidyr,
     magrittr,
-    dplyr (>= 1.1.0),
+    dplyr (>= 1.1.4),
     glue,
-    bigrquery,
+    bigrquery (>= 1.5.1),
     purrr,
     stats,
     utils,
-    dbplyr,
+    dbplyr (>= 2.5.0),
     sessioninfo,
-    rlang
+    rlang,
+    stringr,
+    DBI
 Suggests:
-    DBI,
     knitr,
     rmarkdown,
     testthat (>= 3.0.0),

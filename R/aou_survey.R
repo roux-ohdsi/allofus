@@ -143,7 +143,7 @@ aou_survey <- function(cohort = NULL,
       dplyr::select("person_id")
   } else {
     function_cohort <- cohort %>%
-      dplyr::select("person_id")
+      dplyr::distinct(.data$person_id)
   }
 
   # pivot longer to inclde the rx, on_txt, and age_diagnosis columns

@@ -22,3 +22,7 @@ NULL
 is.date <- function(x){
  inherits(x, 'Date')
 }
+
+# fix for between CRAN error from
+# https://dplyr.tidyverse.org/articles/in-packages.html#join-helpers
+utils::globalVariables("between")
