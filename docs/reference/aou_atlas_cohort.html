@@ -20,7 +20,7 @@ Please see the online vignette for additional details insert link here"><!-- mat
     <div style="height:40px;display:inline;margin:0 10px;"><a href="https://ohdsi.northeastern.edu/" class="external-link"><img src="https://roux-ohdsi.github.io/allofus/articles/logo.png" style="width:auto;height:100%;"></a></div>
     <a class="navbar-brand me-2" href="../index.html">allofus</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.0.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.0.0.9000</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -81,15 +81,7 @@ Please see the online vignette for additional details insert link here</p>
 
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">aou_atlas_cohort</span><span class="op">(</span></span>
-<span>  <span class="va">cohort_definition</span>,</span>
-<span>  <span class="va">cohort_sql</span>,</span>
-<span>  persistence_window <span class="op">=</span> <span class="fl">548</span>,</span>
-<span>  end_date_buffer <span class="op">=</span> <span class="fl">60</span>,</span>
-<span>  exclude_aou_visits <span class="op">=</span> <span class="cn">FALSE</span>,</span>
-<span>  debug <span class="op">=</span> <span class="cn">FALSE</span>,</span>
-<span>  <span class="va">...</span></span>
-<span><span class="op">)</span></span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">aou_atlas_cohort</span><span class="op">(</span><span class="va">cohort_definition</span>, <span class="va">cohort_sql</span>, debug <span class="op">=</span> <span class="cn">FALSE</span>, <span class="va">...</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div class="section level2">
@@ -102,25 +94,13 @@ Please see the online vignette for additional details insert link here</p>
 <dd><p>The cohort_sql generated using <code>getCohortSql() from ROhdsiWebApi</code></p></dd>
 
 
-<dt>persistence_window</dt>
-<dd><p>Longest allowable time between visits for the same observation period. Defaults to 548 (see details)</p></dd>
-
-
-<dt>end_date_buffer</dt>
-<dd><p>Number of days to add to last observed date. Defaults to 60 (see details)</p></dd>
-
-
-<dt>exclude_aou_visits</dt>
-<dd><p>Whether to exclude All of Us clinical visits (i.e., for program-specific measurements,
-not part of the participants' typical EHR) from the observation period. Defaults to <code>FALSE</code></p></dd>
-
-
 <dt>debug</dt>
 <dd><p>Print the query to the console; useful for debugging.</p></dd>
 
 
 <dt>...</dt>
-<dd><p>Further arguments passed along to <code>collect()</code> if <code>collect = TRUE</code></p></dd>
+<dd><p>Further arguments passed along to <code>collect()</code> if <code>collect = TRUE</code></p>
+<p><a href="https://lifecycle.r-lib.org/articles/stages.html#experimental" class="external-link"><img src="figures/lifecycle-experimental.svg" alt="[Experimental]"></a></p></dd>
 
 </dl></div>
     <div class="section level2">
@@ -131,7 +111,32 @@ not part of the participants' typical EHR) from the observation period. Defaults
     </div>
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
-    <p>Follows conventions described here: <a href="https://ohdsi.github.io/CommonDataModel/ehrObsPeriods.html" class="external-link">https://ohdsi.github.io/CommonDataModel/ehrObsPeriods.html</a></p>
+    <p>The current observation period table in the All of Us OMOP CDM is not always
+appropriate for cohorts generated using OHDSI tools such as ATLAS. Some observation
+periods are overly short and some participants have hundreds of observation periods.</p>
+<p>This function generates an observation period table from the first occurrence of
+a clinical event in the EHR tables to the last clinical event in the EHR tables.
+It will only return a single observation period per person_id in the database. If
+<code>collect = FALSE</code>, the function returns a query to a temporary table in the database
+which can be referenced by typical dplyr functions.</p>
+<p>Normal OMOP conventions for EHR suggest that long lapses of time bewteen clinical
+events may indicate that the person was not "observed" during this period. However,
+due to the diverse nature of clinical EHR data contributed to all of us, it seems
+most conservative to assume that the person was observed from their first to last
+clinical event. See https://ohdsi.github.io/CommonDataModel/ehrObsPeriods.html
+for more details.</p>
+<p>Some users have clinical events going back to before the time of widespread
+electronic medical record use (e.g., the 1980s and 1990s). This function considers
+all EHR data in the database, regardless of the date of the clinical event, but we
+recommend that users consider the implications of including data from the 1980s and 1990s.
+It may be more prudent to exclude data prior to a more recent cutoff date so that the EHR
+data is more likely to be accurate, though this decision depends highly on the research
+question (see example below).</p>
+<p>Users should note that the aou_observation_period function will only generate observation periods for
+participants who have at least one clinical observation. If participant in the AllofUs research
+program who did not include electronic health record data are included in the cohort argument, or
+elected to contribute data but have no data to contribute, they will not be included in the
+generated observation period table.</p>
     </div>
 
     <div class="section level2">
