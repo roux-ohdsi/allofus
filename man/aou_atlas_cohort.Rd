@@ -24,7 +24,7 @@ aou_atlas_cohort(
 \item{end_date_buffer}{Number of days to add to last observed date. Defaults to 60 (see details)}
 
 \item{exclude_aou_visits}{Whether to exclude All of Us clinical visits (i.e., for program-specific measurements,
-not part of the participants' typical EHR) from the observation period. Defaults to \code{FALSE}}
+not part of the participants' typical EHR) from the observation period. Defaults to \code{TRUE}}
 
 \item{debug}{Print the query to the console; useful for debugging.}
 

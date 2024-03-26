@@ -8,7 +8,7 @@ aou_observation_period(
   cohort = NULL,
   persistence_window = 548,
   end_date_buffer = 60,
-  exclude_aou_visits = FALSE,
+  exclude_aou_visits = TRUE,
   con = getOption("aou.default.con"),
   collect = FALSE,
   ...
@@ -23,7 +23,7 @@ defaults to the entire All of Us cohort}
 \item{end_date_buffer}{Number of days to add to last observed date. Defaults to 60 (see details)}
 
 \item{exclude_aou_visits}{Whether to exclude All of Us clinical visits (i.e., for program-specific measurements,
-not part of the participants' typical EHR) from the observation period. Defaults to \code{FALSE}}
+not part of the participants' typical EHR) from the observation period. Defaults to \code{TRUE}}
 
 \item{con}{Connection to the allofus SQL database. Defaults to getOption("aou.default.con"), which is set automatically if you use \code{aou_connect()}}
 

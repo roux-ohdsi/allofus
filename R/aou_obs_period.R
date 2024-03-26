@@ -5,7 +5,7 @@
 #' @param persistence_window Longest allowable time between visits for the same observation period. Defaults to 548 (see details)
 #' @param end_date_buffer Number of days to add to last observed date. Defaults to 60 (see details)
 #' @param exclude_aou_visits Whether to exclude All of Us clinical visits (i.e., for program-specific measurements,
-#' not part of the participants' typical EHR) from the observation period. Defaults to `FALSE`
+#' not part of the participants' typical EHR) from the observation period. Defaults to `TRUE`
 #' @param con Connection to the allofus SQL database. Defaults to getOption("aou.default.con"), which is set automatically if you use `aou_connect()`
 #' @param collect Whether to collect the data or keep as SQL query. Defaults to `FALSE`.
 #' @param ... Further arguments passed along to `collect()` if `collect = TRUE`
@@ -31,7 +31,7 @@
 aou_observation_period <- function(cohort = NULL,
                                    persistence_window = 548,
                                    end_date_buffer = 60,
-                                   exclude_aou_visits = FALSE,
+                                   exclude_aou_visits = TRUE,
                                    con = getOption("aou.default.con"),
                                    collect = FALSE,
                                    ...) {
