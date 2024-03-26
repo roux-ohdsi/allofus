@@ -5,73 +5,89 @@
 \title{Generate an observation period table based on OMOP Conventions}
 \usage{
 aou_observation_period(
-  cohort = NULL,
-  persistence_window = 548,
-  end_date_buffer = 60,
-  exclude_aou_visits = TRUE,
   con = getOption("aou.default.con"),
   collect = FALSE,
-  max_visit_length = 1095,
-  max_op_visit_length = 7,
-  max_er_visit_length = 30,
   ...
 )
 }
 \arguments{
-\item{cohort}{Query to a cohort or local dataframe with column "person_id". If no cohort is provided,
-defaults to the entire All of Us cohort}
-
-\item{persistence_window}{Longest allowable time between visits for the same observation period. Defaults to 548 (see details)}
-
-\item{end_date_buffer}{Number of days to add to last observed date. Defaults to 60 (see details)}
-
-\item{exclude_aou_visits}{Whether to exclude All of Us clinical visits (i.e., for program-specific measurements,
-not part of the participants' typical EHR) from the observation period. Defaults to \code{FALSE}}
-
 \item{con}{Connection to the allofus SQL database. Defaults to getOption("aou.default.con"), which is set automatically if you use \code{aou_connect()}}
 
 \item{collect}{Whether to collect the data or keep as SQL query. Defaults to \code{FALSE}.}
 
-\item{max_visit_length}{max visit length for all visits}
+\item{...}{Further arguments passed along to \code{collect()} if \code{collect = TRUE}
 
-\item{max_op_visit_length}{max visit length for outpatient visits}
-
-\item{max_er_visit_length}{max visit length for emergency room visits}
-
-\item{...}{Further arguments passed along to \code{collect()} if \code{collect = TRUE}}
+\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#experimental}{\figure{lifecycle-experimental.svg}{options: alt='[Experimental]'}}}{\strong{[Experimental]}}}
 }
 \value{
-a sql query or local data frame
+a sql query or local data frame with person_id, observation_period_start_date, and observation_period_end_date
 }
 \description{
 Generate an observation period table based on OMOP Conventions
 }
 \details{
-The visit_occurrence table
-\url{https://ohdsi.github.io/CommonDataModel/ehrObsPeriods.html}. The visit_occurrence table in the
-All of Us OMOP CDM contains dates from participant data collection visits which are excluded by default but can be included. Some of the
-visit lengths in the visit_occurrence table are unrealistically long for EHR data. These visits can be constrained
-by setting the \code{max_visit_length}, \code{max_op_visit_length}, and \code{max_er_visit_length} parameters. >99\% of these visits are of the outpatient
-visit type, so its likely these are errors in the data. However, assuming these are errors, there's no way to determine whether the
-visit_start_date or visit_end_date are the actual visit date. Therefore, the function will exclude these visits when generating the
-observation period table.
+The current observation period table in the All of Us OMOP CDM is not always
+appropriate for cohorts generated using OHDSI tools such as ATLAS. Some observation
+periods are overly short and some participants have hundreds of observation periods.
+
+This function generates an observation period table from the first occurrence of
+a clinical event in the EHR tables to the last clinical event in the EHR tables.
+It will only return a single observation period per person_id in the database. If
+\code{collect = FALSE}, the function returns a query to a temporary table in the database
+which can be referenced by typical dplyr functions.
+
+Normal OMOP conventions for EHR suggest that long lapses of time bewteen clinical
+events may indicate that the person was not "observed" during this period. However,
+due to the diverse nature of clinical EHR data contributed to all of us, it seems
+most conservative to assume that the person was observed from their first to last
+clinical event. See https://ohdsi.github.io/CommonDataModel/ehrObsPeriods.html
+for more details.
+
+Some users have clinical events going back to before the time of widespread
+electronic medical record use (e.g., the 1980s and 1990s). This function considers
+all EHR data in the database, regardless of the date of the clinical event, but we
+recommend that users consider the implications of including data from the 1980s and 1990s.
+It may be more prudent to exclude data prior to a more recent cutoff date so that the EHR
+data is more likely to be accurate, though this decision depends highly on the research
+question (see example below).
 
 Users should note that the aou_observation_period function will only generate observation periods for
-participants who have at least one visit in the visit_occurrence table. If participant in the AllofUs research
-program who did not include electronic health record data are included in the cohort argument, they will not be included in the
+participants who have at least one clinical observation. If participant in the AllofUs research
+program who did not include electronic health record data are included in the cohort argument, or
+elected to contribute data but have no data to contribute, they will not be included in the
 generated observation period table.
 }
 \examples{
 \dontshow{if (on_workbench()) (if (getRversion() >= "3.4") withAutoprint else force)(\{ # examplesIf}
+# create observation_period table for everyone
+observation_period_tbl <- aou_observation_period()
+
+# create an index date as the first date a survey was taken
+index_date_tbl <- tbl(con, "ds_survey") \%>\%
+  group_by(person_id) \%>\%
+  filter(survey_datetime == min(survey_datetime)) \%>\%
+  mutate(index_date = as.Date(survey_datetime)) \%>\%
+  distinct(person_id, index_date)
+
+# create a cohort of participants with EHR data and at least one year
+# of observation starting on the date they took the first survey
 cohort <- dplyr::tbl(con, "cb_search_person") \%>\%
   dplyr::filter(has_ehr_data == 1) \%>\%
-  head(100) \%>\%
-  dplyr::select(person_id)
+  inner_join(index_date_tbl, by = "person_id") \%>\%
+  inner_join(observation_period_tbl, by = "person_id") \%>\%
+  filter(observation_period_end_date >= DATE_ADD(index_date,
+                                                 dplyr::sql(paste0("INTERVAL ", 1, " year"))),
+         observation_period_start_date <= index_date) \%>\%
+  select(person_id, gender, sex_at_birth, race, ethnicity, age_at_consent)
 
-observation_periods <- aou_observation_period(cohort,
-  persistence_window = 548,
-  end_date_buffer = 60,
-  collect = FALSE
-)
+# head(cohort)
+
+# create an observation period table with a minimum start date (e.g., 2010-01-01)
+observation_period_tbl \%>\%
+  mutate(observation_period_start_date =
+           if_else(observation_period_start_date < as.Date("2010-01-01"),
+                   as.Date("2010-01-01"),
+                   observation_period_start_date)) \%>\%
+  filter(observation_period_end_date > as.Date("2010-01-01"))
 \dontshow{\}) # examplesIf}
 }

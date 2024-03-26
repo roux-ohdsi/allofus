@@ -25,7 +25,8 @@ Imports:
     sessioninfo,
     rlang,
     stringr,
-    DBI
+    DBI,
+    lifecycle
 Suggests:
     knitr,
     rmarkdown,
