@@ -33,6 +33,8 @@ reference:
   - aou_join
   - aou_observation_period
   - aou_survey
+  - aou_compute
+  - aou_create_temp_table
 - title: Data dictionaries
 - contents:
   - aou_codebook

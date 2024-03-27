@@ -158,7 +158,7 @@ aou_workspace_to_bucket <- function(file, directory = FALSE,
                                     bucket = getOption("aou.default.bucket")) {
 
   if(stringr::str_detect(file, " ")) {
-    stop("File names cannot contain spaces. Consider using underscores or hyphens instead.")
+    cli::cli_abort("File names cannot contain spaces. Consider using underscores or hyphens instead.")
   }
 
   tmp <- tempdir()

@@ -85,10 +85,16 @@
     <loc>/reference/aou_cohort_example.html</loc>
   </url>
   <url>
+    <loc>/reference/aou_compute.html</loc>
+  </url>
+  <url>
     <loc>/reference/aou_concept_set.html</loc>
   </url>
   <url>
     <loc>/reference/aou_connect.html</loc>
+  </url>
+  <url>
+    <loc>/reference/aou_create_temp_table.html</loc>
   </url>
   <url>
     <loc>/reference/aou_get_concepts.html</loc>

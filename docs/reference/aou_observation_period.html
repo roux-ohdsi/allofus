@@ -10,7 +10,7 @@
     <div style="height:40px;display:inline;margin:0 10px;"><a href="https://ohdsi.northeastern.edu/" class="external-link"><img src="https://roux-ohdsi.github.io/allofus/articles/logo.png" style="width:auto;height:100%;"></a></div>
     <a class="navbar-brand me-2" href="../index.html">allofus</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.0.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.0.0.9000</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -67,10 +67,6 @@
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">aou_observation_period</span><span class="op">(</span></span>
-<span>  cohort <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  persistence_window <span class="op">=</span> <span class="fl">548</span>,</span>
-<span>  end_date_buffer <span class="op">=</span> <span class="fl">60</span>,</span>
-<span>  exclude_aou_visits <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  con <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/options.html" class="external-link">getOption</a></span><span class="op">(</span><span class="st">"aou.default.con"</span><span class="op">)</span>,</span>
 <span>  collect <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  <span class="va">...</span></span>
@@ -79,25 +75,7 @@
 
     <div class="section level2">
     <h2 id="arguments">Arguments<a class="anchor" aria-label="anchor" href="#arguments"></a></h2>
-    <dl><dt>cohort</dt>
-<dd><p>Query to a cohort or local dataframe with column "person_id". If no cohort is provided,
-defaults to the entire All of Us cohort</p></dd>
-
-
-<dt>persistence_window</dt>
-<dd><p>Longest allowable time between visits for the same observation period. Defaults to 548 (see details)</p></dd>
-
-
-<dt>end_date_buffer</dt>
-<dd><p>Number of days to add to last observed date. Defaults to 60 (see details)</p></dd>
-
-
-<dt>exclude_aou_visits</dt>
-<dd><p>Whether to exclude All of Us clinical visits (i.e., for program-specific measurements,
-not part of the participants' typical EHR) from the observation period. Defaults to <code>FALSE</code></p></dd>
-
-
-<dt>con</dt>
+    <dl><dt>con</dt>
 <dd><p>Connection to the allofus SQL database. Defaults to getOption("aou.default.con"), which is set automatically if you use <code><a href="aou_connect.html">aou_connect()</a></code></p></dd>
 
 
@@ -106,33 +84,79 @@ not part of the participants' typical EHR) from the observation period. Defaults
 
 
 <dt>...</dt>
-<dd><p>Further arguments passed along to <code>collect()</code> if <code>collect = TRUE</code></p></dd>
+<dd><p>Further arguments passed along to <code>collect()</code> if <code>collect = TRUE</code></p>
+<p><a href="https://lifecycle.r-lib.org/articles/stages.html#experimental" class="external-link"><img src="figures/lifecycle-experimental.svg" alt="[Experimental]"></a></p></dd>
 
 </dl></div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
     
 
-<p>a sql query or local data frame</p>
+<p>a sql query or local data frame with person_id, observation_period_start_date, and observation_period_end_date</p>
     </div>
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
-    <p>Follows conventions described here: <a href="https://ohdsi.github.io/CommonDataModel/ehrObsPeriods.html" class="external-link">https://ohdsi.github.io/CommonDataModel/ehrObsPeriods.html</a></p>
+    <p>The current observation period table in the All of Us OMOP CDM is not always
+appropriate for cohorts generated using OHDSI tools such as ATLAS. Some observation
+periods are overly short and some participants have hundreds of observation periods.</p>
+<p>This function generates an observation period table from the first occurrence of
+a clinical event in the EHR tables to the last clinical event in the EHR tables.
+It will only return a single observation period per person_id in the database. If
+<code>collect = FALSE</code>, the function returns a query to a temporary table in the database
+which can be referenced by typical dplyr functions.</p>
+<p>Normal OMOP conventions for EHR suggest that long lapses of time bewteen clinical
+events may indicate that the person was not "observed" during this period. However,
+due to the diverse nature of clinical EHR data contributed to all of us, it seems
+most conservative to assume that the person was observed from their first to last
+clinical event. See https://ohdsi.github.io/CommonDataModel/ehrObsPeriods.html
+for more details.</p>
+<p>Some users have clinical events going back to before the time of widespread
+electronic medical record use (e.g., the 1980s and 1990s). This function considers
+all EHR data in the database, regardless of the date of the clinical event, but we
+recommend that users consider the implications of including data from the 1980s and 1990s.
+It may be more prudent to exclude data prior to a more recent cutoff date so that the EHR
+data is more likely to be accurate, though this decision depends highly on the research
+question (see example below).</p>
+<p>Users should note that the aou_observation_period function will only generate observation periods for
+participants who have at least one clinical observation. If participant in the AllofUs research
+program who did not include electronic health record data are included in the cohort argument, or
+elected to contribute data but have no data to contribute, they will not be included in the
+generated observation period table.</p>
     </div>
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span> <span class="co"># on_workbench()</span></span></span>
+<span class="r-in"><span><span class="co"># create observation_period table for everyone</span></span></span>
+<span class="r-in"><span><span class="va">observation_period_tbl</span> <span class="op">&lt;-</span> <span class="fu">aou_observation_period</span><span class="op">(</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># create an index date as the first date a survey was taken</span></span></span>
+<span class="r-in"><span><span class="va">index_date_tbl</span> <span class="op">&lt;-</span> <span class="fu">tbl</span><span class="op">(</span><span class="va">con</span>, <span class="st">"ds_survey"</span><span class="op">)</span> <span class="op"><a href="pipe.html">%&gt;%</a></span></span></span>
+<span class="r-in"><span>  <span class="fu">group_by</span><span class="op">(</span><span class="va">person_id</span><span class="op">)</span> <span class="op"><a href="pipe.html">%&gt;%</a></span></span></span>
+<span class="r-in"><span>  <span class="fu"><a href="https://rdrr.io/r/stats/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">survey_datetime</span> <span class="op">==</span> <span class="fu"><a href="https://rdrr.io/r/base/Extremes.html" class="external-link">min</a></span><span class="op">(</span><span class="va">survey_datetime</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="pipe.html">%&gt;%</a></span></span></span>
+<span class="r-in"><span>  <span class="fu">mutate</span><span class="op">(</span>index_date <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/as.Date.html" class="external-link">as.Date</a></span><span class="op">(</span><span class="va">survey_datetime</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="pipe.html">%&gt;%</a></span></span></span>
+<span class="r-in"><span>  <span class="fu">distinct</span><span class="op">(</span><span class="va">person_id</span>, <span class="va">index_date</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># create a cohort of participants with EHR data and at least one year</span></span></span>
+<span class="r-in"><span><span class="co"># of observation starting on the date they took the first survey</span></span></span>
 <span class="r-in"><span><span class="va">cohort</span> <span class="op">&lt;-</span> <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/tbl.html" class="external-link">tbl</a></span><span class="op">(</span><span class="va">con</span>, <span class="st">"cb_search_person"</span><span class="op">)</span> <span class="op"><a href="pipe.html">%&gt;%</a></span></span></span>
 <span class="r-in"><span>  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">has_ehr_data</span> <span class="op">==</span> <span class="fl">1</span><span class="op">)</span> <span class="op"><a href="pipe.html">%&gt;%</a></span></span></span>
-<span class="r-in"><span>  <span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="fl">100</span><span class="op">)</span> <span class="op"><a href="pipe.html">%&gt;%</a></span></span></span>
-<span class="r-in"><span>  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="va">person_id</span><span class="op">)</span></span></span>
+<span class="r-in"><span>  <span class="fu">inner_join</span><span class="op">(</span><span class="va">index_date_tbl</span>, by <span class="op">=</span> <span class="st">"person_id"</span><span class="op">)</span> <span class="op"><a href="pipe.html">%&gt;%</a></span></span></span>
+<span class="r-in"><span>  <span class="fu">inner_join</span><span class="op">(</span><span class="va">observation_period_tbl</span>, by <span class="op">=</span> <span class="st">"person_id"</span><span class="op">)</span> <span class="op"><a href="pipe.html">%&gt;%</a></span></span></span>
+<span class="r-in"><span>  <span class="fu"><a href="https://rdrr.io/r/stats/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">observation_period_end_date</span> <span class="op">&gt;=</span> <span class="fu"><a href="DATE_ADD.html">DATE_ADD</a></span><span class="op">(</span><span class="va">index_date</span>,</span></span>
+<span class="r-in"><span>                                                 <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/sql.html" class="external-link">sql</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="st">"INTERVAL "</span>, <span class="fl">1</span>, <span class="st">" year"</span><span class="op">)</span><span class="op">)</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>         <span class="va">observation_period_start_date</span> <span class="op">&lt;=</span> <span class="va">index_date</span><span class="op">)</span> <span class="op"><a href="pipe.html">%&gt;%</a></span></span></span>
+<span class="r-in"><span>  <span class="fu">select</span><span class="op">(</span><span class="va">person_id</span>, <span class="va">gender</span>, <span class="va">sex_at_birth</span>, <span class="va">race</span>, <span class="va">ethnicity</span>, <span class="va">age_at_consent</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="va">observation_periods</span> <span class="op">&lt;-</span> <span class="fu">aou_observation_period</span><span class="op">(</span><span class="va">cohort</span>,</span></span>
-<span class="r-in"><span>  persistence_window <span class="op">=</span> <span class="fl">548</span>,</span></span>
-<span class="r-in"><span>  end_date_buffer <span class="op">=</span> <span class="fl">60</span>,</span></span>
-<span class="r-in"><span>  collect <span class="op">=</span> <span class="cn">FALSE</span></span></span>
-<span class="r-in"><span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="co"># head(cohort)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># create an observation period table with a minimum start date (e.g., 2010-01-01)</span></span></span>
+<span class="r-in"><span><span class="va">observation_period_tbl</span> <span class="op"><a href="pipe.html">%&gt;%</a></span></span></span>
+<span class="r-in"><span>  <span class="fu">mutate</span><span class="op">(</span>observation_period_start_date <span class="op">=</span></span></span>
+<span class="r-in"><span>           <span class="fu">if_else</span><span class="op">(</span><span class="va">observation_period_start_date</span> <span class="op">&lt;</span> <span class="fu"><a href="https://rdrr.io/r/base/as.Date.html" class="external-link">as.Date</a></span><span class="op">(</span><span class="st">"2010-01-01"</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>                   <span class="fu"><a href="https://rdrr.io/r/base/as.Date.html" class="external-link">as.Date</a></span><span class="op">(</span><span class="st">"2010-01-01"</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>                   <span class="va">observation_period_start_date</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="pipe.html">%&gt;%</a></span></span></span>
+<span class="r-in"><span>  <span class="fu"><a href="https://rdrr.io/r/stats/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">observation_period_end_date</span> <span class="op">&gt;</span> <span class="fu"><a href="https://rdrr.io/r/base/as.Date.html" class="external-link">as.Date</a></span><span class="op">(</span><span class="st">"2010-01-01"</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="op">}</span></span></span>
 </code></pre></div>
     </div>

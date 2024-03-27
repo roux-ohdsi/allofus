@@ -42,6 +42,22 @@ install.packages("pak")
 pak::pak("roux-ohdsi/allofus")
 ```
 
+On the new RStudio interface on the workbench, you will need to manually
+specify the CRAN mirror to be able to download *any* recently updated
+packages.
+
+``` r
+# specify the mirror directly
+install.packages("allofus", repos = 'https://cloud.r-project.org')
+
+# OR set the mirror as an option at the top of your script
+options(repos = c(CRAN = "https://cloud.r-project.org"))
+
+# Github development versions may requires using the remotes package
+install.packages("remotes")
+remotes::install_github("roux-ohdsi/allofus", repos = 'https://cloud.r-project.org')
+```
+
 ### Use
 
 Read through the [getting
@@ -53,8 +69,9 @@ vignette to learn how to use the package.
 Please cite the `allofus` package as:
 <p>
 Smith L, Cavanaugh R (2023). <em>allofus: Interface for ‘All of Us’
-Researcher Workbench</em>. R package version 1.0.0,
-<a href="https://CRAN.R-project.org/package=allofus">https://CRAN.R-project.org/package=allofus</a>.
+Researcher Workbench</em>.
+<a href="https://doi.org/10.5281/zenodo.10420610">doi:10.5281/zenodo.10420610</a>,
+<a href="https://roux-ohdsi.github.io/allofus/">https://roux-ohdsi.github.io/allofus/</a>.
 </p>
 
 or with

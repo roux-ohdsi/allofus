@@ -75,6 +75,9 @@ aou_connect <- function(CDR = getOption("aou.default.cdr"), ...) {
       cli::cli_inform(c("v" = "Connected successfully!"))
       options(aou.default.con = connection)
 
+      # add aou-specific class to allow for aou_methods
+      class(connection) <- c("src_aou", class(connection))
+
       connection
     },
     error = function(e) {

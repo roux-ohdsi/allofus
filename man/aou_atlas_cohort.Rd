@@ -4,31 +4,18 @@
 \alias{aou_atlas_cohort}
 \title{Retrieve a cohort from ATLAS for use in All of Us}
 \usage{
-aou_atlas_cohort(
-  cohort_definition,
-  cohort_sql,
-  persistence_window = 548,
-  end_date_buffer = 60,
-  exclude_aou_visits = FALSE,
-  debug = FALSE,
-  ...
-)
+aou_atlas_cohort(cohort_definition, cohort_sql, debug = FALSE, ...)
 }
 \arguments{
 \item{cohort_definition}{A cohort definition generated using \verb{getCohortDefinition() from ROhdsiWebApi}}
 
 \item{cohort_sql}{The cohort_sql generated using \verb{getCohortSql() from ROhdsiWebApi}}
 
-\item{persistence_window}{Longest allowable time between visits for the same observation period. Defaults to 548 (see details)}
-
-\item{end_date_buffer}{Number of days to add to last observed date. Defaults to 60 (see details)}
-
-\item{exclude_aou_visits}{Whether to exclude All of Us clinical visits (i.e., for program-specific measurements,
-not part of the participants' typical EHR) from the observation period. Defaults to \code{TRUE}}
-
 \item{debug}{Print the query to the console; useful for debugging.}
 
-\item{...}{Further arguments passed along to \code{collect()} if \code{collect = TRUE}}
+\item{...}{Further arguments passed along to \code{collect()} if \code{collect = TRUE}
+
+\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#experimental}{\figure{lifecycle-experimental.svg}{options: alt='[Experimental]'}}}{\strong{[Experimental]}}}
 }
 \value{
 A dataframe with the resulting cohort. The SQL query used to generate the cohort is stored as an attribute.
@@ -42,24 +29,42 @@ to generate the appropriate observation periods and incorporate other package fu
 Please see the online vignette for additional details insert link here
 }
 \details{
-The visit_occurrence table
-\url{https://ohdsi.github.io/CommonDataModel/ehrObsPeriods.html}. The visit_occurrence table in the
-All of Us OMOP CDM contains dates from participant data collection visits which are excluded by default but can be included. Some of the
-visit lengths in the visit_occurrence table are unrealistically long for EHR data. These visits can be constrained
-by setting the \code{max_visit_length}, \code{max_op_visit_length}, and \code{max_er_visit_length} parameters. >99\% of these visits are of the outpatient
-visit type, so its likely these are errors in the data. However, assuming these are errors, there's no way to determine whether the
-visit_start_date or visit_end_date are the actual visit date. Therefore, the function will exclude these visits when generating the
-observation period table.
+The current observation period table in the All of Us OMOP CDM is not always
+appropriate for cohorts generated using OHDSI tools such as ATLAS. Some observation
+periods are overly short and some participants have hundreds of observation periods.
+
+This function generates an observation period table from the first occurrence of
+a clinical event in the EHR tables to the last clinical event in the EHR tables.
+It will only return a single observation period per person_id in the database. If
+\code{collect = FALSE}, the function returns a query to a temporary table in the database
+which can be referenced by typical dplyr functions.
+
+Normal OMOP conventions for EHR suggest that long lapses of time bewteen clinical
+events may indicate that the person was not "observed" during this period. However,
+due to the diverse nature of clinical EHR data contributed to all of us, it seems
+most conservative to assume that the person was observed from their first to last
+clinical event. See https://ohdsi.github.io/CommonDataModel/ehrObsPeriods.html
+for more details.
+
+Some users have clinical events going back to before the time of widespread
+electronic medical record use (e.g., the 1980s and 1990s). This function considers
+all EHR data in the database, regardless of the date of the clinical event, but we
+recommend that users consider the implications of including data from the 1980s and 1990s.
+It may be more prudent to exclude data prior to a more recent cutoff date so that the EHR
+data is more likely to be accurate, though this decision depends highly on the research
+question (see example below).
 
 Users should note that the aou_observation_period function will only generate observation periods for
-participants who have at least one visit in the visit_occurrence table. If participant in the AllofUs research
-program who did not include electronic health record data are included in the cohort argument, they will not be included in the
+participants who have at least one clinical observation. If participant in the AllofUs research
+program who did not include electronic health record data are included in the cohort argument, or
+elected to contribute data but have no data to contribute, they will not be included in the
 generated observation period table.
 }
 \examples{
 \dontshow{if (on_workbench()) (if (getRversion() >= "3.4") withAutoprint else force)(\{ # examplesIf}
 # generate a simple stroke cohort
 # see https://atlas-demo.ohdsi.org/#/cohortdefinition/1788061
+# If this cohort is not available, you can create one, or choose one already made.
 # aou_cohort_example contains the results of
 # cd <- ROhdsiWebApi::getCohortDefinition(1788061, "https://atlas-demo.ohdsi.org/WebAPI")
 # cd_sql <- ROhdsiWebApi::getCohortSql(cd, "https://atlas-demo.ohdsi.org/WebAPI")
