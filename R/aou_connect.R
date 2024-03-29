@@ -13,6 +13,34 @@ on_workbench <- function() {
   Sys.getenv("WORKSPACE_CDR") != "" && Sys.getenv("WORKSPACE_BUCKET") != ""
 }
 
+
+#' All of Us data source (via bigquery).
+#'
+#' Use \code{src_aou} to connect to an existing bigquery dataset,
+#' and \code{tbl} to connect to tables within that database.
+#'
+
+src_aou <- function(CDR = getOption("aou.default.cdr"), ...) {
+
+  check_installed("dbplyr")
+
+  dataset <- strsplit(CDR, split = "\\.")[[1]]
+  release <- dataset[2]
+  prefix <- dataset[1]
+
+  connection <- DBI::dbConnect(
+    bigrquery::bigquery(),
+    billing = Sys.getenv("GOOGLE_PROJECT"),
+    project = prefix,
+    dataset = release,
+    bigint = "integer64", # fix for big integers
+    ...
+  )
+
+  dbplyr::src_dbi(con)
+}
+
+
 #' Create a connection to the database in All of Us
 #'
 #'
@@ -52,9 +80,7 @@ aou_connect <- function(CDR = getOption("aou.default.cdr"), ...) {
 
   out <- tryCatch(
     {
-      dataset <- strsplit(CDR, split = "\\.")[[1]]
-      release <- dataset[2]
-      prefix <- dataset[1]
+      connection <- src_aou(CDR)
 
       connection <- DBI::dbConnect(
         bigrquery::bigquery(),
