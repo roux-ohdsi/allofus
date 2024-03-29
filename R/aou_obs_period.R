@@ -160,7 +160,7 @@ aou_observation_period <- function(con = getOption("aou.default.con"),
           )
 
       SELECT
-      participant AS person_id,  MIN (first_date) AS observation_period_start_date, MAX (last_date) as observation_period_end_date, '' AS col_remove
+      participant AS person_id,  MIN (first_date) AS observation_period_start_date, MAX (last_date) as observation_period_end_date
       FROM ehr
       GROUP BY 1
       ORDER BY 1
@@ -185,7 +185,8 @@ aou_observation_period <- function(con = getOption("aou.default.con"),
     # get the tbale name to return for future reference.
     tbl_name = paste(tbl_obj$project, tbl_obj$dataset, tbl_obj$table, sep = ("."))
 
-    obs_period = dplyr::tbl(con, tbl_name) %>% dplyr::select(-"col_remove")
+    # to deal with display error when printing the output in jupyter
+    obs_period = dplyr::tbl(con, tbl_name) %>% dplyr::filter(1 > 0)
 
     # collect if desired.
     if (isTRUE(collect)) {

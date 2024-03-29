@@ -3,6 +3,7 @@
 export("%>%")
 export(aou_atlas_cohort)
 export(aou_bucket_to_workspace)
+export(aou_collect)
 export(aou_compute)
 export(aou_concept_set)
 export(aou_connect)

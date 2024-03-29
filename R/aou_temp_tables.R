@@ -79,11 +79,9 @@ aou_create_temp_table <- function(df, nchar_batch = 1000000, con = getOption("ao
 
     final_tbl <- purrr::reduce(n, dplyr::union_all)
 
-    return(final_tbl)
+    # to deal with display error when printing the output in jupyter
+    return(dplyr::filter(final_tbl, 1 > 0))
 }
-
-
-
 
 #' Compute a dplyr tbl SQL query into a temp table
 #'
@@ -143,6 +141,52 @@ aou_compute <- function(.data, con = getOption('aou.default.con')){
   # get the tbale name to return for future reference.
   tbl_name = paste(tbl_obj$project, tbl_obj$dataset, tbl_obj$table, sep = ("."))
 
-  return(dplyr::tbl(con, tbl_name))
+  # to deal with display error when printing the output in jupyter
+  return(dplyr::filter(dplyr::tbl(con, tbl_name), 1 > 0))
 
+}
+
+#' Collect a tbl object and convert integer64 columns to double
+#'
+#' @param tbl_obj reference to a database table
+#' @param convert_int64 do you want to convert integers to doubles? Defaults to `TRUE`
+#'
+#' @description If you connect to the All of Us database via `aou_connect()`, integer columns
+#' will be converted to the int64 class, which can represent 64-bit integers.
+#' This is safer than keeping as R's default integer class,
+#' because some of the values of the ID columns in All of Us are larger than
+#' R can handle as integers. However, this can make working with the local table
+#' more difficult in RStudio as a vector of values will not match
+#' the int64 class. This is not a problem in Jupyter notebooks, meaning
+#' that code that works on one platform may not work on another. A safe practice
+#' is to use `aou_collect()`, which works just like `dplyr::collect()`
+#' except that any integer values are converted to doubles. If this is not what
+#' you want, set `convert_int64 = FALSE`.
+#' @return  a local dataframe
+#' @export
+#'
+#' @examplesIf on_workbench()
+#'
+#' # returns 2 rows, as expected
+#' dplyr::tbl(con, "concept") %>%
+#'   dplyr::filter(concept_id %in% c(1112807, 4167538)) %>%
+#'   aou_collect() %>%
+#'   dplyr::filter(concept_id %in% c(1112807, 4167538))
+#'
+#' default_collect <- tbl(con, "concept") %>%
+#'   dplyr::filter(concept_id %in% c(1112807, 4167538)) %>%
+#'   dplyr::collect()
+#' # returns 2 rows in Jupyter and 0 in RStudio
+#' dplyr::filter(default_collect, concept_id %in% c(1112807, 4167538))
+#'
+aou_collect <- function(tbl_obj, convert_int64 = TRUE, ...) {
+  # use the default collect method
+  collected <- dplyr::collect(tbl_obj, ...)
+  # and then convert to double
+  if (convert_int64) {
+    cli::cli_inform("{.code integer64} columns were converted to {.code double}.")
+    return(dplyr::mutate(collected, dplyr::across(dplyr::where(bit64::is.integer64), as.double)))
+  } else {
+    return(collected)
+  }
 }
