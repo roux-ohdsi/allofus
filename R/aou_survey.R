@@ -383,7 +383,8 @@ aou_survey <- function(cohort = NULL,
         dplyr::group_by(.data$person_id) %>%
         dplyr::slice_max(order_by = type, n = 1) %>%
         dplyr::ungroup() %>%
-        dplyr::select("person_id", !!condition_name := "condition", !!condition_date := "observation_date")
+        dplyr::select("person_id", !!condition_name := "condition", !!condition_date := "observation_date") %>%
+        aou_compute()
     }) %>%
       purrr::reduce(dplyr::left_join, by = "person_id")
 
@@ -403,7 +404,8 @@ aou_survey <- function(cohort = NULL,
     tmp <- dplyr::tbl(con, "observation") %>%
       dplyr::filter(.data$observation_source_concept_id %in% regular_survey_concept_ids) %>%
       # this is necessary because there may be multiple rows for a single person (hence full_join later)
-      dplyr::inner_join(dplyr::select(function_cohort, "person_id"), by = "person_id")
+      dplyr::inner_join(dplyr::select(function_cohort, "person_id"), by = "person_id") %>%
+      aou_compute()
 
     # for retrieving columns and pivoting
     q <- paste0("observation_source_", question_output)
@@ -462,7 +464,8 @@ aou_survey <- function(cohort = NULL,
       # change to lower, then rename
       wide <- wide %>%
         dplyr::rename_with(tolower) %>%
-        dplyr::rename(dplyr::all_of(nm))
+        dplyr::rename(dplyr::all_of(nm)) %>%
+        aou_compute()
     }
     # join back to original table
     out <- dplyr::full_join(cohort_w_health, wide, by = "person_id")
