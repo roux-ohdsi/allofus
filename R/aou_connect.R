@@ -230,7 +230,7 @@ aou_sql <- function(query, CDR = getOption("aou.default.cdr"), debug = FALSE, ..
 
 #' List tables in the AoU Database
 #'
-#' @descrption Prints a list of all of the tables in the All of Us Big Query Database.
+#' @description Prints a list of all of the tables in the All of Us Big Query Database.
 #'
 #' @param con Connection to the allofus SQL database. Defaults to `getOption("aou.default.con")`,
 #' which is created automatically with `aou_connect()`

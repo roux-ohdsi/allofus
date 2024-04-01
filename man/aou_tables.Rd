@@ -16,7 +16,7 @@ which is created automatically with \code{aou_connect()}}
 A dataframe with the table names and the number of columns
 }
 \description{
-List tables in the AoU Database
+Prints a list of all of the tables in the All of Us Big Query Database.
 }
 \examples{
 \dontshow{if (on_workbench()) (if (getRversion() >= "3.4") withAutoprint else force)(\{ # examplesIf}

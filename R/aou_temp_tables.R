@@ -4,8 +4,7 @@
 #' @param df a local dataframe or tibble
 #' @param nchar_batch approximate number of characters per sql query
 #' @param con connection
-#' @description
-#' Generates a temporary table from a local data frame.
+#' @description Generates a temporary table from a local data frame.
 #'  Tables generally will need to be small in size (<1500 rows).
 #'  The temporary table will only exist for the current session and will need to be created again a new session.
 #' in a new session.
