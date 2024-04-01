@@ -26,7 +26,8 @@ Imports:
     rlang,
     stringr,
     DBI,
-    lifecycle
+    lifecycle,
+    bit64
 Suggests:
     knitr,
     rmarkdown,

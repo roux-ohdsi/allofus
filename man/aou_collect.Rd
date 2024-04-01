@@ -10,6 +10,8 @@ aou_collect(tbl_obj, convert_int64 = TRUE, ...)
 \item{tbl_obj}{reference to a database table}
 
 \item{convert_int64}{do you want to convert integers to doubles? Defaults to \code{TRUE}}
+
+\item{...}{other arguments passed to dplyr::collect()}
 }
 \value{
 a local dataframe

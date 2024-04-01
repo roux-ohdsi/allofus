@@ -150,6 +150,7 @@ aou_compute <- function(.data, con = getOption('aou.default.con')){
 #'
 #' @param tbl_obj reference to a database table
 #' @param convert_int64 do you want to convert integers to doubles? Defaults to `TRUE`
+#' @param ... other arguments passed to dplyr::collect()
 #'
 #' @description If you connect to the All of Us database via `aou_connect()`, integer columns
 #' will be converted to the int64 class, which can represent 64-bit integers.
