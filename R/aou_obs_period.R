@@ -1,5 +1,10 @@
 #' Generate an observation period table
 #'
+#' @description Generates a temporary observation period table based the first and last event in
+#'  the electronic medical record data. Because some EHR sites have contributed data from several decades ago, researchers
+#'  might want to consider further constraining this table to reasonable date ranges of interest
+#'  (e.g., setting all observation_period_start_date values to no earlier than 01/01/2010).
+#'
 #' @param con Connection to the allofus SQL database. Defaults to getOption("aou.default.con"), which is set automatically if you use `aou_connect()`
 #' @param collect Whether to collect the data or keep as SQL query. Defaults to `FALSE`.
 #' @param ... Further arguments passed along to `collect()` if `collect = TRUE`

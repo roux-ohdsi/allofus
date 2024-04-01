@@ -16,9 +16,12 @@
 aou_table_info
 }
 \description{
-A data frame containing tables and columns in the aou OMOP CDM created from
-https://docs.google.com/spreadsheets/d/1XLVq84LLd0VZMioF2sPwyiaPw3EFp5c8o1CTWGPH-Yc/edit#gid=1815943286.
-Note that the column 'value_source_value' has been manually added as it is missing from the data dictionary.
+@description A data from with rows of the All of Us codebook pertaining to the health history questions.
+In early All of Us surveys, these questions were asked separately about the respondent
+and the respondent's family. In the current version, the questions are asked on the same survey.
+The nested nature of these questions can make them challenging to extract and analyze.
+}
+\details{
 \itemize{
 \item{\href{https://github.com/roux-ohdsi/allofus/blob/main/data-raw/more_data.R}{Code to generate table}}
 }

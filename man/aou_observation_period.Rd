@@ -23,7 +23,10 @@ aou_observation_period(
 a sql query or local data frame with person_id, observation_period_start_date, and observation_period_end_date
 }
 \description{
-Generate an observation period table
+Generates a temporary observation period table based the first and last event in
+the electronic medical record data. Because some EHR sites have contributed data from several decades ago, researchers
+might want to consider further constraining this table to reasonable date ranges of interest
+(e.g., setting all observation_period_start_date values to no earlier than 01/01/2010).
 }
 \details{
 The current observation period table in the All of Us OMOP CDM is not always

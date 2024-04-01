@@ -5,10 +5,9 @@
 #' @param nchar_batch approximate number of characters per sql query
 #' @param con connection
 #' @description
-#'  Experimental function that builds a local tibble into an SQL query and
-#'  generates a temporary table. Tables
-#' generally will need to be small in size (<1500 rows). The table will only
-#' exist for the current connection session and will need to be created again
+#' Generates a temporary table from a local data frame.
+#'  Tables generally will need to be small in size (<1500 rows).
+#'  The temporary table will only exist for the current session and will need to be created again a new session.
 #' in a new session.
 #' @return a reference to a temporary table in the database with the data from `df`
 #' @export
@@ -90,13 +89,11 @@ aou_create_temp_table <- function(df, nchar_batch = 1000000, con = getOption("ao
 #' @param .data result of tbl(con, "table") %>% ... query
 #' @param con connection from aou_connect(). Set by default
 #'
-#' @description Experimental function that computes a temporary table from a tbl(con, "table")
-#' dplyr chain that returns an SQL query (e.g., with show_query()). The
-#' may be useful to create intermediate tables to reduce long queries.
-#' It is a workaround for dplyr::compute(temporary = TRUE) which does not
-#' currently work on the workbench. The table will only
-#' exist for the current connection session and will need to be created again
-#' in a new session.
+#' @description Computes a temporary table from a dplyr chain that returns an
+#'  SQL query (e.g., tbl(con, table)) and returns the name of the temporary table.
+#'  May be useful to create intermediate tables to reduce long queries.
+#'  The temporary table will only exist for the current session and will nee
+#'  to be created again a new session.
 #'
 #' @return  a name to a temporary table in the database.
 #' @export

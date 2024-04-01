@@ -39,8 +39,7 @@ aou_join(
 Continued dbplyr query
 }
 \description{
-Simple wrapper for join functions to join an existing query
-to another table in the All of Us database.
+Joins two tables in the All of Us database. A less verbose wrapper for the dplyr::*_join() functions with some added safeguards.
 }
 \details{
 There are a few good reasons to use aou_join() when possible over the x_join functions from dplyr.
