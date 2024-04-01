@@ -18,8 +18,7 @@ Default will find all files apart from notebooks (.ipynb files).}
 A vector of file names
 }
 \description{
-The files stored in a workspace are not easily visible from a notebook. List
-all files in the workspace (apart from notebooks) or files matching a certain pattern.
+Lists all data files in the workspace or files matching a certain pattern.
 }
 \examples{
 my_workspace_files <- aou_ls_workspace(silent = TRUE)

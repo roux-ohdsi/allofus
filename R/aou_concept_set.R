@@ -1,5 +1,6 @@
 #' Get occurrences of a concept set from AoU for a given cohort
 #'
+#' @description Retrieves occurrences of a concept set from the All of Us database for a given cohort
 #' @param cohort query to a cohort or local dataframe with a column called "person_id", and (possibly) columns for start_date and end_date.
 #' If not provided, defaults to entire All of Us cohort.
 #' @param concepts a vector of concept ids
@@ -260,6 +261,7 @@ aou_concept_set <- function(cohort = NULL,
 #' @param ... Additional arguments not currently used
 #'
 #' @noRd
+#' @keywords internal
 
 get_domain_concepts <- function(cohort, concepts, start_date, end_date, tbl_name, date_column, concept_id_column, con = getOption("aou.default.con"), ...) {
   domain_tbl <- dplyr::tbl(con, tbl_name) %>%

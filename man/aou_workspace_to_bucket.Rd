@@ -23,6 +23,9 @@ which is \code{Sys.getenv('WORKSPACE_BUCKET')} unless specified otherwise.}
 Nothing
 }
 \description{
+Moves a file saved in on the persistent disk to the workspace bucket, where it can be stored even if a compute environment is deleted.
+}
+\details{
 This function moves a file saved in a workspace
 to a bucket, where it can be retrieved even if the environment is deleted. To use, first save the desired
 object as a file to the workspace (e.g., \code{write.csv(object, "filename.csv")}) and then run this function

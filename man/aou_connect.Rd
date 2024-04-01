@@ -18,7 +18,11 @@ On the controlled tier, specify the "base" CDR with \code{CDR = paste0(Sys.geten
 A \code{BigQueryConnection} object. This object is also saved as an option (\code{getOption("aou.default.con")}).
 }
 \description{
-Use this function to create a \code{BigQueryConnection} object.
+Connects to the All of Us database and returns a BigQueryConnection object.
+You can reference this object to query the database using R and or SQL code.
+A message is printed with the connection status (successful or not).
+}
+\details{
 You can reference this object to connect to the All of Us database and run
 SQL code using, e.g., \code{dbplyr} or \code{DBI}. A message is printed with the connection
 status (successful or not).

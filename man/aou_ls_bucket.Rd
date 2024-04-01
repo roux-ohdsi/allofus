@@ -30,8 +30,7 @@ See \url{https://cloud.google.com/storage/docs/gsutil/commands/ls} for details.}
 A vector of file names
 }
 \description{
-The files stored in a bucket are not easily visible from a notebook. List
-all files in the bucket or files matching a certain pattern.
+Lists all files in the bucket or files matching a certain pattern.
 }
 \examples{
 \dontshow{if (on_workbench()) (if (getRversion() >= "3.4") withAutoprint else force)(\{ # examplesIf}

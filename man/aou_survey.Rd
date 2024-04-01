@@ -34,11 +34,19 @@ aou_survey(
 a dataframe if collect = TRUE; a remote tbl if not
 }
 \description{
-Because responses to the survey questions stored in the ds_survey table do not
-include skipped questions (i.e., missing data!), this function makes it easier to
-query the observation table for responses to survey questions so that the skipped
-responses are included.
-
+Extracts survey responses in a tidy format that also includes ‘skip’ responses
+and collapses across all versions of the person health / personal medical history
+surveys. Currently responses in the ‘ds_survey’ table omit skipped responses.
+Responses are returned as Yes" if the respondent answered that the individual
+had the condition, No" if the respondent answered that the individual did not
+have that condition (or omitted it when selecting from related conditions),
+a skip response if the question was skipped, and NA if the respondent did not answer
+the question. Returns a data frame or SQL tbl with the initial cohort table along with
+a column for each question included in questions and answers foreach person_id in the cells.
+To find the desired survey questions, use the all of us data dictionary, survey codebook,
+Athena, data browser, or the modified codebook which can be found in the allofus R package.
+}
+\details{
 The function will return a dataframe or SQL tbl with the initial cohort table along
 with a column for each question included in \code{questions} and answers for
 each person_id in the cells. The column names (questions) can

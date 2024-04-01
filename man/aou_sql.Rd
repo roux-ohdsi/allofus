@@ -25,7 +25,7 @@ On the controlled tier, specify the "base" CDR with \code{CDR = paste0(Sys.geten
 A dataframe with the results of the query.
 }
 \description{
-Execute a SQL query on the All of Us database
+Executes an SQL query on the All of Us database and returns the result as a data frame.
 }
 \examples{
 \dontshow{if (on_workbench()) (if (getRversion() >= "3.4") withAutoprint else force)(\{ # examplesIf}
