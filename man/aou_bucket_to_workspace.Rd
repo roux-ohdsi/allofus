@@ -23,6 +23,9 @@ which is \code{Sys.getenv('WORKSPACE_BUCKET')} unless specified otherwise.}
 Nothing
 }
 \description{
+Retrieves a file from the workspace bucket and moves it into the current persistent disk where it can be read into R, e.g., using a function like read.csv().
+}
+\details{
 This function retrieves a file from your bucket and moves it
 into your workspace where it can be read into R, e.g., using a function like \code{write.csv()}.
 See \url{https://cloud.google.com/storage/docs/gsutil/commands/cp} for details on the

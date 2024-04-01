@@ -48,7 +48,7 @@ the number of matching concepts per person ("count"), or all info about the matc
 a dataframe if collect = TRUE; a remote tbl if not
 }
 \description{
-Get occurrences of a concept set from AoU for a given cohort
+Retrieves occurrences of a concept set from the All of Us database for a given cohort
 }
 \examples{
 \dontshow{if (on_workbench()) (if (getRversion() >= "3.4") withAutoprint else force)(\{ # examplesIf}

@@ -1,10 +1,7 @@
 #' Join current query to another table
 #'
-#' @description Simple wrapper for join functions to join an existing query
-#' to another table in the All of Us database.
-#'
+#' @description Joins two tables in the All of Us database. A less verbose wrapper for the dplyr::*_join() functions with some added safeguards.
 #' @details
-#'
 #' There are a few good reasons to use aou_join() when possible over the x_join functions from dplyr.
 #' First, it reduces the code necessary to join an existing table to another table. Second,
 #' it includes checks/workarounds for two sources of common errors using dbplyr:

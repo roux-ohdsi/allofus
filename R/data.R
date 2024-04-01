@@ -1,12 +1,12 @@
 #' All of Us Modified Codebook
 #'
-#' This table consists of mapped rows from the
-#' publicly available All of Us Survey Codebook
-#' to the All of Us PPI Vocabulary available on Athena . A small number of rows did not
-#' match between the codebook and the Athena PPI Vocabulary. It can also be accessed in R using `allofus::aou_codebook`.
+#' @description A data frame with rows from the publicly available All of Us Survey Codebook
+#' mapped to the All of Us PPI Vocabulary available on Athena . A small number of
+#' rows did not match between the codebook and the Athena PPI Vocabulary.
 #'
-#' Questions relating to specific conditions are not included as part of this table.
+#' @details Questions relating to specific conditions are not included as part of this table.
 #' They are instead available in the `aou_health_history` table.
+#'
 #' \itemize{
 #'    \item{\href{https://docs.google.com/spreadsheets/d/1Ey8MScRYZ9QyS4izVYScISLMb62QEhSM-ErbG27dNtw/edit#gid=1832128489}{All of Us codebook}}
 #'    \item{\href{https://github.com/roux-ohdsi/allofus/blob/main/data-raw/pkg_data.R}{Code to generate table}}
@@ -58,9 +58,11 @@
 
 #' Table of tables, columns, and use for researchers from the CT data dictionary
 #'
-#' A data frame containing tables and columns in the aou OMOP CDM created from
-#' https://docs.google.com/spreadsheets/d/1XLVq84LLd0VZMioF2sPwyiaPw3EFp5c8o1CTWGPH-Yc/edit#gid=1815943286.
-#' Note that the column 'value_source_value' has been manually added as it is missing from the data dictionary.
+#'  @description A data from with rows of the All of Us codebook pertaining to the health history questions.
+#' In early All of Us surveys, these questions were asked separately about the respondent
+#' and the respondent's family. In the current version, the questions are asked on the same survey.
+#' The nested nature of these questions can make them challenging to extract and analyze.
+#'
 #' \itemize{
 #'    \item{\href{https://github.com/roux-ohdsi/allofus/blob/main/data-raw/more_data.R}{Code to generate table}}
 #' }
@@ -75,7 +77,9 @@
 
 #' Example cohort definition and SQL query from ATLAS
 #'
-#' A list containing a sample cohort definition and SQL query from the demo ATLAS for a cohort of stroke survivors.
+#' @description A data frame containing tables and columns in the All of Us Controlled Tier Dataset
+#' v7 CDR Data Dictionary (C2022Q4R9) found here: https://docs.google.com/spreadsheets/d/1XLVq84LLd0VZMioF2sPwyiaPw3EFp5c8o1CTWGPH-Yc/edit#gid=1815943286.
+#' Note that the column 'value_source_value' has been manually added as it is missing from the data dictionary.
 #' @keywords internal
 #' @format `aou_cohort_example`
 #' \describe{

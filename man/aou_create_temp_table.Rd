@@ -21,10 +21,9 @@ aou_create_temp_table(
 a reference to a temporary table in the database with the data from \code{df}
 }
 \description{
-Experimental function that builds a local tibble into an SQL query and
-generates a temporary table. Tables
-generally will need to be small in size (<1500 rows). The table will only
-exist for the current connection session and will need to be created again
+Generates a temporary table from a local data frame.
+Tables generally will need to be small in size (<1500 rows).
+The temporary table will only exist for the current session and will need to be created again a new session.
 in a new session.
 }
 \examples{

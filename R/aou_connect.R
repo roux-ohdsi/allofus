@@ -15,9 +15,10 @@ on_workbench <- function() {
 
 #' Create a connection to the database in All of Us
 #'
-#'
-#' @description Use this function to create a `BigQueryConnection` object.
-#' You can reference this object to connect to the All of Us database and run
+#' @description Connects to the All of Us database and returns a BigQueryConnection object.
+#' You can reference this object to query the database using R and or SQL code.
+#' A message is printed with the connection status (successful or not).
+#' @details You can reference this object to connect to the All of Us database and run
 #' SQL code using, e.g., `dbplyr` or `DBI`. A message is printed with the connection
 #' status (successful or not).
 #' @param CDR The name of the "curated data repository" to connect to. Defaults to
@@ -25,7 +26,6 @@ on_workbench <- function() {
 #' (i.e., the "mainline" CDR).
 #' On the controlled tier, specify the "base" CDR with `CDR = paste0(Sys.getenv('WORKSPACE_CDR'), "_base")`.
 #' @param ... Further arguments passed along to `DBI::dbConnect()`.
-#'
 #' @return A `BigQueryConnection` object. This object is also saved as an option (`getOption("aou.default.con")`).
 #' @export
 #' @examplesIf on_workbench()
@@ -87,6 +87,7 @@ aou_connect <- function(CDR = getOption("aou.default.cdr"), ...) {
 }
 
 #' Execute a SQL query on the All of Us database
+#' @description Executes an SQL query on the All of Us database and returns the result as a data frame.
 #'
 #' @param query A SQL query (BigQuery dialect) to be executed. Interpreted
 #' with `glue::glue()`, so expressions enclosed with braces will be evaluated.
@@ -228,6 +229,8 @@ aou_sql <- function(query, CDR = getOption("aou.default.cdr"), debug = FALSE, ..
 
 
 #' List tables in the AoU Database
+#'
+#' @descrption Prints a list of all of the tables in the All of Us Big Query Database.
 #'
 #' @param con Connection to the allofus SQL database. Defaults to `getOption("aou.default.con")`,
 #' which is created automatically with `aou_connect()`

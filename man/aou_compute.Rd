@@ -15,13 +15,11 @@ aou_compute(.data, con = getOption("aou.default.con"))
 a name to a temporary table in the database.
 }
 \description{
-Experimental function that computes a temporary table from a tbl(con, "table")
-dplyr chain that returns an SQL query (e.g., with show_query()). The
-may be useful to create intermediate tables to reduce long queries.
-It is a workaround for dplyr::compute(temporary = TRUE) which does not
-currently work on the workbench. The table will only
-exist for the current connection session and will need to be created again
-in a new session.
+Computes a temporary table from a dplyr chain that returns an
+SQL query (e.g., tbl(con, table)) and returns the name of the temporary table.
+May be useful to create intermediate tables to reduce long queries.
+The temporary table will only exist for the current session and will nee
+to be created again a new session.
 }
 \examples{
 \dontshow{if (on_workbench()) (if (getRversion() >= "3.4") withAutoprint else force)(\{ # examplesIf}
