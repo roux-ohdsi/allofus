@@ -4,17 +4,19 @@
 #' `r lifecycle::badge('experimental')`
 #'
 #' @param data A local dataframe (or tibble)
-#' @param nchar_batch approximate number of characters to break up each SQL query
+#' @param nchar_batch approximate number of characters to break up each SQL
+#'   query
 #' @param ... Not currently used
-#' @param con Connection to the allofus SQL database. Defaults to `getOption("aou.default.con")`,
-#' which is created automatically with `aou_connect()`.
-#' @description
-#' Experimental function that builds a local tibble into an SQL query and
-#' generates a temporary table. Larger tables will be broken up into consequitive SQL queries;
-#' making `nchar_batch` smaller can avoid errors but will take longer. The table will only
-#' exist for the current connection session and will need to be created again
-#' in a new session.
-#' @return a reference to a temporary table in the database with the data from `df`
+#' @param con Connection to the allofus SQL database. Defaults to
+#'   `getOption("aou.default.con")`, which is created automatically with
+#'   `aou_connect()`.
+#' @description Experimental function that builds a local tibble into an SQL
+#' query and generates a temporary table. Larger tables will be broken up into
+#' consequitive SQL queries; making `nchar_batch` smaller can avoid errors but
+#' will take longer. The table will only exist for the current connection
+#' session and will need to be created again in a new session.
+#' @return a reference to a temporary table in the database with the data from
+#'   `df`
 #' @export
 #'
 #' @examplesIf on_workbench()
@@ -112,16 +114,19 @@ aou_create_temp_table <- function(data, nchar_batch = 1000000, ..., con = getOpt
 #'
 #' `r lifecycle::badge('experimental')`
 #'
-#' @param data A reference to an unexecuted remote query (e.g., the result of a `tbl(con, ...) %>% ...` chain)
-#' @param ... Other arugments passed to `bigrquery::bq_table_download()` when `collect = TRUE`
-#' @param con Connection to the allofus SQL database. Defaults to `getOption("aou.default.con")`,
-#' which is created automatically with `aou_connect()`.
+#' @param data A reference to an unexecuted remote query (e.g., the result of a
+#'   `tbl(con, ...) %>% ...` chain)
+#' @param ... Other arugments passed to `bigrquery::bq_table_download()` when
+#'   `collect = TRUE`
+#' @param con Connection to the allofus SQL database. Defaults to
+#'   `getOption("aou.default.con")`, which is created automatically with
+#'   `aou_connect()`.
 #'
 #' @description Computes a temporary table from a dplyr chain that returns an
-#'  SQL query (e.g., tbl(con, table)) and returns the name of the temporary table.
-#'  May be useful to create intermediate tables to reduce long queries.
-#'  The temporary table will only exist for the current session and will nee
-#'  to be created again a new session.
+#'   SQL query (e.g., tbl(con, table)) and returns the name of the temporary
+#'   table. May be useful to create intermediate tables to reduce long queries.
+#'   The temporary table will only exist for the current session and will nee to
+#'   be created again a new session.
 #'
 #' @return  A reference to a temporary table in the database.
 #' @export
@@ -168,20 +173,21 @@ aou_compute <- function(data, ..., con = getOption("aou.default.con")) {
 #' `r lifecycle::badge('experimental')`
 #'
 #' @param data A reference to a remote database table (or unexecuted query)
-#' @param convert_int64 Do you want to convert integer values to doubles? Defaults to `TRUE`
+#' @param convert_int64 Do you want to convert integer values to doubles?
+#'   Defaults to `TRUE`
 #' @param ... Other arguments passed to dplyr::collect()
 #'
-#' @description If you connect to the All of Us database via `aou_connect()`, integer columns
-#' will be converted to the int64 class, which can represent 64-bit integers.
-#' This is safer than keeping as R's default integer class,
-#' because some of the values of the ID columns in All of Us are larger than
-#' R can handle as integers. However, this can make working with the local table
-#' more difficult in RStudio as a vector of values will not match
-#' the int64 class. This is not a problem in Jupyter notebooks, meaning
-#' that code that works on one platform may not work on another. A safe practice
-#' is to use `aou_collect()`, which works just like `dplyr::collect()`
-#' except that any integer values are converted to doubles. If this is not what
-#' you want, set `convert_int64 = FALSE`.
+#' @description If you connect to the All of Us database via `aou_connect()`,
+#'   integer columns will be converted to the int64 class, which can represent
+#'   64-bit integers. This is safer than keeping as R's default integer class,
+#'   because some of the values of the ID columns in All of Us are larger than R
+#'   can handle as integers. However, this can make working with the local table
+#'   more difficult in RStudio as a vector of values will not match the int64
+#'   class. This is not a problem in Jupyter notebooks, meaning that code that
+#'   works on one platform may not work on another. A safe practice is to use
+#'   `aou_collect()`, which works just like `dplyr::collect()` except that any
+#'   integer values are converted to doubles. If this is not what you want, set
+#'   `convert_int64 = FALSE`.
 #' @return  a local dataframe
 #' @export
 #'

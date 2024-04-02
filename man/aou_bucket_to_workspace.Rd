@@ -11,36 +11,40 @@ aou_bucket_to_workspace(
 )
 }
 \arguments{
-\item{file}{The name of a file in your bucket, a vector of multiple files, a directory,
-or a file pattern (e.g. ".csv").}
+\item{file}{The name of a file in your bucket, a vector of multiple files, a
+directory, or a file pattern (e.g. ".csv").}
 
-\item{directory}{Whether \code{file} refers to an entire directory you want to move.}
+\item{directory}{Whether \code{file} refers to an entire directory you want to
+move.}
 
-\item{bucket}{Bucket to retrieve file from. Defaults to \code{getOption("aou.default.bucket")},
-which is \code{Sys.getenv('WORKSPACE_BUCKET')} unless specified otherwise.}
+\item{bucket}{Bucket to retrieve file from. Defaults to
+\code{getOption("aou.default.bucket")}, which is
+\code{Sys.getenv('WORKSPACE_BUCKET')} unless specified otherwise.}
 }
 \value{
 Nothing
 }
 \description{
-Retrieves a file from the workspace bucket and moves it into the current persistent disk where it can be read into R, e.g., using a function like read.csv().
+Retrieves a file from the workspace bucket and moves it into the
+current persistent disk where it can be read into R, e.g., using a function
+like read.csv().
 }
 \details{
-This function retrieves a file from your bucket and moves it
-into your workspace where it can be read into R, e.g., using a function like \code{write.csv()}.
-See \url{https://cloud.google.com/storage/docs/gsutil/commands/cp} for details on the
-underlying function.
+This function retrieves a file from your bucket and moves it into
+your workspace where it can be read into R, e.g., using a function like
+\code{write.csv()}. See
+\url{https://cloud.google.com/storage/docs/gsutil/commands/cp} for details on
+the underlying function.
 }
 \examples{
 \dontshow{if (on_workbench()) (if (getRversion() >= "3.4") withAutoprint else force)(\{ # examplesIf}
 # save a file to the bucket
 tmp <- tempdir()
-write.csv(data.frame(x = 1), file.path(tmp,"testdata.csv"))
-aou_workspace_to_bucket(file.path(tmp,"testdata.csv"))
+write.csv(data.frame(x = 1), file.path(tmp, "testdata.csv"))
+aou_workspace_to_bucket(file.path(tmp, "testdata.csv"))
 # read the file back into the workspace
 aou_bucket_to_workspace("testdata.csv")
 # read in to your local environment
 read.csv("testdata.csv")
-
 \dontshow{\}) # examplesIf}
 }

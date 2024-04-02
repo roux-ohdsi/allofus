@@ -10,9 +10,9 @@ on_workbench()
 TRUE if you are on the workbench, FALSE otherwise
 }
 \description{
-Use this function to check whether you are on the
-All of Us Researcher Workbench. This is useful for writing code that
-can be used both on the workbench and locally.
+Use this function to check whether you are on the All of Us
+Researcher Workbench. This is useful for writing code that can be used both
+on the workbench and locally.
 }
 \examples{
 on_workbench()

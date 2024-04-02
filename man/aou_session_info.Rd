@@ -7,14 +7,18 @@
 aou_session_info(CDR = getOption("aou.default.cdr"))
 }
 \arguments{
-\item{CDR}{The name of the CDR to use. Defaults to \code{getOption("aou.default.cdr")}}
+\item{CDR}{The name of the CDR to use. Defaults to
+\code{getOption("aou.default.cdr")}}
 }
 \value{
-A list with three elements: the platform, the AoU release, and the packages
+A list with three elements: the platform, the AoU release, and the
+packages
 }
 \description{
-Returns a table of information that is necessary to fully reproduce your analyses.
-Specifically, it includes R version, the packages loaded and their versions, and the All of Us CDR release that you are using.
+Returns a table of information that is necessary to fully
+reproduce your analyses. Specifically, it includes R version, the packages
+loaded and their versions, and the All of Us CDR release that you are
+using.
 }
 \examples{
 \dontshow{if (on_workbench()) (if (getRversion() >= "3.4") withAutoprint else force)(\{ # examplesIf}

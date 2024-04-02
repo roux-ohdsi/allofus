@@ -1,12 +1,15 @@
 #' Print session information for the AoU R environment
 #'
-#' @description
-#' Returns a table of information that is necessary to fully reproduce your analyses.
-#' Specifically, it includes R version, the packages loaded and their versions, and the All of Us CDR release that you are using.
+#' @description Returns a table of information that is necessary to fully
+#'   reproduce your analyses. Specifically, it includes R version, the packages
+#'   loaded and their versions, and the All of Us CDR release that you are
+#'   using.
 #'
-#' @param CDR The name of the CDR to use. Defaults to `getOption("aou.default.cdr")`
+#' @param CDR The name of the CDR to use. Defaults to
+#'   `getOption("aou.default.cdr")`
 #'
-#' @return A list with three elements: the platform, the AoU release, and the packages
+#' @return A list with three elements: the platform, the AoU release, and the
+#'   packages
 #' @export
 #'
 #' @examplesIf on_workbench()

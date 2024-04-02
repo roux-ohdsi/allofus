@@ -15,57 +15,71 @@ aou_survey(
 )
 }
 \arguments{
-\item{cohort}{Reference to a remote table or local dataframe with a column called "person_id"}
+\item{cohort}{Reference to a remote table or local dataframe with a column
+called "person_id"}
 
-\item{questions}{either a vector of concept_ids or concept_codes for questions to return results}
+\item{questions}{either a vector of concept_ids or concept_codes for
+questions to return results}
 
-\item{question_output}{how to name the columns. Options include as the text of the concept code ("concept_code"), as concept ids preceded by
-"x_" ("concept_id"), or using a custom vector of column names matching the vector of \code{questions}. Defaults to "concept_code".}
+\item{question_output}{how to name the columns. Options include as the text
+of the concept code ("concept_code"), as concept ids preceded by "x_"
+("concept_id"), or using a custom vector of column names matching the
+vector of \code{questions}. Defaults to "concept_code".}
 
-\item{clean_answers}{whether to clean the answers to the survey questions. Defaults to TRUE.}
+\item{clean_answers}{whether to clean the answers to the survey questions.
+Defaults to TRUE.}
 
 \item{collect}{Whether to bring the resulting table into local memory
-(\code{collect = TRUE}) as a dataframe or leave as a reference to a database table (for
-continued analysis using, e.g., \code{dbplyr}). Defaults to \code{FALSE.}}
+(\code{collect = TRUE}) as a dataframe or leave as a reference to a database
+table (for continued analysis using, e.g., \code{dbplyr}). Defaults to \code{FALSE.}}
 
 \item{...}{additional arguments passed to \code{collect()} when \code{collect = TRUE}}
 
-\item{con}{connection to the allofus SQL database. Defaults to getOption("aou.default.con"), which is created automatically with \code{aou_connect()}}
+\item{con}{connection to the allofus SQL database. Defaults to
+getOption("aou.default.con"), which is created automatically with
+\code{aou_connect()}}
 }
 \value{
-A dataframe if \code{collect = TRUE}; a reference to a remote database table if not.
+A dataframe if \code{collect = TRUE}; a reference to a remote database
+table if not.
 }
 \description{
-Extracts survey responses in a tidy format that also includes ‘skip’ responses
-and collapses across all versions of the person health / personal medical history
-surveys. Currently responses in the ‘ds_survey’ table omit skipped responses.
-Responses are returned as Yes" if the respondent answered that the individual
-had the condition, No" if the respondent answered that the individual did not
-have that condition (or omitted it when selecting from related conditions),
-a skip response if the question was skipped, and NA if the respondent did not answer
-the question. Returns a data frame or SQL tbl with the initial cohort table along with
-a column for each question included in questions and answers foreach person_id in the cells.
-To find the desired survey questions, use the all of us data dictionary, survey codebook,
-Athena, data browser, or the modified codebook which can be found in the allofus R package.
+Extracts survey responses in a tidy format that also includes
+‘skip’ responses and collapses across all versions of the person health /
+personal medical history surveys. Currently responses in the ‘ds_survey’
+table omit skipped responses. Responses are returned as Yes" if the
+respondent answered that the individual had the condition, No" if the
+respondent answered that the individual did not have that condition (or
+omitted it when selecting from related conditions), a skip response if the
+question was skipped, and NA if the respondent did not answer the question.
+Returns a data frame or SQL tbl with the initial cohort table along with a
+column for each question included in questions and answers foreach
+person_id in the cells. To find the desired survey questions, use the all
+of us data dictionary, survey codebook, Athena, data browser, or the
+modified codebook which can be found in the allofus R package.
 }
 \details{
-The function will return a dataframe or SQL tbl with the initial cohort table along
-with a column for each question included in \code{questions} and answers for
-each person_id in the cells. The column names (questions) can
-be returned as the concept_code or concept_id or by providing new column names. For each question, a column with
-the suffix "_date" is included with the date on which the question was answered.
-When questions can have multiple answers ("checkbox"-style questions), answers
-are returned as a comma-separated string.
+The function will return a dataframe or SQL tbl with the initial
+cohort table along with a column for each question included in \code{questions}
+and answers for each person_id in the cells. The column names (questions)
+can be returned as the concept_code or concept_id or by providing new
+column names. For each question, a column with the suffix "_date" is
+included with the date on which the question was answered. When questions
+can have multiple answers ("checkbox"-style questions), answers are
+returned as a comma-separated string.
 
 To find the desired survey questions, use the all of us data dictionary,
-survey codebook, athena, data browser, or the allofus R package
-modified codebook which can be found here: https://roux-ohdsi.github.io/allofus/articles/searchable_codebook.html
-For questions regarding an individual's health history or family health history,
-the function requires the specific concept_id (or concept_code) for individual in question,
-whether that is "self" or another relative. Responses are returned as "Yes" if the respondent
-answered that the individual had the condition, "No" if the respondent answered that the individual
-did not have that condition (or omitted it when selecting from related conditions), a
-skip response if the question was skipped, and NA if the respondent did not answer the question.
+survey codebook, athena, data browser, or the allofus R package modified
+codebook which can be found here:
+https://roux-ohdsi.github.io/allofus/articles/searchable_codebook.html For
+questions regarding an individual's health history or family health
+history, the function requires the specific concept_id (or concept_code)
+for individual in question, whether that is "self" or another relative.
+Responses are returned as "Yes" if the respondent answered that the
+individual had the condition, "No" if the respondent answered that the
+individual did not have that condition (or omitted it when selecting from
+related conditions), a skip response if the question was skipped, and NA if
+the respondent did not answer the question.
 }
 \examples{
 \dontshow{if (on_workbench()) (if (getRversion() >= "3.4") withAutoprint else force)(\{ # examplesIf}

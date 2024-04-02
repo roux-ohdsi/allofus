@@ -11,33 +11,37 @@ aou_workspace_to_bucket(
 )
 }
 \arguments{
-\item{file}{The name of a file in your bucket, a vector of multiple files, a directory,
-or a file pattern (e.g. ".csv"). See Details.}
+\item{file}{The name of a file in your bucket, a vector of multiple files, a
+directory, or a file pattern (e.g. ".csv"). See Details.}
 
-\item{directory}{Whether \code{file} refers to an entire directory you want to move.}
+\item{directory}{Whether \code{file} refers to an entire directory you want to
+move.}
 
-\item{bucket}{Bucket to save files to. Defaults to \code{getOption("aou.default.bucket")},
-which is \code{Sys.getenv('WORKSPACE_BUCKET')} unless specified otherwise.}
+\item{bucket}{Bucket to save files to. Defaults to
+\code{getOption("aou.default.bucket")}, which is
+\code{Sys.getenv('WORKSPACE_BUCKET')} unless specified otherwise.}
 }
 \value{
 Nothing
 }
 \description{
-Moves a file saved in on the persistent disk to the workspace bucket, where it can be stored even if a compute environment is deleted.
+Moves a file saved in on the persistent disk to the workspace
+bucket, where it can be stored even if a compute environment is deleted.
 }
 \details{
-This function moves a file saved in a workspace
-to a bucket, where it can be retrieved even if the environment is deleted. To use, first save the desired
-object as a file to the workspace (e.g., \code{write.csv(object, "filename.csv")}) and then run this function
-(e.g., \code{aou_workspace_to_bucket(files = "filename.csv")}). See \url{https://cloud.google.com/storage/docs/gsutil/commands/cp} for details on the
-underlying function.
+This function moves a file saved in a workspace to a bucket, where
+it can be retrieved even if the environment is deleted. To use, first save
+the desired object as a file to the workspace (e.g., \code{write.csv(object, "filename.csv")}) and then run this function (e.g.,
+\code{aou_workspace_to_bucket(files = "filename.csv")}). See
+\url{https://cloud.google.com/storage/docs/gsutil/commands/cp} for details on
+the underlying function.
 }
 \examples{
 \dontshow{if (on_workbench()) (if (getRversion() >= "3.4") withAutoprint else force)(\{ # examplesIf}
 # create test files in a temporary directory
 tmp <- tempdir()
-write.csv(data.frame(x = 1), file.path(tmp,"testdata1.csv"))
-write.csv(data.frame(y = 2), file.path(tmp,"testdata2.csv"))
+write.csv(data.frame(x = 1), file.path(tmp, "testdata1.csv"))
+write.csv(data.frame(y = 2), file.path(tmp, "testdata2.csv"))
 # save a file to the bucket
 aou_workspace_to_bucket(file.path(tmp, "testdata1.csv"))
 # save multiple files at once

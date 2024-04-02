@@ -7,25 +7,27 @@
 aou_connect(CDR = getOption("aou.default.cdr"), ...)
 }
 \arguments{
-\item{CDR}{The name of the "curated data repository" to connect to. Defaults to
-\code{getOption("aou.default.cdr")}, which is \code{Sys.getenv('WORKSPACE_CDR')} if not specified otherwise
-(i.e., the "mainline" CDR).
-On the controlled tier, specify the "base" CDR with \code{CDR = paste0(Sys.getenv('WORKSPACE_CDR'), "_base")}.}
+\item{CDR}{The name of the "curated data repository" to connect to. Defaults
+to \code{getOption("aou.default.cdr")}, which is \code{Sys.getenv('WORKSPACE_CDR')}
+if not specified otherwise (i.e., the "mainline" CDR). On the controlled
+tier, specify the "base" CDR with \code{CDR = paste0(Sys.getenv('WORKSPACE_CDR'), "_base")}.}
 
 \item{...}{Further arguments passed along to \code{DBI::dbConnect()}.}
 }
 \value{
-A \code{BigQueryConnection} object. This object is also saved as an option (\code{getOption("aou.default.con")}).
+A \code{BigQueryConnection} object. This object is also saved as an option
+(\code{getOption("aou.default.con")}).
 }
 \description{
-Connects to the All of Us database and returns a BigQueryConnection object.
-You can reference this object to query the database using R and or SQL code.
-A message is printed with the connection status (successful or not).
+Connects to the All of Us database and returns a
+BigQueryConnection object. You can reference this object to query the
+database using R and or SQL code. A message is printed with the connection
+status (successful or not).
 }
 \details{
-You can reference this object to connect to the All of Us database and run
-SQL code using, e.g., \code{dbplyr} or \code{DBI}. A message is printed with the connection
-status (successful or not).
+You can reference this object to connect to the All of Us database
+and run SQL code using, e.g., \code{dbplyr} or \code{DBI}. A message is printed with
+the connection status (successful or not).
 }
 \examples{
 \dontshow{if (on_workbench()) (if (getRversion() >= "3.4") withAutoprint else force)(\{ # examplesIf}

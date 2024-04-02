@@ -14,22 +14,25 @@ aou_create_temp_table(
 \arguments{
 \item{data}{A local dataframe (or tibble)}
 
-\item{nchar_batch}{approximate number of characters to break up each SQL query}
+\item{nchar_batch}{approximate number of characters to break up each SQL
+query}
 
 \item{...}{Not currently used}
 
-\item{con}{Connection to the allofus SQL database. Defaults to \code{getOption("aou.default.con")},
-which is created automatically with \code{aou_connect()}.}
+\item{con}{Connection to the allofus SQL database. Defaults to
+\code{getOption("aou.default.con")}, which is created automatically with
+\code{aou_connect()}.}
 }
 \value{
-a reference to a temporary table in the database with the data from \code{df}
+a reference to a temporary table in the database with the data from
+\code{df}
 }
 \description{
-Experimental function that builds a local tibble into an SQL query and
-generates a temporary table. Larger tables will be broken up into consequitive SQL queries;
-making \code{nchar_batch} smaller can avoid errors but will take longer. The table will only
-exist for the current connection session and will need to be created again
-in a new session.
+Experimental function that builds a local tibble into an SQL
+query and generates a temporary table. Larger tables will be broken up into
+consequitive SQL queries; making \code{nchar_batch} smaller can avoid errors but
+will take longer. The table will only exist for the current connection
+session and will need to be created again in a new session.
 }
 \details{
 \ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#experimental}{\figure{lifecycle-experimental.svg}{options: alt='[Experimental]'}}}{\strong{[Experimental]}}
@@ -37,13 +40,17 @@ in a new session.
 \examples{
 \dontshow{if (on_workbench()) (if (getRversion() >= "3.4") withAutoprint else force)(\{ # examplesIf}
 con <- aou_connect()
-df <- data.frame(concept_id = c(439331, 4290245, 42535816, 46269813,
-                 2784565, 45765502, 434112, 4128031, 435640, 45876808),
-                 category = c("AB", "DELIV", "DELIV", "SA", "DELIV",
-                 "LB", "DELIV", "DELIV", "PREG", "SA"),
-                 gest_value = c(NA, NA, NA, NA, NA, NA, NA, NA, 25, NA))
-tmp_tbl = aou_create_temp_table(df)
-
-
+df <- data.frame(
+  concept_id = c(
+    439331, 4290245, 42535816, 46269813,
+    2784565, 45765502, 434112, 4128031, 435640, 45876808
+  ),
+  category = c(
+    "AB", "DELIV", "DELIV", "SA", "DELIV",
+    "LB", "DELIV", "DELIV", "PREG", "SA"
+  ),
+  gest_value = c(NA, NA, NA, NA, NA, NA, NA, NA, 25, NA)
+)
+tmp_tbl <- aou_create_temp_table(df)
 \dontshow{\}) # examplesIf}
 }

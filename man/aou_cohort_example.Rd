@@ -15,8 +15,10 @@
 aou_cohort_example
 }
 \description{
-A data frame containing tables and columns in the All of Us Controlled Tier Dataset
-v7 CDR Data Dictionary (C2022Q4R9) found here: https://docs.google.com/spreadsheets/d/1XLVq84LLd0VZMioF2sPwyiaPw3EFp5c8o1CTWGPH-Yc/edit#gid=1815943286.
-Note that the column 'value_source_value' has been manually added as it is missing from the data dictionary.
+A data frame containing tables and columns in the All of Us
+Controlled Tier Dataset v7 CDR Data Dictionary (C2022Q4R9) found here:
+https://docs.google.com/spreadsheets/d/1XLVq84LLd0VZMioF2sPwyiaPw3EFp5c8o1CTWGPH-Yc/edit#gid=1815943286.
+Note that the column 'value_source_value' has been manually added as it is
+missing from the data dictionary.
 }
 \keyword{internal}

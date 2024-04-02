@@ -13,15 +13,17 @@ aou_ls_bucket(
 )
 }
 \arguments{
-\item{pattern}{Regular expression, such as "*.csv" or a single file name e.g., "mydata.csv".
-Default will find all files apart from notebooks (.ipynb files).}
+\item{pattern}{Regular expression, such as "*.csv" or a single file name
+e.g., "mydata.csv". Default will find all files apart from notebooks
+(.ipynb files).}
 
 \item{silent}{Whether to omit the names of files found. Defaults to \code{FALSE}.}
 
 \item{recursive}{Whether to search subdirectories. Defaults to \code{TRUE}.}
 
-\item{bucket}{Bucket to retrieve file from. Defaults to \code{getOption("aou.default.bucket")},
-which is \code{Sys.getenv('WORKSPACE_BUCKET')} unless specified otherwise.}
+\item{bucket}{Bucket to retrieve file from. Defaults to
+\code{getOption("aou.default.bucket")}, which is
+\code{Sys.getenv('WORKSPACE_BUCKET')} unless specified otherwise.}
 
 \item{gsutil_args}{A string containing other arguments passed to \verb{gsutil ls}.
 See \url{https://cloud.google.com/storage/docs/gsutil/commands/ls} for details.}
@@ -30,7 +32,8 @@ See \url{https://cloud.google.com/storage/docs/gsutil/commands/ls} for details.}
 A vector of file names
 }
 \description{
-Lists all files in the bucket or files matching a certain pattern.
+Lists all files in the bucket or files matching a certain
+pattern.
 }
 \examples{
 \dontshow{if (on_workbench()) (if (getRversion() >= "3.4") withAutoprint else force)(\{ # examplesIf}

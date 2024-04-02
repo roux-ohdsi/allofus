@@ -1,24 +1,36 @@
 #' Get occurrences of a concept set from AoU for a given cohort
 #'
-#' @description Retrieves occurrences of a concept set from the All of Us database for a given cohort.
-#' @param cohort Reference to a remote table or local dataframe with a column called "person_id", and (possibly) columns for `start_date` and `end_date`.
-#' If not provided, defaults to entire All of Us cohort.
+#' @description Retrieves occurrences of a concept set from the All of Us
+#'   database for a given cohort.
+#' @param cohort Reference to a remote table or local dataframe with a column
+#'   called "person_id", and (possibly) columns for `start_date` and `end_date`.
+#'   If not provided, defaults to entire All of Us cohort.
 #' @param concepts a vector of concept ids
-#' @param start_date chr; the name of the start_date column in the cohort table; defaults to NULL to pull data across all dates
-#' @param end_date chr; the name of the end_date column in the cohort table; defaults to NULL to pull data across all dates
-#' @param domains chr; a vector of domains to search for the concepts in ("condition", "measurement", "observation", "procedure", "drug", "device", "visit"); defaults to all
-#' @param output one of "indicator", "count", "all"; do you want to return a 1 if a person has any matching concepts and 0 if not ("indicator"),
-#'  the number of matching concepts per person ("count"), or all info about the matching concepts ("all"). Defaults to "indicator"
-#' @param concept_set_name chr; If output = "indicator" or output = "n", name for that column. Defaults to "concept_set".
-#' @param min_n dbl; If output = "indicator", the minimum number of occurrences per person to consider the indicator true. Defaults to 1.
-#' @param con Connection to the allofus SQL database. Defaults to `getOption("aou.default.con")`,
-#' which is created automatically with `aou_connect()`.
+#' @param start_date chr; the name of the start_date column in the cohort table;
+#'   defaults to NULL to pull data across all dates
+#' @param end_date chr; the name of the end_date column in the cohort table;
+#'   defaults to NULL to pull data across all dates
+#' @param domains chr; a vector of domains to search for the concepts in
+#'   ("condition", "measurement", "observation", "procedure", "drug", "device",
+#'   "visit"); defaults to all
+#' @param output one of "indicator", "count", "all"; do you want to return a 1
+#'   if a person has any matching concepts and 0 if not ("indicator"), the
+#'   number of matching concepts per person ("count"), or all info about the
+#'   matching concepts ("all"). Defaults to "indicator"
+#' @param concept_set_name chr; If output = "indicator" or output = "n", name
+#'   for that column. Defaults to "concept_set".
+#' @param min_n dbl; If output = "indicator", the minimum number of occurrences
+#'   per person to consider the indicator true. Defaults to 1.
+#' @param con Connection to the allofus SQL database. Defaults to
+#'   `getOption("aou.default.con")`, which is created automatically with
+#'   `aou_connect()`.
 #' @param collect Whether to bring the resulting table into local memory
-#'   (`collect = TRUE`) as a dataframe or leave as a reference to a database table (for
-#'   continued analysis using, e.g., `dbplyr`). Defaults to `FALSE.`
+#'   (`collect = TRUE`) as a dataframe or leave as a reference to a database
+#'   table (for continued analysis using, e.g., `dbplyr`). Defaults to `FALSE.`
 #' @param ... further arguments passed along to `collect()` if `collect = TRUE`
 #'
-#' @return A dataframe if `collect = TRUE`; a reference to a remote database table if not.
+#' @return A dataframe if `collect = TRUE`; a reference to a remote database
+#'   table if not.
 #' @export
 #'
 #' @examplesIf on_workbench()
@@ -244,11 +256,14 @@ aou_concept_set <- function(cohort = NULL,
     return(res)
   }
 }
+
 #' Retrieves domain concepts for a given cohort and time range
 #'
-#' @param con Connection to the allofus SQL database. Defaults to `getOption("aou.default.con")`,
-#' which is created automatically with `aou_connect()`.
-#' @param cohort Reference to a remote table or local dataframe with a column called "person_id"
+#' @param con Connection to the allofus SQL database. Defaults to
+#'   `getOption("aou.default.con")`, which is created automatically with
+#'   `aou_connect()`.
+#' @param cohort Reference to a remote table or local dataframe with a column
+#'   called "person_id"
 #' @param concepts A vector of concept IDs to retrieve
 #' @param start_date The start date of the time range to retrieve concepts for
 #' @param end_date The end date of the time range to retrieve concepts for

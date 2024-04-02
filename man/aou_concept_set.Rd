@@ -20,38 +20,50 @@ aou_concept_set(
 )
 }
 \arguments{
-\item{cohort}{Reference to a remote table or local dataframe with a column called "person_id", and (possibly) columns for \code{start_date} and \code{end_date}.
+\item{cohort}{Reference to a remote table or local dataframe with a column
+called "person_id", and (possibly) columns for \code{start_date} and \code{end_date}.
 If not provided, defaults to entire All of Us cohort.}
 
 \item{concepts}{a vector of concept ids}
 
-\item{start_date}{chr; the name of the start_date column in the cohort table; defaults to NULL to pull data across all dates}
+\item{start_date}{chr; the name of the start_date column in the cohort table;
+defaults to NULL to pull data across all dates}
 
-\item{end_date}{chr; the name of the end_date column in the cohort table; defaults to NULL to pull data across all dates}
+\item{end_date}{chr; the name of the end_date column in the cohort table;
+defaults to NULL to pull data across all dates}
 
-\item{domains}{chr; a vector of domains to search for the concepts in ("condition", "measurement", "observation", "procedure", "drug", "device", "visit"); defaults to all}
+\item{domains}{chr; a vector of domains to search for the concepts in
+("condition", "measurement", "observation", "procedure", "drug", "device",
+"visit"); defaults to all}
 
-\item{output}{one of "indicator", "count", "all"; do you want to return a 1 if a person has any matching concepts and 0 if not ("indicator"),
-the number of matching concepts per person ("count"), or all info about the matching concepts ("all"). Defaults to "indicator"}
+\item{output}{one of "indicator", "count", "all"; do you want to return a 1
+if a person has any matching concepts and 0 if not ("indicator"), the
+number of matching concepts per person ("count"), or all info about the
+matching concepts ("all"). Defaults to "indicator"}
 
-\item{concept_set_name}{chr; If output = "indicator" or output = "n", name for that column. Defaults to "concept_set".}
+\item{concept_set_name}{chr; If output = "indicator" or output = "n", name
+for that column. Defaults to "concept_set".}
 
-\item{min_n}{dbl; If output = "indicator", the minimum number of occurrences per person to consider the indicator true. Defaults to 1.}
+\item{min_n}{dbl; If output = "indicator", the minimum number of occurrences
+per person to consider the indicator true. Defaults to 1.}
 
 \item{collect}{Whether to bring the resulting table into local memory
-(\code{collect = TRUE}) as a dataframe or leave as a reference to a database table (for
-continued analysis using, e.g., \code{dbplyr}). Defaults to \code{FALSE.}}
+(\code{collect = TRUE}) as a dataframe or leave as a reference to a database
+table (for continued analysis using, e.g., \code{dbplyr}). Defaults to \code{FALSE.}}
 
 \item{...}{further arguments passed along to \code{collect()} if \code{collect = TRUE}}
 
-\item{con}{Connection to the allofus SQL database. Defaults to \code{getOption("aou.default.con")},
-which is created automatically with \code{aou_connect()}.}
+\item{con}{Connection to the allofus SQL database. Defaults to
+\code{getOption("aou.default.con")}, which is created automatically with
+\code{aou_connect()}.}
 }
 \value{
-A dataframe if \code{collect = TRUE}; a reference to a remote database table if not.
+A dataframe if \code{collect = TRUE}; a reference to a remote database
+table if not.
 }
 \description{
-Retrieves occurrences of a concept set from the All of Us database for a given cohort.
+Retrieves occurrences of a concept set from the All of Us
+database for a given cohort.
 }
 \examples{
 \dontshow{if (on_workbench()) (if (getRversion() >= "3.4") withAutoprint else force)(\{ # examplesIf}

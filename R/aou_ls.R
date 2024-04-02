@@ -1,9 +1,11 @@
 #' List the current files in your workspace
 #'
-#' @description Lists all data files in the workspace or files matching a certain pattern.
+#' @description Lists all data files in the workspace or files matching a
+#'   certain pattern.
 #'
-#' @param pattern Regular expression, such as "*.csv" or a single file name e.g., "mydata.csv".
-#' Default will find all files apart from notebooks (.ipynb, .Rmd, .qmd files).
+#' @param pattern Regular expression, such as "*.csv" or a single file name
+#'   e.g., "mydata.csv". Default will find all files apart from notebooks
+#'   (.ipynb, .Rmd, .qmd files).
 #' @param silent Whether to omit the names of files found. Defaults to `FALSE`.
 #' @param ... Other arguments passed to `list.files()`
 #' @return A vector of file names
@@ -39,16 +41,19 @@ aou_ls_workspace <- function(pattern = "", silent = FALSE, ...) {
 
 
 #' List the current files in your bucket
-#' @description Lists all files in the bucket or files matching a certain pattern.
+#' @description Lists all files in the bucket or files matching a certain
+#'   pattern.
 #'
-#' @param pattern Regular expression, such as "*.csv" or a single file name e.g., "mydata.csv".
-#' Default will find all files apart from notebooks (.ipynb files).
+#' @param pattern Regular expression, such as "*.csv" or a single file name
+#'   e.g., "mydata.csv". Default will find all files apart from notebooks
+#'   (.ipynb files).
 #' @param silent Whether to omit the names of files found. Defaults to `FALSE`.
 #' @param recursive Whether to search subdirectories. Defaults to `TRUE`.
-#' @param bucket Bucket to retrieve file from. Defaults to `getOption("aou.default.bucket")`,
-#' which is `Sys.getenv('WORKSPACE_BUCKET')` unless specified otherwise.
+#' @param bucket Bucket to retrieve file from. Defaults to
+#'   `getOption("aou.default.bucket")`, which is
+#'   `Sys.getenv('WORKSPACE_BUCKET')` unless specified otherwise.
 #' @param gsutil_args A string containing other arguments passed to `gsutil ls`.
-#' See <https://cloud.google.com/storage/docs/gsutil/commands/ls> for details.
+#'   See <https://cloud.google.com/storage/docs/gsutil/commands/ls> for details.
 #' @return A vector of file names
 #'
 #' @export
@@ -79,18 +84,23 @@ aou_ls_bucket <- function(pattern = "", silent = FALSE, recursive = TRUE, bucket
 
 #' Move files from a bucket to your workspace
 #'
-#' @description Retrieves a file from the workspace bucket and moves it into the current persistent disk where it can be read into R, e.g., using a function like read.csv().
+#' @description Retrieves a file from the workspace bucket and moves it into the
+#'   current persistent disk where it can be read into R, e.g., using a function
+#'   like read.csv().
 #'
-#' @param file The name of a file in your bucket, a vector of multiple files, a directory,
-#' or a file pattern (e.g. ".csv").
-#' @param directory Whether `file` refers to an entire directory you want to move.
-#' @param bucket Bucket to retrieve file from. Defaults to `getOption("aou.default.bucket")`,
-#' which is `Sys.getenv('WORKSPACE_BUCKET')` unless specified otherwise.
+#' @param file The name of a file in your bucket, a vector of multiple files, a
+#'   directory, or a file pattern (e.g. ".csv").
+#' @param directory Whether `file` refers to an entire directory you want to
+#'   move.
+#' @param bucket Bucket to retrieve file from. Defaults to
+#'   `getOption("aou.default.bucket")`, which is
+#'   `Sys.getenv('WORKSPACE_BUCKET')` unless specified otherwise.
 #'
-#' @details This function retrieves a file from your bucket and moves it
-#' into your workspace where it can be read into R, e.g., using a function like `write.csv()`.
-#' See <https://cloud.google.com/storage/docs/gsutil/commands/cp> for details on the
-#' underlying function.
+#' @details This function retrieves a file from your bucket and moves it into
+#'   your workspace where it can be read into R, e.g., using a function like
+#'   `write.csv()`. See
+#'   <https://cloud.google.com/storage/docs/gsutil/commands/cp> for details on
+#'   the underlying function.
 #'
 #' @return Nothing
 #' @export
@@ -134,20 +144,25 @@ aou_bucket_to_workspace <- function(file, directory = FALSE, bucket = getOption(
 
 #' Save a file from your workspace to your bucket
 #'
-#' @description Moves a file saved in on the persistent disk to the workspace bucket, where it can be stored even if a compute environment is deleted.
+#' @description Moves a file saved in on the persistent disk to the workspace
+#'   bucket, where it can be stored even if a compute environment is deleted.
 #'
 #'
-#' @param file The name of a file in your bucket, a vector of multiple files, a directory,
-#' or a file pattern (e.g. ".csv"). See Details.
-#' @param directory Whether `file` refers to an entire directory you want to move.
-#' @param bucket Bucket to save files to. Defaults to `getOption("aou.default.bucket")`,
-#' which is `Sys.getenv('WORKSPACE_BUCKET')` unless specified otherwise.
+#' @param file The name of a file in your bucket, a vector of multiple files, a
+#'   directory, or a file pattern (e.g. ".csv"). See Details.
+#' @param directory Whether `file` refers to an entire directory you want to
+#'   move.
+#' @param bucket Bucket to save files to. Defaults to
+#'   `getOption("aou.default.bucket")`, which is
+#'   `Sys.getenv('WORKSPACE_BUCKET')` unless specified otherwise.
 #'
-#' @details This function moves a file saved in a workspace
-#' to a bucket, where it can be retrieved even if the environment is deleted. To use, first save the desired
-#' object as a file to the workspace (e.g., `write.csv(object, "filename.csv")`) and then run this function
-#' (e.g., `aou_workspace_to_bucket(files = "filename.csv")`). See <https://cloud.google.com/storage/docs/gsutil/commands/cp> for details on the
-#' underlying function.
+#' @details This function moves a file saved in a workspace to a bucket, where
+#'   it can be retrieved even if the environment is deleted. To use, first save
+#'   the desired object as a file to the workspace (e.g., `write.csv(object,
+#'   "filename.csv")`) and then run this function (e.g.,
+#'   `aou_workspace_to_bucket(files = "filename.csv")`). See
+#'   <https://cloud.google.com/storage/docs/gsutil/commands/cp> for details on
+#'   the underlying function.
 #' @return Nothing
 #' @export
 #' @examplesIf on_workbench()

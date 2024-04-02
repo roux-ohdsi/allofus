@@ -16,12 +16,12 @@
 aou_table_info
 }
 \description{
-@description A data from with rows of the All of Us codebook pertaining to the health history questions.
-In early All of Us surveys, these questions were asked separately about the respondent
-and the respondent's family. In the current version, the questions are asked on the same survey.
-The nested nature of these questions can make them challenging to extract and analyze.
-}
-\details{
+A data from with rows of the All of Us codebook pertaining to
+the health history questions. In early All of Us surveys, these questions
+were asked separately about the respondent and the respondent's family. In
+the current version, the questions are asked on the same survey. The nested
+nature of these questions can make them challenging to extract and analyze.
+
 \itemize{
 \item{\href{https://github.com/roux-ohdsi/allofus/blob/main/data-raw/more_data.R}{Code to generate table}}
 }

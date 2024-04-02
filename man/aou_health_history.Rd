@@ -5,8 +5,7 @@
 \alias{aou_health_history}
 \title{All of Us Health History Codebook}
 \format{
-\code{aou_health_history}
-A data frame with 1685  rows and 9 columns:
+\code{aou_health_history} A data frame with 1685  rows and 9 columns:
 \describe{
 \item{question}{chr; Question asked on survey}
 \item{relative}{chr; Person to whom the answer pertains}
@@ -23,10 +22,12 @@ A data frame with 1685  rows and 9 columns:
 aou_health_history
 }
 \description{
-This table consists of rows of the codebook pertaining to the health history questions. In early All of Us surveys,
-these questions were asked separately about the respondent and the respondent's family. In the current version,
-the questions are asked on the same survey. The nested nature of these questions makes them challenging to deal with.
-It can also be accessed in R using \code{allofus::aou_health_history}.
+This table consists of rows of the codebook pertaining to the health history
+questions. In early All of Us surveys, these questions were asked separately
+about the respondent and the respondent's family. In the current version, the
+questions are asked on the same survey. The nested nature of these questions
+makes them challenging to deal with. It can also be accessed in R using
+\code{allofus::aou_health_history}.
 \itemize{
 \item{\href{https://github.com/roux-ohdsi/allofus/blob/main/data-raw/pkg_data.R}{Code to generate table}}
 }

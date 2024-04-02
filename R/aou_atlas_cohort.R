@@ -1,17 +1,25 @@
 #' Retrieve a cohort from ATLAS for use in All of Us
 #'
-#' Retrieves a cohort definition from ATLAS and generates the cohort in All of Us.
-#' Observation periods are first generated for each subject using the `aou_observation_period()`
-#' function.The resulting cohort is a table with the cohort start and end dates for each person_id.
-#' @details The function is based on a similar function in <https://github.com/cmayer2/r4aou> with some tweaks
-#' to generate the appropriate observation periods and incorporate other package functions.
-#' Please see the [online vignette](https://roux-ohdsi.github.io/allofus/articles/atlas.html) for additional details.
-#' @param cohort_definition A cohort definition generated using `getCohortDefinition() from ROhdsiWebApi`
-#' @param cohort_sql The cohort_sql generated using `getCohortSql() from ROhdsiWebApi`
+#' Retrieves a cohort definition from ATLAS and generates the cohort in All of
+#' Us. Observation periods are first generated for each subject using the
+#' `aou_observation_period()` function.The resulting cohort is a table with the
+#' cohort start and end dates for each person_id.
+#' @details The function is based on a similar function in
+#'   <https://github.com/cmayer2/r4aou> with some tweaks to generate the
+#'   appropriate observation periods and incorporate other package functions.
+#'   Please see the [online
+#'   vignette](https://roux-ohdsi.github.io/allofus/articles/atlas.html) for
+#'   additional details.
+#' @param cohort_definition A cohort definition generated using
+#'   `getCohortDefinition() from ROhdsiWebApi`
+#' @param cohort_sql The cohort_sql generated using `getCohortSql() from
+#'   ROhdsiWebApi`
 #' @inheritParams aou_observation_period
 #' @inheritParams aou_sql
 #' @inherit aou_observation_period details
-#' @return A dataframe if `collect = TRUE`; a reference to a remote database table if not. The SQL query used to generate the cohort is stored as an attribute.
+#' @return A dataframe if `collect = TRUE`; a reference to a remote database
+#'   table if not. The SQL query used to generate the cohort is stored as an
+#'   attribute.
 #' @export
 #'
 #' @examplesIf on_workbench()

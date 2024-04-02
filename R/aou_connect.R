@@ -1,9 +1,9 @@
 # AoU helpers
 
 #' Check to see whether you are on the All of Us workbench
-#' @description Use this function to check whether you are on the
-#' All of Us Researcher Workbench. This is useful for writing code that
-#' can be used both on the workbench and locally.
+#' @description Use this function to check whether you are on the All of Us
+#'   Researcher Workbench. This is useful for writing code that can be used both
+#'   on the workbench and locally.
 #' @return TRUE if you are on the workbench, FALSE otherwise
 #' @export
 #' @keywords internal
@@ -15,18 +15,21 @@ on_workbench <- function() {
 
 #' Create a connection to the database in All of Us
 #'
-#' @description Connects to the All of Us database and returns a BigQueryConnection object.
-#' You can reference this object to query the database using R and or SQL code.
-#' A message is printed with the connection status (successful or not).
-#' @details You can reference this object to connect to the All of Us database and run
-#' SQL code using, e.g., `dbplyr` or `DBI`. A message is printed with the connection
-#' status (successful or not).
-#' @param CDR The name of the "curated data repository" to connect to. Defaults to
-#' `getOption("aou.default.cdr")`, which is `Sys.getenv('WORKSPACE_CDR')` if not specified otherwise
-#' (i.e., the "mainline" CDR).
-#' On the controlled tier, specify the "base" CDR with `CDR = paste0(Sys.getenv('WORKSPACE_CDR'), "_base")`.
+#' @description Connects to the All of Us database and returns a
+#'   BigQueryConnection object. You can reference this object to query the
+#'   database using R and or SQL code. A message is printed with the connection
+#'   status (successful or not).
+#' @details You can reference this object to connect to the All of Us database
+#'   and run SQL code using, e.g., `dbplyr` or `DBI`. A message is printed with
+#'   the connection status (successful or not).
+#' @param CDR The name of the "curated data repository" to connect to. Defaults
+#'   to `getOption("aou.default.cdr")`, which is `Sys.getenv('WORKSPACE_CDR')`
+#'   if not specified otherwise (i.e., the "mainline" CDR). On the controlled
+#'   tier, specify the "base" CDR with `CDR =
+#'   paste0(Sys.getenv('WORKSPACE_CDR'), "_base")`.
 #' @param ... Further arguments passed along to `DBI::dbConnect()`.
-#' @return A `BigQueryConnection` object. This object is also saved as an option (`getOption("aou.default.con")`).
+#' @return A `BigQueryConnection` object. This object is also saved as an option
+#'   (`getOption("aou.default.con")`).
 #' @export
 #' @examplesIf on_workbench()
 #' con <- aou_connect()
@@ -232,11 +235,12 @@ aou_sql <- function(query, collect = FALSE, debug = FALSE, ..., con = getOption(
 #' Helper function to get result of a query
 #' @param q query
 #' @param collect Whether to bring the resulting table into local memory
-#'   (`collect = TRUE`) as a dataframe or leave as a reference to a database table (for
-#'   continued analysis using, e.g., `dbplyr`). Defaults to `FALSE.`
+#'   (`collect = TRUE`) as a dataframe or leave as a reference to a database
+#'   table (for continued analysis using, e.g., `dbplyr`). Defaults to `FALSE.`
 #' @param ... Other arguments passed to bigrquery::bq_table_download
-#' @param con Connection to the allofus SQL database. Defaults to `getOption("aou.default.con")`,
-#' which is created automatically with `aou_connect()`.
+#' @param con Connection to the allofus SQL database. Defaults to
+#'   `getOption("aou.default.con")`, which is created automatically with
+#'   `aou_connect()`.
 #' @keywords internal
 #' @noRd
 
@@ -269,12 +273,15 @@ get_query_table <- function(q, collect = FALSE, ..., con = getOption("aou.defaul
 
 #' List tables in the AoU Database
 #'
-#' @description Prints a list of all of the tables in the All of Us Big Query Database.
+#' @description Prints a list of all of the tables in the All of Us Big Query
+#'   Database.
 #'
-#' @param remove_na Whether to remove tables that are not in the data dictionary. Defaults to `TRUE`
+#' @param remove_na Whether to remove tables that are not in the data
+#'   dictionary. Defaults to `TRUE`
 #' @param ... Not currently used
-#' @param con Connection to the allofus SQL database. Defaults to `getOption("aou.default.con")`,
-#' which is created automatically with `aou_connect()`.
+#' @param con Connection to the allofus SQL database. Defaults to
+#'   `getOption("aou.default.con")`, which is created automatically with
+#'   `aou_connect()`.
 #'
 #' @return A dataframe with the table names and the number of columns
 #' @export

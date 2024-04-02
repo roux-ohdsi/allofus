@@ -7,22 +7,25 @@
 aou_compute(data, ..., con = getOption("aou.default.con"))
 }
 \arguments{
-\item{data}{A reference to an unexecuted remote query (e.g., the result of a \code{tbl(con, ...) \%>\% ...} chain)}
+\item{data}{A reference to an unexecuted remote query (e.g., the result of a
+\code{tbl(con, ...) \%>\% ...} chain)}
 
-\item{...}{Other arugments passed to \code{bigrquery::bq_table_download()} when \code{collect = TRUE}}
+\item{...}{Other arugments passed to \code{bigrquery::bq_table_download()} when
+\code{collect = TRUE}}
 
-\item{con}{Connection to the allofus SQL database. Defaults to \code{getOption("aou.default.con")},
-which is created automatically with \code{aou_connect()}.}
+\item{con}{Connection to the allofus SQL database. Defaults to
+\code{getOption("aou.default.con")}, which is created automatically with
+\code{aou_connect()}.}
 }
 \value{
 A reference to a temporary table in the database.
 }
 \description{
 Computes a temporary table from a dplyr chain that returns an
-SQL query (e.g., tbl(con, table)) and returns the name of the temporary table.
-May be useful to create intermediate tables to reduce long queries.
-The temporary table will only exist for the current session and will nee
-to be created again a new session.
+SQL query (e.g., tbl(con, table)) and returns the name of the temporary
+table. May be useful to create intermediate tables to reduce long queries.
+The temporary table will only exist for the current session and will nee to
+be created again a new session.
 }
 \details{
 \ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#experimental}{\figure{lifecycle-experimental.svg}{options: alt='[Experimental]'}}}{\strong{[Experimental]}}
@@ -31,12 +34,11 @@ to be created again a new session.
 \dontshow{if (on_workbench()) (if (getRversion() >= "3.4") withAutoprint else force)(\{ # examplesIf}
 
 con <- aou_connect()
-tmp_tbl = tbl(con, "concept") \%>\%
-   select(concept_id) \%>\%
-   head(10) \%>\%
-   aou_compute()
+tmp_tbl <- tbl(con, "concept") \%>\%
+  select(concept_id) \%>\%
+  head(10) \%>\%
+  aou_compute()
 
 tbl(con, tmp_tbl)
-
 \dontshow{\}) # examplesIf}
 }

@@ -5,8 +5,7 @@
 \alias{aou_codebook}
 \title{All of Us Modified Codebook}
 \format{
-\code{aou_codebook}
-A data frame with 702 rows and 11 columns:
+\code{aou_codebook} A data frame with 702 rows and 11 columns:
 \describe{
 \item{concept_code}{chr; Concept code from AOU codebook}
 \item{concept_id}{int; mapped concept_id from PPI vocabulary}
@@ -26,13 +25,15 @@ A data frame with 702 rows and 11 columns:
 aou_codebook
 }
 \description{
-A data frame with rows from the publicly available All of Us Survey Codebook
-mapped to the All of Us PPI Vocabulary available on Athena . A small number of
-rows did not match between the codebook and the Athena PPI Vocabulary.
+A data frame with rows from the publicly available All of Us
+Survey Codebook mapped to the All of Us PPI Vocabulary available on Athena
+. A small number of rows did not match between the codebook and the Athena
+PPI Vocabulary.
 }
 \details{
-Questions relating to specific conditions are not included as part of this table.
-They are instead available in the \code{aou_health_history} table.
+Questions relating to specific conditions are not included as part
+of this table. They are instead available in the \code{aou_health_history}
+table.
 
 \itemize{
 \item{\href{https://docs.google.com/spreadsheets/d/1Ey8MScRYZ9QyS4izVYScISLMb62QEhSM-ErbG27dNtw/edit#gid=1832128489}{All of Us codebook}}

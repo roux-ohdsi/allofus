@@ -12,58 +12,68 @@ aou_observation_period(
 )
 }
 \arguments{
-\item{cohort}{Reference to a remote table or local dataframe with a column called "person_id"}
+\item{cohort}{Reference to a remote table or local dataframe with a column
+called "person_id"}
 
 \item{collect}{Whether to bring the resulting table into local memory
-(\code{collect = TRUE}) as a dataframe or leave as a reference to a database table (for
-continued analysis using, e.g., \code{dbplyr}). Defaults to \code{FALSE.}}
+(\code{collect = TRUE}) as a dataframe or leave as a reference to a database
+table (for continued analysis using, e.g., \code{dbplyr}). Defaults to \code{FALSE.}}
 
 \item{...}{Further arguments passed along to \code{collect()} if \code{collect = TRUE}}
 
-\item{con}{Connection to the allofus SQL database. Defaults to getOption("aou.default.con"), which is set automatically if you use \code{aou_connect()}}
+\item{con}{Connection to the allofus SQL database. Defaults to
+getOption("aou.default.con"), which is set automatically if you use
+\code{aou_connect()}}
 }
 \value{
-A dataframe if \code{collect = TRUE}; a reference to a remote database table if not. Columns will be "person_id", "observation_period_start_date", and "observation_period_end_date".
+A dataframe if \code{collect = TRUE}; a reference to a remote database
+table if not. Columns will be "person_id", "observation_period_start_date",
+and "observation_period_end_date".
 }
 \description{
-Generates a temporary observation period table based the first and last event in
-the electronic medical record data. Because some EHR sites have contributed data from several decades ago, researchers
-might want to consider further constraining this table to reasonable date ranges of interest
-(e.g., setting all observation_period_start_date values to no earlier than 01/01/2010).
+Generates a temporary observation period table based the first
+and last event in the electronic medical record data. Because some EHR
+sites have contributed data from several decades ago, researchers might
+want to consider further constraining this table to reasonable date ranges
+of interest (e.g., setting all observation_period_start_date values to no
+earlier than 01/01/2010).
 }
 \details{
 \ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#experimental}{\figure{lifecycle-experimental.svg}{options: alt='[Experimental]'}}}{\strong{[Experimental]}}
 
 The current observation period table in the All of Us OMOP CDM is not always
-appropriate for cohorts generated using OHDSI tools such as ATLAS. Some observation
-periods are overly short and some participants have hundreds of observation periods.
+appropriate for cohorts generated using OHDSI tools such as ATLAS. Some
+observation periods are overly short and some participants have hundreds of
+observation periods.
 
-This function generates an observation period table from the first occurrence of
-a clinical event in the EHR tables to the last clinical event in the EHR tables.
-It will only return a single observation period per person_id in the database. If
-\code{collect = FALSE}, the function returns a query to a temporary table in the database
-which can be referenced by typical dplyr functions.
+This function generates an observation period table from the first occurrence
+of a clinical event in the EHR tables to the last clinical event in the EHR
+tables. It will only return a single observation period per person_id in the
+database. If \code{collect = FALSE}, the function returns a query to a temporary
+table in the database which can be referenced by typical dplyr functions.
 
-Normal OMOP conventions for EHR suggest that long lapses of time bewteen clinical
-events may indicate that the person was not "observed" during this period. However,
-due to the diverse nature of clinical EHR data contributed to all of us, it seems
-most conservative to assume that the person was observed from their first to last
-clinical event. See https://ohdsi.github.io/CommonDataModel/ehrObsPeriods.html
-for more details.
+Normal OMOP conventions for EHR suggest that long lapses of time bewteen
+clinical events may indicate that the person was not "observed" during this
+period. However, due to the diverse nature of clinical EHR data contributed
+to all of us, it seems most conservative to assume that the person was
+observed from their first to last clinical event. See
+https://ohdsi.github.io/CommonDataModel/ehrObsPeriods.html for more details.
 
 Some users have clinical events going back to before the time of widespread
-electronic medical record use (e.g., the 1980s and 1990s). This function considers
-all EHR data in the database, regardless of the date of the clinical event, but we
-recommend that users consider the implications of including data from the 1980s and 1990s.
-It may be more prudent to exclude data prior to a more recent cutoff date so that the EHR
-data is more likely to be accurate, though this decision depends highly on the research
-question (see example below).
+electronic medical record use (e.g., the 1980s and 1990s). This function
+considers all EHR data in the database, regardless of the date of the
+clinical event, but we recommend that users consider the implications of
+including data from the 1980s and 1990s. It may be more prudent to exclude
+data prior to a more recent cutoff date so that the EHR data is more likely
+to be accurate, though this decision depends highly on the research question
+(see example below).
 
-Users should note that the aou_observation_period function will only generate observation periods for
-participants who have at least one clinical observation. If participant in the AllofUs research
-program who did not include electronic health record data are included in the cohort argument, or
-elected to contribute data but have no data to contribute, they will not be included in the
-generated observation period table.
+Users should note that the aou_observation_period function will only generate
+observation periods for participants who have at least one clinical
+observation. If participant in the AllofUs research program who did not
+include electronic health record data are included in the cohort argument, or
+elected to contribute data but have no data to contribute, they will not be
+included in the generated observation period table.
 }
 \examples{
 \dontshow{if (on_workbench()) (if (getRversion() >= "3.4") withAutoprint else force)(\{ # examplesIf}
@@ -83,19 +93,26 @@ cohort <- dplyr::tbl(con, "cb_search_person") \%>\%
   dplyr::filter(has_ehr_data == 1) \%>\%
   inner_join(index_date_tbl, by = "person_id") \%>\%
   inner_join(observation_period_tbl, by = "person_id") \%>\%
-  filter(observation_period_end_date >= DATE_ADD(index_date,
-                                                 dplyr::sql(paste0("INTERVAL ", 1, " year"))),
-         observation_period_start_date <= index_date) \%>\%
+  filter(
+    observation_period_end_date >= DATE_ADD(
+      index_date,
+      dplyr::sql(paste0("INTERVAL ", 1, " year"))
+    ),
+    observation_period_start_date <= index_date
+  ) \%>\%
   select(person_id, gender, sex_at_birth, race, ethnicity, age_at_consent)
 
 # head(cohort)
 
 # create an observation period table with a minimum start date (e.g., 2010-01-01)
 observation_period_tbl \%>\%
-  mutate(observation_period_start_date =
-           if_else(observation_period_start_date < as.Date("2010-01-01"),
-                   as.Date("2010-01-01"),
-                   observation_period_start_date)) \%>\%
+  mutate(
+    observation_period_start_date =
+      if_else(observation_period_start_date < as.Date("2010-01-01"),
+        as.Date("2010-01-01"),
+        observation_period_start_date
+      )
+  ) \%>\%
   filter(observation_period_end_date > as.Date("2010-01-01"))
 \dontshow{\}) # examplesIf}
 }

@@ -14,32 +14,40 @@ aou_atlas_cohort(
 )
 }
 \arguments{
-\item{cohort_definition}{A cohort definition generated using \verb{getCohortDefinition() from ROhdsiWebApi}}
+\item{cohort_definition}{A cohort definition generated using
+\verb{getCohortDefinition() from ROhdsiWebApi}}
 
 \item{cohort_sql}{The cohort_sql generated using \verb{getCohortSql() from ROhdsiWebApi}}
 
 \item{debug}{Print the query to the console; useful for debugging.}
 
 \item{collect}{Whether to bring the resulting table into local memory
-(\code{collect = TRUE}) as a dataframe or leave as a reference to a database table (for
-continued analysis using, e.g., \code{dbplyr}). Defaults to \code{FALSE.}}
+(\code{collect = TRUE}) as a dataframe or leave as a reference to a database
+table (for continued analysis using, e.g., \code{dbplyr}). Defaults to \code{FALSE.}}
 
 \item{...}{Further arguments passed along to \code{collect()} if \code{collect = TRUE}}
 
-\item{con}{Connection to the allofus SQL database. Defaults to getOption("aou.default.con"), which is set automatically if you use \code{aou_connect()}}
+\item{con}{Connection to the allofus SQL database. Defaults to
+getOption("aou.default.con"), which is set automatically if you use
+\code{aou_connect()}}
 }
 \value{
-A dataframe if \code{collect = TRUE}; a reference to a remote database table if not. The SQL query used to generate the cohort is stored as an attribute.
+A dataframe if \code{collect = TRUE}; a reference to a remote database
+table if not. The SQL query used to generate the cohort is stored as an
+attribute.
 }
 \description{
-Retrieves a cohort definition from ATLAS and generates the cohort in All of Us.
-Observation periods are first generated for each subject using the \code{aou_observation_period()}
-function.The resulting cohort is a table with the cohort start and end dates for each person_id.
+Retrieves a cohort definition from ATLAS and generates the cohort in All of
+Us. Observation periods are first generated for each subject using the
+\code{aou_observation_period()} function.The resulting cohort is a table with the
+cohort start and end dates for each person_id.
 }
 \details{
-The function is based on a similar function in \url{https://github.com/cmayer2/r4aou} with some tweaks
-to generate the appropriate observation periods and incorporate other package functions.
-Please see the \href{https://roux-ohdsi.github.io/allofus/articles/atlas.html}{online vignette} for additional details.
+The function is based on a similar function in
+\url{https://github.com/cmayer2/r4aou} with some tweaks to generate the
+appropriate observation periods and incorporate other package functions.
+Please see the \href{https://roux-ohdsi.github.io/allofus/articles/atlas.html}{online vignette} for
+additional details.
 }
 \examples{
 \dontshow{if (on_workbench()) (if (getRversion() >= "3.4") withAutoprint else force)(\{ # examplesIf}

@@ -9,7 +9,8 @@ aou_collect(data, convert_int64 = TRUE, ...)
 \arguments{
 \item{data}{A reference to a remote database table (or unexecuted query)}
 
-\item{convert_int64}{Do you want to convert integer values to doubles? Defaults to \code{TRUE}}
+\item{convert_int64}{Do you want to convert integer values to doubles?
+Defaults to \code{TRUE}}
 
 \item{...}{Other arguments passed to dplyr::collect()}
 }
@@ -17,17 +18,17 @@ aou_collect(data, convert_int64 = TRUE, ...)
 a local dataframe
 }
 \description{
-If you connect to the All of Us database via \code{aou_connect()}, integer columns
-will be converted to the int64 class, which can represent 64-bit integers.
-This is safer than keeping as R's default integer class,
-because some of the values of the ID columns in All of Us are larger than
-R can handle as integers. However, this can make working with the local table
-more difficult in RStudio as a vector of values will not match
-the int64 class. This is not a problem in Jupyter notebooks, meaning
-that code that works on one platform may not work on another. A safe practice
-is to use \code{aou_collect()}, which works just like \code{dplyr::collect()}
-except that any integer values are converted to doubles. If this is not what
-you want, set \code{convert_int64 = FALSE}.
+If you connect to the All of Us database via \code{aou_connect()},
+integer columns will be converted to the int64 class, which can represent
+64-bit integers. This is safer than keeping as R's default integer class,
+because some of the values of the ID columns in All of Us are larger than R
+can handle as integers. However, this can make working with the local table
+more difficult in RStudio as a vector of values will not match the int64
+class. This is not a problem in Jupyter notebooks, meaning that code that
+works on one platform may not work on another. A safe practice is to use
+\code{aou_collect()}, which works just like \code{dplyr::collect()} except that any
+integer values are converted to doubles. If this is not what you want, set
+\code{convert_int64 = FALSE}.
 }
 \details{
 \ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#experimental}{\figure{lifecycle-experimental.svg}{options: alt='[Experimental]'}}}{\strong{[Experimental]}}
