@@ -33,7 +33,9 @@
 aou_atlas_cohort <- function(cohort_definition,
                              cohort_sql,
                              debug = FALSE,
-                             ...) {
+                             collect = FALSE,
+                             ...,
+                             con = getOption("aou.default.con")) {
   if (!("id" %in% names(cohort_definition))) {
     cli::cli_abort(
       c("This function is designed to be used with cohort definitions created by {.code ROhdsiWebApi::getCohortDefinition()}",
@@ -183,11 +185,8 @@ aou_atlas_cohort <- function(cohort_definition,
 
       # Execute SQL
 
-      r <- allofus::aou_sql(sql_translated, debug = debug, ...) %>%
+      r <- allofus::aou_sql(sql_translated, debug = debug, collect = collect, ..., con = con) %>%
         dplyr::rename(person_id = "subject_id")
-      # Execute SQL
-      r <- allofus::aou_sql(sql_translated)
-      r <- r %>% dplyr::rename(person_id = "subject_id")
 
       attr(r, "query") <- sql_translated
 

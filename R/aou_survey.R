@@ -68,25 +68,10 @@ aou_survey <- function(cohort = NULL,
                        questions,
                        question_output = "concept_code",
                        clean_answers = TRUE,
-                       con = getOption("aou.default.con"),
                        collect = FALSE,
-                       ...) {
-  if (packageVersion("dbplyr") < "2.3.0") {
-    cli::cli_abort(c(
-      'Older versions of dbplyr are not supported by the {.code aou_survey()} function.',
-      i = "Note: v.2.4.0 is also not compatible with the AllofUS Database",
-      i = 'Please install either dbplyr v2.3.4 or the development version of dbplyr:',
+                       ...,
+                       con = getOption("aou.default.con")) {
 
-      '# Install pak',
-      'install.packages("pak")',
-      '# Install dbplyr v2.3.4',
-      'pak::pkg_install("tidyverse/dbplyr@v2.3.4")',
-      '# Or install development version of dbplyr',
-      'pak::pkg_install("tidyverse/dbplyr")',
-      '# restart your R kernel'
-    ), call = NULL)
-
-  }
 
   # check for connection
   if (is.null(con)) {
@@ -97,7 +82,7 @@ aou_survey <- function(cohort = NULL,
   }
 
   # check for NA values or empty strings in questions or question_output
-  if(any(is.na(c(questions, question_output))) | any(c(questions, question_output) == "")){
+  if (any(is.na(c(questions, question_output))) | any(c(questions, question_output) == "")) {
     cli::cli_abort("NA values or empty string detected in {.code questions} or {.code question_output}")
   }
 

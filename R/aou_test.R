@@ -20,7 +20,7 @@ aou_test_examples <- function() {
 #' @keywords internal
 #' @noRd
 aou_test_tests <- function() {
-  gh::gh("https://api.github.com/repos/roux-ohdsi/allofus/contents/tests/testthat", ref = "cran") %>%
+  gh::gh("https://api.github.com/repos/roux-ohdsi/allofus/contents/tests/testthat", ref = "main") %>%
     purrr::map_chr(purrr::pluck, "download_url") %>%
     purrr::walk(source)
 }

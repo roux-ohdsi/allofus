@@ -4,10 +4,12 @@
 \alias{aou_compute}
 \title{Compute a dplyr tbl SQL query into a temp table}
 \usage{
-aou_compute(.data, con = getOption("aou.default.con"))
+aou_compute(.data, ..., con = getOption("aou.default.con"))
 }
 \arguments{
 \item{.data}{result of tbl(con, "table") \%>\% ... query}
+
+\item{...}{Other arugments passed to \code{bigrquery::bq_table_download()} when \code{collect = TRUE}}
 
 \item{con}{connection from aou_connect(). Set by default}
 }
@@ -22,6 +24,9 @@ It is a workaround for dplyr::compute(temporary = TRUE) which does not
 currently work on the workbench. The table will only
 exist for the current connection session and will need to be created again
 in a new session.
+}
+\details{
+\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#experimental}{\figure{lifecycle-experimental.svg}{options: alt='[Experimental]'}}}{\strong{[Experimental]}}
 }
 \examples{
 \dontshow{if (on_workbench()) (if (getRversion() >= "3.4") withAutoprint else force)(\{ # examplesIf}

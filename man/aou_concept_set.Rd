@@ -14,9 +14,9 @@ aou_concept_set(
   output = "indicator",
   concept_set_name = "concept_set",
   min_n = 1,
-  con = getOption("aou.default.con"),
   collect = FALSE,
-  ...
+  ...,
+  con = getOption("aou.default.con")
 )
 }
 \arguments{
@@ -38,11 +38,11 @@ the number of matching concepts per person ("count"), or all info about the matc
 
 \item{min_n}{dbl; If output = "indicator", the minimum number of occurrences per person to consider the indicator true. Defaults to 1.}
 
-\item{con}{connection to the allofus SQL database. Defaults to getOption("aou.default.con"), which is set automatically if you use \code{aou_connect()}}
-
-\item{collect}{lgl; whether to collect from the database}
+\item{collect}{lgl; whether to collect from the database. Defaults to FALSE.}
 
 \item{...}{further arguments passed along to \code{collect()} if \code{collect = TRUE}}
+
+\item{con}{connection to the allofus SQL database. Defaults to getOption("aou.default.con"), which is set automatically if you use \code{aou_connect()}}
 }
 \value{
 a dataframe if collect = TRUE; a remote tbl if not

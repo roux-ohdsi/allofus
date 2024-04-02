@@ -4,7 +4,14 @@
 \alias{aou_atlas_cohort}
 \title{Retrieve a cohort from ATLAS for use in All of Us}
 \usage{
-aou_atlas_cohort(cohort_definition, cohort_sql, debug = FALSE, ...)
+aou_atlas_cohort(
+  cohort_definition,
+  cohort_sql,
+  debug = FALSE,
+  collect = FALSE,
+  ...,
+  con = getOption("aou.default.con")
+)
 }
 \arguments{
 \item{cohort_definition}{A cohort definition generated using \verb{getCohortDefinition() from ROhdsiWebApi}}
@@ -13,9 +20,11 @@ aou_atlas_cohort(cohort_definition, cohort_sql, debug = FALSE, ...)
 
 \item{debug}{Print the query to the console; useful for debugging.}
 
-\item{...}{Further arguments passed along to \code{collect()} if \code{collect = TRUE}
+\item{collect}{Whether to collect the data or keep as SQL query. Defaults to \code{FALSE}.}
 
-\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#experimental}{\figure{lifecycle-experimental.svg}{options: alt='[Experimental]'}}}{\strong{[Experimental]}}}
+\item{...}{Further arguments passed along to \code{collect()} if \code{collect = TRUE}}
+
+\item{con}{Connection to the allofus SQL database. Defaults to getOption("aou.default.con"), which is set automatically if you use \code{aou_connect()}}
 }
 \value{
 A dataframe with the resulting cohort. The SQL query used to generate the cohort is stored as an attribute.

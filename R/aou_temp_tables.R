@@ -1,13 +1,15 @@
 #
 #' Creates a temporary table from a local data frame or tibble
 #'
+#' `r lifecycle::badge('experimental')`
+#'
 #' @param df a local dataframe or tibble
-#' @param nchar_batch approximate number of characters per sql query
+#' @param nchar_batch approximate number of characters to break up each SQL query
 #' @param con connection
 #' @description
-#'  Experimental function that builds a local tibble into an SQL query and
-#'  generates a temporary table. Tables
-#' generally will need to be small in size (<1500 rows). The table will only
+#' Experimental function that builds a local tibble into an SQL query and
+#' generates a temporary table. Larger tables will be broken up into consequitive SQL queries;
+#' making `nchar_batch` smaller can avoid errors but will take longer. The table will only
 #' exist for the current connection session and will need to be created again
 #' in a new session.
 #' @return a reference to a temporary table in the database with the data from `df`
@@ -24,7 +26,7 @@
 #'
 #'
 #'
-aou_create_temp_table <- function(df, nchar_batch = 1000000, con = getOption("aou.default.con")) {
+aou_create_temp_table <- function(df, nchar_batch = 1000000, ..., con = getOption("aou.default.con")) {
     if (is.null(con)) {
         cli::cli_abort(c("No connection available.", i = "Provide a connection automatically by running {.code aou_connect()} before this function.",
                          i = "You can also provide {.code con} as an argument or default with {.code options(aou.default.con = ...)}."))
@@ -85,7 +87,10 @@ aou_create_temp_table <- function(df, nchar_batch = 1000000, con = getOption("ao
 
 #' Compute a dplyr tbl SQL query into a temp table
 #'
+#' `r lifecycle::badge('experimental')`
+#'
 #' @param .data result of tbl(con, "table") %>% ... query
+#' @param ... Other arugments passed to `bigrquery::bq_table_download()` when `collect = TRUE`
 #' @param con connection from aou_connect(). Set by default
 #'
 #' @description Experimental function that computes a temporary table from a tbl(con, "table")
@@ -110,7 +115,7 @@ aou_create_temp_table <- function(df, nchar_batch = 1000000, con = getOption("ao
 #' tbl(con, tmp_tbl)
 #'
 #'
-aou_compute <- function(.data, con = getOption('aou.default.con')){
+aou_compute <- function(.data, ..., con = getOption('aou.default.con')){
 
   # get the query as a character vector
   q = as.character(dbplyr::db_sql_render(con, .data))
@@ -134,19 +139,14 @@ aou_compute <- function(.data, con = getOption('aou.default.con')){
   out = stringr::str_glue(out)
 
   # execute the query
-  tbl_obj = bigrquery::bq_project_query(
-    Sys.getenv("GOOGLE_PROJECT"),
-    query = out, temporary = TRUE
-  )
-  # get the tbale name to return for future reference.
-  tbl_name = paste(tbl_obj$project, tbl_obj$dataset, tbl_obj$table, sep = ("."))
 
-  # to deal with display error when printing the output in jupyter
-  return(dplyr::filter(dplyr::tbl(con, tbl_name), 1 > 0))
+  get_query_table(out, collect = collect, ..., con = con)
 
 }
 
 #' Collect a tbl object and convert integer64 columns to double
+#'
+#' `r lifecycle::badge('experimental')`
 #'
 #' @param tbl_obj reference to a database table
 #' @param convert_int64 do you want to convert integers to doubles? Defaults to `TRUE`

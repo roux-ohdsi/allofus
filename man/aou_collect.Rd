@@ -27,6 +27,9 @@ is to use \code{aou_collect()}, which works just like \code{dplyr::collect()}
 except that any integer values are converted to doubles. If this is not what
 you want, set \code{convert_int64 = FALSE}.
 }
+\details{
+\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#experimental}{\figure{lifecycle-experimental.svg}{options: alt='[Experimental]'}}}{\strong{[Experimental]}}
+}
 \examples{
 \dontshow{if (on_workbench()) (if (getRversion() >= "3.4") withAutoprint else force)(\{ # examplesIf}
 

@@ -4,13 +4,15 @@
 \alias{aou_tables}
 \title{List tables in the AoU Database}
 \usage{
-aou_tables(con = getOption("aou.default.con"), remove_na = TRUE)
+aou_tables(remove_na = TRUE, ..., con = getOption("aou.default.con"))
 }
 \arguments{
+\item{remove_na}{Whether to remove tables that are not in the data dictionary. Defaults to \code{TRUE}}
+
+\item{...}{Not currently useed}
+
 \item{con}{Connection to the allofus SQL database. Defaults to \code{getOption("aou.default.con")},
 which is created automatically with \code{aou_connect()}}
-
-\item{remove_na}{Whether to remove tables that are not in the data dictionary. Defaults to \code{TRUE}}
 }
 \value{
 A dataframe with the table names and the number of columns

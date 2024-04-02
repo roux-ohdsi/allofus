@@ -40,10 +40,10 @@ aou_join <- function(data,
                      type,
                      by = NULL,
                      suffix = c("_x", "_y"),
-                     con = getOption("aou.default.con"),
                      x_as = NULL,
                      y_as = NULL,
-                     ...) {
+                     ...,
+                     con = getOption("aou.default.con")) {
   if (is.null(con)) {
     cli::cli_abort(c("No connection available.",
       "i" = "Provide a connection automatically by running {.code aou_connect()} before this function.",

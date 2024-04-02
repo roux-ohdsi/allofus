@@ -1,10 +1,10 @@
 #' Generate an observation period table
 #'
+#' `r lifecycle::badge('experimental')`
+#'
 #' @param con Connection to the allofus SQL database. Defaults to getOption("aou.default.con"), which is set automatically if you use `aou_connect()`
 #' @param collect Whether to collect the data or keep as SQL query. Defaults to `FALSE`.
 #' @param ... Further arguments passed along to `collect()` if `collect = TRUE`
-#'
-#' `r lifecycle::badge('experimental')`
 #'
 #' @details
 #'
@@ -74,14 +74,34 @@
 #'                    observation_period_start_date)) %>%
 #'   filter(observation_period_end_date > as.Date("2010-01-01"))
 #'
-aou_observation_period <- function(con = getOption("aou.default.con"),
+aou_observation_period <- function(cohort = NULL,
                                    collect = FALSE,
-                                   ...) {
+                                   ...,
+                                   con = getOption("aou.default.con")) {
   if (is.null(con)) {
     cli::cli_abort(c("No connection available.",
       "i" = "Provide a connection automatically by running {.code aou_connect()} before this function.",
       "i" = "You can also provide {.code con} as an argument or default with {.code options(aou.default.con = ...)}."
     ))
+  }
+
+  if (is.null(cohort)) {
+    cli::cli_warn(c("No cohort provided.", ">" = "Pulling observation periods for entire All of Us cohort."))
+    function_cohort <- dplyr::tbl(con, "person") %>% dplyr::select("person_id")
+  } else if (!"person_id" %in% colnames(cohort)) {
+    # ensure person_id is a column name in cohort
+
+    cli::cli_abort(c("{.code person_id} column not found in cohort.",
+                     "i" = "Confirm that the cohort has a column named {.code person_id}"
+    ))
+  } else if (is.data.frame(cohort)) {
+    function_cohort <- dplyr::tbl(con, "person") %>%
+      dplyr::filter(.data$person_id %in% !!unique(cohort$person_id)) %>%
+      dplyr::select("person_id") %>%
+      aou_compute()
+  } else {
+    function_cohort <- cohort %>%
+      dplyr::distinct(.data$person_id)
   }
 
     q <- "
@@ -178,19 +198,11 @@ aou_observation_period <- function(con = getOption("aou.default.con"),
 
     #cat(out)
     # execute the query
-    tbl_obj = bigrquery::bq_project_query(
-      Sys.getenv("GOOGLE_PROJECT"),
-      query = out, temporary = TRUE
-    )
-    # get the tbale name to return for future reference.
-    tbl_name = paste(tbl_obj$project, tbl_obj$dataset, tbl_obj$table, sep = ("."))
+    merged <- dplyr::left_join(function_cohort,
+                  get_query_table(out, collect = FALSE, con = con),
+                  by = "person_id")
 
-    # to deal with display error when printing the output in jupyter
-    obs_period = dplyr::tbl(con, tbl_name) %>% dplyr::filter(1 > 0)
+    if (isFALSE(collect)) return(merged)
 
-    # collect if desired.
-    if (isTRUE(collect)) {
-      obs_period <- dplyr::collect(obs_period, ...)
-    }
-  return(obs_period)
+    return(collect(merged, ...))
 }

@@ -7,13 +7,14 @@
 aou_create_temp_table(
   df,
   nchar_batch = 1e+06,
+  ...,
   con = getOption("aou.default.con")
 )
 }
 \arguments{
 \item{df}{a local dataframe or tibble}
 
-\item{nchar_batch}{approximate number of characters per sql query}
+\item{nchar_batch}{approximate number of characters to break up each SQL query}
 
 \item{con}{connection}
 }
@@ -22,10 +23,13 @@ a reference to a temporary table in the database with the data from \code{df}
 }
 \description{
 Experimental function that builds a local tibble into an SQL query and
-generates a temporary table. Tables
-generally will need to be small in size (<1500 rows). The table will only
+generates a temporary table. Larger tables will be broken up into consequitive SQL queries;
+making \code{nchar_batch} smaller can avoid errors but will take longer. The table will only
 exist for the current connection session and will need to be created again
 in a new session.
+}
+\details{
+\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#experimental}{\figure{lifecycle-experimental.svg}{options: alt='[Experimental]'}}}{\strong{[Experimental]}}
 }
 \examples{
 \dontshow{if (on_workbench()) (if (getRversion() >= "3.4") withAutoprint else force)(\{ # examplesIf}

@@ -4,25 +4,34 @@
 \alias{aou_sql}
 \title{Execute a SQL query on the All of Us database}
 \usage{
-aou_sql(query, CDR = getOption("aou.default.cdr"), debug = FALSE, ...)
+aou_sql(
+  query,
+  collect = FALSE,
+  debug = FALSE,
+  ...,
+  con = getOption("aou.default.con"),
+  CDR = getOption("aou.default.cdr")
+)
 }
 \arguments{
 \item{query}{A SQL query (BigQuery dialect) to be executed. Interpreted
 with \code{glue::glue()}, so expressions enclosed with braces will be evaluated.
 References to \code{"{CDR}"} or \code{"{cdr}"} will be evaluated automatically (see examples).}
 
+\item{collect}{Whether to bring the data into local memory (collect = TRUE) or not. Defaults to FALSE.}
+
+\item{debug}{Print the query to the console; useful for debugging.}
+
+\item{...}{All other arguments passed to \code{bigrquery::bq_table_download()}}
+
 \item{CDR}{The name of the "curated data repository" that will be used in any
 references of the form \code{"{CDR}"} or \code{"{cdr}"} in the query (see examples). Defaults to
 \code{getOption("aou.default.cdr")}, which is \code{Sys.getenv('WORKSPACE_CDR')} if not specified otherwise
 (i.e., the "mainline" CDR).
 On the controlled tier, specify the "base" CDR with \code{CDR = paste0(Sys.getenv('WORKSPACE_CDR'), "_base")}.}
-
-\item{debug}{Print the query to the console; useful for debugging.}
-
-\item{...}{All other arguments passed to \code{bigrquery::bq_table_download()}}
 }
 \value{
-A dataframe with the results of the query.
+A reference to a remote table or a dataframe (if \code{collect = TRUE}) with the results of the query.
 }
 \description{
 Execute a SQL query on the All of Us database

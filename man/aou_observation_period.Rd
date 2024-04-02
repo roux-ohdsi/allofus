@@ -5,25 +5,24 @@
 \title{Generate an observation period table}
 \usage{
 aou_observation_period(
-  con = getOption("aou.default.con"),
+  cohort = NULL,
   collect = FALSE,
-  ...
+  ...,
+  con = getOption("aou.default.con")
 )
 }
 \arguments{
-\item{con}{Connection to the allofus SQL database. Defaults to getOption("aou.default.con"), which is set automatically if you use \code{aou_connect()}}
-
 \item{collect}{Whether to collect the data or keep as SQL query. Defaults to \code{FALSE}.}
 
-\item{...}{Further arguments passed along to \code{collect()} if \code{collect = TRUE}
+\item{...}{Further arguments passed along to \code{collect()} if \code{collect = TRUE}}
 
-\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#experimental}{\figure{lifecycle-experimental.svg}{options: alt='[Experimental]'}}}{\strong{[Experimental]}}}
+\item{con}{Connection to the allofus SQL database. Defaults to getOption("aou.default.con"), which is set automatically if you use \code{aou_connect()}}
 }
 \value{
 a sql query or local data frame with person_id, observation_period_start_date, and observation_period_end_date
 }
 \description{
-Generate an observation period table
+\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#experimental}{\figure{lifecycle-experimental.svg}{options: alt='[Experimental]'}}}{\strong{[Experimental]}}
 }
 \details{
 The current observation period table in the All of Us OMOP CDM is not always

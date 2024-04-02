@@ -10,10 +10,10 @@ aou_join(
   type,
   by = NULL,
   suffix = c("_x", "_y"),
-  con = getOption("aou.default.con"),
   x_as = NULL,
   y_as = NULL,
-  ...
+  ...,
+  con = getOption("aou.default.con")
 )
 }
 \arguments{
@@ -27,13 +27,13 @@ aou_join(
 
 \item{suffix}{suffix preferences to add when joining data with the same column names not specified in the by argument.}
 
-\item{con}{connection to the allofus SQL database. Defaults to getOption("aou.default.con"), which is set automatically if you use \code{aou_connect()}}
-
 \item{x_as}{optional; a string for the name of the left table}
 
 \item{y_as}{optional; a string for the name of the right table}
 
 \item{...}{arguments passed on to the join function. e.g., by = "person_id"}
+
+\item{con}{connection to the allofus SQL database. Defaults to getOption("aou.default.con"), which is set automatically if you use \code{aou_connect()}}
 }
 \value{
 Continued dbplyr query

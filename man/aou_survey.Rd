@@ -9,9 +9,9 @@ aou_survey(
   questions,
   question_output = "concept_code",
   clean_answers = TRUE,
-  con = getOption("aou.default.con"),
   collect = FALSE,
-  ...
+  ...,
+  con = getOption("aou.default.con")
 )
 }
 \arguments{
@@ -24,11 +24,11 @@ aou_survey(
 
 \item{clean_answers}{whether to clean the answers to the survey questions. Defaults to TRUE.}
 
-\item{con}{connection to the allofus SQL database. Defaults to getOption("aou.default.con"), which is created automatically with \code{aou_connect()}}
-
 \item{collect}{whether to return the results as a local (TRUE) or database table}
 
 \item{...}{additional arguments passed to \code{collect()} when \code{collect = TRUE}}
+
+\item{con}{connection to the allofus SQL database. Defaults to getOption("aou.default.con"), which is created automatically with \code{aou_connect()}}
 }
 \value{
 a dataframe if collect = TRUE; a remote tbl if not
