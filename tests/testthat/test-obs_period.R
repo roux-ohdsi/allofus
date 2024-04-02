@@ -1,5 +1,4 @@
 test_that("aou_observation_period returns expected output", {
-
   skip_workbench()
 
   expect_warning(aou_observation_period(), "No cohort provided")

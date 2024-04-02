@@ -79,8 +79,6 @@ aou_survey <- function(cohort = NULL,
                        collect = FALSE,
                        ...,
                        con = getOption("aou.default.con")) {
-
-
   # check for connection
   if (is.null(con)) {
     cli::cli_abort(c("No connection available.",

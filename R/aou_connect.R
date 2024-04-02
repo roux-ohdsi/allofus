@@ -37,15 +37,15 @@ on_workbench <- function() {
 aou_connect <- function(CDR = getOption("aou.default.cdr"), ...) {
   if (packageVersion("dbplyr") == "2.4.0") {
     cli::cli_abort(c(
-      'dbplyr v2.4.0 is not compatible with the All of Us database (bigquery).;',
-     i = 'Please install either dbplyr v2.3.4 or the development version of dbplyr:',
-      '# Install pak',
+      "dbplyr v2.4.0 is not compatible with the All of Us database (bigquery).;",
+      i = "Please install either dbplyr v2.3.4 or the development version of dbplyr:",
+      "# Install pak",
       'install.packages("pak")',
-      '# Install dbplyr v2.3.4',
+      "# Install dbplyr v2.3.4",
       'pak::pkg_install("tidyverse/dbplyr@v2.3.4")',
-      '# Or install development version of dbplyr',
+      "# Or install development version of dbplyr",
       'pak::pkg_install("tidyverse/dbplyr")',
-      '# restart your R kernel'
+      "# restart your R kernel"
     ), call = NULL)
   }
 
@@ -192,7 +192,6 @@ aou_connect <- function(CDR = getOption("aou.default.cdr"), ...) {
 #'   N DESC
 #' ', collect = TRUE)
 aou_sql <- function(query, collect = FALSE, debug = FALSE, ..., con = getOption("aou.default.con"), CDR = getOption("aou.default.cdr")) {
-
   .cdr_objs <- ls(envir = .GlobalEnv, pattern = "^CDR$|^cdr$")
   if (length(.cdr_objs) == 0) {
     CDR <- CDR
@@ -244,12 +243,12 @@ aou_sql <- function(query, collect = FALSE, debug = FALSE, ..., con = getOption(
 get_query_table <- function(q, collect = FALSE, ..., con = getOption("aou.default.con")) {
   if (is.null(con) & isFALSE(collect)) {
     cli::cli_abort(c("No connection available.",
-                     "i" = "Provide a connection automatically by running {.code aou_connect()} before this function.",
-                     "i" = "You can also provide {.code con} as an argument or default with {.code options(aou.default.con = ...)}."
+      "i" = "Provide a connection automatically by running {.code aou_connect()} before this function.",
+      "i" = "You can also provide {.code con} as an argument or default with {.code options(aou.default.con = ...)}."
     ))
   }
 
-  tbl_obj = bigrquery::bq_project_query(
+  tbl_obj <- bigrquery::bq_project_query(
     Sys.getenv("GOOGLE_PROJECT"),
     query = q, temporary = TRUE
   )
@@ -259,10 +258,10 @@ get_query_table <- function(q, collect = FALSE, ..., con = getOption("aou.defaul
   }
 
   # get the table name to return for future reference.
-  tbl_name = paste(tbl_obj$project, tbl_obj$dataset, tbl_obj$table, sep = ("."))
+  tbl_name <- paste(tbl_obj$project, tbl_obj$dataset, tbl_obj$table, sep = ("."))
 
   # to deal with display error when printing the output in jupyter
-  res = dplyr::tbl(con, tbl_name) %>% dplyr::filter(1 > 0)
+  res <- dplyr::tbl(con, tbl_name) %>% dplyr::filter(1 > 0)
 
   res
 }

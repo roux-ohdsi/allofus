@@ -19,72 +19,93 @@
 #'
 #' @examplesIf on_workbench()
 #' con <- aou_connect()
-#' df <- data.frame(concept_id = c(439331, 4290245, 42535816, 46269813,
-#'                  2784565, 45765502, 434112, 4128031, 435640, 45876808),
-#'                  category = c("AB", "DELIV", "DELIV", "SA", "DELIV",
-#'                  "LB", "DELIV", "DELIV", "PREG", "SA"),
-#'                  gest_value = c(NA, NA, NA, NA, NA, NA, NA, NA, 25, NA))
-#' tmp_tbl = aou_create_temp_table(df)
-#'
-#'
+#' df <- data.frame(
+#'   concept_id = c(
+#'     439331, 4290245, 42535816, 46269813,
+#'     2784565, 45765502, 434112, 4128031, 435640, 45876808
+#'   ),
+#'   category = c(
+#'     "AB", "DELIV", "DELIV", "SA", "DELIV",
+#'     "LB", "DELIV", "DELIV", "PREG", "SA"
+#'   ),
+#'   gest_value = c(NA, NA, NA, NA, NA, NA, NA, NA, 25, NA)
+#' )
+#' tmp_tbl <- aou_create_temp_table(df)
 #'
 aou_create_temp_table <- function(data, nchar_batch = 1000000, ..., con = getOption("aou.default.con")) {
-    if (is.null(con)) {
-        cli::cli_abort(c("No connection available.", i = "Provide a connection automatically by running {.code aou_connect()} before this function.",
-                         i = "You can also provide {.code con} as an argument or default with {.code options(aou.default.con = ...)}."))
-    }
-    add_q = function(s) {
-        paste0("'", s, "'")
-    }
-    add_date <- function(d) {
-        paste0("DATE '", as.character(d), "'")
-    }
-    data <- data %>% dplyr::mutate(dplyr::across(dplyr::where(is.factor), as.character),
-                               dplyr::across(dplyr::where(is.character),
-                                             ~stringr::str_replace_all(.x, "\\'", "\\\\'")),
-                               dplyr::across(dplyr::where(is.character),
-                                             ~stringr::str_replace_all(.x, "\\\"", "\\\\\"")),
-                               dplyr::across(dplyr::where(is.character), add_q))
-    cn = colnames(data)
-    ct = stringr::str_replace_all(sapply(data, class), c(character = "STRING",
-                                                       integer64 = "INT64",
-                                                       integer = "INT64",
-                                                       double = "FLOAT64",
-                                                       numeric = "FLOAT64",
-                                                       factor = "STRING",
-                                                       Date = "DATE"))
-    data <- data %>% dplyr::mutate(dplyr::across(dplyr::where(is.date), ~ifelse(is.na(.x), "NULL", add_date(.x))),
-                               dplyr::across(dplyr::everything(),
-                                             ~replace_na(as.character(.x), "NULL")))
+  if (is.null(con)) {
+    cli::cli_abort(c("No connection available.",
+      i = "Provide a connection automatically by running {.code aou_connect()} before this function.",
+      i = "You can also provide {.code con} as an argument or default with {.code options(aou.default.con = ...)}."
+    ))
+  }
+  add_q <- function(s) {
+    paste0("'", s, "'")
+  }
+  add_date <- function(d) {
+    paste0("DATE '", as.character(d), "'")
+  }
+  data <- data %>% dplyr::mutate(
+    dplyr::across(dplyr::where(is.factor), as.character),
+    dplyr::across(
+      dplyr::where(is.character),
+      ~ stringr::str_replace_all(.x, "\\'", "\\\\'")
+    ),
+    dplyr::across(
+      dplyr::where(is.character),
+      ~ stringr::str_replace_all(.x, "\\\"", "\\\\\"")
+    ),
+    dplyr::across(dplyr::where(is.character), add_q)
+  )
+  cn <- colnames(data)
+  ct <- stringr::str_replace_all(sapply(data, class), c(
+    character = "STRING",
+    integer64 = "INT64",
+    integer = "INT64",
+    double = "FLOAT64",
+    numeric = "FLOAT64",
+    factor = "STRING",
+    Date = "DATE"
+  ))
+  data <- data %>% dplyr::mutate(
+    dplyr::across(dplyr::where(is.date), ~ ifelse(is.na(.x), "NULL", add_date(.x))),
+    dplyr::across(
+      dplyr::everything(),
+      ~ replace_na(as.character(.x), "NULL")
+    )
+  )
 
-    l2 = purrr::map2_chr(cn, ct, paste)
-    s1_str = paste(l2, collapse = ",\n")
+  l2 <- purrr::map2_chr(cn, ct, paste)
+  s1_str <- paste(l2, collapse = ",\n")
 
-    l = purrr::map_chr(purrr::transpose(data), ~paste0("(", paste(.x, collapse = ", "), ")"))
+  l <- purrr::map_chr(purrr::transpose(data), ~ paste0("(", paste(.x, collapse = ", "), ")"))
 
-    values <- split(l, ceiling(cumsum(purrr::map_dbl(l, nchar)) / nchar_batch))
-    batches <- purrr::map_chr(values, ~stringr::str_glue("VALUES{paste(.x, collapse = \",\n\")};"))
+  values <- split(l, ceiling(cumsum(purrr::map_dbl(l, nchar)) / nchar_batch))
+  batches <- purrr::map_chr(values, ~ stringr::str_glue("VALUES{paste(.x, collapse = \",\n\")};"))
 
-    datasets <- do.call(paste0, replicate(10, sample(LETTERS, length(batches), TRUE), FALSE))
-    n <- list()
+  datasets <- do.call(paste0, replicate(10, sample(LETTERS, length(batches), TRUE), FALSE))
+  n <- list()
 
-    for (i in seq_along(batches)) {
-        dataset <- datasets[i]
-        s1 = stringr::str_glue("CREATE TEMP TABLE {dataset} (\n{s1_str}\n);")
-        s2 = stringr::str_glue("INSERT INTO {dataset} ({paste(cn, collapse =\", \")})")
-        s3 = batches[i]
-        s4 = stringr::str_glue("SELECT * FROM {dataset};")
-        q = paste(s1, s2, s3, s4)
-        tmptbl_object = bigrquery::bq_project_query(Sys.getenv("GOOGLE_PROJECT"),
-                                                    query = q)
-        n[[i]] <- dplyr::tbl(con, paste(tmptbl_object$project, tmptbl_object$dataset,
-                        tmptbl_object$table, sep = (".")))
-    }
+  for (i in seq_along(batches)) {
+    dataset <- datasets[i]
+    s1 <- stringr::str_glue("CREATE TEMP TABLE {dataset} (\n{s1_str}\n);")
+    s2 <- stringr::str_glue("INSERT INTO {dataset} ({paste(cn, collapse =\", \")})")
+    s3 <- batches[i]
+    s4 <- stringr::str_glue("SELECT * FROM {dataset};")
+    q <- paste(s1, s2, s3, s4)
+    tmptbl_object <- bigrquery::bq_project_query(Sys.getenv("GOOGLE_PROJECT"),
+      query = q
+    )
+    n[[i]] <- dplyr::tbl(con, paste(tmptbl_object$project, tmptbl_object$dataset,
+      tmptbl_object$table,
+      sep = (".")
+    ))
+  }
 
-    final_tbl <- purrr::reduce(n, dplyr::union_all)
+  final_tbl <- purrr::reduce(n, dplyr::union_all)
 
-    # to deal with display error when printing the output in jupyter
-    return(dplyr::filter(final_tbl, 1 > 0))
+  # to deal with display error when printing the output in jupyter
+  return(dplyr::filter(final_tbl, 1 > 0))
 }
 
 #' Compute a dplyr tbl SQL query into a temp table
@@ -108,41 +129,38 @@ aou_create_temp_table <- function(data, nchar_batch = 1000000, ..., con = getOpt
 #' @examplesIf on_workbench()
 #'
 #' con <- aou_connect()
-#' tmp_tbl = tbl(con, "concept") %>%
-#'    select(concept_id) %>%
-#'    head(10) %>%
-#'    aou_compute()
+#' tmp_tbl <- tbl(con, "concept") %>%
+#'   select(concept_id) %>%
+#'   head(10) %>%
+#'   aou_compute()
 #'
 #' tbl(con, tmp_tbl)
 #'
-#'
-aou_compute <- function(data, ..., con = getOption('aou.default.con')){
-
+aou_compute <- function(data, ..., con = getOption("aou.default.con")) {
   # get the query as a character vector
-  q = as.character(dbplyr::db_sql_render(con, data))
+  q <- as.character(dbplyr::db_sql_render(con, data))
 
   # add the create temp table text before and after
-  tmp1 = 'CREATE TEMP TABLE table1 AS'
-  tmp2 = 'SELECT * FROM table1'
+  tmp1 <- "CREATE TEMP TABLE table1 AS"
+  tmp2 <- "SELECT * FROM table1"
 
   # combine the three vars
-  out = paste0(tmp1, "\n", q, ";\n", tmp2)
+  out <- paste0(tmp1, "\n", q, ";\n", tmp2)
 
   # adjustment to the table references to add {CDR}. in front
   # of the tables in the dplyr query so that the table
   # references point to the right place.
   # replaces any references to current tables from dbListTables
-  without_cdr = paste0("`",DBI::dbListTables(con), "`")
-  with_cdr = paste("`{CDR}",DBI::dbListTables(con),"`", sep = ".")
-  names(with_cdr) = without_cdr
-  out = stringr::str_replace_all(out, pattern = with_cdr)
-  CDR = getOption("aou.default.cdr")
-  out = stringr::str_glue(out)
+  without_cdr <- paste0("`", DBI::dbListTables(con), "`")
+  with_cdr <- paste("`{CDR}", DBI::dbListTables(con), "`", sep = ".")
+  names(with_cdr) <- without_cdr
+  out <- stringr::str_replace_all(out, pattern = with_cdr)
+  CDR <- getOption("aou.default.cdr")
+  out <- stringr::str_glue(out)
 
   # execute the query
 
   get_query_table(out, collect = FALSE, ..., con = con)
-
 }
 
 #' Collect a tbl object and convert integer64 columns to double

@@ -67,19 +67,26 @@
 #'   dplyr::filter(has_ehr_data == 1) %>%
 #'   inner_join(index_date_tbl, by = "person_id") %>%
 #'   inner_join(observation_period_tbl, by = "person_id") %>%
-#'   filter(observation_period_end_date >= DATE_ADD(index_date,
-#'                                                  dplyr::sql(paste0("INTERVAL ", 1, " year"))),
-#'          observation_period_start_date <= index_date) %>%
+#'   filter(
+#'     observation_period_end_date >= DATE_ADD(
+#'       index_date,
+#'       dplyr::sql(paste0("INTERVAL ", 1, " year"))
+#'     ),
+#'     observation_period_start_date <= index_date
+#'   ) %>%
 #'   select(person_id, gender, sex_at_birth, race, ethnicity, age_at_consent)
 #'
 #' # head(cohort)
 #'
 #' # create an observation period table with a minimum start date (e.g., 2010-01-01)
 #' observation_period_tbl %>%
-#'   mutate(observation_period_start_date =
-#'            if_else(observation_period_start_date < as.Date("2010-01-01"),
-#'                    as.Date("2010-01-01"),
-#'                    observation_period_start_date)) %>%
+#'   mutate(
+#'     observation_period_start_date =
+#'       if_else(observation_period_start_date < as.Date("2010-01-01"),
+#'         as.Date("2010-01-01"),
+#'         observation_period_start_date
+#'       )
+#'   ) %>%
 #'   filter(observation_period_end_date > as.Date("2010-01-01"))
 #'
 aou_observation_period <- function(cohort = NULL,
@@ -100,7 +107,7 @@ aou_observation_period <- function(cohort = NULL,
     # ensure person_id is a column name in cohort
 
     cli::cli_abort(c("{.code person_id} column not found in cohort.",
-                     "i" = "Confirm that the cohort has a column named {.code person_id}"
+      "i" = "Confirm that the cohort has a column named {.code person_id}"
     ))
   } else if (is.data.frame(cohort)) {
     function_cohort <- dplyr::tbl(con, "person") %>%
@@ -112,7 +119,7 @@ aou_observation_period <- function(cohort = NULL,
       dplyr::distinct(.data$person_id)
   }
 
-    q <- "
+  q <- "
 
       WITH ehr AS (
           SELECT  m.person_id AS participant, MIN( m.measurement_date) AS first_date, MAX( m.measurement_date) AS last_date
@@ -194,23 +201,26 @@ aou_observation_period <- function(cohort = NULL,
       ORDER BY 1
       "
 
-    # add the create temp table text before and after
-    tmp1 = 'CREATE TEMP TABLE table1 AS'
-    tmp2 = 'SELECT * FROM table1'
+  # add the create temp table text before and after
+  tmp1 <- "CREATE TEMP TABLE table1 AS"
+  tmp2 <- "SELECT * FROM table1"
 
-    # combine the three vars
-    out = paste0(tmp1, "\n", q, ";\n", tmp2)
+  # combine the three vars
+  out <- paste0(tmp1, "\n", q, ";\n", tmp2)
 
-    CDR = getOption("aou.default.cdr")
-    out = stringr::str_glue(out)
+  CDR <- getOption("aou.default.cdr")
+  out <- stringr::str_glue(out)
 
-    #cat(out)
-    # execute the query
-    merged <- dplyr::left_join(function_cohort,
-                  get_query_table(out, collect = FALSE, con = con),
-                  by = "person_id")
+  # cat(out)
+  # execute the query
+  merged <- dplyr::left_join(function_cohort,
+    get_query_table(out, collect = FALSE, con = con),
+    by = "person_id"
+  )
 
-    if (isFALSE(collect)) return(merged)
+  if (isFALSE(collect)) {
+    return(merged)
+  }
 
-    return(collect(merged, ...))
+  return(collect(merged, ...))
 }

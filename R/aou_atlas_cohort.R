@@ -158,7 +158,7 @@ aou_atlas_cohort <- function(cohort_definition,
     "
         )
       })
-      #obs_period_sql <- gsub("`visit_occurrence`", "`{cdr}.visit_occurrence`", obs_period_sql)
+      # obs_period_sql <- gsub("`visit_occurrence`", "`{cdr}.visit_occurrence`", obs_period_sql)
 
       # Create target cohort table
       target_cohort_sql <- "

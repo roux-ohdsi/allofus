@@ -32,5 +32,3 @@ greet_startup <- function() {
     )
   }
 }
-
-

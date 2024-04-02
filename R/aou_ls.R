@@ -97,13 +97,12 @@ aou_ls_bucket <- function(pattern = "", silent = FALSE, recursive = TRUE, bucket
 #' @examplesIf on_workbench()
 #' # save a file to the bucket
 #' tmp <- tempdir()
-#' write.csv(data.frame(x = 1), file.path(tmp,"testdata.csv"))
-#' aou_workspace_to_bucket(file.path(tmp,"testdata.csv"))
+#' write.csv(data.frame(x = 1), file.path(tmp, "testdata.csv"))
+#' aou_workspace_to_bucket(file.path(tmp, "testdata.csv"))
 #' # read the file back into the workspace
 #' aou_bucket_to_workspace("testdata.csv")
 #' # read in to your local environment
 #' read.csv("testdata.csv")
-#'
 #'
 aou_bucket_to_workspace <- function(file, directory = FALSE, bucket = getOption("aou.default.bucket")) {
   # # Copy the file from current workspace to the bucket
@@ -114,7 +113,9 @@ aou_bucket_to_workspace <- function(file, directory = FALSE, bucket = getOption(
   if (directory) {
     file <- paste0(file, "/:")
     gs_args <- "gsutil cp -r "
-  } else gs_args <- "gsutil cp "
+  } else {
+    gs_args <- "gsutil cp "
+  }
 
   for (i in seq_along(file)) {
     if (!(file[i] %in% bucket_files)) {
@@ -152,19 +153,17 @@ aou_bucket_to_workspace <- function(file, directory = FALSE, bucket = getOption(
 #' @examplesIf on_workbench()
 #' # create test files in a temporary directory
 #' tmp <- tempdir()
-#' write.csv(data.frame(x = 1), file.path(tmp,"testdata1.csv"))
-#' write.csv(data.frame(y = 2), file.path(tmp,"testdata2.csv"))
+#' write.csv(data.frame(x = 1), file.path(tmp, "testdata1.csv"))
+#' write.csv(data.frame(y = 2), file.path(tmp, "testdata2.csv"))
 #' # save a file to the bucket
 #' aou_workspace_to_bucket(file.path(tmp, "testdata1.csv"))
 #' # save multiple files at once
 #' aou_workspace_to_bucket(c(file.path(tmp, "testdata1.csv"), file.path(tmp, "testdata2.csv")))
 #' # save an entire directory
 #' aou_workspace_to_bucket(tmp, directory = TRUE)
-
 aou_workspace_to_bucket <- function(file, directory = FALSE,
                                     bucket = getOption("aou.default.bucket")) {
-
-  if(stringr::str_detect(file, " ")) {
+  if (stringr::str_detect(file, " ")) {
     cli::cli_abort("File names cannot contain spaces. Consider using underscores or hyphens instead.")
   }
 
@@ -179,8 +178,9 @@ aou_workspace_to_bucket <- function(file, directory = FALSE,
   # Copy the file from current workspace to the bucket
   for (i in seq_along(file)) {
     system(
-      paste("gsutil cp", gsutil_args, file[i], bucket)
-      , intern = TRUE)
+      paste("gsutil cp", gsutil_args, file[i], bucket),
+      intern = TRUE
+    )
   }
   # Check which files were copied
   if (length(read.csv(tmp_log)$Destination) == 0) {
