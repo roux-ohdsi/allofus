@@ -4,12 +4,14 @@
 \alias{aou_collect}
 \title{Collect a tbl object and convert integer64 columns to double}
 \usage{
-aou_collect(tbl_obj, convert_int64 = TRUE, ...)
+aou_collect(data, convert_int64 = TRUE, ...)
 }
 \arguments{
-\item{tbl_obj}{reference to a database table}
+\item{data}{A reference to a remote database table (or unexecuted query)}
 
-\item{convert_int64}{do you want to convert integers to doubles? Defaults to \code{TRUE}}
+\item{convert_int64}{Do you want to convert integer values to doubles? Defaults to \code{TRUE}}
+
+\item{...}{Other arguments passed to dplyr::collect()}
 }
 \value{
 a local dataframe

@@ -33,7 +33,7 @@
     <div style="height:40px;display:inline;margin:0 10px;"><a href="https://ohdsi.northeastern.edu/" class="external-link"><img src="https://roux-ohdsi.github.io/allofus/articles/logo.png" style="width:auto;height:100%;"></a></div>
     <a class="navbar-brand me-2" href="../index.html">allofus</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.0.0.9000</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.1.0</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -117,7 +117,7 @@ available on CRAN (and is therefore not included with the
 package:</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://roux-ohdsi.github.io/allofus/" class="external-link">allofus</a></span><span class="op">)</span></span>
-<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://ohdsi.github.io/ROhdsiWebApi/" class="external-link">ROhdsiWebApi</a></span><span class="op">)</span></span></code></pre></div>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va">ROhdsiWebApi</span><span class="op">)</span></span></code></pre></div>
 <p>If you haven’t already, this is the time to build your cohort
 definition in ATLAS. You can use the publicly available <a href="https://atlas-demo.ohdsi.org" class="external-link">demo version of ATLAS</a> which is
 pre-populated with many sample cohort definitions (though keep in mind
@@ -130,8 +130,8 @@ simple stroke cohort definition.</p>
 <p>Using <code>ROhdsiWebApi</code>, we can download the cohort
 definition and SQL query from ATLAS:</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">cd</span> <span class="op">&lt;-</span> <span class="fu">ROhdsiWebApi</span><span class="fu">::</span><span class="fu"><a href="https://ohdsi.github.io/ROhdsiWebApi/reference/getCohortDefinition.html" class="external-link">getCohortDefinition</a></span><span class="op">(</span><span class="fl">1788061</span>, <span class="st">"https://atlas-demo.ohdsi.org/WebAPI"</span><span class="op">)</span></span>
-<span><span class="va">cd_sql</span> <span class="op">&lt;-</span> <span class="fu">ROhdsiWebApi</span><span class="fu">::</span><span class="fu"><a href="https://ohdsi.github.io/ROhdsiWebApi/reference/getCohortSql.html" class="external-link">getCohortSql</a></span><span class="op">(</span><span class="va">cd</span>, <span class="st">"https://atlas-demo.ohdsi.org/WebAPI"</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">cd</span> <span class="op">&lt;-</span> <span class="fu">ROhdsiWebApi</span><span class="fu">::</span><span class="fu">getCohortDefinition</span><span class="op">(</span><span class="fl">1788061</span>, <span class="st">"https://atlas-demo.ohdsi.org/WebAPI"</span><span class="op">)</span></span>
+<span><span class="va">cd_sql</span> <span class="op">&lt;-</span> <span class="fu">ROhdsiWebApi</span><span class="fu">::</span><span class="fu">getCohortSql</span><span class="op">(</span><span class="va">cd</span>, <span class="st">"https://atlas-demo.ohdsi.org/WebAPI"</span><span class="op">)</span></span></code></pre></div>
 <p>Then, we can use the <code><a href="../reference/aou_atlas_cohort.html">aou_atlas_cohort()</a></code> function to
 generate the cohort in the All of Us database.</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
@@ -144,7 +144,7 @@ heuristics</a> for the <code>observation_period</code> table,
 observation periods are first generated for each subject using the
 <code><a href="../reference/aou_observation_period.html">aou_observation_period()</a></code> function. After generating a new
 <code>observation_period</code> table, the SQL from
-<code><a href="https://ohdsi.github.io/ROhdsiWebApi/reference/getCohortSql.html" class="external-link">ROhdsiWebApi::getCohortSql()</a></code> will extract a cohort from the
+<code>ROhdsiWebApi::getCohortSql()</code> will extract a cohort from the
 All of Us database - resulting in a <em>local</em> dataframe with the
 cohort start and end dates for each subject who fell within the cohort
 definition. (The function is based on code from <a href="https://github.com/cmayer2/r4aou" class="external-link uri">https://github.com/cmayer2/r4aou</a> with some tweaks to

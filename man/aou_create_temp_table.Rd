@@ -5,18 +5,21 @@
 \title{Creates a temporary table from a local data frame or tibble}
 \usage{
 aou_create_temp_table(
-  df,
+  data,
   nchar_batch = 1e+06,
   ...,
   con = getOption("aou.default.con")
 )
 }
 \arguments{
-\item{df}{a local dataframe or tibble}
+\item{data}{A local dataframe (or tibble)}
 
 \item{nchar_batch}{approximate number of characters to break up each SQL query}
 
-\item{con}{connection}
+\item{...}{Not currently used}
+
+\item{con}{Connection to the allofus SQL database. Defaults to \code{getOption("aou.default.con")},
+which is created automatically with \code{aou_connect()}.}
 }
 \value{
 a reference to a temporary table in the database with the data from \code{df}

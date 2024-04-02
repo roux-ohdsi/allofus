@@ -1,12 +1,18 @@
 #' Function to query allofus observation table for survey responses
 #'
-#' @description
-#' Because responses to the survey questions stored in the ds_survey table do not
-#' include skipped questions (i.e., missing data!), this function makes it easier to
-#' query the observation table for responses to survey questions so that the skipped
-#' responses are included.
+#' @description Extracts survey responses in a tidy format that also includes ‘skip’ responses
+#' and collapses across all versions of the person health / personal medical history
+#' surveys. Currently responses in the ‘ds_survey’ table omit skipped responses.
+#' Responses are returned as Yes" if the respondent answered that the individual
+#' had the condition, No" if the respondent answered that the individual did not
+#' have that condition (or omitted it when selecting from related conditions),
+#' a skip response if the question was skipped, and NA if the respondent did not answer
+#' the question. Returns a data frame or SQL tbl with the initial cohort table along with
+#' a column for each question included in questions and answers foreach person_id in the cells.
+#' To find the desired survey questions, use the all of us data dictionary, survey codebook,
+#'  Athena, data browser, or the modified codebook which can be found in the allofus R package.
 #'
-#' The function will return a dataframe or SQL tbl with the initial cohort table along
+#' @details The function will return a dataframe or SQL tbl with the initial cohort table along
 #' with a column for each question included in `questions` and answers for
 #' each person_id in the cells. The column names (questions) can
 #' be returned as the concept_code or concept_id or by providing new column names. For each question, a column with
@@ -24,15 +30,17 @@
 #' did not have that condition (or omitted it when selecting from related conditions), a
 #' skip response if the question was skipped, and NA if the respondent did not answer the question.
 #'
-#' @param cohort tbl or dataframe with a cohort that includes a column called person_id
+#' @param cohort Reference to a remote table or local dataframe with a column called "person_id"
 #' @param questions either a vector of concept_ids or concept_codes for questions to return results
 #' @param question_output how to name the columns. Options include as the text of the concept code ("concept_code"), as concept ids preceded by
 #' "x_" ("concept_id"), or using a custom vector of column names matching the vector of `questions`. Defaults to "concept_code".
 #' @param clean_answers whether to clean the answers to the survey questions. Defaults to TRUE.
 #' @param con connection to the allofus SQL database. Defaults to getOption("aou.default.con"), which is created automatically with `aou_connect()`
-#' @param collect whether to return the results as a local (TRUE) or database table
+#' @param collect Whether to bring the resulting table into local memory
+#'   (`collect = TRUE`) as a dataframe or leave as a reference to a database table (for
+#'   continued analysis using, e.g., `dbplyr`). Defaults to `FALSE.`
 #' @param ... additional arguments passed to `collect()` when `collect = TRUE`
-#' @return a dataframe if collect = TRUE; a remote tbl if not
+#' @return A dataframe if `collect = TRUE`; a reference to a remote database table if not.
 #' @export
 #' @examplesIf on_workbench()
 #'

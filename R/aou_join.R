@@ -1,10 +1,7 @@
 #' Join current query to another table
 #'
-#' @description Simple wrapper for join functions to join an existing query
-#' to another table in the All of Us database.
-#'
+#' @description Joins two tables in the All of Us database. A less verbose wrapper for the dplyr::*_join() functions with some added safeguards.
 #' @details
-#'
 #' There are a few good reasons to use aou_join() when possible over the x_join functions from dplyr.
 #' First, it reduces the code necessary to join an existing table to another table. Second,
 #' it includes checks/workarounds for two sources of common errors using dbplyr:
@@ -14,15 +11,15 @@
 #'
 #' @param data unexecuted SQL query from dbplyr/dplyr.
 #' @param table the omop table (or other remote table in your schema) you wish to join, as a character string, or a tbl object.
-#' @param type the type of join. use types available in dplyr: left, right, inner, anti, full etc.
-#' @param con connection to the allofus SQL database. Defaults to getOption("aou.default.con"), which is set automatically if you use `aou_connect()`
-#' @param ... arguments passed on to the join function. e.g., by = "person_id"
+#' @param type the type of join; types available in dplyr: "left", "right", "inner", "anti", "full", etc.
+#' @param con Connection to the allofus SQL database. Defaults to `getOption("aou.default.con")`,
+#' which is created automatically with `aou_connect()`.
 #' @param by columns to join on
 #' @param suffix suffix preferences to add when joining data with the same column names not specified in the by argument.
 #' @param x_as optional; a string for the name of the left table
 #' @param y_as optional; a string for the name of the right table
-#'
-#' @return Continued dbplyr query
+#' @param ... Additional arguments passed on to the join function
+#' @return Reference to the remote table created by the join.
 #' @export
 #' @importFrom dplyr left_join right_join inner_join anti_join full_join semi_join
 #' @md

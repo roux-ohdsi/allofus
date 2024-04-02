@@ -4,26 +4,25 @@
 \alias{aou_compute}
 \title{Compute a dplyr tbl SQL query into a temp table}
 \usage{
-aou_compute(.data, ..., con = getOption("aou.default.con"))
+aou_compute(data, ..., con = getOption("aou.default.con"))
 }
 \arguments{
-\item{.data}{result of tbl(con, "table") \%>\% ... query}
+\item{data}{A reference to an unexecuted remote query (e.g., the result of a \code{tbl(con, ...) \%>\% ...} chain)}
 
 \item{...}{Other arugments passed to \code{bigrquery::bq_table_download()} when \code{collect = TRUE}}
 
-\item{con}{connection from aou_connect(). Set by default}
+\item{con}{Connection to the allofus SQL database. Defaults to \code{getOption("aou.default.con")},
+which is created automatically with \code{aou_connect()}.}
 }
 \value{
-a name to a temporary table in the database.
+A reference to a temporary table in the database.
 }
 \description{
-Experimental function that computes a temporary table from a tbl(con, "table")
-dplyr chain that returns an SQL query (e.g., with show_query()). The
-may be useful to create intermediate tables to reduce long queries.
-It is a workaround for dplyr::compute(temporary = TRUE) which does not
-currently work on the workbench. The table will only
-exist for the current connection session and will need to be created again
-in a new session.
+Computes a temporary table from a dplyr chain that returns an
+SQL query (e.g., tbl(con, table)) and returns the name of the temporary table.
+May be useful to create intermediate tables to reduce long queries.
+The temporary table will only exist for the current session and will nee
+to be created again a new session.
 }
 \details{
 \ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#experimental}{\figure{lifecycle-experimental.svg}{options: alt='[Experimental]'}}}{\strong{[Experimental]}}

@@ -3,9 +3,11 @@
 #'
 #' `r lifecycle::badge('experimental')`
 #'
-#' @param df a local dataframe or tibble
+#' @param data A local dataframe (or tibble)
 #' @param nchar_batch approximate number of characters to break up each SQL query
-#' @param con connection
+#' @param ... Not currently used
+#' @param con Connection to the allofus SQL database. Defaults to `getOption("aou.default.con")`,
+#' which is created automatically with `aou_connect()`.
 #' @description
 #' Experimental function that builds a local tibble into an SQL query and
 #' generates a temporary table. Larger tables will be broken up into consequitive SQL queries;
@@ -26,7 +28,7 @@
 #'
 #'
 #'
-aou_create_temp_table <- function(df, nchar_batch = 1000000, ..., con = getOption("aou.default.con")) {
+aou_create_temp_table <- function(data, nchar_batch = 1000000, ..., con = getOption("aou.default.con")) {
     if (is.null(con)) {
         cli::cli_abort(c("No connection available.", i = "Provide a connection automatically by running {.code aou_connect()} before this function.",
                          i = "You can also provide {.code con} as an argument or default with {.code options(aou.default.con = ...)}."))
@@ -37,28 +39,28 @@ aou_create_temp_table <- function(df, nchar_batch = 1000000, ..., con = getOptio
     add_date <- function(d) {
         paste0("DATE '", as.character(d), "'")
     }
-    df <- df %>% dplyr::mutate(dplyr::across(dplyr::where(is.factor), as.character),
+    data <- data %>% dplyr::mutate(dplyr::across(dplyr::where(is.factor), as.character),
                                dplyr::across(dplyr::where(is.character),
                                              ~stringr::str_replace_all(.x, "\\'", "\\\\'")),
                                dplyr::across(dplyr::where(is.character),
                                              ~stringr::str_replace_all(.x, "\\\"", "\\\\\"")),
                                dplyr::across(dplyr::where(is.character), add_q))
-    cn = colnames(df)
-    ct = stringr::str_replace_all(sapply(df, class), c(character = "STRING",
+    cn = colnames(data)
+    ct = stringr::str_replace_all(sapply(data, class), c(character = "STRING",
                                                        integer64 = "INT64",
                                                        integer = "INT64",
                                                        double = "FLOAT64",
                                                        numeric = "FLOAT64",
                                                        factor = "STRING",
                                                        Date = "DATE"))
-    df <- df %>% dplyr::mutate(dplyr::across(dplyr::where(is.date), ~ifelse(is.na(.x), "NULL", add_date(.x))),
+    data <- data %>% dplyr::mutate(dplyr::across(dplyr::where(is.date), ~ifelse(is.na(.x), "NULL", add_date(.x))),
                                dplyr::across(dplyr::everything(),
                                              ~replace_na(as.character(.x), "NULL")))
 
     l2 = purrr::map2_chr(cn, ct, paste)
     s1_str = paste(l2, collapse = ",\n")
 
-    l = purrr::map_chr(purrr::transpose(df), ~paste0("(", paste(.x, collapse = ", "), ")"))
+    l = purrr::map_chr(purrr::transpose(data), ~paste0("(", paste(.x, collapse = ", "), ")"))
 
     values <- split(l, ceiling(cumsum(purrr::map_dbl(l, nchar)) / nchar_batch))
     batches <- purrr::map_chr(values, ~stringr::str_glue("VALUES{paste(.x, collapse = \",\n\")};"))
@@ -89,19 +91,18 @@ aou_create_temp_table <- function(df, nchar_batch = 1000000, ..., con = getOptio
 #'
 #' `r lifecycle::badge('experimental')`
 #'
-#' @param .data result of tbl(con, "table") %>% ... query
+#' @param data A reference to an unexecuted remote query (e.g., the result of a `tbl(con, ...) %>% ...` chain)
 #' @param ... Other arugments passed to `bigrquery::bq_table_download()` when `collect = TRUE`
-#' @param con connection from aou_connect(). Set by default
+#' @param con Connection to the allofus SQL database. Defaults to `getOption("aou.default.con")`,
+#' which is created automatically with `aou_connect()`.
 #'
-#' @description Experimental function that computes a temporary table from a tbl(con, "table")
-#' dplyr chain that returns an SQL query (e.g., with show_query()). The
-#' may be useful to create intermediate tables to reduce long queries.
-#' It is a workaround for dplyr::compute(temporary = TRUE) which does not
-#' currently work on the workbench. The table will only
-#' exist for the current connection session and will need to be created again
-#' in a new session.
+#' @description Computes a temporary table from a dplyr chain that returns an
+#'  SQL query (e.g., tbl(con, table)) and returns the name of the temporary table.
+#'  May be useful to create intermediate tables to reduce long queries.
+#'  The temporary table will only exist for the current session and will nee
+#'  to be created again a new session.
 #'
-#' @return  a name to a temporary table in the database.
+#' @return  A reference to a temporary table in the database.
 #' @export
 #'
 #' @examplesIf on_workbench()
@@ -115,10 +116,10 @@ aou_create_temp_table <- function(df, nchar_batch = 1000000, ..., con = getOptio
 #' tbl(con, tmp_tbl)
 #'
 #'
-aou_compute <- function(.data, ..., con = getOption('aou.default.con')){
+aou_compute <- function(data, ..., con = getOption('aou.default.con')){
 
   # get the query as a character vector
-  q = as.character(dbplyr::db_sql_render(con, .data))
+  q = as.character(dbplyr::db_sql_render(con, data))
 
   # add the create temp table text before and after
   tmp1 = 'CREATE TEMP TABLE table1 AS'
@@ -140,7 +141,7 @@ aou_compute <- function(.data, ..., con = getOption('aou.default.con')){
 
   # execute the query
 
-  get_query_table(out, collect = collect, ..., con = con)
+  get_query_table(out, collect = FALSE, ..., con = con)
 
 }
 
@@ -148,8 +149,9 @@ aou_compute <- function(.data, ..., con = getOption('aou.default.con')){
 #'
 #' `r lifecycle::badge('experimental')`
 #'
-#' @param tbl_obj reference to a database table
-#' @param convert_int64 do you want to convert integers to doubles? Defaults to `TRUE`
+#' @param data A reference to a remote database table (or unexecuted query)
+#' @param convert_int64 Do you want to convert integer values to doubles? Defaults to `TRUE`
+#' @param ... Other arguments passed to dplyr::collect()
 #'
 #' @description If you connect to the All of Us database via `aou_connect()`, integer columns
 #' will be converted to the int64 class, which can represent 64-bit integers.
@@ -179,9 +181,9 @@ aou_compute <- function(.data, ..., con = getOption('aou.default.con')){
 #' # returns 2 rows in Jupyter and 0 in RStudio
 #' dplyr::filter(default_collect, concept_id %in% c(1112807, 4167538))
 #'
-aou_collect <- function(tbl_obj, convert_int64 = TRUE, ...) {
+aou_collect <- function(data, convert_int64 = TRUE, ...) {
   # use the default collect method
-  collected <- dplyr::collect(tbl_obj, ...)
+  collected <- dplyr::collect(data, ...)
   # and then convert to double
   if (convert_int64) {
     cli::cli_inform("{.code integer64} columns were converted to {.code double}.")

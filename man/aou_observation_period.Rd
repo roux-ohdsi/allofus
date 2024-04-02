@@ -12,19 +12,28 @@ aou_observation_period(
 )
 }
 \arguments{
-\item{collect}{Whether to collect the data or keep as SQL query. Defaults to \code{FALSE}.}
+\item{cohort}{Reference to a remote table or local dataframe with a column called "person_id"}
+
+\item{collect}{Whether to bring the resulting table into local memory
+(\code{collect = TRUE}) as a dataframe or leave as a reference to a database table (for
+continued analysis using, e.g., \code{dbplyr}). Defaults to \code{FALSE.}}
 
 \item{...}{Further arguments passed along to \code{collect()} if \code{collect = TRUE}}
 
 \item{con}{Connection to the allofus SQL database. Defaults to getOption("aou.default.con"), which is set automatically if you use \code{aou_connect()}}
 }
 \value{
-a sql query or local data frame with person_id, observation_period_start_date, and observation_period_end_date
+A dataframe if \code{collect = TRUE}; a reference to a remote database table if not. Columns will be "person_id", "observation_period_start_date", and "observation_period_end_date".
 }
 \description{
-\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#experimental}{\figure{lifecycle-experimental.svg}{options: alt='[Experimental]'}}}{\strong{[Experimental]}}
+Generates a temporary observation period table based the first and last event in
+the electronic medical record data. Because some EHR sites have contributed data from several decades ago, researchers
+might want to consider further constraining this table to reasonable date ranges of interest
+(e.g., setting all observation_period_start_date values to no earlier than 01/01/2010).
 }
 \details{
+\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#experimental}{\figure{lifecycle-experimental.svg}{options: alt='[Experimental]'}}}{\strong{[Experimental]}}
+
 The current observation period table in the All of Us OMOP CDM is not always
 appropriate for cohorts generated using OHDSI tools such as ATLAS. Some observation
 periods are overly short and some participants have hundreds of observation periods.

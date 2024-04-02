@@ -34,6 +34,7 @@ reference:
   - aou_observation_period
   - aou_survey
   - aou_compute
+  - aou_collect
   - aou_create_temp_table
 - title: Data dictionaries
 - contents:

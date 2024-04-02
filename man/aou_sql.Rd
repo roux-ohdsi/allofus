@@ -14,27 +14,34 @@ aou_sql(
 )
 }
 \arguments{
-\item{query}{A SQL query (BigQuery dialect) to be executed. Interpreted
-with \code{glue::glue()}, so expressions enclosed with braces will be evaluated.
-References to \code{"{CDR}"} or \code{"{cdr}"} will be evaluated automatically (see examples).}
+\item{query}{A SQL query (BigQuery dialect) to be executed. Interpreted with
+\code{glue::glue()}, so expressions enclosed with braces will be evaluated.
+References to \code{"{CDR}"} or \code{"{cdr}"} will be evaluated automatically (see
+examples).}
 
-\item{collect}{Whether to bring the data into local memory (collect = TRUE) or not. Defaults to FALSE.}
+\item{collect}{Whether to bring the resulting table into local memory
+(\code{collect = TRUE}) as a dataframe or leave as a reference to a database table (for
+continued analysis using, e.g., \code{dbplyr}). Defaults to \code{FALSE.}}
 
 \item{debug}{Print the query to the console; useful for debugging.}
 
-\item{...}{All other arguments passed to \code{bigrquery::bq_table_download()}}
+\item{...}{All other arguments passed to \code{bigrquery::bq_table_download()} if
+\code{collect = TRUE}.}
+
+\item{con}{Connection to the allofus SQL database. Defaults to \code{getOption("aou.default.con")},
+which is created automatically with \code{aou_connect()}. Only needed if \code{collect = FALSE}.}
 
 \item{CDR}{The name of the "curated data repository" that will be used in any
-references of the form \code{"{CDR}"} or \code{"{cdr}"} in the query (see examples). Defaults to
-\code{getOption("aou.default.cdr")}, which is \code{Sys.getenv('WORKSPACE_CDR')} if not specified otherwise
-(i.e., the "mainline" CDR).
-On the controlled tier, specify the "base" CDR with \code{CDR = paste0(Sys.getenv('WORKSPACE_CDR'), "_base")}.}
+references of the form \code{"{CDR}"} or \code{"{cdr}"} in the query (see examples).
+Defaults to \code{getOption("aou.default.cdr")}, which is
+\code{Sys.getenv('WORKSPACE_CDR')} if not specified otherwise (i.e., the
+"mainline" CDR). On the controlled tier, specify the "base" CDR with \code{CDR = paste0(Sys.getenv('WORKSPACE_CDR'), "_base")}.}
 }
 \value{
-A reference to a remote table or a dataframe (if \code{collect = TRUE}) with the results of the query.
+A dataframe if \code{collect = TRUE}; a reference to a remote database table if not.
 }
 \description{
-Execute a SQL query on the All of Us database
+Executes an SQL query on the All of Us database
 }
 \examples{
 \dontshow{if (on_workbench()) (if (getRversion() >= "3.4") withAutoprint else force)(\{ # examplesIf}
@@ -45,7 +52,7 @@ aou_sql("
   COUNT(DISTINCT person_id) AS total_number_of_participants
   FROM
   `{CDR}.person`
-")
+", collect = TRUE)
 
 MEASUREMENT_OF_INTEREST <- "hemoglobin"
 aou_sql('
@@ -117,6 +124,6 @@ GROUP BY
   unit_name
 ORDER BY
   N DESC
-', debug = TRUE)
+', collect = TRUE)
 \dontshow{\}) # examplesIf}
 }

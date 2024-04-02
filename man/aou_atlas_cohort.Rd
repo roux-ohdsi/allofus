@@ -20,54 +20,26 @@ aou_atlas_cohort(
 
 \item{debug}{Print the query to the console; useful for debugging.}
 
-\item{collect}{Whether to collect the data or keep as SQL query. Defaults to \code{FALSE}.}
+\item{collect}{Whether to bring the resulting table into local memory
+(\code{collect = TRUE}) as a dataframe or leave as a reference to a database table (for
+continued analysis using, e.g., \code{dbplyr}). Defaults to \code{FALSE.}}
 
 \item{...}{Further arguments passed along to \code{collect()} if \code{collect = TRUE}}
 
 \item{con}{Connection to the allofus SQL database. Defaults to getOption("aou.default.con"), which is set automatically if you use \code{aou_connect()}}
 }
 \value{
-A dataframe with the resulting cohort. The SQL query used to generate the cohort is stored as an attribute.
+A dataframe if \code{collect = TRUE}; a reference to a remote database table if not. The SQL query used to generate the cohort is stored as an attribute.
 }
 \description{
-This function retrieves a cohort definition from ATLAS and generates the cohort in All of Us.
-Observation periods are first generated for each subject using the \code{\link[=aou_observation_period]{aou_observation_period()}} function.
-The resulting cohort is a dataframe with the cohort start and end dates for each subject.
-The function is based on a similar function in \url{https://github.com/cmayer2/r4aou} with some tweaks
-to generate the appropriate observation periods and incorporate other package functions.
-Please see the online vignette for additional details insert link here
+Retrieves a cohort definition from ATLAS and generates the cohort in All of Us.
+Observation periods are first generated for each subject using the \code{aou_observation_period()}
+function.The resulting cohort is a table with the cohort start and end dates for each person_id.
 }
 \details{
-The current observation period table in the All of Us OMOP CDM is not always
-appropriate for cohorts generated using OHDSI tools such as ATLAS. Some observation
-periods are overly short and some participants have hundreds of observation periods.
-
-This function generates an observation period table from the first occurrence of
-a clinical event in the EHR tables to the last clinical event in the EHR tables.
-It will only return a single observation period per person_id in the database. If
-\code{collect = FALSE}, the function returns a query to a temporary table in the database
-which can be referenced by typical dplyr functions.
-
-Normal OMOP conventions for EHR suggest that long lapses of time bewteen clinical
-events may indicate that the person was not "observed" during this period. However,
-due to the diverse nature of clinical EHR data contributed to all of us, it seems
-most conservative to assume that the person was observed from their first to last
-clinical event. See https://ohdsi.github.io/CommonDataModel/ehrObsPeriods.html
-for more details.
-
-Some users have clinical events going back to before the time of widespread
-electronic medical record use (e.g., the 1980s and 1990s). This function considers
-all EHR data in the database, regardless of the date of the clinical event, but we
-recommend that users consider the implications of including data from the 1980s and 1990s.
-It may be more prudent to exclude data prior to a more recent cutoff date so that the EHR
-data is more likely to be accurate, though this decision depends highly on the research
-question (see example below).
-
-Users should note that the aou_observation_period function will only generate observation periods for
-participants who have at least one clinical observation. If participant in the AllofUs research
-program who did not include electronic health record data are included in the cohort argument, or
-elected to contribute data but have no data to contribute, they will not be included in the
-generated observation period table.
+The function is based on a similar function in \url{https://github.com/cmayer2/r4aou} with some tweaks
+to generate the appropriate observation periods and incorporate other package functions.
+Please see the \href{https://roux-ohdsi.github.io/allofus/articles/atlas.html}{online vignette} for additional details.
 }
 \examples{
 \dontshow{if (on_workbench()) (if (getRversion() >= "3.4") withAutoprint else force)(\{ # examplesIf}

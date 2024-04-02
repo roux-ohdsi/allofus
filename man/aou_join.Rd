@@ -21,7 +21,7 @@ aou_join(
 
 \item{table}{the omop table (or other remote table in your schema) you wish to join, as a character string, or a tbl object.}
 
-\item{type}{the type of join. use types available in dplyr: left, right, inner, anti, full etc.}
+\item{type}{the type of join; types available in dplyr: "left", "right", "inner", "anti", "full", etc.}
 
 \item{by}{columns to join on}
 
@@ -31,16 +31,16 @@ aou_join(
 
 \item{y_as}{optional; a string for the name of the right table}
 
-\item{...}{arguments passed on to the join function. e.g., by = "person_id"}
+\item{...}{Additional arguments passed on to the join function}
 
-\item{con}{connection to the allofus SQL database. Defaults to getOption("aou.default.con"), which is set automatically if you use \code{aou_connect()}}
+\item{con}{Connection to the allofus SQL database. Defaults to \code{getOption("aou.default.con")},
+which is created automatically with \code{aou_connect()}.}
 }
 \value{
-Continued dbplyr query
+Reference to the remote table created by the join.
 }
 \description{
-Simple wrapper for join functions to join an existing query
-to another table in the All of Us database.
+Joins two tables in the All of Us database. A less verbose wrapper for the dplyr::*_join() functions with some added safeguards.
 }
 \details{
 There are a few good reasons to use aou_join() when possible over the x_join functions from dplyr.

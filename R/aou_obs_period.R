@@ -2,8 +2,16 @@
 #'
 #' `r lifecycle::badge('experimental')`
 #'
+#' @description Generates a temporary observation period table based the first and last event in
+#'  the electronic medical record data. Because some EHR sites have contributed data from several decades ago, researchers
+#'  might want to consider further constraining this table to reasonable date ranges of interest
+#'  (e.g., setting all observation_period_start_date values to no earlier than 01/01/2010).
+#'
+#' @param cohort Reference to a remote table or local dataframe with a column called "person_id"
 #' @param con Connection to the allofus SQL database. Defaults to getOption("aou.default.con"), which is set automatically if you use `aou_connect()`
-#' @param collect Whether to collect the data or keep as SQL query. Defaults to `FALSE`.
+#' @param collect Whether to bring the resulting table into local memory
+#'   (`collect = TRUE`) as a dataframe or leave as a reference to a database table (for
+#'   continued analysis using, e.g., `dbplyr`). Defaults to `FALSE.`
 #' @param ... Further arguments passed along to `collect()` if `collect = TRUE`
 #'
 #' @details
@@ -39,7 +47,7 @@
 #' elected to contribute data but have no data to contribute, they will not be included in the
 #' generated observation period table.
 #'
-#' @return a sql query or local data frame with person_id, observation_period_start_date, and observation_period_end_date
+#' @return A dataframe if `collect = TRUE`; a reference to a remote database table if not. Columns will be "person_id", "observation_period_start_date", and "observation_period_end_date".
 #' @export
 #'
 #' @examplesIf on_workbench()

@@ -20,7 +20,7 @@ aou_concept_set(
 )
 }
 \arguments{
-\item{cohort}{query to a cohort or local dataframe with a column called "person_id", and (possibly) columns for start_date and end_date.
+\item{cohort}{Reference to a remote table or local dataframe with a column called "person_id", and (possibly) columns for \code{start_date} and \code{end_date}.
 If not provided, defaults to entire All of Us cohort.}
 
 \item{concepts}{a vector of concept ids}
@@ -38,17 +38,20 @@ the number of matching concepts per person ("count"), or all info about the matc
 
 \item{min_n}{dbl; If output = "indicator", the minimum number of occurrences per person to consider the indicator true. Defaults to 1.}
 
-\item{collect}{lgl; whether to collect from the database. Defaults to FALSE.}
+\item{collect}{Whether to bring the resulting table into local memory
+(\code{collect = TRUE}) as a dataframe or leave as a reference to a database table (for
+continued analysis using, e.g., \code{dbplyr}). Defaults to \code{FALSE.}}
 
 \item{...}{further arguments passed along to \code{collect()} if \code{collect = TRUE}}
 
-\item{con}{connection to the allofus SQL database. Defaults to getOption("aou.default.con"), which is set automatically if you use \code{aou_connect()}}
+\item{con}{Connection to the allofus SQL database. Defaults to \code{getOption("aou.default.con")},
+which is created automatically with \code{aou_connect()}.}
 }
 \value{
-a dataframe if collect = TRUE; a remote tbl if not
+A dataframe if \code{collect = TRUE}; a reference to a remote database table if not.
 }
 \description{
-Get occurrences of a concept set from AoU for a given cohort
+Retrieves occurrences of a concept set from the All of Us database for a given cohort.
 }
 \examples{
 \dontshow{if (on_workbench()) (if (getRversion() >= "3.4") withAutoprint else force)(\{ # examplesIf}

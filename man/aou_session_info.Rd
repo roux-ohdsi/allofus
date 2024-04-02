@@ -13,9 +13,8 @@ aou_session_info(CDR = getOption("aou.default.cdr"))
 A list with three elements: the platform, the AoU release, and the packages
 }
 \description{
-For the purposes of reproducibility, it is important to know the version of R,
-the packages, and the AoU release that you are using. This function prints
-this information to the console.
+Returns a table of information that is necessary to fully reproduce your analyses.
+Specifically, it includes R version, the packages loaded and their versions, and the All of Us CDR release that you are using.
 }
 \examples{
 \dontshow{if (on_workbench()) (if (getRversion() >= "3.4") withAutoprint else force)(\{ # examplesIf}

@@ -1,7 +1,7 @@
 Package: allofus
 Type: Package
 Title: Interface for 'All of Us' Researcher Workbench 
-Version: 1.0.0.9000
+Version: 1.1.0
 Authors@R: 
     c(
       person("Louisa", "Smith", email = "l.smith@northeastern.edu", role = c("aut", "cph"), comment = c(ORCID = "0000-0001-9029-4644")),
@@ -26,7 +26,8 @@ Imports:
     rlang,
     stringr,
     DBI,
-    lifecycle
+    lifecycle,
+    bit64
 Suggests:
     knitr,
     rmarkdown,
