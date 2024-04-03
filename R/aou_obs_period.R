@@ -240,5 +240,5 @@ aou_observation_period <- function(cohort = NULL,
     return(merged)
   }
 
-  return(collect(merged, ...))
+  return(dplyr::collect(merged, ...))
 }
