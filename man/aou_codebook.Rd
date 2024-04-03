@@ -26,8 +26,8 @@ aou_codebook
 }
 \description{
 A data frame with rows from the publicly available All of Us
-Survey Codebook mapped to the All of Us PPI Vocabulary available on Athena
-. A small number of rows did not match between the codebook and the Athena
+Survey Codebook mapped to the All of Us PPI Vocabulary available on Athena.
+A small number of rows did not match between the codebook and the Athena
 PPI Vocabulary.
 }
 \details{

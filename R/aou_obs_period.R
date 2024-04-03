@@ -32,10 +32,10 @@
 #' database. If `collect = FALSE`, the function returns a query to a temporary
 #' table in the database which can be referenced by typical dplyr functions.
 #'
-#' Normal OMOP conventions for EHR suggest that long lapses of time bewteen
+#' Normal OMOP conventions for EHR suggest that long lapses of time between
 #' clinical events may indicate that the person was not "observed" during this
 #' period. However, due to the diverse nature of clinical EHR data contributed
-#' to all of us, it seems most conservative to assume that the person was
+#' to All of Us, it seems most conservative to assume that the person was
 #' observed from their first to last clinical event. See
 #' https://ohdsi.github.io/CommonDataModel/ehrObsPeriods.html for more details.
 #'
@@ -61,34 +61,42 @@
 #' @export
 #'
 #' @examplesIf on_workbench()
+#'
+#' library(dplyr)
+#' con <- aou_connect()
+#'
 #' # create observation_period table for everyone
 #' observation_period_tbl <- aou_observation_period()
 #'
-#' # create an index date as the first date a survey was taken
+#' # create a cohort of participants with EHR data and at least one year
+#' # of observation before they took the first survey
+#'
+#' # first, create an index date as the first date a survey was taken
 #' index_date_tbl <- tbl(con, "ds_survey") %>%
 #'   group_by(person_id) %>%
-#'   filter(survey_datetime == min(survey_datetime)) %>%
-#'   mutate(index_date = as.Date(survey_datetime)) %>%
-#'   distinct(person_id, index_date)
+#'   summarize(index_date = as.Date(min(survey_datetime, na.rm = TRUE)),
+#'             .groups = "drop")
 #'
-#' # create a cohort of participants with EHR data and at least one year
-#' # of observation starting on the date they took the first survey
-#' cohort <- dplyr::tbl(con, "cb_search_person") %>%
-#'   dplyr::filter(has_ehr_data == 1) %>%
+#' # join with observation_period_tbl
+#' cohort <- tbl(con, "cb_search_person") %>%
+#'   filter(has_ehr_data == 1) %>%
 #'   inner_join(index_date_tbl, by = "person_id") %>%
 #'   inner_join(observation_period_tbl, by = "person_id") %>%
 #'   filter(
-#'     observation_period_end_date >= DATE_ADD(
+#'     observation_period_start_date <= DATE_ADD(
 #'       index_date,
-#'       dplyr::sql(paste0("INTERVAL ", 1, " year"))
+#'       sql(paste0("INTERVAL ", -1, " year"))
 #'     ),
-#'     observation_period_start_date <= index_date
+#'     index_date <= observation_period_end_date
 #'   ) %>%
-#'   select(person_id, gender, sex_at_birth, race, ethnicity, age_at_consent)
+#'   select(person_id, gender, sex_at_birth,
+#'     race, ethnicity, age_at_consent,
+#'     index_date, observation_period_start_date, observation_period_end_date)
 #'
 #' # head(cohort)
 #'
 #' # create an observation period table with a minimum start date (e.g., 2010-01-01)
+#' # to only look at EHR data after that date
 #' observation_period_tbl %>%
 #'   mutate(
 #'     observation_period_start_date =

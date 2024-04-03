@@ -73,7 +73,7 @@ aou_create_temp_table <- function(data, nchar_batch = 1000000, ..., con = getOpt
     dplyr::across(dplyr::where(is.date), ~ ifelse(is.na(.x), "NULL", add_date(.x))),
     dplyr::across(
       dplyr::everything(),
-      ~ replace_na(as.character(.x), "NULL")
+      ~ tidyr::replace_na(as.character(.x), "NULL")
     )
   )
 
@@ -134,8 +134,8 @@ aou_create_temp_table <- function(data, nchar_batch = 1000000, ..., con = getOpt
 #' @examplesIf on_workbench()
 #'
 #' con <- aou_connect()
-#' tmp_tbl <- tbl(con, "concept") %>%
-#'   select(concept_id) %>%
+#' tmp_tbl <- dplyr::tbl(con, "concept") %>%
+#'   dplyr::select(concept_id) %>%
 #'   head(10) %>%
 #'   aou_compute()
 #'

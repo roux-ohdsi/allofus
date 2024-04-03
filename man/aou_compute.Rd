@@ -34,8 +34,8 @@ be created again a new session.
 \dontshow{if (on_workbench()) (if (getRversion() >= "3.4") withAutoprint else force)(\{ # examplesIf}
 
 con <- aou_connect()
-tmp_tbl <- tbl(con, "concept") \%>\%
-  select(concept_id) \%>\%
+tmp_tbl <- dplyr::tbl(con, "concept") \%>\%
+  dplyr::select(concept_id) \%>\%
   head(10) \%>\%
   aou_compute()
 
