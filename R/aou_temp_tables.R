@@ -139,7 +139,7 @@ aou_create_temp_table <- function(data, nchar_batch = 1000000, ..., con = getOpt
 #'   head(10) %>%
 #'   aou_compute()
 #'
-#' tbl(con, tmp_tbl)
+#' tmp_tbl
 #'
 aou_compute <- function(data, ..., con = getOption("aou.default.con")) {
   # get the query as a character vector

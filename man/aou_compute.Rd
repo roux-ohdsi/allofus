@@ -39,6 +39,6 @@ tmp_tbl <- dplyr::tbl(con, "concept") \%>\%
   head(10) \%>\%
   aou_compute()
 
-tbl(con, tmp_tbl)
+tmp_tbl
 \dontshow{\}) # examplesIf}
 }
