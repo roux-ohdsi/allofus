@@ -5,5 +5,5 @@ test_that("aou_observation_period returns expected output", {
 
   expect_no_warning(aou_observation_period(cohort = data.frame(person_id = 2150822)))
 
-  expect_equal(nrow(aou_observation_period(cohort = data.frame(person_id = 2011381), collect = TRUE, n = 2)), 2)
+  expect_equal(nrow(aou_observation_period(cohort = data.frame(person_id = 2011381), collect = TRUE)), 1)
 })

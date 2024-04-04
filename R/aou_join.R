@@ -56,6 +56,24 @@ aou_join <- function(data,
 
   if (is.character(table)) y_table <- dplyr::tbl(con, table) else y_table <- table
 
+  if (type %in% c("anti", "semi")) {
+    # don't need extra warning and can't do suffix
+    res <- get(paste(type, "join", sep = "_"))(data, y_table,
+                                               x_as = if (missing(x_as)) {
+                                                 paste(sample(letters, 10, TRUE), collapse = "")
+                                               } else {
+                                                 x_as
+                                               },
+                                               y_as = if (missing(y_as)) {
+                                                 paste(sample(letters, 10, TRUE), collapse = "")
+                                               } else {
+                                                 y_as
+                                               },
+                                               by = by,
+                                               ...)
+    return(res)
+  }
+
   res <- get(paste(type, "join", sep = "_"))(data, y_table,
     x_as = if (missing(x_as)) {
       paste(sample(letters, 10, TRUE), collapse = "")

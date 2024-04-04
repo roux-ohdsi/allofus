@@ -173,7 +173,7 @@ order to connect to a table in the database, you must first create the
 database connection (<code>con</code>). For example, to create a
 reference to the person table:</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">person_tbl</span> <span class="op">&lt;-</span> <span class="fu">tbl</span><span class="op">(</span><span class="va">con</span>, <span class="st">"person"</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">person_tbl</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/tbl.html" class="external-link">tbl</a></span><span class="op">(</span><span class="va">con</span>, <span class="st">"person"</span><span class="op">)</span></span></code></pre></div>
 <p>Although the <code>person_tbl</code> object behaves similarly to a
 data frame, it is not actually a data frame. Instead, it is actually a
 SQL query that only gets run when you need to access the data. This is a
@@ -228,7 +228,7 @@ memory.</p>
 1980:</p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">young_women</span> <span class="op">&lt;-</span> <span class="va">person_tbl</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
-<span>  <span class="fu"><a href="https://rdrr.io/r/stats/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">gender_concept_id</span> <span class="op">==</span> <span class="fl">45878463</span>, <span class="va">year_of_birth</span> <span class="op">&gt;</span> <span class="fl">1980</span><span class="op">)</span></span></code></pre></div>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">gender_concept_id</span> <span class="op">==</span> <span class="fl">45878463</span>, <span class="va">year_of_birth</span> <span class="op">&gt;</span> <span class="fl">1980</span><span class="op">)</span></span></code></pre></div>
 <p>Before we print out <code>young_women</code>, the SQL query has not
 actually been run. In fact, <code>person_tbl</code> is not run either.
 When we do print it, it will run the following SQL:</p>
@@ -262,9 +262,9 @@ When we do print it, it will run the following SQL:</p>
 <p>Note that we don’t know how many observations match these conditions
 yet (the dimensions are <code>[?? x 23]</code>), because it hasn’t been
 fully executed – only the first 10 rows. To get the total number of
-observations, we can use <code>tally()</code>:</p>
+observations, we can use <code><a href="https://dplyr.tidyverse.org/reference/count.html" class="external-link">tally()</a></code>:</p>
 <div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu">tally</span><span class="op">(</span><span class="va">young_women</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/count.html" class="external-link">tally</a></span><span class="op">(</span><span class="va">young_women</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">#&gt; # Source:   SQL [1 x 1]</span></span>
 <span><span class="co">#&gt; # Database: BigQueryConnection</span></span>
 <span><span class="co">#&gt;         n</span></span>
@@ -284,18 +284,18 @@ is executed on the database:</p>
 <h3 id="the-collect-function">The <code>collect()</code> Function<a class="anchor" aria-label="anchor" href="#the-collect-function"></a>
 </h3>
 <p>We can bring the result of a query into the local R session using
-<code>collect()</code>:</p>
+<code><a href="https://dplyr.tidyverse.org/reference/compute.html" class="external-link">collect()</a></code>:</p>
 <div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">young_women</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span> <span class="fu">collect</span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">young_women</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/compute.html" class="external-link">collect</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 <p>This brings the table into your local R workspace as a tibble, or
 dataframe. This is useful for performing operations that cannot be
 performed directly on the database, such as certain statistical analyses
 or plotting. For example, if you’re planning to run a regression
 analysis on the filtered data, you would first use
-<code>collect()</code> to bring the data into R.</p>
-<p>We can bring in the result of <code>tally()</code> as well:</p>
+<code><a href="https://dplyr.tidyverse.org/reference/compute.html" class="external-link">collect()</a></code> to bring the data into R.</p>
+<p>We can bring in the result of <code><a href="https://dplyr.tidyverse.org/reference/count.html" class="external-link">tally()</a></code> as well:</p>
 <div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu">tally</span><span class="op">(</span><span class="va">young_women</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span> <span class="fu">collect</span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/count.html" class="external-link">tally</a></span><span class="op">(</span><span class="va">young_women</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/compute.html" class="external-link">collect</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">#&gt; A tibble: 1 × 1</span></span>
 <span><span class="co">#&gt;       n</span></span>
 <span><span class="co">#&gt; &lt;int64&gt;</span></span>
@@ -303,7 +303,7 @@ analysis on the filtered data, you would first use
 <p>Or even the entire person table, although that’s not recommended
 because it’s so large!</p>
 <div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">person_data</span> <span class="op">&lt;-</span> <span class="va">person_tbl</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span> <span class="fu">collect</span><span class="op">(</span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="va">person_data</span> <span class="op">&lt;-</span> <span class="va">person_tbl</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/compute.html" class="external-link">collect</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="va">person_data</span></span></code></pre></div>
 <pre><code><span><span class="co">#&gt; # A tibble: 413457 × 23</span></span>
 <span><span class="co">#&gt; person_id    gender_concept_id   year_of_birth   month_of_birth  day_of_birth    </span></span>
@@ -332,8 +332,8 @@ join tables together.</p>
 <code>gender_concept_id == 45878463</code> referred to women? We can
 look up the names of concept ids in the <code>concept</code> table:</p>
 <div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">concept_tbl</span> <span class="op">&lt;-</span> <span class="fu">tbl</span><span class="op">(</span><span class="va">con</span>, <span class="st">"concept"</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
-<span>  <span class="fu">select</span><span class="op">(</span><span class="va">concept_id</span>, <span class="va">concept_name</span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="va">concept_tbl</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/tbl.html" class="external-link">tbl</a></span><span class="op">(</span><span class="va">con</span>, <span class="st">"concept"</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="va">concept_id</span>, <span class="va">concept_name</span><span class="op">)</span></span>
 <span><span class="va">concept_tbl</span></span></code></pre></div>
 <pre><code><span><span class="co">#&gt; # Source:   SQL [?? x 2]</span></span>
 <span><span class="co">#&gt; # Database: BigQueryConnection</span></span>
@@ -356,8 +356,8 @@ this, we can join the <code>person</code> table with the
 ids, first we will count them:</p>
 <div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">genders_in_aou</span> <span class="op">&lt;-</span> <span class="va">person_tbl</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
-<span>  <span class="fu">count</span><span class="op">(</span><span class="va">gender_concept_id</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
-<span>  <span class="fu">left_join</span><span class="op">(</span><span class="va">concept_tbl</span>, by <span class="op">=</span> <span class="fu">join_by</span><span class="op">(</span><span class="va">gender_concept_id</span> <span class="op">==</span> <span class="va">concept_id</span><span class="op">)</span><span class="op">)</span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/count.html" class="external-link">count</a></span><span class="op">(</span><span class="va">gender_concept_id</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate-joins.html" class="external-link">left_join</a></span><span class="op">(</span><span class="va">concept_tbl</span>, by <span class="op">=</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/join_by.html" class="external-link">join_by</a></span><span class="op">(</span><span class="va">gender_concept_id</span> <span class="op">==</span> <span class="va">concept_id</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="va">genders_in_aou</span></span></code></pre></div>
 <pre><code><span><span class="co">#&gt; # Source:   SQL [9 x 3]</span></span>
 <span><span class="co">#&gt; # Database: BigQueryConnection</span></span>
@@ -403,7 +403,7 @@ the column names of the <code>obs</code> table that have the default
 added suffix, “_x” and “_y”:</p>
 <div class="sourceCode" id="cb26"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">obs</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
-<span>  <span class="fu">select</span><span class="op">(</span><span class="fu">ends_with</span><span class="op">(</span><span class="st">"_x"</span><span class="op">)</span>, <span class="fu">ends_with</span><span class="op">(</span><span class="st">"_y"</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="fu"><a href="https://tidyselect.r-lib.org/reference/starts_with.html" class="external-link">ends_with</a></span><span class="op">(</span><span class="st">"_x"</span><span class="op">)</span>, <span class="fu"><a href="https://tidyselect.r-lib.org/reference/starts_with.html" class="external-link">ends_with</a></span><span class="op">(</span><span class="st">"_y"</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">colnames</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">#&gt; [1] "provider_id_x" "provider_id_y"</span></span></code></pre>
 <p>Because this is often a mistake occurring because we are not working
@@ -414,7 +414,7 @@ example, we could remove the <code>provider_id</code> column from the
 <code>person</code> table before joining:</p>
 <div class="sourceCode" id="cb28"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">obs</span> <span class="op">&lt;-</span> <span class="va">person_tbl</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
-<span>  <span class="fu">select</span><span class="op">(</span><span class="op">-</span><span class="va">provider_id</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="op">-</span><span class="va">provider_id</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="../reference/aou_join.html">aou_join</a></span><span class="op">(</span><span class="st">"observation"</span>, type <span class="op">=</span> <span class="st">"inner"</span>, by <span class="op">=</span> <span class="st">"person_id"</span><span class="op">)</span></span></code></pre></div>
 </div>
 </div>
@@ -428,7 +428,7 @@ in R. If you end up with one of each, you have a couple of options:</p>
 <code>allofus</code> functions have a <code>collect = FALSE</code>
 argument, but sometimes it’s unavoidable.</li>
 <li>Bring the table from the database into R using
-<code>collect()</code> and then join it with the dataframe in R. This
+<code><a href="https://dplyr.tidyverse.org/reference/compute.html" class="external-link">collect()</a></code> and then join it with the dataframe in R. This
 can be inefficient if part of the reason for joining is to subset the
 table down to only data you care about.</li>
 <li>First subset the table on the database, then bring it into R and
@@ -439,10 +439,10 @@ for those participants, you could run:</li>
 </ol>
 <div class="sourceCode" id="cb29"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># instead of aou_join(cohort, "activity_summary", type = "left", by = "person_id")</span></span>
-<span><span class="va">activity_data</span> <span class="op">&lt;-</span> <span class="fu">tbl</span><span class="op">(</span><span class="va">con</span>, <span class="st">"activity_summary"</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
-<span>  <span class="fu"><a href="https://rdrr.io/r/stats/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">person_id</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span> <span class="op">!</span><span class="op">!</span><span class="va">cohort</span><span class="op">$</span><span class="va">person_id</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
-<span>  <span class="fu">collect</span><span class="op">(</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
-<span>  <span class="fu">right_join</span><span class="op">(</span><span class="va">cohort</span>, by <span class="op">=</span> <span class="st">"person_id"</span><span class="op">)</span></span></code></pre></div>
+<span><span class="va">activity_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/tbl.html" class="external-link">tbl</a></span><span class="op">(</span><span class="va">con</span>, <span class="st">"activity_summary"</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">person_id</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span> <span class="op">!</span><span class="op">!</span><span class="va">cohort</span><span class="op">$</span><span class="va">person_id</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/compute.html" class="external-link">collect</a></span><span class="op">(</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate-joins.html" class="external-link">right_join</a></span><span class="op">(</span><span class="va">cohort</span>, by <span class="op">=</span> <span class="st">"person_id"</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="viewing-the-underlying-sql-with-show_query">Viewing the Underlying SQL with <code>show_query()</code><a class="anchor" aria-label="anchor" href="#viewing-the-underlying-sql-with-show_query"></a>
@@ -450,11 +450,11 @@ for those participants, you could run:</li>
 <p>Understanding the SQL code that <code>dbplyr</code> generates can be
 insightful, especially if you’re debugging or simply curious about the
 translation from R to SQL. To view the SQL query that corresponds to
-your <code>dbplyr</code> operations, use the <code>show_query()</code>
+your <code>dbplyr</code> operations, use the <code><a href="https://dplyr.tidyverse.org/reference/explain.html" class="external-link">show_query()</a></code>
 function:</p>
 <div class="sourceCode" id="cb30"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">obs</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
-<span>  <span class="fu">show_query</span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/explain.html" class="external-link">show_query</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 <pre><code>SELECT
   `edjnngldox`.`person_id` AS `person_id`,
   `gender_concept_id`,
@@ -526,7 +526,7 @@ Us calls the “curated data repository”. When writing SQL code directly,
 we don’t need the database connection object <code>con</code>, instead
 we need to direct the code to the correct tables by preceding the table
 names with “{CDR}”. This means we can’t run the code we get from
-<code>show_query()</code> without modification. For example, we could
+<code><a href="https://dplyr.tidyverse.org/reference/explain.html" class="external-link">show_query()</a></code> without modification. For example, we could
 count the number of young women in the dataset, as we did above with the
 <code>dbplyr</code> approach, like this:</p>
 <div class="sourceCode" id="cb33"><pre class="downlit sourceCode r">
