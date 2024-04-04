@@ -1,4 +1,5 @@
 
+
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
 # `allofus` R Package
@@ -22,8 +23,8 @@ CDM](https://www.researchallofus.org/faq/what-is-omop/) data.
 
 [![R-CMD-check](https://github.com/roux-ohdsi/allofus/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/roux-ohdsi/allofus/actions/workflows/R-CMD-check.yaml)
 [![CRAN
-status](https://www.r-pkg.org/badges/version/allofus)](https://CRAN.R-project.org/package=allofus)
-[![](http://cranlogs.r-pkg.org/badges/grand-total/allofus)](https://cran.r-project.org/package=allofus)
+status](https://www.r-pkg.org/badges/version/allofus.png)](https://CRAN.R-project.org/package=allofus)
+[![](http://cranlogs.r-pkg.org/badges/grand-total/allofus.png)](https://cran.r-project.org/package=allofus)
 [![DOI](https://zenodo.org/badge/659848534.svg)](https://zenodo.org/doi/10.5281/zenodo.10420610)
 <!-- badges: end -->
 
@@ -48,14 +49,14 @@ packages.
 
 ``` r
 # specify the mirror directly
-install.packages("allofus", repos = 'https://cloud.r-project.org')
+install.packages("allofus", repos = "https://cloud.r-project.org")
 
 # OR set the mirror as an option at the top of your script
 options(repos = c(CRAN = "https://cloud.r-project.org"))
 
 # Github development versions may requires using the remotes package
 install.packages("remotes")
-remotes::install_github("roux-ohdsi/allofus", repos = 'https://cloud.r-project.org')
+remotes::install_github("roux-ohdsi/allofus", repos = "https://cloud.r-project.org")
 ```
 
 ### Use
@@ -67,6 +68,7 @@ vignette to learn how to use the package.
 ### Citation
 
 Please cite the `allofus` package as:
+
 <p>
 Smith L, Cavanaugh R (2023). <em>allofus: Interface for ‘All of Us’
 Researcher Workbench</em>.
@@ -84,4 +86,4 @@ citation("allofus")
 
 Please leave us comments, requests, and report bugs using the “Issues”
 tab on github located here:
-<https://github.com/roux-ohdsi/allofus/issues>.
+https://github.com/roux-ohdsi/allofus/issues.
