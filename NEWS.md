@@ -9,4 +9,6 @@ a new `aou_collect()` function which accomodates bit64 integers when needed.
 latest clinical events rather than strictly implementing OHDSI conventions per
 expert advice
 
+* all functions with the option to collect data locally default to `collect = FALSE`
+
 * minor big fixes, improved error messages, and improved documentation

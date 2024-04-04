@@ -48,14 +48,14 @@ packages.
 
 ``` r
 # specify the mirror directly
-install.packages("allofus", repos = 'https://cloud.r-project.org')
+install.packages("allofus", repos = "https://cloud.r-project.org")
 
 # OR set the mirror as an option at the top of your script
 options(repos = c(CRAN = "https://cloud.r-project.org"))
 
 # Github development versions may requires using the remotes package
 install.packages("remotes")
-remotes::install_github("roux-ohdsi/allofus", repos = 'https://cloud.r-project.org')
+remotes::install_github("roux-ohdsi/allofus", repos = "https://cloud.r-project.org")
 ```
 
 ### Use
