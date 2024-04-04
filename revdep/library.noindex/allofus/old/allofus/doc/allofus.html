@@ -1,0 +1,770 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+
+
+
+<title>All of Us in R</title>
+
+<script>// Pandoc 2.9 adds attributes on both header and div. We remove the former (to
+// be compatible with the behavior of Pandoc < 2.8).
+document.addEventListener('DOMContentLoaded', function(e) {
+  var hs = document.querySelectorAll("div.section[class*='level'] > :first-child");
+  var i, h, a;
+  for (i = 0; i < hs.length; i++) {
+    h = hs[i];
+    if (!/^h[1-6]$/i.test(h.tagName)) continue;  // it should be a header h1-h6
+    a = h.attributes;
+    while (a.length > 0) h.removeAttribute(a[0].name);
+  }
+});
+</script>
+
+<style type="text/css">
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+span.underline{text-decoration: underline;}
+div.column{display: inline-block; vertical-align: top; width: 50%;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+</style>
+
+
+
+<style type="text/css">
+code {
+white-space: pre;
+}
+.sourceCode {
+overflow: visible;
+}
+</style>
+<style type="text/css" data-origin="pandoc">
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+{ counter-reset: source-line 0; }
+pre.numberSource code > span
+{ position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+{ content: counter(source-line);
+position: relative; left: -1em; text-align: right; vertical-align: baseline;
+border: none; display: inline-block;
+-webkit-touch-callout: none; -webkit-user-select: none;
+-khtml-user-select: none; -moz-user-select: none;
+-ms-user-select: none; user-select: none;
+padding: 0 4px; width: 4em;
+color: #aaaaaa;
+}
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa; padding-left: 4px; }
+div.sourceCode
+{ }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } 
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.at { color: #7d9029; } 
+code span.bn { color: #40a070; } 
+code span.bu { color: #008000; } 
+code span.cf { color: #007020; font-weight: bold; } 
+code span.ch { color: #4070a0; } 
+code span.cn { color: #880000; } 
+code span.co { color: #60a0b0; font-style: italic; } 
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.do { color: #ba2121; font-style: italic; } 
+code span.dt { color: #902000; } 
+code span.dv { color: #40a070; } 
+code span.er { color: #ff0000; font-weight: bold; } 
+code span.ex { } 
+code span.fl { color: #40a070; } 
+code span.fu { color: #06287e; } 
+code span.im { color: #008000; font-weight: bold; } 
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.kw { color: #007020; font-weight: bold; } 
+code span.op { color: #666666; } 
+code span.ot { color: #007020; } 
+code span.pp { color: #bc7a00; } 
+code span.sc { color: #4070a0; } 
+code span.ss { color: #bb6688; } 
+code span.st { color: #4070a0; } 
+code span.va { color: #19177c; } 
+code span.vs { color: #4070a0; } 
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } 
+</style>
+<script>
+// apply pandoc div.sourceCode style to pre.sourceCode instead
+(function() {
+  var sheets = document.styleSheets;
+  for (var i = 0; i < sheets.length; i++) {
+    if (sheets[i].ownerNode.dataset["origin"] !== "pandoc") continue;
+    try { var rules = sheets[i].cssRules; } catch (e) { continue; }
+    var j = 0;
+    while (j < rules.length) {
+      var rule = rules[j];
+      // check if there is a div.sourceCode rule
+      if (rule.type !== rule.STYLE_RULE || rule.selectorText !== "div.sourceCode") {
+        j++;
+        continue;
+      }
+      var style = rule.style.cssText;
+      // check if color or background-color is set
+      if (rule.style.color === '' && rule.style.backgroundColor === '') {
+        j++;
+        continue;
+      }
+      // replace div.sourceCode by a pre.sourceCode rule
+      sheets[i].deleteRule(j);
+      sheets[i].insertRule('pre.sourceCode{' + style + '}', j);
+    }
+  }
+})();
+</script>
+
+
+
+
+<style type="text/css">body {
+background-color: #fff;
+margin: 1em auto;
+max-width: 700px;
+overflow: visible;
+padding-left: 2em;
+padding-right: 2em;
+font-family: "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+font-size: 14px;
+line-height: 1.35;
+}
+#TOC {
+clear: both;
+margin: 0 0 10px 10px;
+padding: 4px;
+width: 400px;
+border: 1px solid #CCCCCC;
+border-radius: 5px;
+background-color: #f6f6f6;
+font-size: 13px;
+line-height: 1.3;
+}
+#TOC .toctitle {
+font-weight: bold;
+font-size: 15px;
+margin-left: 5px;
+}
+#TOC ul {
+padding-left: 40px;
+margin-left: -1.5em;
+margin-top: 5px;
+margin-bottom: 5px;
+}
+#TOC ul ul {
+margin-left: -2em;
+}
+#TOC li {
+line-height: 16px;
+}
+table {
+margin: 1em auto;
+border-width: 1px;
+border-color: #DDDDDD;
+border-style: outset;
+border-collapse: collapse;
+}
+table th {
+border-width: 2px;
+padding: 5px;
+border-style: inset;
+}
+table td {
+border-width: 1px;
+border-style: inset;
+line-height: 18px;
+padding: 5px 5px;
+}
+table, table th, table td {
+border-left-style: none;
+border-right-style: none;
+}
+table thead, table tr.even {
+background-color: #f7f7f7;
+}
+p {
+margin: 0.5em 0;
+}
+blockquote {
+background-color: #f6f6f6;
+padding: 0.25em 0.75em;
+}
+hr {
+border-style: solid;
+border: none;
+border-top: 1px solid #777;
+margin: 28px 0;
+}
+dl {
+margin-left: 0;
+}
+dl dd {
+margin-bottom: 13px;
+margin-left: 13px;
+}
+dl dt {
+font-weight: bold;
+}
+ul {
+margin-top: 0;
+}
+ul li {
+list-style: circle outside;
+}
+ul ul {
+margin-bottom: 0;
+}
+pre, code {
+background-color: #f7f7f7;
+border-radius: 3px;
+color: #333;
+white-space: pre-wrap; 
+}
+pre {
+border-radius: 3px;
+margin: 5px 0px 10px 0px;
+padding: 10px;
+}
+pre:not([class]) {
+background-color: #f7f7f7;
+}
+code {
+font-family: Consolas, Monaco, 'Courier New', monospace;
+font-size: 85%;
+}
+p > code, li > code {
+padding: 2px 0px;
+}
+div.figure {
+text-align: center;
+}
+img {
+background-color: #FFFFFF;
+padding: 2px;
+border: 1px solid #DDDDDD;
+border-radius: 3px;
+border: 1px solid #CCCCCC;
+margin: 0 5px;
+}
+h1 {
+margin-top: 0;
+font-size: 35px;
+line-height: 40px;
+}
+h2 {
+border-bottom: 4px solid #f7f7f7;
+padding-top: 10px;
+padding-bottom: 2px;
+font-size: 145%;
+}
+h3 {
+border-bottom: 2px solid #f7f7f7;
+padding-top: 10px;
+font-size: 120%;
+}
+h4 {
+border-bottom: 1px solid #f7f7f7;
+margin-left: 8px;
+font-size: 105%;
+}
+h5, h6 {
+border-bottom: 1px solid #ccc;
+font-size: 105%;
+}
+a {
+color: #0033dd;
+text-decoration: none;
+}
+a:hover {
+color: #6666ff; }
+a:visited {
+color: #800080; }
+a:visited:hover {
+color: #BB00BB; }
+a[href^="http:"] {
+text-decoration: underline; }
+a[href^="https:"] {
+text-decoration: underline; }
+
+code > span.kw { color: #555; font-weight: bold; } 
+code > span.dt { color: #902000; } 
+code > span.dv { color: #40a070; } 
+code > span.bn { color: #d14; } 
+code > span.fl { color: #d14; } 
+code > span.ch { color: #d14; } 
+code > span.st { color: #d14; } 
+code > span.co { color: #888888; font-style: italic; } 
+code > span.ot { color: #007020; } 
+code > span.al { color: #ff0000; font-weight: bold; } 
+code > span.fu { color: #900; font-weight: bold; } 
+code > span.er { color: #a61717; background-color: #e3d2d2; } 
+</style>
+
+
+
+
+</head>
+
+<body>
+
+
+
+
+<h1 class="title toc-ignore">All of Us in R</h1>
+
+
+
+<div id="the-basics" class="section level2">
+<h2>The Basics</h2>
+<p>Before diving into the specifics, let’s clarify some vocabulary:</p>
+<ul>
+<li><strong>SQL database</strong> : A structured collection of data
+where information is stored in tables. Each table is like a spreadsheet
+with rows and columns. Data can be added, removed, or modified using SQL
+queries.</li>
+<li><strong>SQL query</strong> : A request for data from a database
+written in a language called SQL (Structured Query Language).</li>
+<li><strong>Google BigQuery</strong> : A cloud-based SQL database that
+is used to store the All of Us data.</li>
+<li><strong>bigrquery</strong> : An R package that allows you to
+interact with Google BigQuery from R.</li>
+<li><strong>dplyr</strong>: A part of the <code>tidyverse</code> in R,
+<code>dplyr</code> is a package for data manipulation. It provides a set
+of functions that can be used to filter, select, arrange, mutate,
+summarize, and join data.</li>
+<li><strong>dbplyr</strong> : Also a part of the <code>tidyverse</code>
+in R, <code>dbplyr</code> is a database backend for <code>dplyr</code>.
+It allows you to write R code that is then translated into SQL
+queries.</li>
+</ul>
+</div>
+<div id="accessing-data" class="section level2">
+<h2>Accessing Data</h2>
+<div id="connecting-to-the-database" class="section level3">
+<h3>Connecting to the database</h3>
+<p>A connection to a database is an object that allows you to interact
+with it from R. The <code>allofus</code> package relies on the
+<code>bigrquery</code> R package to create a connection to the Google
+BigQuery database when you run <code>aou_connect()</code>.</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" tabindex="-1"></a><span class="fu">library</span>(allofus)</span>
+<span id="cb1-2"><a href="#cb1-2" tabindex="-1"></a>con <span class="ot">&lt;-</span> <span class="fu">aou_connect</span>()</span></code></pre></div>
+<p>The object <code>con</code> is used to refer to the connection to the
+All of Us database. When you run the <code>aou_connect()</code>
+function, it also gets stored as the default connection for a session,
+so you don’t need to include it in other functions from the
+<code>allofus</code> package. For instance, you can run
+<code>aou_tables()</code> to see a list of tables in the database:</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" tabindex="-1"></a><span class="fu">aou_tables</span>()</span></code></pre></div>
+<pre><code>#&gt; # A tibble: 68 × 2
+#&gt;    table_name               columns                                             
+#&gt;    &lt;chr&gt;                    &lt;chr&gt;                                               
+#&gt;  1 concept_ancestor         ancestor_concept_id, descendant_concept_id, min_lev…
+#&gt;  2 cb_criteria_ancestor     ancestor_id, descendant_id                          
+#&gt;  3 attribute_definition     attribute_definition_id, attribute_name, attribute_…
+#&gt;  4 cdm_source               cdm_source_name, cdm_source_abbreviation, cdm_holde…
+#&gt;  5 concept_class            concept_class_id, concept_class_name, concept_class…
+#&gt;  6 concept                  concept_id, concept_name, domain_id, vocabulary_id,…
+#&gt;  7 concept_synonym          concept_id, concept_synonym_name, language_concept_…
+#&gt;  8 cb_criteria_relationship concept_id_1, concept_id_2                          
+#&gt;  9 concept_relationship     concept_id_1, concept_id_2, relationship_id, valid_…
+#&gt; 10 condition_occurrence     condition_occurrence_id, person_id, condition_conce…
+#&gt; # ℹ 58 more rows</code></pre>
+</div>
+<div id="accessing-a-table" class="section level3">
+<h3>Accessing a table</h3>
+<p>To access a table in the database, use
+<code>tbl(con, &quot;tablename&quot;)</code>. The resulting object is reference to
+a table in a database that allows you to interact with it from R. In
+order to connect to a table in the database, you must first create the
+database connection (<code>con</code>). For example, to create a
+reference to the person table:</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" tabindex="-1"></a>person_tbl <span class="ot">&lt;-</span> <span class="fu">tbl</span>(con, <span class="st">&quot;person&quot;</span>)</span></code></pre></div>
+<p>Although the <code>person_tbl</code> object behaves similarly to a
+data frame, it is not actually a data frame. Instead, it is actually a
+SQL query that only gets run when you need to access the data. This is a
+feature of the <code>dbplyr</code> package that allows you to manipulate
+data without actually retrieving it. The SQL query behind the
+<code>person_tbl</code> object is:</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode sql"><code class="sourceCode sql"><span id="cb5-1"><a href="#cb5-1" tabindex="-1"></a><span class="kw">SELECT</span> <span class="op">*</span></span>
+<span id="cb5-2"><a href="#cb5-2" tabindex="-1"></a><span class="kw">FROM</span> `person`</span></code></pre></div>
+<p>When you print <code>person_tbl</code>, you’ll get something like
+this:</p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" tabindex="-1"></a>person_tbl</span></code></pre></div>
+<pre><code>#&gt; # Source:   table&lt;person&gt; [?? x 23]
+#&gt; # Database: BigQueryConnection
+#&gt;    person_id gender_concept_id year_of_birth month_of_birth day_of_birth
+#&gt;      &lt;int64&gt;           &lt;int64&gt;       &lt;int64&gt;        &lt;int64&gt;      &lt;int64&gt;
+#&gt;  1   xxxxxxx            903096          1955             NA           NA
+#&gt;  2   xxxxxxx            903096          1978             NA           NA
+#&gt;  3   xxxxxxx            903096          2000             NA           NA
+#&gt;  4   xxxxxxx            903096          1988             NA           NA
+#&gt;  5   xxxxxxx            903096          1993             NA           NA
+#&gt;  6   xxxxxxx            903096          1959             NA           NA
+#&gt;  7   xxxxxxx            903096          1976             NA           NA
+#&gt;  8   xxxxxxx            903096          1961             NA           NA
+#&gt;  9   xxxxxxx            903096          1952             NA           NA
+#&gt; 10   xxxxxxx            903096          1980             NA           NA
+#&gt; # ℹ more rows
+#&gt; # ℹ 18 more variables: birth_datetime &lt;dttm&gt;, race_concept_id &lt;int64&gt;,
+#&gt; #   ethnicity_concept_id &lt;int64&gt;, location_id &lt;int64&gt;, provider_id &lt;int64&gt;,
+#&gt; #   care_site_id &lt;int64&gt;, person_source_value &lt;chr&gt;, gender_source_value &lt;chr&gt;,
+#&gt; #   gender_source_concept_id &lt;int64&gt;, race_source_value &lt;chr&gt;,
+#&gt; #   race_source_concept_id &lt;int64&gt;, ethnicity_source_value &lt;chr&gt;,
+#&gt; #   ethnicity_source_concept_id &lt;int64&gt;, …</code></pre>
+<p>You’ll only see the first 10 rows of the person table (person ids
+were omitted from the output). This allows you to see what the data
+looks like without loading the entire table into R, which can be slow or
+even crash your session.</p>
+<p>Instead, you want to perform as much data manipulation as possible on
+the database. This is more efficient because the operations are
+translated into SQL and executed on the server, which is faster and
+requires less memory than processing in R.</p>
+</div>
+</div>
+<div id="data-manipulation-on-the-database" class="section level2">
+<h2>Data manipulation on the database</h2>
+<p>Before bringing data into R, you can manipulate it on the database
+using the <code>dplyr</code> functions. This allows you to perform
+operations on the database without bringing the data into R’s
+memory.</p>
+<p>For example, you can subset the person table to women born after
+1980:</p>
+<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" tabindex="-1"></a>young_women <span class="ot">&lt;-</span> person_tbl <span class="sc">%&gt;%</span></span>
+<span id="cb8-2"><a href="#cb8-2" tabindex="-1"></a>  <span class="fu">filter</span>(gender_concept_id <span class="sc">==</span> <span class="dv">45878463</span>, year_of_birth <span class="sc">&gt;</span> <span class="dv">1980</span>)</span></code></pre></div>
+<p>Before we print out <code>young_women</code>, the SQL query has not
+actually been run. In fact, <code>person_tbl</code> is not run either.
+When we do print it, it will run the following SQL:</p>
+<div class="sourceCode" id="cb9"><pre class="sourceCode sql"><code class="sourceCode sql"><span id="cb9-1"><a href="#cb9-1" tabindex="-1"></a><span class="kw">SELECT</span> `person`.<span class="op">*</span></span>
+<span id="cb9-2"><a href="#cb9-2" tabindex="-1"></a><span class="kw">FROM</span> `person`</span>
+<span id="cb9-3"><a href="#cb9-3" tabindex="-1"></a><span class="kw">WHERE</span> (`gender_concept_id` <span class="op">=</span> <span class="fl">45878463.0</span>) <span class="kw">AND</span> (`year_of_birth` <span class="op">&gt;</span> <span class="fl">1980.0</span>)</span></code></pre></div>
+<p>and print the first 10 rows:</p>
+<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" tabindex="-1"></a>young_women</span></code></pre></div>
+<pre><code>#&gt; # Source:   SQL [?? x 23]
+#&gt; # Database: BigQueryConnection
+#&gt;    person_id gender_concept_id year_of_birth month_of_birth day_of_birth
+#&gt;      &lt;int64&gt;           &lt;int64&gt;       &lt;int64&gt;        &lt;int64&gt;      &lt;int64&gt;
+#&gt;  1   xxxxxxx          45878463          1992             NA           NA
+#&gt;  2   xxxxxxx          45878463          1989             NA           NA
+#&gt;  3   xxxxxxx          45878463          1981             NA           NA
+#&gt;  4   xxxxxxx          45878463          1990             NA           NA
+#&gt;  5   xxxxxxx          45878463          1990             NA           NA
+#&gt;  6   xxxxxxx          45878463          1985             NA           NA
+#&gt;  7   xxxxxxx          45878463          1987             NA           NA
+#&gt;  8   xxxxxxx          45878463          1986             NA           NA
+#&gt;  9   xxxxxxx          45878463          1983             NA           NA
+#&gt; 10   xxxxxxx          45878463          1998             NA           NA
+# ℹ more rows
+# ℹ 18 more variables: birth_datetime &lt;dttm&gt;, race_concept_id &lt;int64&gt;,
+#   ethnicity_concept_id &lt;int64&gt;, location_id &lt;int64&gt;, provider_id &lt;int64&gt;,
+#   care_site_id &lt;int64&gt;, person_source_value &lt;chr&gt;, gender_source_value &lt;chr&gt;,
+#   gender_source_concept_id &lt;int64&gt;, race_source_value &lt;chr&gt;,
+#   race_source_concept_id &lt;int64&gt;, ethnicity_source_value &lt;chr&gt;,
+#   ethnicity_source_concept_id &lt;int64&gt;, …</code></pre>
+<p>Note that we don’t know how many observations match these conditions
+yet (the dimensions are <code>[?? x 23]</code>), because it hasn’t been
+fully executed – only the first 10 rows. To get the total number of
+observations, we can use <code>tally()</code>:</p>
+<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" tabindex="-1"></a><span class="fu">tally</span>(young_women)</span></code></pre></div>
+<pre><code>#&gt; # Source:   SQL [1 x 1]
+#&gt; # Database: BigQueryConnection
+#&gt;         n
+#&gt;   &lt;int64&gt;
+#&gt; 1   76135</code></pre>
+<p>This is actually a SQL query that only results in 1 row, so we do get
+to see the entire thing. It’s much faster to run than to bring the
+entire table into R and then count the number of rows, because the code
+is executed on the database:</p>
+<div class="sourceCode" id="cb14"><pre class="sourceCode sql"><code class="sourceCode sql"><span id="cb14-1"><a href="#cb14-1" tabindex="-1"></a><span class="kw">SELECT</span> <span class="fu">count</span>(<span class="op">*</span>) <span class="kw">AS</span> `n`</span>
+<span id="cb14-2"><a href="#cb14-2" tabindex="-1"></a><span class="kw">FROM</span> (</span>
+<span id="cb14-3"><a href="#cb14-3" tabindex="-1"></a>  <span class="kw">SELECT</span> `person`.<span class="op">*</span></span>
+<span id="cb14-4"><a href="#cb14-4" tabindex="-1"></a>  <span class="kw">FROM</span> `person`</span>
+<span id="cb14-5"><a href="#cb14-5" tabindex="-1"></a>  <span class="kw">WHERE</span> (`gender_concept_id` <span class="op">=</span> <span class="fl">45878463.0</span>) <span class="kw">AND</span> (`year_of_birth` <span class="op">&gt;</span> <span class="fl">1980.0</span>)</span>
+<span id="cb14-6"><a href="#cb14-6" tabindex="-1"></a>)</span></code></pre></div>
+<div id="the-collect-function" class="section level3">
+<h3>The <code>collect()</code> Function</h3>
+<p>We can bring the result of a query into the local R session using
+<code>collect()</code>:</p>
+<div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" tabindex="-1"></a>young_women <span class="sc">%&gt;%</span> <span class="fu">collect</span>()</span></code></pre></div>
+<p>This brings the table into your local R workspace as a tibble, or
+dataframe. This is useful for performing operations that cannot be
+performed directly on the database, such as certain statistical analyses
+or plotting. For example, if you’re planning to run a regression
+analysis on the filtered data, you would first use
+<code>collect()</code> to bring the data into R.</p>
+<p>We can bring in the result of <code>tally()</code> as well:</p>
+<div class="sourceCode" id="cb16"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" tabindex="-1"></a><span class="fu">tally</span>(young_women) <span class="sc">%&gt;%</span> <span class="fu">collect</span>()</span></code></pre></div>
+<pre><code>#&gt; A tibble: 1 × 1
+#&gt;       n
+#&gt; &lt;int64&gt;
+#&gt;   76135</code></pre>
+<p>Or even the entire person table, although that’s not recommended
+because it’s so large!</p>
+<div class="sourceCode" id="cb18"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" tabindex="-1"></a>person_data <span class="ot">&lt;-</span> person_tbl <span class="sc">%&gt;%</span> <span class="fu">collect</span>()</span>
+<span id="cb18-2"><a href="#cb18-2" tabindex="-1"></a>person_data</span></code></pre></div>
+<pre><code>#&gt; # A tibble: 413457 × 23
+#&gt; person_id    gender_concept_id   year_of_birth   month_of_birth  day_of_birth    
+#&gt;   &lt;int64&gt;              &lt;int64&gt;         &lt;int64&gt;          &lt;int64&gt;       &lt;int64&gt;
+#&gt;   xxxxxxx               903096            1955               NA            NA    
+#&gt;   xxxxxxx               903096            1978               NA            NA
+#&gt;   xxxxxxx               903096            2000               NA            NA
+#&gt;   xxxxxxx               903096            1988               NA            NA
+#&gt;   xxxxxxx               903096            1993               NA            NA
+#&gt;   xxxxxxx               903096            1959               NA            NA
+#&gt;   xxxxxxx               903096            1976               NA            NA
+#&gt;   xxxxxxx               903096            1961               NA            NA
+#&gt;   xxxxxxx               903096            1952               NA            NA
+#&gt;   xxxxxxx               903096            1980               NA            NA    </code></pre>
+</div>
+</div>
+<div id="data-manipulation-with-multiple-tables" class="section level2">
+<h2>Data manipulation with multiple tables</h2>
+<p>The All of Us data is spread across multiple tables, for the most
+part corresponding to the OMOP Common Data Model. This allows for
+efficient storage and retrieval of data, but it can be a bit tricky to
+work with at first. Fortunately, <code>dbplyr</code> makes it easy to
+join tables together.</p>
+<p>For example, how did we know that
+<code>gender_concept_id == 45878463</code> referred to women? We can
+look up the names of concept ids in the <code>concept</code> table:</p>
+<div class="sourceCode" id="cb20"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" tabindex="-1"></a>concept_tbl <span class="ot">&lt;-</span> <span class="fu">tbl</span>(con, <span class="st">&quot;concept&quot;</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb20-2"><a href="#cb20-2" tabindex="-1"></a>  <span class="fu">select</span>(concept_id, concept_name)</span>
+<span id="cb20-3"><a href="#cb20-3" tabindex="-1"></a>concept_tbl</span></code></pre></div>
+<pre><code>#&gt; # Source:   SQL [?? x 2]
+#&gt; # Database: BigQueryConnection
+#&gt;    concept_id concept_name                                      
+#&gt;       &lt;int64&gt; &lt;chr&gt;                                             
+#&gt;  1   38003166 Durable Medical Equipment - General Classification
+#&gt;  2   35805830 DexaBEAM                                          
+#&gt;  3   38003221 Blood - Plasma                                    
+#&gt;  4    1147839 survey_conduct.survey_start_date                  
+#&gt;  5       8623 log reduction                                     
+#&gt;  6   38004063 Rehabilitation Practitioner                       
+#&gt;  7   38003186 Radiology - Diagnostic - General Classification   
+#&gt;  8   35805115 VNCOP-B                                           
+#&gt;  9   35805457 VAdCA                                             
+#&gt; 10       8581 heartbeat                                         
+#&gt; # ℹ more rows</code></pre>
+<p>We just want to extract the names of the gender concept ids. To do
+this, we can join the <code>person</code> table with the
+<code>concept</code> table. So that we can see the full range of gender
+ids, first we will count them:</p>
+<div class="sourceCode" id="cb22"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" tabindex="-1"></a>genders_in_aou <span class="ot">&lt;-</span> person_tbl <span class="sc">%&gt;%</span></span>
+<span id="cb22-2"><a href="#cb22-2" tabindex="-1"></a>  <span class="fu">count</span>(gender_concept_id) <span class="sc">%&gt;%</span></span>
+<span id="cb22-3"><a href="#cb22-3" tabindex="-1"></a>  <span class="fu">left_join</span>(concept_tbl, <span class="at">by =</span> <span class="fu">join_by</span>(gender_concept_id <span class="sc">==</span> concept_id))</span>
+<span id="cb22-4"><a href="#cb22-4" tabindex="-1"></a>genders_in_aou</span></code></pre></div>
+<pre><code>#&gt; # Source:   SQL [9 x 3]
+#&gt; # Database: BigQueryConnection
+#&gt;   gender_concept_id       n concept_name                                        
+#&gt;             &lt;int64&gt; &lt;int64&gt; &lt;chr&gt;                                               
+#&gt; 1           1177221     602 I prefer not to answer                              
+#&gt; 2                 0      97 No matching concept                                 
+#&gt; 3          45878463  247453 Female                                              
+#&gt; 4           1585843     407 Gender Identity: Additional Options                 
+#&gt; 5            903096    7356 PMI: Skip                                           
+#&gt; 6          45880669  154241 Male                                                
+#&gt; 7           1585842     562 Gender Identity: Transgender                        
+#&gt; 8           1585841    1213 Gender Identity: Non Binary                         
+#&gt; 9        2000000002    1526 Not man only, not woman only, prefer not to answer,…</code></pre>
+<p>The result of this SQL query is just 9 rows, so we get to see all of
+them. Both the counting and the joining were done directly on the
+database, so this was very efficient.</p>
+<div id="aou_join" class="section level3">
+<h3><code>aou_join()</code></h3>
+<p>The <code>allofus</code> package includes a function called
+<code>aou_join()</code> that makes it easy to join tables together. It
+includes some additional checks to help avoid mistakes in joining. For
+example, if we wanted to join the <code>person</code> table with the
+<code>observation</code> table, dropping people with no observations, we
+could do it like this:</p>
+<div class="sourceCode" id="cb24"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" tabindex="-1"></a>obs <span class="ot">&lt;-</span> person_tbl <span class="sc">%&gt;%</span></span>
+<span id="cb24-2"><a href="#cb24-2" tabindex="-1"></a>  <span class="fu">aou_join</span>(<span class="st">&quot;observation&quot;</span>, <span class="at">type =</span> <span class="st">&quot;inner&quot;</span>, <span class="at">by =</span> <span class="st">&quot;person_id&quot;</span>)</span></code></pre></div>
+<pre><code>Warning message:
+“There are shared column names not specified in the `by` argument.
+→ These column names now end in &#39;_x&#39; and &#39;_y&#39;.
+ℹ You can change these suffixes using the `suffix` argument but it cannot
+  contain periods (`.`).
+→ Consider specifing all shared columns in the `by` argument.
+→ Or if these additional shared columns are `NA`, remove them prior to joining.”</code></pre>
+<p>The warning message tells us that the <code>person</code> and
+<code>observation</code> tables share some column names that we didn’t
+specify as part of the join argument. That is because both tables have a
+column called <code>provider_id</code>. We can see this by looking at
+the column names of the <code>obs</code> table that have the default
+added suffix, “_x” and “_y”:</p>
+<div class="sourceCode" id="cb26"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" tabindex="-1"></a>obs <span class="sc">%&gt;%</span></span>
+<span id="cb26-2"><a href="#cb26-2" tabindex="-1"></a>  <span class="fu">select</span>(<span class="fu">ends_with</span>(<span class="st">&quot;_x&quot;</span>), <span class="fu">ends_with</span>(<span class="st">&quot;_y&quot;</span>)) <span class="sc">%&gt;%</span></span>
+<span id="cb26-3"><a href="#cb26-3" tabindex="-1"></a>  <span class="fu">colnames</span>()</span></code></pre></div>
+<pre><code>#&gt; [1] &quot;provider_id_x&quot; &quot;provider_id_y&quot;</code></pre>
+<p>Because this is often a mistake occurring because we are not working
+with the tables directly, <code>aou_join()</code> warns us about this.
+We can avoid this warning by specifying all of the columns that we want
+to join on and removing the columns that we don’t want to join on. For
+example, we could remove the <code>provider_id</code> column from the
+<code>person</code> table before joining:</p>
+<div class="sourceCode" id="cb28"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" tabindex="-1"></a>obs <span class="ot">&lt;-</span> person_tbl <span class="sc">%&gt;%</span></span>
+<span id="cb28-2"><a href="#cb28-2" tabindex="-1"></a>  <span class="fu">select</span>(<span class="sc">-</span>provider_id) <span class="sc">%&gt;%</span></span>
+<span id="cb28-3"><a href="#cb28-3" tabindex="-1"></a>  <span class="fu">aou_join</span>(<span class="st">&quot;observation&quot;</span>, <span class="at">type =</span> <span class="st">&quot;inner&quot;</span>, <span class="at">by =</span> <span class="st">&quot;person_id&quot;</span>)</span></code></pre></div>
+</div>
+</div>
+<div id="joins-from-different-sources" class="section level2">
+<h2>Joins from different sources?</h2>
+<p>Unfortunately, we can’t join a table on the database with a dataframe
+in R. If you end up with one of each, you have a couple of options:</p>
+<ol style="list-style-type: decimal">
+<li>See if you can avoid collecting the dataframe into R. Most
+<code>allofus</code> functions have a <code>collect = FALSE</code>
+argument, but sometimes it’s unavoidable.</li>
+<li>Bring the table from the database into R using
+<code>collect()</code> and then join it with the dataframe in R. This
+can be inefficient if part of the reason for joining is to subset the
+table down to only data you care about.</li>
+<li>First subset the table on the database, then bring it into R and
+join it with the dataframe in R. For example, if you have a cohort of
+participants as a dataframe, e.g., as created by
+<code>aou_atlas_cohort()</code>, and you want to bring in activity data
+for those participants, you could run:</li>
+</ol>
+<div class="sourceCode" id="cb29"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1" tabindex="-1"></a><span class="co"># instead of aou_join(cohort, &quot;activity_summary&quot;, type = &quot;left&quot;, by = &quot;person_id&quot;)</span></span>
+<span id="cb29-2"><a href="#cb29-2" tabindex="-1"></a>activity_data <span class="ot">&lt;-</span> <span class="fu">tbl</span>(con, <span class="st">&quot;activity_summary&quot;</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb29-3"><a href="#cb29-3" tabindex="-1"></a>  <span class="fu">filter</span>(person_id <span class="sc">%in%</span> <span class="sc">!!</span>cohort<span class="sc">$</span>person_id) <span class="sc">%&gt;%</span></span>
+<span id="cb29-4"><a href="#cb29-4" tabindex="-1"></a>  <span class="fu">collect</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb29-5"><a href="#cb29-5" tabindex="-1"></a>  <span class="fu">right_join</span>(cohort, <span class="at">by =</span> <span class="st">&quot;person_id&quot;</span>)</span></code></pre></div>
+</div>
+<div id="viewing-the-underlying-sql-with-show_query" class="section level2">
+<h2>Viewing the Underlying SQL with <code>show_query()</code></h2>
+<p>Understanding the SQL code that <code>dbplyr</code> generates can be
+insightful, especially if you’re debugging or simply curious about the
+translation from R to SQL. To view the SQL query that corresponds to
+your <code>dbplyr</code> operations, use the <code>show_query()</code>
+function:</p>
+<div class="sourceCode" id="cb30"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" tabindex="-1"></a>obs <span class="sc">%&gt;%</span></span>
+<span id="cb30-2"><a href="#cb30-2" tabindex="-1"></a>  <span class="fu">show_query</span>()</span></code></pre></div>
+<pre><code>SELECT
+  `edjnngldox`.`person_id` AS `person_id`,
+  `gender_concept_id`,
+  `year_of_birth`,
+  `month_of_birth`,
+  `day_of_birth`,
+  `birth_datetime`,
+  `race_concept_id`,
+  `ethnicity_concept_id`,
+  `location_id`,
+  `care_site_id`,
+  `person_source_value`,
+  `gender_source_value`,
+  `gender_source_concept_id`,
+  `race_source_value`,
+  `race_source_concept_id`,
+  `ethnicity_source_value`,
+  `ethnicity_source_concept_id`,
+  `state_of_residence_concept_id`,
+  `state_of_residence_source_value`,
+  `sex_at_birth_concept_id`,
+  `sex_at_birth_source_concept_id`,
+  `sex_at_birth_source_value`,
+  `observation_id`,
+  `observation_concept_id`,
+  `observation_date`,
+  `observation_datetime`,
+  `observation_type_concept_id`,
+  `value_as_number`,
+  `value_as_string`,
+  `value_as_concept_id`,
+  `qualifier_concept_id`,
+  `unit_concept_id`,
+  `zwcwezaowf`.`provider_id` AS `provider_id`,
+  `visit_occurrence_id`,
+  `visit_detail_id`,
+  `observation_source_value`,
+  `observation_source_concept_id`,
+  `unit_source_value`,
+  `qualifier_source_value`,
+  `value_source_concept_id`,
+  `value_source_value`,
+  `questionnaire_response_id`
+FROM `person` `edjnngldox`
+INNER JOIN `observation` `zwcwezaowf`
+  ON (`edjnngldox`.`person_id` = `zwcwezaowf`.`person_id`)</code></pre>
+<p>This function prints the SQL query that would be sent to the
+database. It’s a great way to learn SQL and understand how
+<code>dbplyr</code> optimizes data manipulation. (Why the gibberish
+table names? Bugs in previous versions of <code>dbplyr</code> resulted
+in table names that would break the query, and giving them unique names
+is a workaround.)</p>
+</div>
+<div id="running-sql-code-directly" class="section level2">
+<h2>Running SQL code directly</h2>
+<p>Another approach to working with the data is to write SQL code
+directly. This is especially useful for complex queries that are
+difficult to express in <code>dplyr</code> syntax. The
+<code>allofus</code> package includes a function called
+<code>aou_sql()</code> that makes it easy to run SQL code directly on
+the database. For example, we could count the number of people in the
+<code>person</code> table like this:</p>
+<div class="sourceCode" id="cb32"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb32-1"><a href="#cb32-1" tabindex="-1"></a><span class="fu">aou_sql</span>(<span class="st">&quot;SELECT COUNT(*) AS n FROM {CDR}.person&quot;</span>)</span></code></pre></div>
+<p>There are a few important things to note about this code. First, the
+<code>CDR</code> variable is a special variable referring to what All of
+Us calls the “curated data repository”. When writing SQL code directly,
+we don’t need the database connection object <code>con</code>, instead
+we need to direct the code to the correct tables by preceding the table
+names with “{CDR}”. This means we can’t run the code we get from
+<code>show_query()</code> without modification. For example, we could
+count the number of young women in the dataset, as we did above with the
+<code>dbplyr</code> approach, like this:</p>
+<div class="sourceCode" id="cb33"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb33-1"><a href="#cb33-1" tabindex="-1"></a><span class="fu">aou_sql</span>(<span class="st">&quot;</span></span>
+<span id="cb33-2"><a href="#cb33-2" tabindex="-1"></a><span class="st">SELECT count(*) AS `n`</span></span>
+<span id="cb33-3"><a href="#cb33-3" tabindex="-1"></a><span class="st">FROM (</span></span>
+<span id="cb33-4"><a href="#cb33-4" tabindex="-1"></a><span class="st">  SELECT `person`.*</span></span>
+<span id="cb33-5"><a href="#cb33-5" tabindex="-1"></a><span class="st">  FROM {CDR}.`person`</span></span>
+<span id="cb33-6"><a href="#cb33-6" tabindex="-1"></a><span class="st">  WHERE (`gender_concept_id` = 45878463.0) AND (`year_of_birth` &gt; 1980.0)</span></span>
+<span id="cb33-7"><a href="#cb33-7" tabindex="-1"></a><span class="st">)</span></span>
+<span id="cb33-8"><a href="#cb33-8" tabindex="-1"></a><span class="st">&quot;</span>)</span></code></pre></div>
+<p>Second, the <code>aou_sql()</code> function returns a dataframe – the
+entire result of the SQL query is brought into memory. This means that
+we want to run an entire query at once, instead of breaking it into
+multiple steps like we did with <code>dbplyr</code>.</p>
+</div>
+
+
+
+<!-- code folding -->
+
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

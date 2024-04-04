@@ -11,3 +11,6 @@
 ^doc$
 ^Meta$
 ^CRAN-SUBMISSION$
+^revdep$
+
+

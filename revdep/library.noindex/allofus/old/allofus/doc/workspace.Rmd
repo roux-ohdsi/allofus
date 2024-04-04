@@ -1,0 +1,84 @@
+---
+title: "Managing files on the workbench"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteIndexEntry{Managing files on the workbench}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  eval = FALSE
+)
+```
+
+The `allofus` package includes several functions designed to help you manage and transfer files between your personal workspace and a shared bucket in Google BigQuery. Understanding the difference between these two storage locations is crucial: 
+
+- **Workspace**: This is your personal storage area. Files here are accessible only to you and will be deleted if you delete your environment. 
+- **Bucket** : This is a shared storage space. Files in the bucket can be accessed by collaborators on your project and are used for permanent storage.
+
+## Listing Files
+### In Your Workspace
+
+Use `aou_ls_workspace()` to list files in your workspace. This function is handy for quickly checking which files you have stored locally.
+
+```{r}
+aou_ls_workspace()
+```
+
+### In Your Bucket
+
+Similarly, `aou_ls_bucket()` lists files in your bucket. This function can be used to view files that you or your collaborators have saved for shared access.
+
+```{r}
+aou_ls_bucket()
+```
+
+You can also use the `pattern` argument with these functions to filter the listed files based on a naming pattern.
+
+```{r}
+aou_ls_workspace(pattern = "*.csv")
+aou_ls_bucket(pattern = "project_*.csv")
+```
+
+
+## Transferring Files
+
+These functions are used in conjunction with R's reading and writing functions. You can store any type of data in both the workspace and the bucket.
+
+### From Workspace to Bucket
+
+Once you've processed or created a file in your workspace, you might want to move it to the bucket for permanent storage or to share it with collaborators. Use `aou_workspace_to_bucket()` for this purpose.
+
+```{r}
+write.csv(data, "file1.csv")
+aou_workspace_to_bucket("file1.csv")
+```
+
+
+### From Bucket to Workspace
+
+If you need to use a file that a collaborator has saved to the bucket, or if you want to retrieve a file after deleting your environment, use `aou_bucket_to_workspace()`.
+
+```{r}
+aou_bucket_to_workspace("file2.csv")
+data <- read.csv("file2.csv")
+```
+
+## Workflow Example
+
+Here’s a typical workflow using these functions: 
+
+1. **List files in your workspace** : Check what files you currently have. 
+2. **Process or create files** : Perform your data analysis or other work in R. 
+3. **Save files to your workspace** : Use R’s file handling functions like `write.csv()` or `write.rds()`. 
+4. **Transfer to the bucket for sharing or permanent storage** : Use `aou_workspace_to_bucket()`. 
+5. **Access shared files from the bucket** : Use `aou_bucket_to_workspace()` to bring files into your workspace as needed.
+
+## Important Considerations 
+
+- **Storage Hygiene** : Regularly clean up your workspace to avoid clutter and manage storage costs. 
+- **Backup Important Files** : Use the bucket to backup important files. Files in your workspace (except for notebooks) are not secure against environment deletion.

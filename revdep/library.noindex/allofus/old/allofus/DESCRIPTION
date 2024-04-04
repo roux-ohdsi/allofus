@@ -1,0 +1,32 @@
+Package: allofus
+Type: Package
+Title: Interface for 'All of Us' Researcher Workbench
+Version: 1.0.0
+Authors@R: 
+    c(
+      person("Louisa", "Smith", email = "l.smith@northeastern.edu", role = c("aut", "cph"), comment = c(ORCID = "0000-0001-9029-4644")),
+      person("Rob", "Cavanaugh", email = "r.cavanaugh@northeastern.edu", role = c("aut", "cre", "cph"), comment = c(ORCID = "0000-0002-2114-6565"))
+    )
+Description: Streamline use of the 'All of Us' Researcher Workbench (<https://www.researchallofus.org/data-tools/workbench/>)with tools to extract and manipulate data from the 'All of Us' database. Increase interoperability with the Observational Health Data Science and Informatics ('OHDSI') tool stack by decreasing reliance of 'All of Us' tools and allowing for cohort creation via 'Atlas'. Improve reproducible and transparent research using 'All of Us'.
+License: MIT + file LICENSE
+Encoding: UTF-8
+LazyData: true
+Imports: cli, tidyr, magrittr, dplyr (>= 1.1.0), glue, bigrquery,
+        purrr, stats, utils, dbplyr, sessioninfo, rlang
+Suggests: DBI, knitr, rmarkdown, testthat (>= 3.0.0), kableExtra, DT,
+        googlesheets4, tibble, forcats, gh, SqlRender (>= 1.6.0)
+RoxygenNote: 7.2.3
+URL: https://roux-ohdsi.github.io/allofus/,
+        https://github.com/roux-ohdsi/allofus
+BugReports: https://github.com/roux-ohdsi/allofus/issues
+VignetteBuilder: knitr
+Depends: R (>= 2.10)
+Config/testthat/edition: 3
+NeedsCompilation: no
+Packaged: 2023-12-20 21:43:06 UTC; robcavanaugh
+Author: Louisa Smith [aut, cph] (<https://orcid.org/0000-0001-9029-4644>),
+  Rob Cavanaugh [aut, cre, cph] (<https://orcid.org/0000-0002-2114-6565>)
+Maintainer: Rob Cavanaugh <r.cavanaugh@northeastern.edu>
+Repository: CRAN
+Date/Publication: 2023-12-21 17:00:06 UTC
+Built: R 4.3.1; ; 2023-12-21 19:22:34 UTC; unix
