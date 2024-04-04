@@ -1,7 +1,3 @@
-# allofus (development version)
-
-# allofus
-
 # allofus 1.1.0
 
 * added new features including creation of temporary tables using `aou_compute()` and `aou_create_temp_table()` and
