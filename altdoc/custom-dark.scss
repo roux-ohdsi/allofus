@@ -3,21 +3,25 @@
 @import url(http://fonts.googleapis.com/css?family=Source+Code+Pro:400italic,700italic,400,700);
 $font-family-sans-serif: 'Lato';
 
-$body-color: #222 !default;
+$body-color: #FFFFFF !default;
 $link-color: #5e7ca1;
-$code-color: #222;
-$navbar-bg: #FFFFFF;
-$navbar-fg: #222;
-$navbar-hl: #222;
-$sidebar-fg: #222;
+$code-color: #FFFFFF;
+$navbar-bg: #222;
+$navbar-fg: #FFFFFF;
+$navbar-hl: #FFFFFF;
+$sidebar-fg: #FFFFFF;
 $sidebar-hl: #5e7ca1;
-$toc-color: #222;
+$toc-color: #FFFFFF;
 $toc-hl: #5e7ca1;
 
 $navbar-padding-y: 0.5rem;
 
 .table {
   font-size: .8em;
+}
+
+code {
+  background-color: #333!important;
 }
 
 

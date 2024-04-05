@@ -13,9 +13,9 @@ website:
   page-footer: "`allofus` R package version 1.1.0"
 
   navbar:
-    background: "#000"
+#    background: "#FFFFFF"
     search: true
-    logo: images/apple-touch-icon-180x180.png
+    logo: images/apple-touch-icon.png
     logo-alt: "Northeastern University logo"
     right:
       - text: Home
@@ -56,8 +56,8 @@ format:
   html:
     toc: true
     theme:
-      - flatly
-      - custom.scss
+      light: [flatly, custom.scss]
+      dark: [darkly, custom-dark.scss]
     highlight-style: atom-one
     code-copy: true
     code-overflow: scroll
