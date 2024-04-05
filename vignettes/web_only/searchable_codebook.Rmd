@@ -1,6 +1,9 @@
 ---
 title: "All of Us Surveys"
-output: rmarkdown::html_vignette
+format: 
+  html:
+    page-layout: full
+sidebar: false
 vignette: >
   %\VignetteIndexEntry{All of Us Surveys}
   %\VignetteEngine{knitr::rmarkdown}

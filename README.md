@@ -1,4 +1,5 @@
 
+
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
 # `allofus` R Package
@@ -10,6 +11,7 @@
 status](https://www.r-pkg.org/badges/version/allofus)](https://CRAN.R-project.org/package=allofus)
 [![](http://cranlogs.r-pkg.org/badges/grand-total/allofus)](https://cran.r-project.org/package=allofus)
 [![DOI](https://zenodo.org/badge/659848534.svg)](https://zenodo.org/doi/10.5281/zenodo.10420610)
+
 <!-- badges: end -->
 
 The goal of the `allofus` R package is to streamline the use of R within
@@ -72,6 +74,7 @@ vignette to learn how to use the package.
 ### Citation
 
 Please cite the `allofus` package as:
+
 <p>
 Smith L, Cavanaugh R (2023). <em>allofus: Interface for ‘All of Us’
 Researcher Workbench</em>.

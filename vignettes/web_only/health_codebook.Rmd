@@ -1,6 +1,9 @@
 ---
 title: "Health History Surveys"
-output: rmarkdown::html_vignette
+format: 
+  html:
+    page-layout: full
+sidebar: false
 vignette: >
   %\VignetteIndexEntry{Health History Surveys}
   %\VignetteEngine{knitr::rmarkdown}
@@ -38,8 +41,6 @@ library(forcats)
 library(tibble)
 library(DT)
 ```
-
-## Codebook for health history surveys
 
 ```{r}
 # code from https://laustep.github.io/stlahblog/posts/DT_childTables.html
