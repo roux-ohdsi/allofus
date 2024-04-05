@@ -11,3 +11,6 @@ errorReportSql.txt
 /doc/
 /Meta/
 * [1-9].*
+altdoc/freeze.rds
+_quarto/
+!_quarto/_freeze/

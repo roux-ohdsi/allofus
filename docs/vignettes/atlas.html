@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>allofus</title>
+<title>allofus - Using ATLAS to create a cohort</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -20,28 +20,62 @@ ul.task-list li input[type="checkbox"] {
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
 }
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
 </style>
 
 
-<script src="site_libs/quarto-nav/quarto-nav.js"></script>
-<script src="site_libs/quarto-nav/headroom.min.js"></script>
-<script src="site_libs/clipboard/clipboard.min.js"></script>
-<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
-<script src="site_libs/quarto-search/fuse.min.js"></script>
-<script src="site_libs/quarto-search/quarto-search.js"></script>
-<meta name="quarto:offset" content="./">
-<link href="./CITATION.html" rel="next">
-<link href="./NEWS.html" rel="prev">
-<link href="./images/favicon.ico" rel="icon">
-<script src="site_libs/quarto-html/quarto.js"></script>
-<script src="site_libs/quarto-html/popper.min.js"></script>
-<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
-<script src="site_libs/quarto-html/anchor.min.js"></script>
-<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
-<script src="site_libs/bootstrap/bootstrap.min.js"></script>
-<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script src="../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../">
+<link href="../vignettes/data.html" rel="next">
+<link href="../vignettes/allofus.html" rel="prev">
+<link href="../images/favicon.ico" rel="icon">
+<script src="../site_libs/quarto-html/quarto.js"></script>
+<script src="../site_libs/quarto-html/popper.min.js"></script>
+<script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -80,10 +114,10 @@ ul.task-list li input[type="checkbox"] {
     <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
       <div class="navbar-container container-fluid">
       <div class="navbar-brand-container mx-auto">
-    <a href="./index.html" class="navbar-brand navbar-brand-logo">
-    <img src="./images/apple-touch-icon-180x180.png" alt="Northeastern University logo" class="navbar-logo">
+    <a href="../index.html" class="navbar-brand navbar-brand-logo">
+    <img src="../images/apple-touch-icon-180x180.png" alt="Northeastern University logo" class="navbar-logo">
     </a>
-    <a class="navbar-brand" href="./index.html">
+    <a class="navbar-brand" href="../index.html">
     <span class="navbar-title">allofus</span>
     </a>
   </div>
@@ -94,7 +128,7 @@ ul.task-list li input[type="checkbox"] {
           <div class="collapse navbar-collapse" id="navbarCollapse">
             <ul class="navbar-nav navbar-nav-scroll ms-auto">
   <li class="nav-item">
-    <a class="nav-link" href="./index.html"> 
+    <a class="nav-link" href="../index.html"> 
 <span class="menu-text">Home</span></a>
   </li>  
   <li class="nav-item compact">
@@ -113,7 +147,7 @@ ul.task-list li input[type="checkbox"] {
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./LICENSE.html">License</a></li></ol></nav>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../vignettes/atlas.html">Tutorials</a></li><li class="breadcrumb-item"><a href="../vignettes/atlas.html">Using ATLAS to create a cohort</a></li></ol></nav>
         <a class="flex-grow-1" role="button" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
     </div>
@@ -127,34 +161,34 @@ ul.task-list li input[type="checkbox"] {
     <ul class="list-unstyled mt-1">
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./vignettes/allofus.html" class="sidebar-item-text sidebar-link">
+  <a href="../vignettes/allofus.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Getting Started</span></a>
   </div>
 </li>
         <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
-            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" aria-expanded="false">
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" aria-expanded="true">
  <span class="menu-text">Tutorials</span></a>
-          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" aria-expanded="false" aria-label="Toggle section">
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" aria-expanded="true" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
       </div>
-      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 ">  
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./vignettes/atlas.html" class="sidebar-item-text sidebar-link">
+  <a href="../vignettes/atlas.html" class="sidebar-item-text sidebar-link active">
  <span class="menu-text">Using ATLAS to create a cohort</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./vignettes/data.html" class="sidebar-item-text sidebar-link">
+  <a href="../vignettes/data.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Extracting All of Us survey and EHR data</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./vignettes/workspace.html" class="sidebar-item-text sidebar-link">
+  <a href="../vignettes/workspace.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Managing files on the workbench</span></a>
   </div>
 </li>
@@ -171,13 +205,13 @@ ul.task-list li input[type="checkbox"] {
       <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 ">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./vignettes/web_only/health_codebook.html" class="sidebar-item-text sidebar-link">
+  <a href="../vignettes/web_only/health_codebook.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Health History Surveys</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./vignettes/web_only/searchable_codebook.html" class="sidebar-item-text sidebar-link">
+  <a href="../vignettes/web_only/searchable_codebook.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">All of Us Surveys</span></a>
   </div>
 </li>
@@ -194,115 +228,115 @@ ul.task-list li input[type="checkbox"] {
       <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 ">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./man/aou_atlas_cohort.html" class="sidebar-item-text sidebar-link">
+  <a href="../man/aou_atlas_cohort.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">aou_atlas_cohort</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./man/aou_bucket_to_workspace.html" class="sidebar-item-text sidebar-link">
+  <a href="../man/aou_bucket_to_workspace.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">aou_bucket_to_workspace</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./man/aou_codebook.html" class="sidebar-item-text sidebar-link">
+  <a href="../man/aou_codebook.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">aou_codebook</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./man/aou_collect.html" class="sidebar-item-text sidebar-link">
+  <a href="../man/aou_collect.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">aou_collect</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./man/aou_compute.html" class="sidebar-item-text sidebar-link">
+  <a href="../man/aou_compute.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">aou_compute</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./man/aou_concept_set.html" class="sidebar-item-text sidebar-link">
+  <a href="../man/aou_concept_set.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">aou_concept_set</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./man/aou_connect.html" class="sidebar-item-text sidebar-link">
+  <a href="../man/aou_connect.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">aou_connect</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./man/aou_create_temp_table.html" class="sidebar-item-text sidebar-link">
+  <a href="../man/aou_create_temp_table.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">aou_create_temp_table</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./man/aou_health_history.html" class="sidebar-item-text sidebar-link">
+  <a href="../man/aou_health_history.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">aou_health_history</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./man/aou_join.html" class="sidebar-item-text sidebar-link">
+  <a href="../man/aou_join.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">aou_join</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./man/aou_ls_bucket.html" class="sidebar-item-text sidebar-link">
+  <a href="../man/aou_ls_bucket.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">aou_ls_bucket</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./man/aou_ls_workspace.html" class="sidebar-item-text sidebar-link">
+  <a href="../man/aou_ls_workspace.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">aou_ls_workspace</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./man/aou_observation_period.html" class="sidebar-item-text sidebar-link">
+  <a href="../man/aou_observation_period.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">aou_observation_period</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./man/aou_session_info.html" class="sidebar-item-text sidebar-link">
+  <a href="../man/aou_session_info.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">aou_session_info</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./man/aou_sql.html" class="sidebar-item-text sidebar-link">
+  <a href="../man/aou_sql.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">aou_sql</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./man/aou_survey.html" class="sidebar-item-text sidebar-link">
+  <a href="../man/aou_survey.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">aou_survey</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./man/aou_table_info.html" class="sidebar-item-text sidebar-link">
+  <a href="../man/aou_table_info.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">aou_table_info</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./man/aou_tables.html" class="sidebar-item-text sidebar-link">
+  <a href="../man/aou_tables.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">aou_tables</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./man/aou_workspace_to_bucket.html" class="sidebar-item-text sidebar-link">
+  <a href="../man/aou_workspace_to_bucket.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">aou_workspace_to_bucket</span></a>
   </div>
 </li>
@@ -310,19 +344,19 @@ ul.task-list li input[type="checkbox"] {
   </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./NEWS.html" class="sidebar-item-text sidebar-link">
+  <a href="../NEWS.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">News</span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./LICENSE.html" class="sidebar-item-text sidebar-link active">
+  <a href="../LICENSE.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">License</span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./CITATION.html" class="sidebar-item-text sidebar-link">
+  <a href="../CITATION.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Citation</span></a>
   </div>
 </li>
@@ -332,29 +366,75 @@ ul.task-list li input[type="checkbox"] {
 <div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
 <!-- margin-sidebar -->
     <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
-        <nav id="TOC" role="doc-toc" class="toc-active">
-    <h2 id="toc-title">On this page</h2>
-   
-  <ul>
-  <li><a href="#mit-license" id="toc-mit-license" class="nav-link active" data-scroll-target="#mit-license">MIT License</a></li>
-  </ul>
-</nav>
+        
     </div>
 <!-- main -->
 <main class="content" id="quarto-document-content">
 
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../vignettes/atlas.html">Tutorials</a></li><li class="breadcrumb-item"><a href="../vignettes/atlas.html">Using ATLAS to create a cohort</a></li></ol></nav>
+<div class="quarto-title">
+<h1 class="title">Using ATLAS to create a cohort</h1>
+</div>
 
 
 
-<section id="mit-license" class="level1">
-<h1>MIT License</h1>
-<p>Copyright (c) 2023 allofus authors</p>
-<p>Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the “Software”), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:</p>
-<p>The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.</p>
-<p>THE SOFTWARE IS PROVIDED “AS IS”, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.</p>
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
 
 
-</section>
+</header>
+
+
+<p>It is often useful to build more complex cohort definitions using ATLAS, a web-based application that allows users to define cohorts and run analyses on the OHDSI network. While most of the features of ATLAS are not compatible with the AllofUS researcher workbench, the All of Us R package includes a function to download a cohort definition from ATLAS and generate the cohort in the All of Us database.</p>
+<p>To use this feature of the <code>allofus</code>package, you’ll also need to install the <a href="https://github.com/OHDSI/ROhdsiWebApi"><code>ROhdsiWebApi</code></a> package from GitHub. This package is used to query the ATLAS API and download the cohort definition and SQL query. The package is not available on CRAN (and is therefore not included with the <code>allofus package</code>), but it can be installed using the <code>pak</code> package:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">install.packages</span>(<span class="st">"pak"</span>)</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>pak<span class="sc">::</span><span class="fu">pak</span>(<span class="st">"ohdsi/ROhdsiWebApi"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>After installing the <code>ROhdsiWebApi</code> package, load the <code>allofus</code> package and the <code>ROhdsiWebApi</code> package:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(allofus)</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ROhdsiWebApi)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>If you haven’t already, this is the time to build your cohort definition in ATLAS. You can use the publicly available <a href="https://atlas-demo.ohdsi.org">demo version of ATLAS</a> which is pre-populated with many sample cohort definitions (though keep in mind that they are not validated). You can also use an ATLAS instance in your organization’s OMOP CDM. (A free, instructional course for using ATLAS is available through <a href="https://academy.ehden.eu/">EHDEN Academy</a>.)</p>
+<p>In this case, we’ll use the cohort definition 1788061, which is a simple stroke cohort definition.</p>
+<p>Using <code>ROhdsiWebApi</code>, we can download the cohort definition and SQL query from ATLAS:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>cd <span class="ot">&lt;-</span> ROhdsiWebApi<span class="sc">::</span><span class="fu">getCohortDefinition</span>(<span class="dv">1788061</span>, <span class="st">"https://atlas-demo.ohdsi.org/WebAPI"</span>)</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>cd_sql <span class="ot">&lt;-</span> ROhdsiWebApi<span class="sc">::</span><span class="fu">getCohortSql</span>(cd, <span class="st">"https://atlas-demo.ohdsi.org/WebAPI"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Then, we can use the <code>aou_atlas_cohort()</code> function to generate the cohort in the All of Us database.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>cohort <span class="ot">&lt;-</span> <span class="fu">aou_atlas_cohort</span>(</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">cohort_definition =</span> cd,</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">cohort_sql =</span> cd_sql</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Because the All of Us program does not use the <a href="https://ohdsi.github.io/CommonDataModel/ehrObsPeriods.html">typical heuristics</a> for the <code>observation_period</code> table, observation periods are first generated for each subject using the <code>aou_observation_period()</code> function. After generating a new <code>observation_period</code> table, the SQL from <code>ROhdsiWebApi::getCohortSql()</code> will extract a cohort from the All of Us database - resulting in a <em>local</em> dataframe with the cohort start and end dates for each subject who fell within the cohort definition. (The function is based on code from https://github.com/cmayer2/r4aou with some tweaks to generate the appropriate observation periods and incorporate other package functions.)</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(cohort)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<pre><code>#&gt; # A tibble: 6 × 4
+#&gt;   cohort_definition_id person_id cohort_start_date cohort_end_date
+#&gt;                  &lt;int&gt; &lt;int&gt;     &lt;date&gt;            &lt;date&gt;         
+#&gt; 1              1788061 xxxxxxx   1995-03-27        1995-03-27     
+#&gt; 2              1788061 xxxxxxx   2012-01-07        2012-01-21     
+#&gt; 3              1788061 xxxxxxx   2010-06-17        2016-04-05     
+#&gt; 4              1788061 xxxxxxx   2015-08-12        2017-08-30     
+#&gt; 5              1788061 xxxxxxx   2017-01-24        2019-01-24     
+#&gt; 6              1788061 xxxxxxx   2008-07-09        2019-01-24</code></pre>
+<p>To use this cohort table further, you can join it to other tables from the All of Us database (after they have been “collected”). Or, to use this table to limit the person table (or other OMOP CDM tables) to only your cohort, filter for the values in the <code>cohort$person_id</code> column:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>dplyr<span class="sc">::</span><span class="fu">tbl</span>(con, <span class="st">"person"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">filter</span>(person_id <span class="sc">%in%</span> <span class="sc">!!</span>cohort<span class="sc">$</span>person_id)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+
+
 
 </main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
@@ -768,13 +848,13 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 </script>
 <nav class="page-navigation">
   <div class="nav-page nav-page-previous">
-      <a href="./NEWS.html" class="pagination-link" aria-label="News">
-        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text">News</span>
+      <a href="../vignettes/allofus.html" class="pagination-link" aria-label="Getting Started">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text">Getting Started</span>
       </a>          
   </div>
   <div class="nav-page nav-page-next">
-      <a href="./CITATION.html" class="pagination-link" aria-label="Citation">
-        <span class="nav-page-text">Citation</span> <i class="bi bi-arrow-right-short"></i>
+      <a href="../vignettes/data.html" class="pagination-link" aria-label="Extracting All of Us survey and EHR data">
+        <span class="nav-page-text">Extracting All of Us survey and EHR data</span> <i class="bi bi-arrow-right-short"></i>
       </a>
   </div>
 </nav>
