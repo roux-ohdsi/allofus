@@ -4,21 +4,6 @@
 
 # `allofus` R Package
 
-The goal of the `allofus` R package is to streamline the use of R within
-the [All of Us Researcher
-Workbench](https://www.researchallofus.org/data-tools/workbench/).
-
-*The `allofus` R package is a not affiliated with or endorsed by the All
-of Us Research Program.*
-
-The `allofus` package helps researchers query the database and build
-transparent and reproducible analysed pipeline. The package allows
-researchers to easily use other database packages, such as `dbplyr` and
-`DBI`, with the All of Us database. The package also includes functions
-to help researchers manage storage in their workspace and bucket, as
-well as take advantage of tools developed for [OMOP
-CDM](https://www.researchallofus.org/faq/what-is-omop/) data.
-
 <!-- badges: start -->
 
 [![R-CMD-check](https://github.com/roux-ohdsi/allofus/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/roux-ohdsi/allofus/actions/workflows/R-CMD-check.yaml)
@@ -27,6 +12,27 @@ status](https://www.r-pkg.org/badges/version/allofus.png)](https://CRAN.R-projec
 [![](http://cranlogs.r-pkg.org/badges/grand-total/allofus.png)](https://cran.r-project.org/package=allofus)
 [![DOI](https://zenodo.org/badge/659848534.svg)](https://zenodo.org/doi/10.5281/zenodo.10420610)
 <!-- badges: end -->
+
+The goal of the `allofus` R package is to streamline the use of R within
+the [All of Us Researcher
+Workbench](https://www.researchallofus.org/data-tools/workbench/). It
+has 4 primary goals:
+
+1.  Facilitate the use of popular `tidyverse` ecosystem of R packages on
+    the Researcher Workbench to facilitate transparent and reproducible
+    analysis pipelines
+2.  Help researchers more efficiently and accurately extract and
+    synthesize survey data and EHR data
+3.  Increase the interoperability between fully-featured tools created
+    by the Observational Health Data Sciences and Informatics community
+    (OHDSI; a global consortium built around the use of the [OMOP
+    CDM](https://www.researchallofus.org/faq/what-is-omop/)) and the
+    Researcher Workbench
+4.  Make connecting to the database and managing files simple
+
+*The `allofus` R package is developed by Louisa Smith and Rob Cavanaugh
+at [Northeastern University](https://ohdsi.northeastern.edu) and is not
+affiliated with or endorsed by the All of Us Research Program.*
 
 ### Installation
 
@@ -85,5 +91,4 @@ citation("allofus")
 ### Bugs
 
 Please leave us comments, requests, and report bugs using the “Issues”
-tab on github located here:
-https://github.com/roux-ohdsi/allofus/issues.
+tab on github.

@@ -1,10 +1,13 @@
 ---
-title: "All of Us Surveys"
-output: rmarkdown::html_vignette
+title: "Searchable survey codebook"
+format: 
+  html: 
+    page-layout: full
 vignette: >
   %\VignetteIndexEntry{All of Us Surveys}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
+sidebar: false
 ---
 
 ```{r, include = FALSE}

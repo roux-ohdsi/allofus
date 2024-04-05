@@ -1,0 +1,718 @@
+[
+  {
+    "objectID": "CITATION.html",
+    "href": "CITATION.html",
+    "title": "Citation",
+    "section": "",
+    "text": "Citation\nTo cite package ‘allofus’ in publications use:\n\n  Smith L, Cavanaugh R (2023). _allofus: Interface for 'All of Us' Researcher Workbench_.\n  doi:10.5281/zenodo.10420610 &lt;https://doi.org/10.5281/zenodo.10420610&gt;, &lt;https://roux-ohdsi.github.io/allofus/&gt;.\n\nA BibTeX entry for LaTeX users is\n\n  @Manual{,\n    title = {allofus: Interface for 'All of Us' Researcher Workbench},\n    author = {Louisa Smith and Rob Cavanaugh},\n    year = {2023},\n    url = {https://roux-ohdsi.github.io/allofus/},\n    doi = {10.5281/zenodo.10420610},\n  }",
+    "crumbs": [
+      "Home",
+      "Citation"
+    ]
+  },
+  {
+    "objectID": "NEWS.html",
+    "href": "NEWS.html",
+    "title": "allofus",
+    "section": "",
+    "text": "allofus\n\n\nallofus 1.1.0\n\nadded new features including creation of temporary tables using aou_compute() and aou_create_temp_table() and a new aou_collect() function which accomodates bit64 integers when needed.\nsimplified aou_observation_period() function to look at earliest and latest clinical events rather than strictly implementing OHDSI conventions per expert advice\nminor big fixes, improved error messages, and improved documentation",
+    "crumbs": [
+      "Home",
+      "News"
+    ]
+  },
+  {
+    "objectID": "vignettes/data.html",
+    "href": "vignettes/data.html",
+    "title": "Extracting All of Us survey and EHR data",
+    "section": "",
+    "text": "The Researcher Workbench, available to registered All of Us researchers, provides tools for creating datasets using the All of Us database. Researchers first use the Workbench to create a cohort defined by values of survey variables (e.g., gender, race, age), observations from the electronic health record (e.g., diagnosis codes, lab values), data from wearable devices (e.g., fitbit), genomic data, and/or physical measurements. Data – either predefined or user-specified concept sets – from each of the database tables can then be extracted for the cohort.\nThe allofus package takes a programmatic approach to extracting data from the All of Us database. One advantage to this approach is that it is easier to document and share the process. This is especially important for reproducibility and transparency. To demonstrate, this vignette will walk through some examples of extracting data from the All of Us database.\nSuppose we want a cohort of the female All of Us participants who weren’t born in the US. For this cohort, we want to extract data on their history of diabetes, their A1C lab values, and their use of metformin after joining All of Us.",
+    "crumbs": [
+      "Home",
+      "Tutorials",
+      "Extracting All of Us survey and EHR data"
+    ]
+  },
+  {
+    "objectID": "vignettes/data.html#survey-data",
+    "href": "vignettes/data.html#survey-data",
+    "title": "Extracting All of Us survey and EHR data",
+    "section": "Survey data",
+    "text": "Survey data\nThe first step is extracting gender and country of birth from the survey data. We can retrieve these variables either by concept code or concept id. Using the allofus searchable codebook, we find that the concept id for gender is 1585838 and for birthplace is 1586135. We can use the aou_survey function to extract these variables from the All of Us database. This function takes a vector of concept ids or codes, and returns a dataset with one row per participant and one column per variable. The question_output argument allows you to specify the names of the column in the output dataset. Alternatively, you can specify “concept_id” or “concept_code” to name the variables according to one of those options.\n\nlibrary(allofus)\nlibrary(tidyverse)\n\nsvy_vars &lt;- aou_survey(questions = c(1585838, 1586135), question_output = c(\"gender\", \"birthplace\"))\n\n\n#&gt; Warning: No cohort provided.\n#&gt; → Pulling survey data for entire All of Us cohort.\n\nNote that the aou_survey function takes a cohort as an argument, with the only requirement that it contains a column called person_id. If no cohort is provided (e.g., if you are using survey data to define your cohort), the function will pull data for the entire All of Us cohort.\nBecause aou_survey() defaults to collect = FALSE, the query isn’t fully executed yet, and we can continue to perform analyses, like cross-tabulating the two variables, on the database.\n\ncount(svy_vars, gender, birthplace)\n\n#&gt; # Source:   SQL [?? x 3]\n#&gt; # Database: BigQueryConnection\n#&gt;    gender            birthplace       n\n#&gt;    &lt;chr&gt;             &lt;chr&gt;      &lt;int64&gt;\n#&gt;  1 Skip              Skip          4449\n#&gt;  2 NA                NA              97\n#&gt;  3 Woman             USA         205440\n#&gt;  4 Woman             Other        40348\n#&gt;  5 Man               Skip          1484\n#&gt;  6 Transgender       USA            504\n#&gt;  7 PreferNotToAnswer USA            475\n#&gt;  8 PreferNotToAnswer Other          112\n#&gt;  9 Man               USA         131698\n#&gt; 10 Man               Other        21059\n#&gt; # ℹ more rows\nTo create our cohort, we can subset the data to the participants matching our criteria.\n\ncohort &lt;- svy_vars %&gt;%\n  filter(gender == \"Woman\", birthplace == \"Other\")\n\ncohort\n\n#&gt; # Source:   SQL [?? x 5]\n#&gt; # Database: BigQueryConnection\n#&gt;    person_id birthplace gender birthplace_date gender_date\n#&gt;      &lt;int64&gt; &lt;chr&gt;      &lt;chr&gt;  &lt;date&gt;          &lt;date&gt;     \n#&gt;  1   xxxxxxx Other      Woman  2019-08-xx      2019-08-xx \n#&gt;  2   xxxxxxx Other      Woman  2018-06-xx      2018-06-xx \n#&gt;  3   xxxxxxx Other      Woman  2019-05-xx      2019-05-xx \n#&gt;  4   xxxxxxx Other      Woman  2019-02-xx      2019-02-xx \n#&gt;  5   xxxxxxx Other      Woman  2018-06-xx      2018-06-xx \n#&gt;  6   xxxxxxx Other      Woman  2019-03-xx      2019-03-xx \n#&gt;  7   xxxxxxx Other      Woman  2019-04-xx      2019-04-xx \n#&gt;  8   xxxxxxx Other      Woman  2019-04-xx      2019-04-xx \n#&gt;  9   xxxxxxx Other      Woman  2019-05-xx      2019-05-xx \n#&gt; 10   xxxxxxx Other      Woman  2020-09-xx      2020-09-xx \n#&gt; # ℹ more rows\nNote that the aou_survey() function automatically creates an additional column for every survey variable extracted, which contains the date the participant answered the question. These are automatically named by adding “_date” as a suffix to the column names.",
+    "crumbs": [
+      "Home",
+      "Tutorials",
+      "Extracting All of Us survey and EHR data"
+    ]
+  },
+  {
+    "objectID": "vignettes/data.html#ehr-data",
+    "href": "vignettes/data.html#ehr-data",
+    "title": "Extracting All of Us survey and EHR data",
+    "section": "EHR data",
+    "text": "EHR data\nNow that we have our cohort, we want to create a dataset with data from these participants’ medical records. We first want to find the concept ids of the data we want to extract. There are a number of tools we could use to do so:\n\nAthena: a web-based tool for searching the entire OMOP vocabulary. The concept id for Type 2 diabetes mellitus can be found under ID. There are many results for this search, but we want only standard concepts when searching for EHR data.\n\nData Browser: a tool for exploring data in the All of Us database. Finding the concept id for Type 2 diabetes mellitus requires searching for that concept and then clicking “Sources”:\n\nResearcher Workbench: Creating a concept set can allow you to find a number of concept ids quickly. Add concepts to your concept set, and then review the concept set to see them all.\n\n\nHere are some concepts we may want to include. Keep in mind that this is an example, and a real analysis would have a more thorough search for relevant concepts.\n\n\n\n\n\n\n\n\nConcept ID\nConcept Name\nDomain\n\n\n\n\n201826\nType 2 diabetes mellitus\nCondition\n\n\n4193704\nType 2 diabetes mellitus without complication\nCondition\n\n\n40164929\nmetformin hydrochloride 500 MG Oral Tablet\nDrug\n\n\n40164897\nmetformin hydrochloride 1000 MG Oral Tablet\nDrug\n\n\n3004410\nHemoglobin A1c/Hemoglobin.total in Blood\nMeasurement\n\n\n3005673\nHemoglobin A1c/Hemoglobin.total in Blood by HPLC\nMeasurement\n\n\n\nFirst, we’ll extract data on diabetes diagnoses. We can use the aou_concept_set function to extract data from the All of Us database. This function takes a cohort, a vector of concepts, and a domain or set of domains. You can actually extract data from multiple domains at once – the default is to search all domains. However, it is helpful to specify the domain(s) when you can, for speed and clarity. The output = argument specifies the type of data to extract. Here, we’ll extract an indicator variable for whether the participant has a diabetes diagnosis at any point in their medical record. We’ll call that variable “t2dm”.\n\nt2dm &lt;- aou_concept_set(cohort,\n  concepts = c(201826, 4193704),\n  domains = \"condition\", output = \"indicator\",\n  concept_set_name = \"t2dm\"\n)\n\nWe can also extract data within a certain time window. For example, if we only want to extract metformin use after joining All of Us, we can specify a start date as the date the participant answered the gender question (on the Basics survey). We’ll count how many times the participant was prescribed metformin after that time point.\n\nmetformin &lt;- aou_concept_set(cohort,\n  concepts = c(40164929, 40164897),\n  domains = \"drug\", output = \"count\",\n  start_date = \"gender_date\", concept_set_name = \"metformin\"\n)\n\nFor a concept set in the measurement domain, we likely want to set output = \"all\" because we are interested in the values of the measurements, not whether they had any or how many they had.\n\na1c &lt;- aou_concept_set(cohort,\n  concepts = c(3004410, 3005673),\n  domains = \"measurement\", output = \"all\", start_date = \"gender_date\"\n)\n\nThe output to this is a dataset with one row per measurement. We can see that the second participant in the output has had 4 A1C measurements since joining All of Us, while the fifth had 1 and the rest had none.\n\na1c\n\n#&gt; # Source:   SQL [?? x 9]\n#&gt; # Database: BigQueryConnection\n#&gt;    person_id concept_date concept_id concept_name concept_domain value_as_number\n#&gt;      &lt;int64&gt; &lt;date&gt;          &lt;int64&gt; &lt;chr&gt;        &lt;chr&gt;                    &lt;dbl&gt;\n#&gt;  1   xxxxxx1 NA                   NA NA           NA                        NA  \n#&gt;  2   xxxxxx2 2022-03-xx      3004410 Hemoglobin … Measurement                5.6\n#&gt;  3   xxxxxx2 2021-07-xx      3004410 Hemoglobin … Measurement                5.6\n#&gt;  4   xxxxxx2 2021-05-xx      3004410 Hemoglobin … Measurement                5.5\n#&gt;  5   xxxxxx2 2020-10-xx      3004410 Hemoglobin … Measurement                6  \n#&gt;  6   xxxxxx3 NA                   NA NA           NA                        NA  \n#&gt;  7   xxxxxx4 NA                   NA NA           NA                        NA  \n#&gt;  8   xxxxxx5 2019-04-xx      3005673 Hemoglobin … Measurement                5.9\n#&gt;  9   xxxxxx6 NA                   NA NA           NA                        NA  \n#&gt; 10   xxxxxx7 NA                   NA NA           NA                        NA  \n#&gt; # ℹ more rows\n#&gt; # ℹ 3 more variables: value_as_concept_id &lt;int64&gt;, value_source_value &lt;chr&gt;,\n#&gt; #   gender_date &lt;date&gt;",
+    "crumbs": [
+      "Home",
+      "Tutorials",
+      "Extracting All of Us survey and EHR data"
+    ]
+  },
+  {
+    "objectID": "vignettes/data.html#health-history-survey-data",
+    "href": "vignettes/data.html#health-history-survey-data",
+    "title": "Extracting All of Us survey and EHR data",
+    "section": "Health history survey data",
+    "text": "Health history survey data\nSuppose we want to compare the EHR data to self-reported survey data on diabetes diagnoses. Returning again to the aou_survey() function, we need to first find the concept id for the question asking about diabetes diagnoses. Wuestions from the health history surveys are more complex than others like gender and birthplace: there are branching questions and complex skip patterns for each question, which were also asked about family members, and groups of diagnoses were asked about together. The searchable health history codebook is a useful tool for finding the concept id for these questions. We can search for “diabetes” and find the concept id for the question asking about type 2 diabetes diagnoses for the respondent: 43529932. We can also use the Data Browser to find the same concept id: \nData from the health history surveys is returned as “Yes”, “No”, or “Skip”. An observation will have a value of “No” if the participant answered that someone in their family had the condition, but did not self-identify as having the condition, or if they responded that no one in their family had the condition. If they skipped either part of the question, the value will be “Skip”.\n\nt2dm_self &lt;- aou_survey(cohort, questions = 43529932, question_output = \"t2dm_survey\")\n\nNext, we want to combine these datasets into one. We can do this using the aou_join function. This function takes a list of datasets and joins them together using the participant id. The aou_join function also allows you to specify the type of join (inner, left, right, or full). Here we’ll perform repeated left joins into the cohort using the reduce() function from the purrr package.\n\ncombined_data &lt;- reduce(list(cohort, t2dm, metformin, a1c, t2dm_self),\n  aou_join,\n  type = \"left\"\n)\n\nOur combined dataset has columns for the diabetes diagnosis indicator from the EHR data, the number of metformin prescriptions, the self-reported diabetes diagnosis from the health history survey and the date that survey was completed, as well as complete data on the A1C measurements. Participants with multiple measurements therefore have multiple rows in the dataset. We may want to do some additional analyses before bringing the table off the database and into R. For example, we may want to summarize the A1C measurements as the highest value for each participant. We can continue to manipulate the data using dplyr functions (see vignette(\"sql\", package = \"allofus\")).\n\nfinal_data &lt;- combined_data %&gt;%\n  group_by(person_id, birthplace, t2dm, metformin, t2dm_survey) %&gt;%\n  summarize(max_a1c = max(value_as_number, na.rm = TRUE), .groups = \"drop\")\n\nThis final query may take a few seconds to run – it is the accumulation of all the queries we’ve run so far (use show_query() to see the SQL query that will be run). For that reason, it is often helpful to print the result of each individual query to make sure it is what you expect before moving on to the next step.\n\nfinal_data\n\n#&gt; # Source:   SQL [?? x 5]\n#&gt; # Database: BigQueryConnection\n#&gt;    person_id  t2dm metformin t2dm_survey max_a1c\n#&gt;      &lt;int64&gt; &lt;dbl&gt;     &lt;dbl&gt; &lt;chr&gt;         &lt;dbl&gt;\n#&gt;  1   xxxxxxx     0         0 NA             NA  \n#&gt;  2   xxxxxxx     0         0 DontKnow       NA  \n#&gt;  3   xxxxxxx     0         0 NA             NA  \n#&gt;  4   xxxxxxx     0         0 No             NA  \n#&gt;  5   xxxxxxx     0         0 NA             NA  \n#&gt;  6   xxxxxxx     0         0 NA             NA  \n#&gt;  7   xxxxxxx     0         0 NA             NA  \n#&gt;  8   xxxxxxx     0         0 No             NA  \n#&gt;  9   xxxxxxx     0         0 NA             NA  \n#&gt; 10   xxxxxxx     0         0 No              5.4\n#&gt; # ℹ more rows",
+    "crumbs": [
+      "Home",
+      "Tutorials",
+      "Extracting All of Us survey and EHR data"
+    ]
+  },
+  {
+    "objectID": "vignettes/web_only/searchable_codebook.html",
+    "href": "vignettes/web_only/searchable_codebook.html",
+    "title": "Searchable survey codebook",
+    "section": "",
+    "text": "This table consists of mapped rows from the publicly available All of Us Survey Codebook to the All of Us PPI Vocabulary available on Athena. A small number of rows did not match between the codebook and the Athena PPI Vocabulary. The code to generate a full table can be found here. It can also be accessed in R using allofus::aou_codebook.\nMore information on the All of Us Surveys is available at the All of Us Survey Explorer. PDF versions of the individual surveys are linked in the table.",
+    "crumbs": [
+      "Home",
+      "Codebooks",
+      "Searchable survey codebook"
+    ]
+  },
+  {
+    "objectID": "vignettes/atlas.html",
+    "href": "vignettes/atlas.html",
+    "title": "Using ATLAS to create a cohort",
+    "section": "",
+    "text": "It is often useful to build more complex cohort definitions using ATLAS, a web-based application that allows users to define cohorts and run analyses on the OHDSI network. While most of the features of ATLAS are not compatible with the AllofUS researcher workbench, the All of Us R package includes a function to download a cohort definition from ATLAS and generate the cohort in the All of Us database.\nTo use this feature of the allofuspackage, you’ll also need to install the ROhdsiWebApi package from GitHub. This package is used to query the ATLAS API and download the cohort definition and SQL query. The package is not available on CRAN (and is therefore not included with the allofus package), but it can be installed using the pak package:\n\ninstall.packages(\"pak\")\npak::pak(\"ohdsi/ROhdsiWebApi\")\n\nAfter installing the ROhdsiWebApi package, load the allofus package and the ROhdsiWebApi package:\n\nlibrary(allofus)\nlibrary(ROhdsiWebApi)\n\nIf you haven’t already, this is the time to build your cohort definition in ATLAS. You can use the publicly available demo version of ATLAS which is pre-populated with many sample cohort definitions (though keep in mind that they are not validated). You can also use an ATLAS instance in your organization’s OMOP CDM. (A free, instructional course for using ATLAS is available through EHDEN Academy.)\nIn this case, we’ll use the cohort definition 1788061, which is a simple stroke cohort definition.\nUsing ROhdsiWebApi, we can download the cohort definition and SQL query from ATLAS:\n\ncd &lt;- ROhdsiWebApi::getCohortDefinition(1788061, \"https://atlas-demo.ohdsi.org/WebAPI\")\ncd_sql &lt;- ROhdsiWebApi::getCohortSql(cd, \"https://atlas-demo.ohdsi.org/WebAPI\")\n\nThen, we can use the aou_atlas_cohort() function to generate the cohort in the All of Us database.\n\ncohort &lt;- aou_atlas_cohort(\n  cohort_definition = cd,\n  cohort_sql = cd_sql\n)\n\nBecause the All of Us program does not use the typical heuristics for the observation_period table, observation periods are first generated for each subject using the aou_observation_period() function. After generating a new observation_period table, the SQL from ROhdsiWebApi::getCohortSql() will extract a cohort from the All of Us database - resulting in a local dataframe with the cohort start and end dates for each subject who fell within the cohort definition. (The function is based on code from https://github.com/cmayer2/r4aou with some tweaks to generate the appropriate observation periods and incorporate other package functions.)\n\nhead(cohort)\n\n#&gt; # A tibble: 6 × 4\n#&gt;   cohort_definition_id person_id cohort_start_date cohort_end_date\n#&gt;                  &lt;int&gt; &lt;int&gt;     &lt;date&gt;            &lt;date&gt;         \n#&gt; 1              1788061 xxxxxxx   1995-03-27        1995-03-27     \n#&gt; 2              1788061 xxxxxxx   2012-01-07        2012-01-21     \n#&gt; 3              1788061 xxxxxxx   2010-06-17        2016-04-05     \n#&gt; 4              1788061 xxxxxxx   2015-08-12        2017-08-30     \n#&gt; 5              1788061 xxxxxxx   2017-01-24        2019-01-24     \n#&gt; 6              1788061 xxxxxxx   2008-07-09        2019-01-24\nTo use this cohort table further, you can join it to other tables from the All of Us database (after they have been “collected”). Or, to use this table to limit the person table (or other OMOP CDM tables) to only your cohort, filter for the values in the cohort$person_id column:\n\ndplyr::tbl(con, \"person\") %&gt;%\n  dplyr::filter(person_id %in% !!cohort$person_id)",
+    "crumbs": [
+      "Home",
+      "Tutorials",
+      "Using ATLAS to create a cohort"
+    ]
+  },
+  {
+    "objectID": "man/aou_collect.html",
+    "href": "man/aou_collect.html",
+    "title": "allofus",
+    "section": "",
+    "text": "If you connect to the All of Us database via aou_connect(), integer columns will be converted to the int64 class, which can represent 64-bit integers. This is safer than keeping as R’s default integer class, because some of the values of the ID columns in All of Us are larger than R can handle as integers. However, this can make working with the local table more difficult in RStudio as a vector of values will not match the int64 class. This is not a problem in Jupyter notebooks, meaning that code that works on one platform may not work on another. A safe practice is to use aou_collect(), which works just like dplyr::collect() except that any integer values are converted to doubles. If this is not what you want, set convert_int64 = FALSE.\n\n\n\naou_collect(data, convert_int64 = TRUE, ...)\n\n\n\n\n\n\n\ndata\n\n\nA reference to a remote database table (or unexecuted query)\n\n\n\n\nconvert_int64\n\n\nDo you want to convert integer values to doubles? Defaults to TRUE\n\n\n\n\n…\n\n\nOther arguments passed to dplyr::collect()\n\n\n\n\n\n\n\n\n\n\na local dataframe\n\n\n\n\nlibrary(allofus)\n\n\n\n# returns 2 rows, as expected\ndplyr::tbl(con, \"concept\") %&gt;%\n  dplyr::filter(concept_id %in% c(1112807, 4167538)) %&gt;%\n  aou_collect() %&gt;%\n  dplyr::filter(concept_id %in% c(1112807, 4167538))\n\ndefault_collect &lt;- tbl(con, \"concept\") %&gt;%\n  dplyr::filter(concept_id %in% c(1112807, 4167538)) %&gt;%\n  dplyr::collect()\n# returns 2 rows in Jupyter and 0 in RStudio\ndplyr::filter(default_collect, concept_id %in% c(1112807, 4167538))",
+    "crumbs": [
+      "Home",
+      "Reference",
+      "aou_collect"
+    ]
+  },
+  {
+    "objectID": "man/aou_collect.html#collect-a-tbl-object-and-convert-integer64-columns-to-double",
+    "href": "man/aou_collect.html#collect-a-tbl-object-and-convert-integer64-columns-to-double",
+    "title": "allofus",
+    "section": "",
+    "text": "If you connect to the All of Us database via aou_connect(), integer columns will be converted to the int64 class, which can represent 64-bit integers. This is safer than keeping as R’s default integer class, because some of the values of the ID columns in All of Us are larger than R can handle as integers. However, this can make working with the local table more difficult in RStudio as a vector of values will not match the int64 class. This is not a problem in Jupyter notebooks, meaning that code that works on one platform may not work on another. A safe practice is to use aou_collect(), which works just like dplyr::collect() except that any integer values are converted to doubles. If this is not what you want, set convert_int64 = FALSE.\n\n\n\naou_collect(data, convert_int64 = TRUE, ...)\n\n\n\n\n\n\n\ndata\n\n\nA reference to a remote database table (or unexecuted query)\n\n\n\n\nconvert_int64\n\n\nDo you want to convert integer values to doubles? Defaults to TRUE\n\n\n\n\n…\n\n\nOther arguments passed to dplyr::collect()\n\n\n\n\n\n\n\n\n\n\na local dataframe\n\n\n\n\nlibrary(allofus)\n\n\n\n# returns 2 rows, as expected\ndplyr::tbl(con, \"concept\") %&gt;%\n  dplyr::filter(concept_id %in% c(1112807, 4167538)) %&gt;%\n  aou_collect() %&gt;%\n  dplyr::filter(concept_id %in% c(1112807, 4167538))\n\ndefault_collect &lt;- tbl(con, \"concept\") %&gt;%\n  dplyr::filter(concept_id %in% c(1112807, 4167538)) %&gt;%\n  dplyr::collect()\n# returns 2 rows in Jupyter and 0 in RStudio\ndplyr::filter(default_collect, concept_id %in% c(1112807, 4167538))",
+    "crumbs": [
+      "Home",
+      "Reference",
+      "aou_collect"
+    ]
+  },
+  {
+    "objectID": "man/aou_concept_set.html",
+    "href": "man/aou_concept_set.html",
+    "title": "allofus",
+    "section": "",
+    "text": "Retrieves occurrences of a concept set from the All of Us database for a given cohort.\n\n\n\naou_concept_set(\n  cohort = NULL,\n  concepts,\n  start_date = NULL,\n  end_date = NULL,\n  domains = c(\"condition\", \"measurement\", \"observation\", \"procedure\", \"drug\", \"device\",\n    \"visit\"),\n  output = \"indicator\",\n  concept_set_name = \"concept_set\",\n  min_n = 1,\n  collect = FALSE,\n  ...,\n  con = getOption(\"aou.default.con\")\n)\n\n\n\n\n\n\n\ncohort\n\n\nReference to a remote table or local dataframe with a column called \"person_id\", and (possibly) columns for start_date and end_date. If not provided, defaults to entire All of Us cohort.\n\n\n\n\nconcepts\n\n\na vector of concept ids\n\n\n\n\nstart_date\n\n\nchr; the name of the start_date column in the cohort table; defaults to NULL to pull data across all dates\n\n\n\n\nend_date\n\n\nchr; the name of the end_date column in the cohort table; defaults to NULL to pull data across all dates\n\n\n\n\ndomains\n\n\nchr; a vector of domains to search for the concepts in (\"condition\", \"measurement\", \"observation\", \"procedure\", \"drug\", \"device\", \"visit\"); defaults to all\n\n\n\n\noutput\n\n\none of \"indicator\", \"count\", \"all\"; do you want to return a 1 if a person has any matching concepts and 0 if not (\"indicator\"), the number of matching concepts per person (\"count\"), or all info about the matching concepts (\"all\"). Defaults to \"indicator\"\n\n\n\n\nconcept_set_name\n\n\nchr; If output = \"indicator\" or output = \"n\", name for that column. Defaults to \"concept_set\".\n\n\n\n\nmin_n\n\n\ndbl; If output = \"indicator\", the minimum number of occurrences per person to consider the indicator true. Defaults to 1.\n\n\n\n\ncollect\n\n\nWhether to bring the resulting table into local memory (collect = TRUE) as a dataframe or leave as a reference to a database table (for continued analysis using, e.g., dbplyr). Defaults to FALSE.\n\n\n\n\n…\n\n\nfurther arguments passed along to collect() if collect = TRUE\n\n\n\n\ncon\n\n\nConnection to the allofus SQL database. Defaults to getOption(“aou.default.con”), which is created automatically with aou_connect().\n\n\n\n\n\n\nA dataframe if collect = TRUE; a reference to a remote database table if not.\n\n\n\n\nlibrary(allofus)\n\n\n# indicator for any aspirin at any time\naspirin_users &lt;- aou_concept_set(dplyr::tbl(con, \"person\"),\n  concepts = 1191, concept_set_name = \"aspirin\", domains = \"drug\"\n)\n\n# starting with person table to create a cohort\npeople &lt;- dplyr::tbl(con, \"person\") %&gt;%\n  dplyr::filter(person_id &lt; 2000000) %&gt;%\n  dplyr::mutate(\n    start = as.Date(\"2021-01-01\"),\n    end = as.Date(\"2023-12-31\")\n  )\n\ndat &lt;- aou_concept_set(\n  cohort = people,\n  concepts = c(725115, 1612146, 1613031),\n  start_date = \"start\",\n  end_date = \"end\",\n  concept_set_name = \"CGM\",\n  output = \"all\"\n)",
+    "crumbs": [
+      "Home",
+      "Reference",
+      "aou_concept_set"
+    ]
+  },
+  {
+    "objectID": "man/aou_concept_set.html#get-occurrences-of-a-concept-set-from-aou-for-a-given-cohort",
+    "href": "man/aou_concept_set.html#get-occurrences-of-a-concept-set-from-aou-for-a-given-cohort",
+    "title": "allofus",
+    "section": "",
+    "text": "Retrieves occurrences of a concept set from the All of Us database for a given cohort.\n\n\n\naou_concept_set(\n  cohort = NULL,\n  concepts,\n  start_date = NULL,\n  end_date = NULL,\n  domains = c(\"condition\", \"measurement\", \"observation\", \"procedure\", \"drug\", \"device\",\n    \"visit\"),\n  output = \"indicator\",\n  concept_set_name = \"concept_set\",\n  min_n = 1,\n  collect = FALSE,\n  ...,\n  con = getOption(\"aou.default.con\")\n)\n\n\n\n\n\n\n\ncohort\n\n\nReference to a remote table or local dataframe with a column called \"person_id\", and (possibly) columns for start_date and end_date. If not provided, defaults to entire All of Us cohort.\n\n\n\n\nconcepts\n\n\na vector of concept ids\n\n\n\n\nstart_date\n\n\nchr; the name of the start_date column in the cohort table; defaults to NULL to pull data across all dates\n\n\n\n\nend_date\n\n\nchr; the name of the end_date column in the cohort table; defaults to NULL to pull data across all dates\n\n\n\n\ndomains\n\n\nchr; a vector of domains to search for the concepts in (\"condition\", \"measurement\", \"observation\", \"procedure\", \"drug\", \"device\", \"visit\"); defaults to all\n\n\n\n\noutput\n\n\none of \"indicator\", \"count\", \"all\"; do you want to return a 1 if a person has any matching concepts and 0 if not (\"indicator\"), the number of matching concepts per person (\"count\"), or all info about the matching concepts (\"all\"). Defaults to \"indicator\"\n\n\n\n\nconcept_set_name\n\n\nchr; If output = \"indicator\" or output = \"n\", name for that column. Defaults to \"concept_set\".\n\n\n\n\nmin_n\n\n\ndbl; If output = \"indicator\", the minimum number of occurrences per person to consider the indicator true. Defaults to 1.\n\n\n\n\ncollect\n\n\nWhether to bring the resulting table into local memory (collect = TRUE) as a dataframe or leave as a reference to a database table (for continued analysis using, e.g., dbplyr). Defaults to FALSE.\n\n\n\n\n…\n\n\nfurther arguments passed along to collect() if collect = TRUE\n\n\n\n\ncon\n\n\nConnection to the allofus SQL database. Defaults to getOption(“aou.default.con”), which is created automatically with aou_connect().\n\n\n\n\n\n\nA dataframe if collect = TRUE; a reference to a remote database table if not.\n\n\n\n\nlibrary(allofus)\n\n\n# indicator for any aspirin at any time\naspirin_users &lt;- aou_concept_set(dplyr::tbl(con, \"person\"),\n  concepts = 1191, concept_set_name = \"aspirin\", domains = \"drug\"\n)\n\n# starting with person table to create a cohort\npeople &lt;- dplyr::tbl(con, \"person\") %&gt;%\n  dplyr::filter(person_id &lt; 2000000) %&gt;%\n  dplyr::mutate(\n    start = as.Date(\"2021-01-01\"),\n    end = as.Date(\"2023-12-31\")\n  )\n\ndat &lt;- aou_concept_set(\n  cohort = people,\n  concepts = c(725115, 1612146, 1613031),\n  start_date = \"start\",\n  end_date = \"end\",\n  concept_set_name = \"CGM\",\n  output = \"all\"\n)",
+    "crumbs": [
+      "Home",
+      "Reference",
+      "aou_concept_set"
+    ]
+  },
+  {
+    "objectID": "man/aou_compute.html",
+    "href": "man/aou_compute.html",
+    "title": "allofus",
+    "section": "",
+    "text": "Computes a temporary table from a dplyr chain that returns an SQL query (e.g., tbl(con, table)) and returns the name of the temporary table. May be useful to create intermediate tables to reduce long queries. The temporary table will only exist for the current session and will nee to be created again a new session.\n\n\n\naou_compute(data, ..., con = getOption(\"aou.default.con\"))\n\n\n\n\n\n\n\ndata\n\n\nA reference to an unexecuted remote query (e.g., the result of a tbl(con, …) %&gt;% … chain)\n\n\n\n\n…\n\n\nOther arugments passed to bigrquery::bq_table_download() when collect = TRUE\n\n\n\n\ncon\n\n\nConnection to the allofus SQL database. Defaults to getOption(“aou.default.con”), which is created automatically with aou_connect().\n\n\n\n\n\n\n\n\n\n\nA reference to a temporary table in the database.\n\n\n\n\nlibrary(allofus)\n\n\n\ncon &lt;- aou_connect()\ntmp_tbl &lt;- dplyr::tbl(con, \"concept\") %&gt;%\n  dplyr::select(concept_id) %&gt;%\n  head(10) %&gt;%\n  aou_compute()\n\ntmp_tbl",
+    "crumbs": [
+      "Home",
+      "Reference",
+      "aou_compute"
+    ]
+  },
+  {
+    "objectID": "man/aou_compute.html#compute-a-dplyr-tbl-sql-query-into-a-temp-table",
+    "href": "man/aou_compute.html#compute-a-dplyr-tbl-sql-query-into-a-temp-table",
+    "title": "allofus",
+    "section": "",
+    "text": "Computes a temporary table from a dplyr chain that returns an SQL query (e.g., tbl(con, table)) and returns the name of the temporary table. May be useful to create intermediate tables to reduce long queries. The temporary table will only exist for the current session and will nee to be created again a new session.\n\n\n\naou_compute(data, ..., con = getOption(\"aou.default.con\"))\n\n\n\n\n\n\n\ndata\n\n\nA reference to an unexecuted remote query (e.g., the result of a tbl(con, …) %&gt;% … chain)\n\n\n\n\n…\n\n\nOther arugments passed to bigrquery::bq_table_download() when collect = TRUE\n\n\n\n\ncon\n\n\nConnection to the allofus SQL database. Defaults to getOption(“aou.default.con”), which is created automatically with aou_connect().\n\n\n\n\n\n\n\n\n\n\nA reference to a temporary table in the database.\n\n\n\n\nlibrary(allofus)\n\n\n\ncon &lt;- aou_connect()\ntmp_tbl &lt;- dplyr::tbl(con, \"concept\") %&gt;%\n  dplyr::select(concept_id) %&gt;%\n  head(10) %&gt;%\n  aou_compute()\n\ntmp_tbl",
+    "crumbs": [
+      "Home",
+      "Reference",
+      "aou_compute"
+    ]
+  },
+  {
+    "objectID": "man/aou_tables.html",
+    "href": "man/aou_tables.html",
+    "title": "allofus",
+    "section": "",
+    "text": "Prints a list of all of the tables in the All of Us Big Query Database.\n\n\n\naou_tables(remove_na = TRUE, ..., con = getOption(\"aou.default.con\"))\n\n\n\n\n\n\n\nremove_na\n\n\nWhether to remove tables that are not in the data dictionary. Defaults to TRUE\n\n\n\n\n…\n\n\nNot currently used\n\n\n\n\ncon\n\n\nConnection to the allofus SQL database. Defaults to getOption(“aou.default.con”), which is created automatically with aou_connect().\n\n\n\n\n\n\nA dataframe with the table names and the number of columns\n\n\n\n\nlibrary(allofus)\n\n\ncon &lt;- aou_connect()\naou_tables()",
+    "crumbs": [
+      "Home",
+      "Reference",
+      "aou_tables"
+    ]
+  },
+  {
+    "objectID": "man/aou_tables.html#list-tables-in-the-aou-database",
+    "href": "man/aou_tables.html#list-tables-in-the-aou-database",
+    "title": "allofus",
+    "section": "",
+    "text": "Prints a list of all of the tables in the All of Us Big Query Database.\n\n\n\naou_tables(remove_na = TRUE, ..., con = getOption(\"aou.default.con\"))\n\n\n\n\n\n\n\nremove_na\n\n\nWhether to remove tables that are not in the data dictionary. Defaults to TRUE\n\n\n\n\n…\n\n\nNot currently used\n\n\n\n\ncon\n\n\nConnection to the allofus SQL database. Defaults to getOption(“aou.default.con”), which is created automatically with aou_connect().\n\n\n\n\n\n\nA dataframe with the table names and the number of columns\n\n\n\n\nlibrary(allofus)\n\n\ncon &lt;- aou_connect()\naou_tables()",
+    "crumbs": [
+      "Home",
+      "Reference",
+      "aou_tables"
+    ]
+  },
+  {
+    "objectID": "man/aou_codebook.html",
+    "href": "man/aou_codebook.html",
+    "title": "allofus",
+    "section": "",
+    "text": "A data frame with rows from the publicly available All of Us Survey Codebook mapped to the All of Us PPI Vocabulary available on Athena. A small number of rows did not match between the codebook and the Athena PPI Vocabulary.\n\n\n\naou_codebook\n\n\n\n\naou_codebook A data frame with 702 rows and 11 columns:\n\n\nconcept_code\n\n\nchr; Concept code from AOU codebook\n\n\nconcept_id\n\n\nint; mapped concept_id from PPI vocabulary\n\n\nconcept_name\n\n\nchr; Formatted text name of concept\n\n\nconcept_class_id\n\n\nchr; type of survey item - question or answer\n\n\nform_name\n\n\nint; name of survey\n\n\nfield_type\n\n\nchr; type of question (radio, text, checkbox etc.)\n\n\nfield_label\n\n\nchr; The actual text of the question or answer\n\n\nchoices\n\n\nint; choices for question if radio or checkbox\n\n\nstandard_concept\n\n\nchr; Whether concept_id is a standard omop concept\n\n\nvalid_start_Date\n\n\nchr; start date for concept\n\n\nvalid_end_Date\n\n\nint; end date for concept\n\n\nlink\n\n\nchr; link to survey pdf\n\n\n\n\n\nQuestions relating to specific conditions are not included as part of this table. They are instead available in the aou_health_history table.\n\n\nAll of Us codebook\n\n\nCode to generate table",
+    "crumbs": [
+      "Home",
+      "Reference",
+      "aou_codebook"
+    ]
+  },
+  {
+    "objectID": "man/aou_codebook.html#all-of-us-modified-codebook",
+    "href": "man/aou_codebook.html#all-of-us-modified-codebook",
+    "title": "allofus",
+    "section": "",
+    "text": "A data frame with rows from the publicly available All of Us Survey Codebook mapped to the All of Us PPI Vocabulary available on Athena. A small number of rows did not match between the codebook and the Athena PPI Vocabulary.\n\n\n\naou_codebook\n\n\n\n\naou_codebook A data frame with 702 rows and 11 columns:\n\n\nconcept_code\n\n\nchr; Concept code from AOU codebook\n\n\nconcept_id\n\n\nint; mapped concept_id from PPI vocabulary\n\n\nconcept_name\n\n\nchr; Formatted text name of concept\n\n\nconcept_class_id\n\n\nchr; type of survey item - question or answer\n\n\nform_name\n\n\nint; name of survey\n\n\nfield_type\n\n\nchr; type of question (radio, text, checkbox etc.)\n\n\nfield_label\n\n\nchr; The actual text of the question or answer\n\n\nchoices\n\n\nint; choices for question if radio or checkbox\n\n\nstandard_concept\n\n\nchr; Whether concept_id is a standard omop concept\n\n\nvalid_start_Date\n\n\nchr; start date for concept\n\n\nvalid_end_Date\n\n\nint; end date for concept\n\n\nlink\n\n\nchr; link to survey pdf\n\n\n\n\n\nQuestions relating to specific conditions are not included as part of this table. They are instead available in the aou_health_history table.\n\n\nAll of Us codebook\n\n\nCode to generate table",
+    "crumbs": [
+      "Home",
+      "Reference",
+      "aou_codebook"
+    ]
+  },
+  {
+    "objectID": "man/aou_ls_workspace.html",
+    "href": "man/aou_ls_workspace.html",
+    "title": "allofus",
+    "section": "",
+    "text": "Lists all data files in the workspace or files matching a certain pattern.\n\n\n\naou_ls_workspace(pattern = \"\", silent = FALSE, ...)\n\n\n\n\n\n\n\npattern\n\n\nRegular expression, such as \"*.csv\" or a single file name e.g., \"mydata.csv\". Default will find all files apart from notebooks (.ipynb, .Rmd, .qmd files).\n\n\n\n\nsilent\n\n\nWhether to omit the names of files found. Defaults to FALSE.\n\n\n\n\n…\n\n\nOther arguments passed to list.files()\n\n\n\n\n\n\nA vector of file names\n\n\n\n\nlibrary(allofus)\n\nmy_workspace_files &lt;- aou_ls_workspace(silent = TRUE)\naou_ls_workspace(\"*.csv\")\naou_ls_workspace(path = \"data\")",
+    "crumbs": [
+      "Home",
+      "Reference",
+      "aou_ls_workspace"
+    ]
+  },
+  {
+    "objectID": "man/aou_ls_workspace.html#list-the-current-files-in-your-workspace",
+    "href": "man/aou_ls_workspace.html#list-the-current-files-in-your-workspace",
+    "title": "allofus",
+    "section": "",
+    "text": "Lists all data files in the workspace or files matching a certain pattern.\n\n\n\naou_ls_workspace(pattern = \"\", silent = FALSE, ...)\n\n\n\n\n\n\n\npattern\n\n\nRegular expression, such as \"*.csv\" or a single file name e.g., \"mydata.csv\". Default will find all files apart from notebooks (.ipynb, .Rmd, .qmd files).\n\n\n\n\nsilent\n\n\nWhether to omit the names of files found. Defaults to FALSE.\n\n\n\n\n…\n\n\nOther arguments passed to list.files()\n\n\n\n\n\n\nA vector of file names\n\n\n\n\nlibrary(allofus)\n\nmy_workspace_files &lt;- aou_ls_workspace(silent = TRUE)\naou_ls_workspace(\"*.csv\")\naou_ls_workspace(path = \"data\")",
+    "crumbs": [
+      "Home",
+      "Reference",
+      "aou_ls_workspace"
+    ]
+  },
+  {
+    "objectID": "man/aou_table_info.html",
+    "href": "man/aou_table_info.html",
+    "title": "allofus",
+    "section": "",
+    "text": "A data from with rows of the All of Us codebook pertaining to the health history questions. In early All of Us surveys, these questions were asked separately about the respondent and the respondent’s family. In the current version, the questions are asked on the same survey. The nested nature of these questions can make them challenging to extract and analyze.\n\n\nCode to generate table\n\n\n\n\n\naou_table_info\n\n\n\n\naou_table_info\n\n\ntable_name\n\n\nchr; name of the table\n\n\ncolumns\n\n\nchr; columns in the table\n\n\nrecommended_for_research\n\n\nchr; whether the table is recomended for research",
+    "crumbs": [
+      "Home",
+      "Reference",
+      "aou_table_info"
+    ]
+  },
+  {
+    "objectID": "man/aou_table_info.html#table-of-tables-columns-and-use-for-researchers-from-the-ct-data-dictionary",
+    "href": "man/aou_table_info.html#table-of-tables-columns-and-use-for-researchers-from-the-ct-data-dictionary",
+    "title": "allofus",
+    "section": "",
+    "text": "A data from with rows of the All of Us codebook pertaining to the health history questions. In early All of Us surveys, these questions were asked separately about the respondent and the respondent’s family. In the current version, the questions are asked on the same survey. The nested nature of these questions can make them challenging to extract and analyze.\n\n\nCode to generate table\n\n\n\n\n\naou_table_info\n\n\n\n\naou_table_info\n\n\ntable_name\n\n\nchr; name of the table\n\n\ncolumns\n\n\nchr; columns in the table\n\n\nrecommended_for_research\n\n\nchr; whether the table is recomended for research",
+    "crumbs": [
+      "Home",
+      "Reference",
+      "aou_table_info"
+    ]
+  },
+  {
+    "objectID": "man/aou_bucket_to_workspace.html",
+    "href": "man/aou_bucket_to_workspace.html",
+    "title": "allofus",
+    "section": "",
+    "text": "Retrieves a file from the workspace bucket and moves it into the current persistent disk where it can be read into R, e.g., using a function like read.csv().\n\n\n\naou_bucket_to_workspace(\n  file,\n  directory = FALSE,\n  bucket = getOption(\"aou.default.bucket\")\n)\n\n\n\n\n\n\n\nfile\n\n\nThe name of a file in your bucket, a vector of multiple files, a directory, or a file pattern (e.g. \".csv\").\n\n\n\n\ndirectory\n\n\nWhether file refers to an entire directory you want to move.\n\n\n\n\nbucket\n\n\nBucket to retrieve file from. Defaults to getOption(“aou.default.bucket”), which is Sys.getenv(‘WORKSPACE_BUCKET’) unless specified otherwise.\n\n\n\n\n\n\nThis function retrieves a file from your bucket and moves it into your workspace where it can be read into R, e.g., using a function like write.csv(). See https://cloud.google.com/storage/docs/gsutil/commands/cp for details on the underlying function.\n\n\n\nNothing\n\n\n\n\nlibrary(allofus)\n\n\n# save a file to the bucket\ntmp &lt;- tempdir()\nwrite.csv(data.frame(x = 1), file.path(tmp, \"testdata.csv\"))\naou_workspace_to_bucket(file.path(tmp, \"testdata.csv\"))\n# read the file back into the workspace\naou_bucket_to_workspace(\"testdata.csv\")\n# read in to your local environment\nread.csv(\"testdata.csv\")",
+    "crumbs": [
+      "Home",
+      "Reference",
+      "aou_bucket_to_workspace"
+    ]
+  },
+  {
+    "objectID": "man/aou_bucket_to_workspace.html#move-files-from-a-bucket-to-your-workspace",
+    "href": "man/aou_bucket_to_workspace.html#move-files-from-a-bucket-to-your-workspace",
+    "title": "allofus",
+    "section": "",
+    "text": "Retrieves a file from the workspace bucket and moves it into the current persistent disk where it can be read into R, e.g., using a function like read.csv().\n\n\n\naou_bucket_to_workspace(\n  file,\n  directory = FALSE,\n  bucket = getOption(\"aou.default.bucket\")\n)\n\n\n\n\n\n\n\nfile\n\n\nThe name of a file in your bucket, a vector of multiple files, a directory, or a file pattern (e.g. \".csv\").\n\n\n\n\ndirectory\n\n\nWhether file refers to an entire directory you want to move.\n\n\n\n\nbucket\n\n\nBucket to retrieve file from. Defaults to getOption(“aou.default.bucket”), which is Sys.getenv(‘WORKSPACE_BUCKET’) unless specified otherwise.\n\n\n\n\n\n\nThis function retrieves a file from your bucket and moves it into your workspace where it can be read into R, e.g., using a function like write.csv(). See https://cloud.google.com/storage/docs/gsutil/commands/cp for details on the underlying function.\n\n\n\nNothing\n\n\n\n\nlibrary(allofus)\n\n\n# save a file to the bucket\ntmp &lt;- tempdir()\nwrite.csv(data.frame(x = 1), file.path(tmp, \"testdata.csv\"))\naou_workspace_to_bucket(file.path(tmp, \"testdata.csv\"))\n# read the file back into the workspace\naou_bucket_to_workspace(\"testdata.csv\")\n# read in to your local environment\nread.csv(\"testdata.csv\")",
+    "crumbs": [
+      "Home",
+      "Reference",
+      "aou_bucket_to_workspace"
+    ]
+  },
+  {
+    "objectID": "man/aou_ls_bucket.html",
+    "href": "man/aou_ls_bucket.html",
+    "title": "allofus",
+    "section": "",
+    "text": "Lists all files in the bucket or files matching a certain pattern.\n\n\n\naou_ls_bucket(\n  pattern = \"\",\n  silent = FALSE,\n  recursive = TRUE,\n  bucket = getOption(\"aou.default.bucket\"),\n  gsutil_args = \"\"\n)\n\n\n\n\n\n\n\npattern\n\n\nRegular expression, such as \"*.csv\" or a single file name e.g., \"mydata.csv\". Default will find all files apart from notebooks (.ipynb files).\n\n\n\n\nsilent\n\n\nWhether to omit the names of files found. Defaults to FALSE.\n\n\n\n\nrecursive\n\n\nWhether to search subdirectories. Defaults to TRUE.\n\n\n\n\nbucket\n\n\nBucket to retrieve file from. Defaults to getOption(“aou.default.bucket”), which is Sys.getenv(‘WORKSPACE_BUCKET’) unless specified otherwise.\n\n\n\n\ngsutil_args\n\n\nA string containing other arguments passed to gsutil ls. See https://cloud.google.com/storage/docs/gsutil/commands/ls for details.\n\n\n\n\n\n\nA vector of file names\n\n\n\n\nlibrary(allofus)\n\n\n# list all files, including in subdirectories\naou_ls_bucket()\n# list all csv files\naou_ls_bucket(\"*.csv\")",
+    "crumbs": [
+      "Home",
+      "Reference",
+      "aou_ls_bucket"
+    ]
+  },
+  {
+    "objectID": "man/aou_ls_bucket.html#list-the-current-files-in-your-bucket",
+    "href": "man/aou_ls_bucket.html#list-the-current-files-in-your-bucket",
+    "title": "allofus",
+    "section": "",
+    "text": "Lists all files in the bucket or files matching a certain pattern.\n\n\n\naou_ls_bucket(\n  pattern = \"\",\n  silent = FALSE,\n  recursive = TRUE,\n  bucket = getOption(\"aou.default.bucket\"),\n  gsutil_args = \"\"\n)\n\n\n\n\n\n\n\npattern\n\n\nRegular expression, such as \"*.csv\" or a single file name e.g., \"mydata.csv\". Default will find all files apart from notebooks (.ipynb files).\n\n\n\n\nsilent\n\n\nWhether to omit the names of files found. Defaults to FALSE.\n\n\n\n\nrecursive\n\n\nWhether to search subdirectories. Defaults to TRUE.\n\n\n\n\nbucket\n\n\nBucket to retrieve file from. Defaults to getOption(“aou.default.bucket”), which is Sys.getenv(‘WORKSPACE_BUCKET’) unless specified otherwise.\n\n\n\n\ngsutil_args\n\n\nA string containing other arguments passed to gsutil ls. See https://cloud.google.com/storage/docs/gsutil/commands/ls for details.\n\n\n\n\n\n\nA vector of file names\n\n\n\n\nlibrary(allofus)\n\n\n# list all files, including in subdirectories\naou_ls_bucket()\n# list all csv files\naou_ls_bucket(\"*.csv\")",
+    "crumbs": [
+      "Home",
+      "Reference",
+      "aou_ls_bucket"
+    ]
+  },
+  {
+    "objectID": "man/aou_survey.html",
+    "href": "man/aou_survey.html",
+    "title": "allofus",
+    "section": "",
+    "text": "Extracts survey responses in a tidy format that also includes ‘skip’ responses and collapses across all versions of the person health / personal medical history surveys. Currently responses in the ‘ds_survey’ table omit skipped responses. Responses are returned as Yes\" if the respondent answered that the individual had the condition, No\" if the respondent answered that the individual did not have that condition (or omitted it when selecting from related conditions), a skip response if the question was skipped, and NA if the respondent did not answer the question. Returns a data frame or SQL tbl with the initial cohort table along with a column for each question included in questions and answers foreach person_id in the cells. To find the desired survey questions, use the all of us data dictionary, survey codebook, Athena, data browser, or the modified codebook which can be found in the allofus R package.\n\n\n\naou_survey(\n  cohort = NULL,\n  questions,\n  question_output = \"concept_code\",\n  clean_answers = TRUE,\n  collect = FALSE,\n  ...,\n  con = getOption(\"aou.default.con\")\n)\n\n\n\n\n\n\n\ncohort\n\n\nReference to a remote table or local dataframe with a column called \"person_id\"\n\n\n\n\nquestions\n\n\neither a vector of concept_ids or concept_codes for questions to return results\n\n\n\n\nquestion_output\n\n\nhow to name the columns. Options include as the text of the concept code (\"concept_code\"), as concept ids preceded by \"x_\" (\"concept_id\"), or using a custom vector of column names matching the vector of questions. Defaults to \"concept_code\".\n\n\n\n\nclean_answers\n\n\nwhether to clean the answers to the survey questions. Defaults to TRUE.\n\n\n\n\ncollect\n\n\nWhether to bring the resulting table into local memory (collect = TRUE) as a dataframe or leave as a reference to a database table (for continued analysis using, e.g., dbplyr). Defaults to FALSE.\n\n\n\n\n…\n\n\nadditional arguments passed to collect() when collect = TRUE\n\n\n\n\ncon\n\n\nconnection to the allofus SQL database. Defaults to getOption(\"aou.default.con\"), which is created automatically with aou_connect()\n\n\n\n\n\n\nThe function will return a dataframe or SQL tbl with the initial cohort table along with a column for each question included in questions and answers for each person_id in the cells. The column names (questions) can be returned as the concept_code or concept_id or by providing new column names. For each question, a column with the suffix \"_date\" is included with the date on which the question was answered. When questions can have multiple answers (\"checkbox\"-style questions), answers are returned as a comma-separated string.\nTo find the desired survey questions, use the all of us data dictionary, survey codebook, athena, data browser, or the allofus R package modified codebook which can be found here: https://roux-ohdsi.github.io/allofus/articles/searchable_codebook.html For questions regarding an individual’s health history or family health history, the function requires the specific concept_id (or concept_code) for individual in question, whether that is \"self\" or another relative. Responses are returned as \"Yes\" if the respondent answered that the individual had the condition, \"No\" if the respondent answered that the individual did not have that condition (or omitted it when selecting from related conditions), a skip response if the question was skipped, and NA if the respondent did not answer the question.\n\n\n\nA dataframe if collect = TRUE; a reference to a remote database table if not.\n\n\n\n\nlibrary(allofus)\n\n\n\ncon &lt;- aou_connect()\ncohort &lt;- dplyr::tbl(con, \"person\") %&gt;%\n  dplyr::filter(person_id &gt; 5000000) %&gt;%\n  dplyr::select(person_id, year_of_birth, gender_concept_id)\n\naou_survey(\n  cohort,\n  questions = c(1585375, 1586135),\n  question_output = \"concept_code\"\n)\naou_survey(\n  cohort,\n  questions = c(1585811, 1585386),\n  question_output = c(\"pregnancy\", \"insurance\")\n)\naou_survey(\n  cohort,\n  questions = c(1585375, 1586135, 1740719, 43529932),\n  question_output = c(\"income\", \"birthplace\", \"grandpa_bowel_obstruction\", \"t2dm\"),\n  collect = FALSE\n)\n\naou_survey(cohort,\n  questions = 1384452,\n  question_output = \"osteoarthritis\"\n) %&gt;%\n  dplyr::count(osteoarthritis)",
+    "crumbs": [
+      "Home",
+      "Reference",
+      "aou_survey"
+    ]
+  },
+  {
+    "objectID": "man/aou_survey.html#function-to-query-allofus-observation-table-for-survey-responses",
+    "href": "man/aou_survey.html#function-to-query-allofus-observation-table-for-survey-responses",
+    "title": "allofus",
+    "section": "",
+    "text": "Extracts survey responses in a tidy format that also includes ‘skip’ responses and collapses across all versions of the person health / personal medical history surveys. Currently responses in the ‘ds_survey’ table omit skipped responses. Responses are returned as Yes\" if the respondent answered that the individual had the condition, No\" if the respondent answered that the individual did not have that condition (or omitted it when selecting from related conditions), a skip response if the question was skipped, and NA if the respondent did not answer the question. Returns a data frame or SQL tbl with the initial cohort table along with a column for each question included in questions and answers foreach person_id in the cells. To find the desired survey questions, use the all of us data dictionary, survey codebook, Athena, data browser, or the modified codebook which can be found in the allofus R package.\n\n\n\naou_survey(\n  cohort = NULL,\n  questions,\n  question_output = \"concept_code\",\n  clean_answers = TRUE,\n  collect = FALSE,\n  ...,\n  con = getOption(\"aou.default.con\")\n)\n\n\n\n\n\n\n\ncohort\n\n\nReference to a remote table or local dataframe with a column called \"person_id\"\n\n\n\n\nquestions\n\n\neither a vector of concept_ids or concept_codes for questions to return results\n\n\n\n\nquestion_output\n\n\nhow to name the columns. Options include as the text of the concept code (\"concept_code\"), as concept ids preceded by \"x_\" (\"concept_id\"), or using a custom vector of column names matching the vector of questions. Defaults to \"concept_code\".\n\n\n\n\nclean_answers\n\n\nwhether to clean the answers to the survey questions. Defaults to TRUE.\n\n\n\n\ncollect\n\n\nWhether to bring the resulting table into local memory (collect = TRUE) as a dataframe or leave as a reference to a database table (for continued analysis using, e.g., dbplyr). Defaults to FALSE.\n\n\n\n\n…\n\n\nadditional arguments passed to collect() when collect = TRUE\n\n\n\n\ncon\n\n\nconnection to the allofus SQL database. Defaults to getOption(\"aou.default.con\"), which is created automatically with aou_connect()\n\n\n\n\n\n\nThe function will return a dataframe or SQL tbl with the initial cohort table along with a column for each question included in questions and answers for each person_id in the cells. The column names (questions) can be returned as the concept_code or concept_id or by providing new column names. For each question, a column with the suffix \"_date\" is included with the date on which the question was answered. When questions can have multiple answers (\"checkbox\"-style questions), answers are returned as a comma-separated string.\nTo find the desired survey questions, use the all of us data dictionary, survey codebook, athena, data browser, or the allofus R package modified codebook which can be found here: https://roux-ohdsi.github.io/allofus/articles/searchable_codebook.html For questions regarding an individual’s health history or family health history, the function requires the specific concept_id (or concept_code) for individual in question, whether that is \"self\" or another relative. Responses are returned as \"Yes\" if the respondent answered that the individual had the condition, \"No\" if the respondent answered that the individual did not have that condition (or omitted it when selecting from related conditions), a skip response if the question was skipped, and NA if the respondent did not answer the question.\n\n\n\nA dataframe if collect = TRUE; a reference to a remote database table if not.\n\n\n\n\nlibrary(allofus)\n\n\n\ncon &lt;- aou_connect()\ncohort &lt;- dplyr::tbl(con, \"person\") %&gt;%\n  dplyr::filter(person_id &gt; 5000000) %&gt;%\n  dplyr::select(person_id, year_of_birth, gender_concept_id)\n\naou_survey(\n  cohort,\n  questions = c(1585375, 1586135),\n  question_output = \"concept_code\"\n)\naou_survey(\n  cohort,\n  questions = c(1585811, 1585386),\n  question_output = c(\"pregnancy\", \"insurance\")\n)\naou_survey(\n  cohort,\n  questions = c(1585375, 1586135, 1740719, 43529932),\n  question_output = c(\"income\", \"birthplace\", \"grandpa_bowel_obstruction\", \"t2dm\"),\n  collect = FALSE\n)\n\naou_survey(cohort,\n  questions = 1384452,\n  question_output = \"osteoarthritis\"\n) %&gt;%\n  dplyr::count(osteoarthritis)",
+    "crumbs": [
+      "Home",
+      "Reference",
+      "aou_survey"
+    ]
+  },
+  {
+    "objectID": "man/aou_health_history.html",
+    "href": "man/aou_health_history.html",
+    "title": "allofus",
+    "section": "",
+    "text": "This table consists of rows of the codebook pertaining to the health history questions. In early All of Us surveys, these questions were asked separately about the respondent and the respondent’s family. In the current version, the questions are asked on the same survey. The nested nature of these questions makes them challenging to deal with. It can also be accessed in R using allofus::aou_health_history.\n\n\nCode to generate table\n\n\n\n\n\naou_health_history\n\n\n\n\naou_health_history A data frame with 1685 rows and 9 columns:\n\n\nquestion\n\n\nchr; Question asked on survey\n\n\nrelative\n\n\nchr; Person to whom the answer pertains\n\n\ncondition\n\n\nchr; Formatted text name of concept\n\n\ncategory\n\n\nchr; Type of health condition\n\n\nconcept_code\n\n\nchr; Concept code from AOU codebook\n\n\nconcept_id_specific\n\n\nint; Concept id for the answer\n\n\nconcept_id_overall\n\n\nint; Concept id for the condition overall\n\n\nconcept_id_question\n\n\nint; Concept id for the overarching question\n\n\nform_name\n\n\nchr; Survey name",
+    "crumbs": [
+      "Home",
+      "Reference",
+      "aou_health_history"
+    ]
+  },
+  {
+    "objectID": "man/aou_health_history.html#all-of-us-health-history-codebook",
+    "href": "man/aou_health_history.html#all-of-us-health-history-codebook",
+    "title": "allofus",
+    "section": "",
+    "text": "This table consists of rows of the codebook pertaining to the health history questions. In early All of Us surveys, these questions were asked separately about the respondent and the respondent’s family. In the current version, the questions are asked on the same survey. The nested nature of these questions makes them challenging to deal with. It can also be accessed in R using allofus::aou_health_history.\n\n\nCode to generate table\n\n\n\n\n\naou_health_history\n\n\n\n\naou_health_history A data frame with 1685 rows and 9 columns:\n\n\nquestion\n\n\nchr; Question asked on survey\n\n\nrelative\n\n\nchr; Person to whom the answer pertains\n\n\ncondition\n\n\nchr; Formatted text name of concept\n\n\ncategory\n\n\nchr; Type of health condition\n\n\nconcept_code\n\n\nchr; Concept code from AOU codebook\n\n\nconcept_id_specific\n\n\nint; Concept id for the answer\n\n\nconcept_id_overall\n\n\nint; Concept id for the condition overall\n\n\nconcept_id_question\n\n\nint; Concept id for the overarching question\n\n\nform_name\n\n\nchr; Survey name",
+    "crumbs": [
+      "Home",
+      "Reference",
+      "aou_health_history"
+    ]
+  },
+  {
+    "objectID": "man/aou_workspace_to_bucket.html",
+    "href": "man/aou_workspace_to_bucket.html",
+    "title": "allofus",
+    "section": "",
+    "text": "Moves a file saved in on the persistent disk to the workspace bucket, where it can be stored even if a compute environment is deleted.\n\n\n\naou_workspace_to_bucket(\n  file,\n  directory = FALSE,\n  bucket = getOption(\"aou.default.bucket\")\n)\n\n\n\n\n\n\n\nfile\n\n\nThe name of a file in your bucket, a vector of multiple files, a directory, or a file pattern (e.g. \".csv\"). See Details.\n\n\n\n\ndirectory\n\n\nWhether file refers to an entire directory you want to move.\n\n\n\n\nbucket\n\n\nBucket to save files to. Defaults to getOption(“aou.default.bucket”), which is Sys.getenv(‘WORKSPACE_BUCKET’) unless specified otherwise.\n\n\n\n\n\n\nThis function moves a file saved in a workspace to a bucket, where it can be retrieved even if the environment is deleted. To use, first save the desired object as a file to the workspace (e.g., write.csv(object, “filename.csv”)) and then run this function (e.g., aou_workspace_to_bucket(files = “filename.csv”)). See https://cloud.google.com/storage/docs/gsutil/commands/cp for details on the underlying function.\n\n\n\nNothing\n\n\n\n\nlibrary(allofus)\n\n\n# create test files in a temporary directory\ntmp &lt;- tempdir()\nwrite.csv(data.frame(x = 1), file.path(tmp, \"testdata1.csv\"))\nwrite.csv(data.frame(y = 2), file.path(tmp, \"testdata2.csv\"))\n# save a file to the bucket\naou_workspace_to_bucket(file.path(tmp, \"testdata1.csv\"))\n# save multiple files at once\naou_workspace_to_bucket(c(file.path(tmp, \"testdata1.csv\"), file.path(tmp, \"testdata2.csv\")))\n# save an entire directory\naou_workspace_to_bucket(tmp, directory = TRUE)",
+    "crumbs": [
+      "Home",
+      "Reference",
+      "aou_workspace_to_bucket"
+    ]
+  },
+  {
+    "objectID": "man/aou_workspace_to_bucket.html#save-a-file-from-your-workspace-to-your-bucket",
+    "href": "man/aou_workspace_to_bucket.html#save-a-file-from-your-workspace-to-your-bucket",
+    "title": "allofus",
+    "section": "",
+    "text": "Moves a file saved in on the persistent disk to the workspace bucket, where it can be stored even if a compute environment is deleted.\n\n\n\naou_workspace_to_bucket(\n  file,\n  directory = FALSE,\n  bucket = getOption(\"aou.default.bucket\")\n)\n\n\n\n\n\n\n\nfile\n\n\nThe name of a file in your bucket, a vector of multiple files, a directory, or a file pattern (e.g. \".csv\"). See Details.\n\n\n\n\ndirectory\n\n\nWhether file refers to an entire directory you want to move.\n\n\n\n\nbucket\n\n\nBucket to save files to. Defaults to getOption(“aou.default.bucket”), which is Sys.getenv(‘WORKSPACE_BUCKET’) unless specified otherwise.\n\n\n\n\n\n\nThis function moves a file saved in a workspace to a bucket, where it can be retrieved even if the environment is deleted. To use, first save the desired object as a file to the workspace (e.g., write.csv(object, “filename.csv”)) and then run this function (e.g., aou_workspace_to_bucket(files = “filename.csv”)). See https://cloud.google.com/storage/docs/gsutil/commands/cp for details on the underlying function.\n\n\n\nNothing\n\n\n\n\nlibrary(allofus)\n\n\n# create test files in a temporary directory\ntmp &lt;- tempdir()\nwrite.csv(data.frame(x = 1), file.path(tmp, \"testdata1.csv\"))\nwrite.csv(data.frame(y = 2), file.path(tmp, \"testdata2.csv\"))\n# save a file to the bucket\naou_workspace_to_bucket(file.path(tmp, \"testdata1.csv\"))\n# save multiple files at once\naou_workspace_to_bucket(c(file.path(tmp, \"testdata1.csv\"), file.path(tmp, \"testdata2.csv\")))\n# save an entire directory\naou_workspace_to_bucket(tmp, directory = TRUE)",
+    "crumbs": [
+      "Home",
+      "Reference",
+      "aou_workspace_to_bucket"
+    ]
+  },
+  {
+    "objectID": "man/aou_atlas_cohort.html",
+    "href": "man/aou_atlas_cohort.html",
+    "title": "allofus",
+    "section": "",
+    "text": "Retrieves a cohort definition from ATLAS and generates the cohort in All of Us. Observation periods are first generated for each subject using the aou_observation_period() function.The resulting cohort is a table with the cohort start and end dates for each person_id.\n\n\n\naou_atlas_cohort(\n  cohort_definition,\n  cohort_sql,\n  debug = FALSE,\n  collect = FALSE,\n  ...,\n  con = getOption(\"aou.default.con\")\n)\n\n\n\n\n\n\n\ncohort_definition\n\n\nA cohort definition generated using getCohortDefinition() from ROhdsiWebApi\n\n\n\n\ncohort_sql\n\n\nThe cohort_sql generated using getCohortSql() from ROhdsiWebApi\n\n\n\n\ndebug\n\n\nPrint the query to the console; useful for debugging.\n\n\n\n\ncollect\n\n\nWhether to bring the resulting table into local memory (collect = TRUE) as a dataframe or leave as a reference to a database table (for continued analysis using, e.g., dbplyr). Defaults to FALSE.\n\n\n\n\n…\n\n\nFurther arguments passed along to collect() if collect = TRUE\n\n\n\n\ncon\n\n\nConnection to the allofus SQL database. Defaults to getOption(\"aou.default.con\"), which is set automatically if you use aou_connect()\n\n\n\n\n\n\nThe function is based on a similar function in https://github.com/cmayer2/r4aou with some tweaks to generate the appropriate observation periods and incorporate other package functions. Please see the online vignette for additional details.\n\n\n\nA dataframe if collect = TRUE; a reference to a remote database table if not. The SQL query used to generate the cohort is stored as an attribute.\n\n\n\n\nlibrary(allofus)\n\n\n# generate a simple stroke cohort\n# see https://atlas-demo.ohdsi.org/#/cohortdefinition/1788061\n# If this cohort is not available, you can create one, or choose one already made.\n# aou_cohort_example contains the results of\n# cd &lt;- ROhdsiWebApi::getCohortDefinition(1788061, \"https://atlas-demo.ohdsi.org/WebAPI\")\n# cd_sql &lt;- ROhdsiWebApi::getCohortSql(cd, \"https://atlas-demo.ohdsi.org/WebAPI\")\n\ncohort &lt;- aou_atlas_cohort(\n  cohort_definition = aou_cohort_example$cd,\n  cohort_sql = aou_cohort_example$cd_sql\n)\n\n# print query that was executed\ncat(attr(cohort, \"query\"))",
+    "crumbs": [
+      "Home",
+      "Reference",
+      "aou_atlas_cohort"
+    ]
+  },
+  {
+    "objectID": "man/aou_atlas_cohort.html#retrieve-a-cohort-from-atlas-for-use-in-all-of-us",
+    "href": "man/aou_atlas_cohort.html#retrieve-a-cohort-from-atlas-for-use-in-all-of-us",
+    "title": "allofus",
+    "section": "",
+    "text": "Retrieves a cohort definition from ATLAS and generates the cohort in All of Us. Observation periods are first generated for each subject using the aou_observation_period() function.The resulting cohort is a table with the cohort start and end dates for each person_id.\n\n\n\naou_atlas_cohort(\n  cohort_definition,\n  cohort_sql,\n  debug = FALSE,\n  collect = FALSE,\n  ...,\n  con = getOption(\"aou.default.con\")\n)\n\n\n\n\n\n\n\ncohort_definition\n\n\nA cohort definition generated using getCohortDefinition() from ROhdsiWebApi\n\n\n\n\ncohort_sql\n\n\nThe cohort_sql generated using getCohortSql() from ROhdsiWebApi\n\n\n\n\ndebug\n\n\nPrint the query to the console; useful for debugging.\n\n\n\n\ncollect\n\n\nWhether to bring the resulting table into local memory (collect = TRUE) as a dataframe or leave as a reference to a database table (for continued analysis using, e.g., dbplyr). Defaults to FALSE.\n\n\n\n\n…\n\n\nFurther arguments passed along to collect() if collect = TRUE\n\n\n\n\ncon\n\n\nConnection to the allofus SQL database. Defaults to getOption(\"aou.default.con\"), which is set automatically if you use aou_connect()\n\n\n\n\n\n\nThe function is based on a similar function in https://github.com/cmayer2/r4aou with some tweaks to generate the appropriate observation periods and incorporate other package functions. Please see the online vignette for additional details.\n\n\n\nA dataframe if collect = TRUE; a reference to a remote database table if not. The SQL query used to generate the cohort is stored as an attribute.\n\n\n\n\nlibrary(allofus)\n\n\n# generate a simple stroke cohort\n# see https://atlas-demo.ohdsi.org/#/cohortdefinition/1788061\n# If this cohort is not available, you can create one, or choose one already made.\n# aou_cohort_example contains the results of\n# cd &lt;- ROhdsiWebApi::getCohortDefinition(1788061, \"https://atlas-demo.ohdsi.org/WebAPI\")\n# cd_sql &lt;- ROhdsiWebApi::getCohortSql(cd, \"https://atlas-demo.ohdsi.org/WebAPI\")\n\ncohort &lt;- aou_atlas_cohort(\n  cohort_definition = aou_cohort_example$cd,\n  cohort_sql = aou_cohort_example$cd_sql\n)\n\n# print query that was executed\ncat(attr(cohort, \"query\"))",
+    "crumbs": [
+      "Home",
+      "Reference",
+      "aou_atlas_cohort"
+    ]
+  },
+  {
+    "objectID": "man/aou_sql.html",
+    "href": "man/aou_sql.html",
+    "title": "allofus",
+    "section": "",
+    "text": "Executes an SQL query on the All of Us database\n\n\n\naou_sql(\n  query,\n  collect = FALSE,\n  debug = FALSE,\n  ...,\n  con = getOption(\"aou.default.con\"),\n  CDR = getOption(\"aou.default.cdr\")\n)\n\n\n\n\n\n\n\nquery\n\n\nA SQL query (BigQuery dialect) to be executed. Interpreted with glue::glue(), so expressions enclosed with braces will be evaluated. References to “{CDR}” or “{cdr}” will be evaluated automatically (see examples).\n\n\n\n\ncollect\n\n\nWhether to bring the resulting table into local memory (collect = TRUE) as a dataframe or leave as a reference to a database table (for continued analysis using, e.g., dbplyr). Defaults to FALSE.\n\n\n\n\ndebug\n\n\nPrint the query to the console; useful for debugging.\n\n\n\n\n…\n\n\nAll other arguments passed to bigrquery::bq_table_download() if collect = TRUE.\n\n\n\n\ncon\n\n\nConnection to the allofus SQL database. Defaults to getOption(“aou.default.con”), which is created automatically with aou_connect(). Only needed if collect = FALSE.\n\n\n\n\nCDR\n\n\nThe name of the \"curated data repository\" that will be used in any references of the form “{CDR}” or “{cdr}” in the query (see examples). Defaults to getOption(“aou.default.cdr”), which is Sys.getenv(‘WORKSPACE_CDR’) if not specified otherwise (i.e., the \"mainline\" CDR). On the controlled tier, specify the \"base\" CDR with CDR = paste0(Sys.getenv(‘WORKSPACE_CDR’), “_base”).\n\n\n\n\n\n\nA dataframe if collect = TRUE; a reference to a remote database table if not.\n\n\n\n\nlibrary(allofus)\n\n\n# Examples based on AoU snippets\naou_sql(\"\n  -- Compute the count of unique participants in our All of Us cohort.\n  SELECT\n  COUNT(DISTINCT person_id) AS total_number_of_participants\n  FROM\n  `{CDR}.person`\n\", collect = TRUE)\n\nMEASUREMENT_OF_INTEREST &lt;- \"hemoglobin\"\naou_sql('\n-- Compute summary information for our measurements of interest for our cohort.\n--\n-- PARAMETERS:\n--   MEASUREMENT_OF_INTEREST: a case-insensitive string, such as \"hemoglobin\", to be compared\n--                            to all measurement concept names to identify those of interest\n\nWITH\n  --\n  -- Use a case insensitive string to search the measurement concept names of those\n  -- measurements we do have in the measurements table.\n  --\n  labs_of_interest AS (\n  SELECT\n    measurement_concept_id,\n    measurement_concept.concept_name AS measurement_name,\n    unit_concept_id,\n    unit_concept.concept_name AS unit_name\n  FROM\n    `{CDR}.measurement`\n  LEFT JOIN `{CDR}.concept` AS measurement_concept\n  ON measurement_concept.concept_id = measurement_concept_id\n  LEFT JOIN `{CDR}.concept` AS unit_concept\n  ON unit_concept.concept_id = unit_concept_id\n  WHERE\n    REGEXP_CONTAINS(measurement_concept.concept_name, r\"(?i){MEASUREMENT_OF_INTEREST}\")\n  GROUP BY\n    measurement_concept_id,\n    unit_concept_id,\n    measurement_concept.concept_name,\n    unit_concept.concept_name\n)\n  --\n  -- Summarize the information about each measurement concept of interest that our\n  -- prior query identified.\n  --\nSELECT\n  measurement_name AS measurement,\n  IFNULL(unit_name, \"NA\") AS unit,\n  COUNT(1) AS N,\n  COUNTIF(value_as_number IS NULL\n    AND (value_as_concept_id IS NULL\n      OR value_as_concept_id = 0)) AS missing,\n  MIN(value_as_number) AS min,\n  MAX(value_as_number) AS max,\n  AVG(value_as_number) AS avg,\n  STDDEV(value_as_number) AS stddev,\n  APPROX_QUANTILES(value_as_number, 4) AS quantiles,\n  COUNTIF(value_as_number IS NOT NULL) AS num_numeric_values,\n  COUNTIF(value_as_concept_id IS NOT NULL\n      AND value_as_concept_id != 0) AS num_concept_values,\n  COUNTIF(operator_concept_id IS NOT NULL) AS num_operators,\n  IF(src_id = \"PPI/PM\", \"PPI\", \"EHR\") AS measurement_source,\n  measurement_concept_id,\n  unit_concept_id\nFROM\n  `{CDR}.measurement`\nINNER JOIN\n labs_of_interest USING(measurement_concept_id, unit_concept_id)\nLEFT JOIN\n  `{CDR}.measurement_ext` USING(measurement_id)\nGROUP BY\n  measurement_concept_id,\n  measurement_name,\n  measurement_source,\n  unit_concept_id,\n  unit_name\nORDER BY\n  N DESC\n', collect = TRUE)",
+    "crumbs": [
+      "Home",
+      "Reference",
+      "aou_sql"
+    ]
+  },
+  {
+    "objectID": "man/aou_sql.html#execute-a-sql-query-on-the-all-of-us-database",
+    "href": "man/aou_sql.html#execute-a-sql-query-on-the-all-of-us-database",
+    "title": "allofus",
+    "section": "",
+    "text": "Executes an SQL query on the All of Us database\n\n\n\naou_sql(\n  query,\n  collect = FALSE,\n  debug = FALSE,\n  ...,\n  con = getOption(\"aou.default.con\"),\n  CDR = getOption(\"aou.default.cdr\")\n)\n\n\n\n\n\n\n\nquery\n\n\nA SQL query (BigQuery dialect) to be executed. Interpreted with glue::glue(), so expressions enclosed with braces will be evaluated. References to “{CDR}” or “{cdr}” will be evaluated automatically (see examples).\n\n\n\n\ncollect\n\n\nWhether to bring the resulting table into local memory (collect = TRUE) as a dataframe or leave as a reference to a database table (for continued analysis using, e.g., dbplyr). Defaults to FALSE.\n\n\n\n\ndebug\n\n\nPrint the query to the console; useful for debugging.\n\n\n\n\n…\n\n\nAll other arguments passed to bigrquery::bq_table_download() if collect = TRUE.\n\n\n\n\ncon\n\n\nConnection to the allofus SQL database. Defaults to getOption(“aou.default.con”), which is created automatically with aou_connect(). Only needed if collect = FALSE.\n\n\n\n\nCDR\n\n\nThe name of the \"curated data repository\" that will be used in any references of the form “{CDR}” or “{cdr}” in the query (see examples). Defaults to getOption(“aou.default.cdr”), which is Sys.getenv(‘WORKSPACE_CDR’) if not specified otherwise (i.e., the \"mainline\" CDR). On the controlled tier, specify the \"base\" CDR with CDR = paste0(Sys.getenv(‘WORKSPACE_CDR’), “_base”).\n\n\n\n\n\n\nA dataframe if collect = TRUE; a reference to a remote database table if not.\n\n\n\n\nlibrary(allofus)\n\n\n# Examples based on AoU snippets\naou_sql(\"\n  -- Compute the count of unique participants in our All of Us cohort.\n  SELECT\n  COUNT(DISTINCT person_id) AS total_number_of_participants\n  FROM\n  `{CDR}.person`\n\", collect = TRUE)\n\nMEASUREMENT_OF_INTEREST &lt;- \"hemoglobin\"\naou_sql('\n-- Compute summary information for our measurements of interest for our cohort.\n--\n-- PARAMETERS:\n--   MEASUREMENT_OF_INTEREST: a case-insensitive string, such as \"hemoglobin\", to be compared\n--                            to all measurement concept names to identify those of interest\n\nWITH\n  --\n  -- Use a case insensitive string to search the measurement concept names of those\n  -- measurements we do have in the measurements table.\n  --\n  labs_of_interest AS (\n  SELECT\n    measurement_concept_id,\n    measurement_concept.concept_name AS measurement_name,\n    unit_concept_id,\n    unit_concept.concept_name AS unit_name\n  FROM\n    `{CDR}.measurement`\n  LEFT JOIN `{CDR}.concept` AS measurement_concept\n  ON measurement_concept.concept_id = measurement_concept_id\n  LEFT JOIN `{CDR}.concept` AS unit_concept\n  ON unit_concept.concept_id = unit_concept_id\n  WHERE\n    REGEXP_CONTAINS(measurement_concept.concept_name, r\"(?i){MEASUREMENT_OF_INTEREST}\")\n  GROUP BY\n    measurement_concept_id,\n    unit_concept_id,\n    measurement_concept.concept_name,\n    unit_concept.concept_name\n)\n  --\n  -- Summarize the information about each measurement concept of interest that our\n  -- prior query identified.\n  --\nSELECT\n  measurement_name AS measurement,\n  IFNULL(unit_name, \"NA\") AS unit,\n  COUNT(1) AS N,\n  COUNTIF(value_as_number IS NULL\n    AND (value_as_concept_id IS NULL\n      OR value_as_concept_id = 0)) AS missing,\n  MIN(value_as_number) AS min,\n  MAX(value_as_number) AS max,\n  AVG(value_as_number) AS avg,\n  STDDEV(value_as_number) AS stddev,\n  APPROX_QUANTILES(value_as_number, 4) AS quantiles,\n  COUNTIF(value_as_number IS NOT NULL) AS num_numeric_values,\n  COUNTIF(value_as_concept_id IS NOT NULL\n      AND value_as_concept_id != 0) AS num_concept_values,\n  COUNTIF(operator_concept_id IS NOT NULL) AS num_operators,\n  IF(src_id = \"PPI/PM\", \"PPI\", \"EHR\") AS measurement_source,\n  measurement_concept_id,\n  unit_concept_id\nFROM\n  `{CDR}.measurement`\nINNER JOIN\n labs_of_interest USING(measurement_concept_id, unit_concept_id)\nLEFT JOIN\n  `{CDR}.measurement_ext` USING(measurement_id)\nGROUP BY\n  measurement_concept_id,\n  measurement_name,\n  measurement_source,\n  unit_concept_id,\n  unit_name\nORDER BY\n  N DESC\n', collect = TRUE)",
+    "crumbs": [
+      "Home",
+      "Reference",
+      "aou_sql"
+    ]
+  },
+  {
+    "objectID": "man/aou_create_temp_table.html",
+    "href": "man/aou_create_temp_table.html",
+    "title": "allofus",
+    "section": "",
+    "text": "Experimental function that builds a local tibble into an SQL query and generates a temporary table. Larger tables will be broken up into consequitive SQL queries; making nchar_batch smaller can avoid errors but will take longer. The table will only exist for the current connection session and will need to be created again in a new session.\n\n\n\naou_create_temp_table(\n  data,\n  nchar_batch = 1e+06,\n  ...,\n  con = getOption(\"aou.default.con\")\n)\n\n\n\n\n\n\n\ndata\n\n\nA local dataframe (or tibble)\n\n\n\n\nnchar_batch\n\n\napproximate number of characters to break up each SQL query\n\n\n\n\n…\n\n\nNot currently used\n\n\n\n\ncon\n\n\nConnection to the allofus SQL database. Defaults to getOption(“aou.default.con”), which is created automatically with aou_connect().\n\n\n\n\n\n\n\n\n\n\na reference to a temporary table in the database with the data from df\n\n\n\n\nlibrary(allofus)\n\n\ncon &lt;- aou_connect()\ndf &lt;- data.frame(\n  concept_id = c(\n    439331, 4290245, 42535816, 46269813,\n    2784565, 45765502, 434112, 4128031, 435640, 45876808\n  ),\n  category = c(\n    \"AB\", \"DELIV\", \"DELIV\", \"SA\", \"DELIV\",\n    \"LB\", \"DELIV\", \"DELIV\", \"PREG\", \"SA\"\n  ),\n  gest_value = c(NA, NA, NA, NA, NA, NA, NA, NA, 25, NA)\n)\ntmp_tbl &lt;- aou_create_temp_table(df)",
+    "crumbs": [
+      "Home",
+      "Reference",
+      "aou_create_temp_table"
+    ]
+  },
+  {
+    "objectID": "man/aou_create_temp_table.html#creates-a-temporary-table-from-a-local-data-frame-or-tibble",
+    "href": "man/aou_create_temp_table.html#creates-a-temporary-table-from-a-local-data-frame-or-tibble",
+    "title": "allofus",
+    "section": "",
+    "text": "Experimental function that builds a local tibble into an SQL query and generates a temporary table. Larger tables will be broken up into consequitive SQL queries; making nchar_batch smaller can avoid errors but will take longer. The table will only exist for the current connection session and will need to be created again in a new session.\n\n\n\naou_create_temp_table(\n  data,\n  nchar_batch = 1e+06,\n  ...,\n  con = getOption(\"aou.default.con\")\n)\n\n\n\n\n\n\n\ndata\n\n\nA local dataframe (or tibble)\n\n\n\n\nnchar_batch\n\n\napproximate number of characters to break up each SQL query\n\n\n\n\n…\n\n\nNot currently used\n\n\n\n\ncon\n\n\nConnection to the allofus SQL database. Defaults to getOption(“aou.default.con”), which is created automatically with aou_connect().\n\n\n\n\n\n\n\n\n\n\na reference to a temporary table in the database with the data from df\n\n\n\n\nlibrary(allofus)\n\n\ncon &lt;- aou_connect()\ndf &lt;- data.frame(\n  concept_id = c(\n    439331, 4290245, 42535816, 46269813,\n    2784565, 45765502, 434112, 4128031, 435640, 45876808\n  ),\n  category = c(\n    \"AB\", \"DELIV\", \"DELIV\", \"SA\", \"DELIV\",\n    \"LB\", \"DELIV\", \"DELIV\", \"PREG\", \"SA\"\n  ),\n  gest_value = c(NA, NA, NA, NA, NA, NA, NA, NA, 25, NA)\n)\ntmp_tbl &lt;- aou_create_temp_table(df)",
+    "crumbs": [
+      "Home",
+      "Reference",
+      "aou_create_temp_table"
+    ]
+  },
+  {
+    "objectID": "man/aou_connect.html",
+    "href": "man/aou_connect.html",
+    "title": "allofus",
+    "section": "",
+    "text": "Connects to the All of Us database and returns a BigQueryConnection object. You can reference this object to query the database using R and or SQL code. A message is printed with the connection status (successful or not).\n\n\n\naou_connect(CDR = getOption(\"aou.default.cdr\"), ...)\n\n\n\n\n\n\n\nCDR\n\n\nThe name of the \"curated data repository\" to connect to. Defaults to getOption(“aou.default.cdr”), which is Sys.getenv(‘WORKSPACE_CDR’) if not specified otherwise (i.e., the \"mainline\" CDR). On the controlled tier, specify the \"base\" CDR with CDR = paste0(Sys.getenv(‘WORKSPACE_CDR’), “_base”).\n\n\n\n\n…\n\n\nFurther arguments passed along to DBI::dbConnect().\n\n\n\n\n\n\nYou can reference this object to connect to the All of Us database and run SQL code using, e.g., dbplyr or DBI. A message is printed with the connection status (successful or not).\n\n\n\nA BigQueryConnection object. This object is also saved as an option (getOption(“aou.default.con”)).\n\n\n\n\nlibrary(allofus)\n\n\ncon &lt;- aou_connect()\n# reference the observation table in the database\ndplyr::tbl(con, \"observation\")\n# print a list of the tables in the database\nDBI::dbListTables(con)",
+    "crumbs": [
+      "Home",
+      "Reference",
+      "aou_connect"
+    ]
+  },
+  {
+    "objectID": "man/aou_connect.html#create-a-connection-to-the-database-in-all-of-us",
+    "href": "man/aou_connect.html#create-a-connection-to-the-database-in-all-of-us",
+    "title": "allofus",
+    "section": "",
+    "text": "Connects to the All of Us database and returns a BigQueryConnection object. You can reference this object to query the database using R and or SQL code. A message is printed with the connection status (successful or not).\n\n\n\naou_connect(CDR = getOption(\"aou.default.cdr\"), ...)\n\n\n\n\n\n\n\nCDR\n\n\nThe name of the \"curated data repository\" to connect to. Defaults to getOption(“aou.default.cdr”), which is Sys.getenv(‘WORKSPACE_CDR’) if not specified otherwise (i.e., the \"mainline\" CDR). On the controlled tier, specify the \"base\" CDR with CDR = paste0(Sys.getenv(‘WORKSPACE_CDR’), “_base”).\n\n\n\n\n…\n\n\nFurther arguments passed along to DBI::dbConnect().\n\n\n\n\n\n\nYou can reference this object to connect to the All of Us database and run SQL code using, e.g., dbplyr or DBI. A message is printed with the connection status (successful or not).\n\n\n\nA BigQueryConnection object. This object is also saved as an option (getOption(“aou.default.con”)).\n\n\n\n\nlibrary(allofus)\n\n\ncon &lt;- aou_connect()\n# reference the observation table in the database\ndplyr::tbl(con, \"observation\")\n# print a list of the tables in the database\nDBI::dbListTables(con)",
+    "crumbs": [
+      "Home",
+      "Reference",
+      "aou_connect"
+    ]
+  },
+  {
+    "objectID": "man/aou_observation_period.html",
+    "href": "man/aou_observation_period.html",
+    "title": "allofus",
+    "section": "",
+    "text": "Generates a temporary observation period table based the first and last event in the electronic medical record data. Because some EHR sites have contributed data from several decades ago, researchers might want to consider further constraining this table to reasonable date ranges of interest (e.g., setting all observation_period_start_date values to no earlier than 01/01/2010).\n\n\n\naou_observation_period(\n  cohort = NULL,\n  collect = FALSE,\n  ...,\n  con = getOption(\"aou.default.con\")\n)\n\n\n\n\n\n\n\ncohort\n\n\nReference to a remote table or local dataframe with a column called \"person_id\"\n\n\n\n\ncollect\n\n\nWhether to bring the resulting table into local memory (collect = TRUE) as a dataframe or leave as a reference to a database table (for continued analysis using, e.g., dbplyr). Defaults to FALSE.\n\n\n\n\n…\n\n\nFurther arguments passed along to collect() if collect = TRUE\n\n\n\n\ncon\n\n\nConnection to the allofus SQL database. Defaults to getOption(\"aou.default.con\"), which is set automatically if you use aou_connect()\n\n\n\n\n\n\n\nThe current observation period table in the All of Us OMOP CDM is not always appropriate for cohorts generated using OHDSI tools such as ATLAS. Some observation periods are overly short and some participants have hundreds of observation periods.\nThis function generates an observation period table from the first occurrence of a clinical event in the EHR tables to the last clinical event in the EHR tables. It will only return a single observation period per person_id in the database. If collect = FALSE, the function returns a query to a temporary table in the database which can be referenced by typical dplyr functions.\nNormal OMOP conventions for EHR suggest that long lapses of time between clinical events may indicate that the person was not \"observed\" during this period. However, due to the diverse nature of clinical EHR data contributed to All of Us, it seems most conservative to assume that the person was observed from their first to last clinical event. See https://ohdsi.github.io/CommonDataModel/ehrObsPeriods.html for more details.\nSome users have clinical events going back to before the time of widespread electronic medical record use (e.g., the 1980s and 1990s). This function considers all EHR data in the database, regardless of the date of the clinical event, but we recommend that users consider the implications of including data from the 1980s and 1990s. It may be more prudent to exclude data prior to a more recent cutoff date so that the EHR data is more likely to be accurate, though this decision depends highly on the research question (see example below).\nUsers should note that the aou_observation_period function will only generate observation periods for participants who have at least one clinical observation. If participant in the AllofUs research program who did not include electronic health record data are included in the cohort argument, or elected to contribute data but have no data to contribute, they will not be included in the generated observation period table.\n\n\n\nA dataframe if collect = TRUE; a reference to a remote database table if not. Columns will be \"person_id\", \"observation_period_start_date\", and \"observation_period_end_date\".\n\n\n\n\nlibrary(allofus)\n\n\n\nlibrary(dplyr)\ncon &lt;- aou_connect()\n\n# create observation_period table for everyone\nobservation_period_tbl &lt;- aou_observation_period()\n\n# create a cohort of participants with EHR data and at least one year\n# of observation before they took the first survey\n\n# first, create an index date as the first date a survey was taken\nindex_date_tbl &lt;- tbl(con, \"ds_survey\") %&gt;%\n  group_by(person_id) %&gt;%\n  summarize(index_date = as.Date(min(survey_datetime, na.rm = TRUE)),\n            .groups = \"drop\")\n\n# join with observation_period_tbl\ncohort &lt;- tbl(con, \"cb_search_person\") %&gt;%\n  filter(has_ehr_data == 1) %&gt;%\n  inner_join(index_date_tbl, by = \"person_id\") %&gt;%\n  inner_join(observation_period_tbl, by = \"person_id\") %&gt;%\n  filter(\n    observation_period_start_date &lt;= DATE_ADD(\n      index_date,\n      sql(paste0(\"INTERVAL \", -1, \" year\"))\n    ),\n    index_date &lt;= observation_period_end_date\n  ) %&gt;%\n  select(person_id, gender, sex_at_birth,\n    race, ethnicity, age_at_consent,\n    index_date, observation_period_start_date, observation_period_end_date)\n\n# head(cohort)\n\n# create an observation period table with a minimum start date (e.g., 2010-01-01)\n# to only look at EHR data after that date\nobservation_period_tbl %&gt;%\n  mutate(\n    observation_period_start_date =\n      if_else(observation_period_start_date &lt; as.Date(\"2010-01-01\"),\n        as.Date(\"2010-01-01\"),\n        observation_period_start_date\n      )\n  ) %&gt;%\n  filter(observation_period_end_date &gt; as.Date(\"2010-01-01\"))",
+    "crumbs": [
+      "Home",
+      "Reference",
+      "aou_observation_period"
+    ]
+  },
+  {
+    "objectID": "man/aou_observation_period.html#generate-an-observation-period-table",
+    "href": "man/aou_observation_period.html#generate-an-observation-period-table",
+    "title": "allofus",
+    "section": "",
+    "text": "Generates a temporary observation period table based the first and last event in the electronic medical record data. Because some EHR sites have contributed data from several decades ago, researchers might want to consider further constraining this table to reasonable date ranges of interest (e.g., setting all observation_period_start_date values to no earlier than 01/01/2010).\n\n\n\naou_observation_period(\n  cohort = NULL,\n  collect = FALSE,\n  ...,\n  con = getOption(\"aou.default.con\")\n)\n\n\n\n\n\n\n\ncohort\n\n\nReference to a remote table or local dataframe with a column called \"person_id\"\n\n\n\n\ncollect\n\n\nWhether to bring the resulting table into local memory (collect = TRUE) as a dataframe or leave as a reference to a database table (for continued analysis using, e.g., dbplyr). Defaults to FALSE.\n\n\n\n\n…\n\n\nFurther arguments passed along to collect() if collect = TRUE\n\n\n\n\ncon\n\n\nConnection to the allofus SQL database. Defaults to getOption(\"aou.default.con\"), which is set automatically if you use aou_connect()\n\n\n\n\n\n\n\nThe current observation period table in the All of Us OMOP CDM is not always appropriate for cohorts generated using OHDSI tools such as ATLAS. Some observation periods are overly short and some participants have hundreds of observation periods.\nThis function generates an observation period table from the first occurrence of a clinical event in the EHR tables to the last clinical event in the EHR tables. It will only return a single observation period per person_id in the database. If collect = FALSE, the function returns a query to a temporary table in the database which can be referenced by typical dplyr functions.\nNormal OMOP conventions for EHR suggest that long lapses of time between clinical events may indicate that the person was not \"observed\" during this period. However, due to the diverse nature of clinical EHR data contributed to All of Us, it seems most conservative to assume that the person was observed from their first to last clinical event. See https://ohdsi.github.io/CommonDataModel/ehrObsPeriods.html for more details.\nSome users have clinical events going back to before the time of widespread electronic medical record use (e.g., the 1980s and 1990s). This function considers all EHR data in the database, regardless of the date of the clinical event, but we recommend that users consider the implications of including data from the 1980s and 1990s. It may be more prudent to exclude data prior to a more recent cutoff date so that the EHR data is more likely to be accurate, though this decision depends highly on the research question (see example below).\nUsers should note that the aou_observation_period function will only generate observation periods for participants who have at least one clinical observation. If participant in the AllofUs research program who did not include electronic health record data are included in the cohort argument, or elected to contribute data but have no data to contribute, they will not be included in the generated observation period table.\n\n\n\nA dataframe if collect = TRUE; a reference to a remote database table if not. Columns will be \"person_id\", \"observation_period_start_date\", and \"observation_period_end_date\".\n\n\n\n\nlibrary(allofus)\n\n\n\nlibrary(dplyr)\ncon &lt;- aou_connect()\n\n# create observation_period table for everyone\nobservation_period_tbl &lt;- aou_observation_period()\n\n# create a cohort of participants with EHR data and at least one year\n# of observation before they took the first survey\n\n# first, create an index date as the first date a survey was taken\nindex_date_tbl &lt;- tbl(con, \"ds_survey\") %&gt;%\n  group_by(person_id) %&gt;%\n  summarize(index_date = as.Date(min(survey_datetime, na.rm = TRUE)),\n            .groups = \"drop\")\n\n# join with observation_period_tbl\ncohort &lt;- tbl(con, \"cb_search_person\") %&gt;%\n  filter(has_ehr_data == 1) %&gt;%\n  inner_join(index_date_tbl, by = \"person_id\") %&gt;%\n  inner_join(observation_period_tbl, by = \"person_id\") %&gt;%\n  filter(\n    observation_period_start_date &lt;= DATE_ADD(\n      index_date,\n      sql(paste0(\"INTERVAL \", -1, \" year\"))\n    ),\n    index_date &lt;= observation_period_end_date\n  ) %&gt;%\n  select(person_id, gender, sex_at_birth,\n    race, ethnicity, age_at_consent,\n    index_date, observation_period_start_date, observation_period_end_date)\n\n# head(cohort)\n\n# create an observation period table with a minimum start date (e.g., 2010-01-01)\n# to only look at EHR data after that date\nobservation_period_tbl %&gt;%\n  mutate(\n    observation_period_start_date =\n      if_else(observation_period_start_date &lt; as.Date(\"2010-01-01\"),\n        as.Date(\"2010-01-01\"),\n        observation_period_start_date\n      )\n  ) %&gt;%\n  filter(observation_period_end_date &gt; as.Date(\"2010-01-01\"))",
+    "crumbs": [
+      "Home",
+      "Reference",
+      "aou_observation_period"
+    ]
+  },
+  {
+    "objectID": "man/aou_session_info.html",
+    "href": "man/aou_session_info.html",
+    "title": "allofus",
+    "section": "",
+    "text": "Returns a table of information that is necessary to fully reproduce your analyses. Specifically, it includes R version, the packages loaded and their versions, and the All of Us CDR release that you are using.\n\n\n\naou_session_info(CDR = getOption(\"aou.default.cdr\"))\n\n\n\n\n\n\n\nCDR\n\n\nThe name of the CDR to use. Defaults to getOption(“aou.default.cdr”)\n\n\n\n\n\n\nA list with three elements: the platform, the AoU release, and the packages\n\n\n\n\nlibrary(allofus)\n\n\nallofus::aou_session_info()",
+    "crumbs": [
+      "Home",
+      "Reference",
+      "aou_session_info"
+    ]
+  },
+  {
+    "objectID": "man/aou_session_info.html#print-session-information-for-the-aou-r-environment",
+    "href": "man/aou_session_info.html#print-session-information-for-the-aou-r-environment",
+    "title": "allofus",
+    "section": "",
+    "text": "Returns a table of information that is necessary to fully reproduce your analyses. Specifically, it includes R version, the packages loaded and their versions, and the All of Us CDR release that you are using.\n\n\n\naou_session_info(CDR = getOption(\"aou.default.cdr\"))\n\n\n\n\n\n\n\nCDR\n\n\nThe name of the CDR to use. Defaults to getOption(“aou.default.cdr”)\n\n\n\n\n\n\nA list with three elements: the platform, the AoU release, and the packages\n\n\n\n\nlibrary(allofus)\n\n\nallofus::aou_session_info()",
+    "crumbs": [
+      "Home",
+      "Reference",
+      "aou_session_info"
+    ]
+  },
+  {
+    "objectID": "man/aou_join.html",
+    "href": "man/aou_join.html",
+    "title": "allofus",
+    "section": "",
+    "text": "Joins two tables in the All of Us database. A less verbose wrapper for the dplyr::*_join() functions with some added safeguards.\n\n\n\naou_join(\n  data,\n  table,\n  type,\n  by = NULL,\n  suffix = c(\"_x\", \"_y\"),\n  x_as = NULL,\n  y_as = NULL,\n  ...,\n  con = getOption(\"aou.default.con\")\n)\n\n\n\n\n\n\n\ndata\n\n\nunexecuted SQL query from dbplyr/dplyr.\n\n\n\n\ntable\n\n\nthe omop table (or other remote table in your schema) you wish to join, as a character string, or a tbl object.\n\n\n\n\ntype\n\n\nthe type of join; types available in dplyr: \"left\", \"right\", \"inner\", \"anti\", \"full\", etc.\n\n\n\n\nby\n\n\ncolumns to join on\n\n\n\n\nsuffix\n\n\nsuffix preferences to add when joining data with the same column names not specified in the by argument.\n\n\n\n\nx_as\n\n\noptional; a string for the name of the left table\n\n\n\n\ny_as\n\n\noptional; a string for the name of the right table\n\n\n\n\n…\n\n\nAdditional arguments passed on to the join function\n\n\n\n\ncon\n\n\nConnection to the allofus SQL database. Defaults to getOption(“aou.default.con”), which is created automatically with aou_connect().\n\n\n\n\n\n\nThere are a few good reasons to use aou_join() when possible over the x_join functions from dplyr. First, it reduces the code necessary to join an existing table to another table. Second, it includes checks/workarounds for two sources of common errors using dbplyr: it automatically appends the x_as and y_as arguments to the join call if they are not provided and it changes the default suffix from .x/.y to _x/_y for cases with shared column names not specified by the by argument which will result in a SQL error.\n\n\n\nReference to the remote table created by the join.\n\n\n\n\nlibrary(allofus)\n\n\n\ncon &lt;- aou_connect()\nobs_tbl &lt;- dplyr::tbl(con, \"observation\") %&gt;%\n  dplyr::select(-provider_id)\nobs_tbl %&gt;%\n  aou_join(\"person\", type = \"left\", by = \"person_id\")",
+    "crumbs": [
+      "Home",
+      "Reference",
+      "aou_join"
+    ]
+  },
+  {
+    "objectID": "man/aou_join.html#join-current-query-to-another-table",
+    "href": "man/aou_join.html#join-current-query-to-another-table",
+    "title": "allofus",
+    "section": "",
+    "text": "Joins two tables in the All of Us database. A less verbose wrapper for the dplyr::*_join() functions with some added safeguards.\n\n\n\naou_join(\n  data,\n  table,\n  type,\n  by = NULL,\n  suffix = c(\"_x\", \"_y\"),\n  x_as = NULL,\n  y_as = NULL,\n  ...,\n  con = getOption(\"aou.default.con\")\n)\n\n\n\n\n\n\n\ndata\n\n\nunexecuted SQL query from dbplyr/dplyr.\n\n\n\n\ntable\n\n\nthe omop table (or other remote table in your schema) you wish to join, as a character string, or a tbl object.\n\n\n\n\ntype\n\n\nthe type of join; types available in dplyr: \"left\", \"right\", \"inner\", \"anti\", \"full\", etc.\n\n\n\n\nby\n\n\ncolumns to join on\n\n\n\n\nsuffix\n\n\nsuffix preferences to add when joining data with the same column names not specified in the by argument.\n\n\n\n\nx_as\n\n\noptional; a string for the name of the left table\n\n\n\n\ny_as\n\n\noptional; a string for the name of the right table\n\n\n\n\n…\n\n\nAdditional arguments passed on to the join function\n\n\n\n\ncon\n\n\nConnection to the allofus SQL database. Defaults to getOption(“aou.default.con”), which is created automatically with aou_connect().\n\n\n\n\n\n\nThere are a few good reasons to use aou_join() when possible over the x_join functions from dplyr. First, it reduces the code necessary to join an existing table to another table. Second, it includes checks/workarounds for two sources of common errors using dbplyr: it automatically appends the x_as and y_as arguments to the join call if they are not provided and it changes the default suffix from .x/.y to _x/_y for cases with shared column names not specified by the by argument which will result in a SQL error.\n\n\n\nReference to the remote table created by the join.\n\n\n\n\nlibrary(allofus)\n\n\n\ncon &lt;- aou_connect()\nobs_tbl &lt;- dplyr::tbl(con, \"observation\") %&gt;%\n  dplyr::select(-provider_id)\nobs_tbl %&gt;%\n  aou_join(\"person\", type = \"left\", by = \"person_id\")",
+    "crumbs": [
+      "Home",
+      "Reference",
+      "aou_join"
+    ]
+  },
+  {
+    "objectID": "vignettes/allofus.html",
+    "href": "vignettes/allofus.html",
+    "title": "Getting started with the allofus package",
+    "section": "",
+    "text": "Before diving into the specifics, let’s clarify some vocabulary:\n\nSQL database : A structured collection of data where information is stored in tables. Each table is like a spreadsheet with rows and columns. Data can be added, removed, or modified using SQL queries.\nSQL query : A request for data from a database written in a language called SQL (Structured Query Language).\nGoogle BigQuery : A cloud-based SQL database that is used to store the All of Us data.\nbigrquery : An R package that allows you to interact with Google BigQuery from R.\ndplyr: A part of the tidyverse in R, dplyr is a package for data manipulation. It provides a set of functions that can be used to filter, select, arrange, mutate, summarize, and join data.\ndbplyr : Also a part of the tidyverse in R, dbplyr is a database backend for dplyr. It allows you to write R code that is then translated into SQL queries.",
+    "crumbs": [
+      "Home",
+      "Getting Started"
+    ]
+  },
+  {
+    "objectID": "vignettes/allofus.html#the-basics",
+    "href": "vignettes/allofus.html#the-basics",
+    "title": "Getting started with the allofus package",
+    "section": "",
+    "text": "Before diving into the specifics, let’s clarify some vocabulary:\n\nSQL database : A structured collection of data where information is stored in tables. Each table is like a spreadsheet with rows and columns. Data can be added, removed, or modified using SQL queries.\nSQL query : A request for data from a database written in a language called SQL (Structured Query Language).\nGoogle BigQuery : A cloud-based SQL database that is used to store the All of Us data.\nbigrquery : An R package that allows you to interact with Google BigQuery from R.\ndplyr: A part of the tidyverse in R, dplyr is a package for data manipulation. It provides a set of functions that can be used to filter, select, arrange, mutate, summarize, and join data.\ndbplyr : Also a part of the tidyverse in R, dbplyr is a database backend for dplyr. It allows you to write R code that is then translated into SQL queries.",
+    "crumbs": [
+      "Home",
+      "Getting Started"
+    ]
+  },
+  {
+    "objectID": "vignettes/allofus.html#accessing-data",
+    "href": "vignettes/allofus.html#accessing-data",
+    "title": "Getting started with the allofus package",
+    "section": "Accessing Data",
+    "text": "Accessing Data\n\nConnecting to the database\nA connection to a database is an object that allows you to interact with it from R. The allofus package relies on the bigrquery R package to create a connection to the Google BigQuery database when you run aou_connect().\n\nlibrary(allofus)\ncon &lt;- aou_connect()\n\nThe object con is used to refer to the connection to the All of Us database. When you run the aou_connect() function, it also gets stored as the default connection for a session, so you don’t need to include it in other functions from the allofus package. For instance, you can run aou_tables() to see a list of tables in the database:\n\naou_tables()\n\n\n#&gt; # A tibble: 68 × 2\n#&gt;    table_name               columns                                             \n#&gt;    &lt;chr&gt;                    &lt;chr&gt;                                               \n#&gt;  1 concept_ancestor         ancestor_concept_id, descendant_concept_id, min_lev…\n#&gt;  2 cb_criteria_ancestor     ancestor_id, descendant_id                          \n#&gt;  3 attribute_definition     attribute_definition_id, attribute_name, attribute_…\n#&gt;  4 cdm_source               cdm_source_name, cdm_source_abbreviation, cdm_holde…\n#&gt;  5 concept_class            concept_class_id, concept_class_name, concept_class…\n#&gt;  6 concept                  concept_id, concept_name, domain_id, vocabulary_id,…\n#&gt;  7 concept_synonym          concept_id, concept_synonym_name, language_concept_…\n#&gt;  8 cb_criteria_relationship concept_id_1, concept_id_2                          \n#&gt;  9 concept_relationship     concept_id_1, concept_id_2, relationship_id, valid_…\n#&gt; 10 condition_occurrence     condition_occurrence_id, person_id, condition_conce…\n#&gt; # ℹ 58 more rows\n\n\n\nAccessing a table\nTo access a table in the database, use tbl(con, \"tablename\"). The resulting object is reference to a table in a database that allows you to interact with it from R. In order to connect to a table in the database, you must first create the database connection (con). For example, to create a reference to the person table:\n\nperson_tbl &lt;- tbl(con, \"person\")\n\nAlthough the person_tbl object behaves similarly to a data frame, it is not actually a data frame. Instead, it is actually a SQL query that only gets run when you need to access the data. This is a feature of the dbplyr package that allows you to manipulate data without actually retrieving it. The SQL query behind the person_tbl object is:\n\nSELECT *\nFROM `person`\n\nWhen you print person_tbl, you’ll get something like this:\n\nperson_tbl\n\n#&gt; # Source:   table&lt;person&gt; [?? x 23]\n#&gt; # Database: BigQueryConnection\n#&gt;    person_id gender_concept_id year_of_birth month_of_birth day_of_birth\n#&gt;      &lt;int64&gt;           &lt;int64&gt;       &lt;int64&gt;        &lt;int64&gt;      &lt;int64&gt;\n#&gt;  1   xxxxxxx            903096          1955             NA           NA\n#&gt;  2   xxxxxxx            903096          1978             NA           NA\n#&gt;  3   xxxxxxx            903096          2000             NA           NA\n#&gt;  4   xxxxxxx            903096          1988             NA           NA\n#&gt;  5   xxxxxxx            903096          1993             NA           NA\n#&gt;  6   xxxxxxx            903096          1959             NA           NA\n#&gt;  7   xxxxxxx            903096          1976             NA           NA\n#&gt;  8   xxxxxxx            903096          1961             NA           NA\n#&gt;  9   xxxxxxx            903096          1952             NA           NA\n#&gt; 10   xxxxxxx            903096          1980             NA           NA\n#&gt; # ℹ more rows\n#&gt; # ℹ 18 more variables: birth_datetime &lt;dttm&gt;, race_concept_id &lt;int64&gt;,\n#&gt; #   ethnicity_concept_id &lt;int64&gt;, location_id &lt;int64&gt;, provider_id &lt;int64&gt;,\n#&gt; #   care_site_id &lt;int64&gt;, person_source_value &lt;chr&gt;, gender_source_value &lt;chr&gt;,\n#&gt; #   gender_source_concept_id &lt;int64&gt;, race_source_value &lt;chr&gt;,\n#&gt; #   race_source_concept_id &lt;int64&gt;, ethnicity_source_value &lt;chr&gt;,\n#&gt; #   ethnicity_source_concept_id &lt;int64&gt;, …\nYou’ll only see the first 10 rows of the person table (person ids were omitted from the output). This allows you to see what the data looks like without loading the entire table into R, which can be slow or even crash your session.\nInstead, you want to perform as much data manipulation as possible on the database. This is more efficient because the operations are translated into SQL and executed on the server, which is faster and requires less memory than processing in R.",
+    "crumbs": [
+      "Home",
+      "Getting Started"
+    ]
+  },
+  {
+    "objectID": "vignettes/allofus.html#data-manipulation-on-the-database",
+    "href": "vignettes/allofus.html#data-manipulation-on-the-database",
+    "title": "Getting started with the allofus package",
+    "section": "Data manipulation on the database",
+    "text": "Data manipulation on the database\nBefore bringing data into R, you can manipulate it on the database using the dplyr functions. This allows you to perform operations on the database without bringing the data into R’s memory.\nFor example, you can subset the person table to women born after 1980:\n\nyoung_women &lt;- person_tbl %&gt;%\n  filter(gender_concept_id == 45878463, year_of_birth &gt; 1980)\n\nBefore we print out young_women, the SQL query has not actually been run. In fact, person_tbl is not run either. When we do print it, it will run the following SQL:\n\nSELECT `person`.*\nFROM `person`\nWHERE (`gender_concept_id` = 45878463.0) AND (`year_of_birth` &gt; 1980.0)\n\nand print the first 10 rows:\n\nyoung_women\n\n#&gt; # Source:   SQL [?? x 23]\n#&gt; # Database: BigQueryConnection\n#&gt;    person_id gender_concept_id year_of_birth month_of_birth day_of_birth\n#&gt;      &lt;int64&gt;           &lt;int64&gt;       &lt;int64&gt;        &lt;int64&gt;      &lt;int64&gt;\n#&gt;  1   xxxxxxx          45878463          1992             NA           NA\n#&gt;  2   xxxxxxx          45878463          1989             NA           NA\n#&gt;  3   xxxxxxx          45878463          1981             NA           NA\n#&gt;  4   xxxxxxx          45878463          1990             NA           NA\n#&gt;  5   xxxxxxx          45878463          1990             NA           NA\n#&gt;  6   xxxxxxx          45878463          1985             NA           NA\n#&gt;  7   xxxxxxx          45878463          1987             NA           NA\n#&gt;  8   xxxxxxx          45878463          1986             NA           NA\n#&gt;  9   xxxxxxx          45878463          1983             NA           NA\n#&gt; 10   xxxxxxx          45878463          1998             NA           NA\n# ℹ more rows\n# ℹ 18 more variables: birth_datetime &lt;dttm&gt;, race_concept_id &lt;int64&gt;,\n#   ethnicity_concept_id &lt;int64&gt;, location_id &lt;int64&gt;, provider_id &lt;int64&gt;,\n#   care_site_id &lt;int64&gt;, person_source_value &lt;chr&gt;, gender_source_value &lt;chr&gt;,\n#   gender_source_concept_id &lt;int64&gt;, race_source_value &lt;chr&gt;,\n#   race_source_concept_id &lt;int64&gt;, ethnicity_source_value &lt;chr&gt;,\n#   ethnicity_source_concept_id &lt;int64&gt;, …\nNote that we don’t know how many observations match these conditions yet (the dimensions are [?? x 23]), because it hasn’t been fully executed – only the first 10 rows. To get the total number of observations, we can use tally():\n\ntally(young_women)\n\n#&gt; # Source:   SQL [1 x 1]\n#&gt; # Database: BigQueryConnection\n#&gt;         n\n#&gt;   &lt;int64&gt;\n#&gt; 1   76135\nThis is actually a SQL query that only results in 1 row, so we do get to see the entire thing. It’s much faster to run than to bring the entire table into R and then count the number of rows, because the code is executed on the database:\n\nSELECT count(*) AS `n`\nFROM (\n  SELECT `person`.*\n  FROM `person`\n  WHERE (`gender_concept_id` = 45878463.0) AND (`year_of_birth` &gt; 1980.0)\n)\n\n\nThe collect() Function\nWe can bring the result of a query into the local R session using collect():\n\nyoung_women %&gt;% collect()\n\nThis brings the table into your local R workspace as a tibble, or dataframe. This is useful for performing operations that cannot be performed directly on the database, such as certain statistical analyses or plotting. For example, if you’re planning to run a regression analysis on the filtered data, you would first use collect() to bring the data into R.\nWe can bring in the result of tally() as well:\n\ntally(young_women) %&gt;% collect()\n\n#&gt; A tibble: 1 × 1\n#&gt;       n\n#&gt; &lt;int64&gt;\n#&gt;   76135\nOr even the entire person table, although that’s not recommended because it’s so large!\n\nperson_data &lt;- person_tbl %&gt;% collect()\nperson_data\n\n#&gt; # A tibble: 413457 × 23\n#&gt; person_id    gender_concept_id   year_of_birth   month_of_birth  day_of_birth    \n#&gt;   &lt;int64&gt;              &lt;int64&gt;         &lt;int64&gt;          &lt;int64&gt;       &lt;int64&gt;\n#&gt;   xxxxxxx               903096            1955               NA            NA    \n#&gt;   xxxxxxx               903096            1978               NA            NA\n#&gt;   xxxxxxx               903096            2000               NA            NA\n#&gt;   xxxxxxx               903096            1988               NA            NA\n#&gt;   xxxxxxx               903096            1993               NA            NA\n#&gt;   xxxxxxx               903096            1959               NA            NA\n#&gt;   xxxxxxx               903096            1976               NA            NA\n#&gt;   xxxxxxx               903096            1961               NA            NA\n#&gt;   xxxxxxx               903096            1952               NA            NA\n#&gt;   xxxxxxx               903096            1980               NA            NA",
+    "crumbs": [
+      "Home",
+      "Getting Started"
+    ]
+  },
+  {
+    "objectID": "vignettes/allofus.html#data-manipulation-with-multiple-tables",
+    "href": "vignettes/allofus.html#data-manipulation-with-multiple-tables",
+    "title": "Getting started with the allofus package",
+    "section": "Data manipulation with multiple tables",
+    "text": "Data manipulation with multiple tables\nThe All of Us data is spread across multiple tables, for the most part corresponding to the OMOP Common Data Model. This allows for efficient storage and retrieval of data, but it can be a bit tricky to work with at first. Fortunately, dbplyr makes it easy to join tables together.\nFor example, how did we know that gender_concept_id == 45878463 referred to women? We can look up the names of concept ids in the concept table:\n\nconcept_tbl &lt;- tbl(con, \"concept\") %&gt;%\n  select(concept_id, concept_name)\nconcept_tbl\n\n#&gt; # Source:   SQL [?? x 2]\n#&gt; # Database: BigQueryConnection\n#&gt;    concept_id concept_name                                      \n#&gt;       &lt;int64&gt; &lt;chr&gt;                                             \n#&gt;  1   38003166 Durable Medical Equipment - General Classification\n#&gt;  2   35805830 DexaBEAM                                          \n#&gt;  3   38003221 Blood - Plasma                                    \n#&gt;  4    1147839 survey_conduct.survey_start_date                  \n#&gt;  5       8623 log reduction                                     \n#&gt;  6   38004063 Rehabilitation Practitioner                       \n#&gt;  7   38003186 Radiology - Diagnostic - General Classification   \n#&gt;  8   35805115 VNCOP-B                                           \n#&gt;  9   35805457 VAdCA                                             \n#&gt; 10       8581 heartbeat                                         \n#&gt; # ℹ more rows\nWe just want to extract the names of the gender concept ids. To do this, we can join the person table with the concept table. So that we can see the full range of gender ids, first we will count them:\n\ngenders_in_aou &lt;- person_tbl %&gt;%\n  count(gender_concept_id) %&gt;%\n  left_join(concept_tbl, by = join_by(gender_concept_id == concept_id))\ngenders_in_aou\n\n#&gt; # Source:   SQL [9 x 3]\n#&gt; # Database: BigQueryConnection\n#&gt;   gender_concept_id       n concept_name                                        \n#&gt;             &lt;int64&gt; &lt;int64&gt; &lt;chr&gt;                                               \n#&gt; 1           1177221     602 I prefer not to answer                              \n#&gt; 2                 0      97 No matching concept                                 \n#&gt; 3          45878463  247453 Female                                              \n#&gt; 4           1585843     407 Gender Identity: Additional Options                 \n#&gt; 5            903096    7356 PMI: Skip                                           \n#&gt; 6          45880669  154241 Male                                                \n#&gt; 7           1585842     562 Gender Identity: Transgender                        \n#&gt; 8           1585841    1213 Gender Identity: Non Binary                         \n#&gt; 9        2000000002    1526 Not man only, not woman only, prefer not to answer,…\nThe result of this SQL query is just 9 rows, so we get to see all of them. Both the counting and the joining were done directly on the database, so this was very efficient.\n\naou_join()\nThe allofus package includes a function called aou_join() that makes it easy to join tables together. It includes some additional checks to help avoid mistakes in joining. For example, if we wanted to join the person table with the observation table, dropping people with no observations, we could do it like this:\n\nobs &lt;- person_tbl %&gt;%\n  aou_join(\"observation\", type = \"inner\", by = \"person_id\")\n\nWarning message:\n“There are shared column names not specified in the `by` argument.\n→ These column names now end in '_x' and '_y'.\nℹ You can change these suffixes using the `suffix` argument but it cannot\n  contain periods (`.`).\n→ Consider specifing all shared columns in the `by` argument.\n→ Or if these additional shared columns are `NA`, remove them prior to joining.”\nThe warning message tells us that the person and observation tables share some column names that we didn’t specify as part of the join argument. That is because both tables have a column called provider_id. We can see this by looking at the column names of the obs table that have the default added suffix, “_x” and “_y”:\n\nobs %&gt;%\n  select(ends_with(\"_x\"), ends_with(\"_y\")) %&gt;%\n  colnames()\n\n\n#&gt; [1] \"provider_id_x\" \"provider_id_y\"\n\nBecause this is often a mistake occurring because we are not working with the tables directly, aou_join() warns us about this. We can avoid this warning by specifying all of the columns that we want to join on and removing the columns that we don’t want to join on. For example, we could remove the provider_id column from the person table before joining:\n\nobs &lt;- person_tbl %&gt;%\n  select(-provider_id) %&gt;%\n  aou_join(\"observation\", type = \"inner\", by = \"person_id\")",
+    "crumbs": [
+      "Home",
+      "Getting Started"
+    ]
+  },
+  {
+    "objectID": "vignettes/allofus.html#joins-from-different-sources",
+    "href": "vignettes/allofus.html#joins-from-different-sources",
+    "title": "Getting started with the allofus package",
+    "section": "Joins from different sources?",
+    "text": "Joins from different sources?\nUnfortunately, we can’t join a table on the database with a dataframe in R. If you end up with one of each, you have a couple of options:\n\nSee if you can avoid collecting the dataframe into R. Most allofus functions have a collect = FALSE argument, but sometimes it’s unavoidable.\nBring the table from the database into R using collect() and then join it with the dataframe in R. This can be inefficient if part of the reason for joining is to subset the table down to only data you care about.\nFirst subset the table on the database, then bring it into R and join it with the dataframe in R. For example, if you have a cohort of participants as a dataframe, e.g., as created by aou_atlas_cohort(), and you want to bring in activity data for those participants, you could run:\n\n\n# instead of aou_join(cohort, \"activity_summary\", type = \"left\", by = \"person_id\")\nactivity_data &lt;- tbl(con, \"activity_summary\") %&gt;%\n  filter(person_id %in% !!cohort$person_id) %&gt;%\n  collect() %&gt;%\n  right_join(cohort, by = \"person_id\")",
+    "crumbs": [
+      "Home",
+      "Getting Started"
+    ]
+  },
+  {
+    "objectID": "vignettes/allofus.html#viewing-the-underlying-sql-with-show_query",
+    "href": "vignettes/allofus.html#viewing-the-underlying-sql-with-show_query",
+    "title": "Getting started with the allofus package",
+    "section": "Viewing the Underlying SQL with show_query()",
+    "text": "Viewing the Underlying SQL with show_query()\nUnderstanding the SQL code that dbplyr generates can be insightful, especially if you’re debugging or simply curious about the translation from R to SQL. To view the SQL query that corresponds to your dbplyr operations, use the show_query() function:\n\nobs %&gt;%\n  show_query()\n\nSELECT\n  `edjnngldox`.`person_id` AS `person_id`,\n  `gender_concept_id`,\n  `year_of_birth`,\n  `month_of_birth`,\n  `day_of_birth`,\n  `birth_datetime`,\n  `race_concept_id`,\n  `ethnicity_concept_id`,\n  `location_id`,\n  `care_site_id`,\n  `person_source_value`,\n  `gender_source_value`,\n  `gender_source_concept_id`,\n  `race_source_value`,\n  `race_source_concept_id`,\n  `ethnicity_source_value`,\n  `ethnicity_source_concept_id`,\n  `state_of_residence_concept_id`,\n  `state_of_residence_source_value`,\n  `sex_at_birth_concept_id`,\n  `sex_at_birth_source_concept_id`,\n  `sex_at_birth_source_value`,\n  `observation_id`,\n  `observation_concept_id`,\n  `observation_date`,\n  `observation_datetime`,\n  `observation_type_concept_id`,\n  `value_as_number`,\n  `value_as_string`,\n  `value_as_concept_id`,\n  `qualifier_concept_id`,\n  `unit_concept_id`,\n  `zwcwezaowf`.`provider_id` AS `provider_id`,\n  `visit_occurrence_id`,\n  `visit_detail_id`,\n  `observation_source_value`,\n  `observation_source_concept_id`,\n  `unit_source_value`,\n  `qualifier_source_value`,\n  `value_source_concept_id`,\n  `value_source_value`,\n  `questionnaire_response_id`\nFROM `person` `edjnngldox`\nINNER JOIN `observation` `zwcwezaowf`\n  ON (`edjnngldox`.`person_id` = `zwcwezaowf`.`person_id`)\nThis function prints the SQL query that would be sent to the database. It’s a great way to learn SQL and understand how dbplyr optimizes data manipulation. (Why the gibberish table names? Bugs in previous versions of dbplyr resulted in table names that would break the query, and giving them unique names is a workaround.)",
+    "crumbs": [
+      "Home",
+      "Getting Started"
+    ]
+  },
+  {
+    "objectID": "vignettes/allofus.html#running-sql-code-directly",
+    "href": "vignettes/allofus.html#running-sql-code-directly",
+    "title": "Getting started with the allofus package",
+    "section": "Running SQL code directly",
+    "text": "Running SQL code directly\nAnother approach to working with the data is to write SQL code directly. This is especially useful for complex queries that are difficult to express in dplyr syntax. The allofus package includes a function called aou_sql() that makes it easy to run SQL code directly on the database. For example, we could count the number of people in the person table like this:\n\naou_sql(\"SELECT COUNT(*) AS n FROM {CDR}.person\")\n\nThere are a few important things to note about this code. First, the CDR variable is a special variable referring to what All of Us calls the “curated data repository”. When writing SQL code directly, we don’t need the database connection object con, instead we need to direct the code to the correct tables by preceding the table names with “{CDR}”. This means we can’t run the code we get from show_query() without modification. For example, we could count the number of young women in the dataset, as we did above with the dbplyr approach, like this:\n\naou_sql(\"\nSELECT count(*) AS `n`\nFROM (\n  SELECT `person`.*\n  FROM {CDR}.`person`\n  WHERE (`gender_concept_id` = 45878463.0) AND (`year_of_birth` &gt; 1980.0)\n)\n\")\n\nSecond, the aou_sql() function returns a dataframe – the entire result of the SQL query is brought into memory. This means that we want to run an entire query at once, instead of breaking it into multiple steps like we did with dbplyr.",
+    "crumbs": [
+      "Home",
+      "Getting Started"
+    ]
+  },
+  {
+    "objectID": "vignettes/workspace.html",
+    "href": "vignettes/workspace.html",
+    "title": "Managing files on the workbench",
+    "section": "",
+    "text": "The allofus package includes several functions designed to help you manage and transfer files between your personal workspace and a shared bucket in Google BigQuery. Understanding the difference between these two storage locations is crucial:",
+    "crumbs": [
+      "Home",
+      "Tutorials",
+      "Managing files on the workbench"
+    ]
+  },
+  {
+    "objectID": "vignettes/workspace.html#listing-files",
+    "href": "vignettes/workspace.html#listing-files",
+    "title": "Managing files on the workbench",
+    "section": "Listing Files",
+    "text": "Listing Files\n\nIn Your Workspace\nUse aou_ls_workspace() to list files in your workspace. This function is handy for quickly checking which files you have stored locally.\n\naou_ls_workspace()\n\n\n\nIn Your Bucket\nSimilarly, aou_ls_bucket() lists files in your bucket. This function can be used to view files that you or your collaborators have saved for shared access.\n\naou_ls_bucket()\n\nYou can also use the pattern argument with these functions to filter the listed files based on a naming pattern.\n\naou_ls_workspace(pattern = \"*.csv\")\naou_ls_bucket(pattern = \"project_*.csv\")",
+    "crumbs": [
+      "Home",
+      "Tutorials",
+      "Managing files on the workbench"
+    ]
+  },
+  {
+    "objectID": "vignettes/workspace.html#transferring-files",
+    "href": "vignettes/workspace.html#transferring-files",
+    "title": "Managing files on the workbench",
+    "section": "Transferring Files",
+    "text": "Transferring Files\nThese functions are used in conjunction with R’s reading and writing functions. You can store any type of data in both the workspace and the bucket.\n\nFrom Workspace to Bucket\nOnce you’ve processed or created a file in your workspace, you might want to move it to the bucket for permanent storage or to share it with collaborators. Use aou_workspace_to_bucket() for this purpose.\n\nwrite.csv(data, \"file1.csv\")\naou_workspace_to_bucket(\"file1.csv\")\n\n\n\nFrom Bucket to Workspace\nIf you need to use a file that a collaborator has saved to the bucket, or if you want to retrieve a file after deleting your environment, use aou_bucket_to_workspace().\n\naou_bucket_to_workspace(\"file2.csv\")\ndata &lt;- read.csv(\"file2.csv\")",
+    "crumbs": [
+      "Home",
+      "Tutorials",
+      "Managing files on the workbench"
+    ]
+  },
+  {
+    "objectID": "vignettes/workspace.html#workflow-example",
+    "href": "vignettes/workspace.html#workflow-example",
+    "title": "Managing files on the workbench",
+    "section": "Workflow Example",
+    "text": "Workflow Example\nHere’s a typical workflow using these functions:\n\nList files in your workspace : Check what files you currently have.\nProcess or create files : Perform your data analysis or other work in R.\nSave files to your workspace : Use R’s file handling functions like write.csv() or write.rds().\nTransfer to the bucket for sharing or permanent storage : Use aou_workspace_to_bucket().\nAccess shared files from the bucket : Use aou_bucket_to_workspace() to bring files into your workspace as needed.",
+    "crumbs": [
+      "Home",
+      "Tutorials",
+      "Managing files on the workbench"
+    ]
+  },
+  {
+    "objectID": "vignettes/workspace.html#important-considerations",
+    "href": "vignettes/workspace.html#important-considerations",
+    "title": "Managing files on the workbench",
+    "section": "Important Considerations",
+    "text": "Important Considerations\n\nStorage Hygiene : Regularly clean up your workspace to avoid clutter and manage storage costs.\nBackup Important Files : Use the bucket to backup important files. Files in your workspace (except for notebooks) are not secure against environment deletion.",
+    "crumbs": [
+      "Home",
+      "Tutorials",
+      "Managing files on the workbench"
+    ]
+  },
+  {
+    "objectID": "LICENSE.html",
+    "href": "LICENSE.html",
+    "title": "MIT License",
+    "section": "",
+    "text": "MIT License\nCopyright (c) 2023 allofus authors\nPermission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the “Software”), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:\nThe above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.\nTHE SOFTWARE IS PROVIDED “AS IS”, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.",
+    "crumbs": [
+      "Home",
+      "License"
+    ]
+  },
+  {
+    "objectID": "index.html",
+    "href": "index.html",
+    "title": "allofus R Package",
+    "section": "",
+    "text": "allofus R Package\n\n    \nThe goal of the allofus R package is to streamline the use of R within the All of Us Researcher Workbench. It has 4 primary goals:\n\nFacilitate the use of popular tidyverse ecosystem of R packages on the Researcher Workbench to facilitate transparent and reproducible analysis pipelines\nHelp researchers more efficiently and accurately extract and synthesize survey data and EHR data\nIncrease the interoperability between fully-featured tools created by the Observational Health Data Sciences and Informatics community (OHDSI; a global consortium built around the use of the OMOP CDM) and the Researcher Workbench\nMake connecting to the database and managing files simple\n\nThe allofus R package is developed by Louisa Smith and Rob Cavanaugh at Northeastern University and is not affiliated with or endorsed by the All of Us Research Program.\n\nInstallation\nInstall the released version of allofus from CRAN:\n\ninstall.packages(\"allofus\")\n\nInstall the development version from Github:\n\ninstall.packages(\"pak\")\npak::pak(\"roux-ohdsi/allofus\")\n\nOn the new RStudio interface on the workbench, you will need to manually specify the CRAN mirror to be able to download any recently updated packages.\n\n# specify the mirror directly\ninstall.packages(\"allofus\", repos = \"https://cloud.r-project.org\")\n\n# OR set the mirror as an option at the top of your script\noptions(repos = c(CRAN = \"https://cloud.r-project.org\"))\n\n# Github development versions may requires using the remotes package\ninstall.packages(\"remotes\")\nremotes::install_github(\"roux-ohdsi/allofus\", repos = \"https://cloud.r-project.org\")\n\n\n\nUse\nRead through the getting started vignette to learn how to use the package.\n\n\nCitation\nPlease cite the allofus package as:\n\nSmith L, Cavanaugh R (2023). allofus: Interface for ‘All of Us’ Researcher Workbench. doi:10.5281/zenodo.10420610, https://roux-ohdsi.github.io/allofus/.\n\nor with\n\ncitation(\"allofus\")\n\n\n\nBugs\nPlease leave us comments, requests, and report bugs using the “Issues” tab on github."
+  }
+]

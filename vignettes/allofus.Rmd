@@ -1,5 +1,5 @@
 ---
-title: "All of Us in R"
+title: "Getting started with the `allofus` package"
 output: rmarkdown::html_vignette
 vignette: >
   %\VignetteEngine{knitr::rmarkdown}
