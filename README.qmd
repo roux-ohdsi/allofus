@@ -61,7 +61,7 @@ remotes::install_github("roux-ohdsi/allofus", repos = "https://cloud.r-project.o
 
 ### Use
 
-Read through the [getting started](https://roux-ohdsi.github.io/allofus/articles/allofus.html) vignette to learn how to use the package.
+Read through the [getting started](https://roux-ohdsi.github.io/allofus/vignettes/allofus.html) vignette to learn how to use the package.
 
 ### Citation
 
