@@ -19,13 +19,12 @@ Workbench](https://www.researchallofus.org/data-tools/workbench/). It
 has 4 primary goals:
 
 1.  Facilitate the use of popular `tidyverse` ecosystem of R packages on
-    the Researcher Workbench to facilitate transparent and reproducible
-    analysis pipelines
+    the Researcher Workbench
 2.  Help researchers more efficiently and accurately extract and
     synthesize survey data and EHR data
-3.  Increase the interoperability between fully-featured tools created
-    by the Observational Health Data Sciences and Informatics community
-    (OHDSI; a global consortium built around the use of the [OMOP
+3.  Increase the interoperability between tools created by the
+    Observational Health Data Sciences and Informatics community (OHDSI)
+    for the [OMOP
     CDM](https://www.researchallofus.org/faq/what-is-omop/)) and the
     Researcher Workbench
 4.  Make connecting to the database and managing files simple
