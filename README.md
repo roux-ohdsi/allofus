@@ -75,7 +75,7 @@ vignette to learn how to use the package.
 Please cite the `allofus` package as:
 <p>
 Smith LH, Cavanaugh R (2024). “allofus: An R Package to Facilitate Use
-of the Asl of Us Researcher Workbench.” <em>Journal of the American
+of the All of Us Researcher Workbench.” <em>Journal of the American
 Medical Informatics Association</em>, ocae198.
 <a href="https://doi.org/10.1093/jamia/ocae198">doi:10.1093/jamia/ocae198</a>.
 </p>
