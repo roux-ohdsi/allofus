@@ -20,7 +20,8 @@ knitr::opts_chunk$set(
 [![R-CMD-check](https://github.com/roux-ohdsi/allofus/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/roux-ohdsi/allofus/actions/workflows/R-CMD-check.yaml)
 [![CRAN status](https://www.r-pkg.org/badges/version/allofus)](https://CRAN.R-project.org/package=allofus)
 [![](http://cranlogs.r-pkg.org/badges/grand-total/allofus)](https://cran.r-project.org/package=allofus)
-[![DOI](https://zenodo.org/badge/659848534.svg)](https://zenodo.org/doi/10.5281/zenodo.10420610)
+[![](https://img.shields.io/badge/DOI-10.1093%2Fjamia%2Focae198-007ec6)](https://www.doi.org/10.1093/jamia/ocae198)
+
 <!-- badges: end -->
 
 The goal of the `allofus` R package is to streamline the use of R within the [All of Us Researcher Workbench](https://www.researchallofus.org/data-tools/workbench/). It has 4 primary goals:
@@ -64,7 +65,7 @@ remotes::install_github("roux-ohdsi/allofus", repos = "https://cloud.r-project.o
 
 ### Use
 
-Read through the [getting started](https://roux-ohdsi.github.io/allofus/articles/allofus.html) vignette to learn how to use the package.
+Read through the [getting started](https://roux-ohdsi.github.io/allofus/vignettes/allofus.html) vignette to learn how to use the package.
 
 ### Citation
 
@@ -75,6 +76,11 @@ print(citation("allofus"), style = "html")
 or with
 ```{r}
 citation("allofus")
+```
+
+We also encourage you to reference the specific version of the package you use for an analysis. You can look this up with
+```{r}
+packageVersion("allofus")
 ```
 
 ### Bugs

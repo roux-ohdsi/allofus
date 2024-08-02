@@ -46,7 +46,7 @@ cohort start and end dates for each person_id.
 The function is based on a similar function in
 \url{https://github.com/cmayer2/r4aou} with some tweaks to generate the
 appropriate observation periods and incorporate other package functions.
-Please see the \href{https://roux-ohdsi.github.io/allofus/articles/atlas.html}{online vignette} for
+Please see the \href{https://roux-ohdsi.github.io/allofus/vignettes/atlas.html}{online vignette} for
 additional details.
 }
 \examples{
@@ -56,7 +56,10 @@ additional details.
 # If this cohort is not available, you can create one, or choose one already made.
 # aou_cohort_example contains the results of
 # cd <- ROhdsiWebApi::getCohortDefinition(1788061, "https://atlas-demo.ohdsi.org/WebAPI")
-# cd_sql <- ROhdsiWebApi::getCohortSql(cd, "https://atlas-demo.ohdsi.org/WebAPI")
+# for some cohorts, you must use the argument generateStats = FALSE or the cohort (its stats)
+# can't be generated on All of Us
+# cd_sql <- ROhdsiWebApi::getCohortSql(cd, "https://atlas-demo.ohdsi.org/WebAPI",
+#                                                   generateStats = FALSE)
 
 cohort <- aou_atlas_cohort(
   cohort_definition = aou_cohort_example$cd,

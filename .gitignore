@@ -14,3 +14,4 @@ errorReportSql.txt
 altdoc/freeze.rds
 _quarto/
 !_quarto/_freeze/
+^_quarto$

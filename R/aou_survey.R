@@ -26,7 +26,7 @@
 #'   To find the desired survey questions, use the all of us data dictionary,
 #'   survey codebook, athena, data browser, or the allofus R package modified
 #'   codebook which can be found here:
-#'   https://roux-ohdsi.github.io/allofus/articles/searchable_codebook.html For
+#'   https://roux-ohdsi.github.io/allofus/vignettes/searchable_codebook.html For
 #'   questions regarding an individual's health history or family health
 #'   history, the function requires the specific concept_id (or concept_code)
 #'   for individual in question, whether that is "self" or another relative.
@@ -184,7 +184,7 @@ aou_survey <- function(cohort = NULL,
     missing_qs <- questions[!questions %in% c(regular_survey_qs, health_survey_qs)]
     if (length(missing_qs) > 0) {
       cli::cli_abort(c(paste("Concept codes", paste(missing_qs, collapse = ", "), "not found in codebook."),
-        "i" = "Check spelling and confirm that concept codes appear in the codebook at {.url https://roux-ohdsi.github.io/allofus/articles/searchable_codebook.html}."
+        "i" = "Check spelling and confirm that concept codes appear in the codebook at {.url https://roux-ohdsi.github.io/allofus/vignettes/searchable_codebook.html}."
       ))
     }
 
@@ -205,7 +205,7 @@ aou_survey <- function(cohort = NULL,
       too_general <- regular_survey_qs[regular_survey_concept_ids %in% aou_health_history_long$concept_id_overall]
       cli::cli_abort(c(paste("Concept code(s) ", paste0(too_general, collapse = ", "), "is/are too general."),
         "i" = "Health history codes must refer to a specific condition and person pairing.",
-        "i" = "Look for a specific condition in the health history codebook at {.url https://roux-ohdsi.github.io/allofus/articles/searchable_codebook.html}."
+        "i" = "Look for a specific condition in the health history codebook at {.url https://roux-ohdsi.github.io/allofus/vignettes/searchable_codebook.html}."
       ))
     }
 
@@ -223,11 +223,11 @@ aou_survey <- function(cohort = NULL,
       if (length(too_general) > 0) {
         cli::cli_abort(c(paste("Concept ID(s) ", paste0(too_general, collapse = ", "), "is/are too general."),
           "i" = "Health history codes must refer to a specific condition and person pairing.",
-          "i" = "Look for a specific condition in the health history codebook at {.url https://roux-ohdsi.github.io/allofus/articles/searchable_codebook.html}."
+          "i" = "Look for a specific condition in the health history codebook at {.url https://roux-ohdsi.github.io/allofus/vignettes/searchable_codebook.html}."
         ))
       } else {
         cli::cli_abort(c(paste("Concept ids", paste(missing_qs, collapse = ", "), "not found in codebook."),
-          "i" = "Confirm that concept codes appear in the codebook at {.url https://roux-ohdsi.github.io/allofus/articles/searchable_codebook.html}."
+          "i" = "Confirm that concept codes appear in the codebook at {.url https://roux-ohdsi.github.io/allofus/vignettes/searchable_codebook.html}."
         ))
       }
     }
@@ -339,7 +339,7 @@ aou_survey <- function(cohort = NULL,
       if (length(osci_specific) == 0) {
         cli::cli_abort(c(paste("Concept id ", specific_concept_id, "is too general."),
           "i" = "Health history codes must refer to a specific condition and person pairing.",
-          "i" = "Look for a specific condition in the health history codebook at {.url https://roux-ohdsi.github.io/allofus/articles/searchable_codebook.html}."
+          "i" = "Look for a specific condition in the health history codebook at {.url https://roux-ohdsi.github.io/allofus/vignettes/searchable_codebook.html}."
         ))
       }
       if (length(osci_specific) == 1 & !is.na(osci_overall)) { # this is not the case if an infectious disease question

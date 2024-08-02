@@ -71,7 +71,7 @@ returned as a comma-separated string.
 To find the desired survey questions, use the all of us data dictionary,
 survey codebook, athena, data browser, or the allofus R package modified
 codebook which can be found here:
-https://roux-ohdsi.github.io/allofus/articles/searchable_codebook.html For
+https://roux-ohdsi.github.io/allofus/vignettes/searchable_codebook.html For
 questions regarding an individual's health history or family health
 history, the function requires the specific concept_id (or concept_code)
 for individual in question, whether that is "self" or another relative.

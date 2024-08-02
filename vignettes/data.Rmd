@@ -25,7 +25,7 @@ Suppose we want a cohort of the female All of Us participants who weren't born i
 
 ## Survey data
 
-The first step is extracting gender and country of birth from the survey data. We can retrieve these variables either by concept code or concept id. Using the `allofus` [searchable codebook](https://roux-ohdsi.github.io/allofus/articles/web_only/searchable_codebook.html), we find that the concept id for gender is 1585838 and for birthplace is 1586135. We can use the `aou_survey` function to extract these variables from the All of Us database. This function takes a vector of concept ids or codes, and returns a dataset with one row per participant and one column per variable. The `question_output` argument allows you to specify the names of the column in the output dataset. Alternatively, you can specify "concept_id" or "concept_code" to name the variables according to one of those options.
+The first step is extracting gender and country of birth from the survey data. We can retrieve these variables either by concept code or concept id. Using the `allofus` [searchable codebook](https://roux-ohdsi.github.io/allofus/vignettes/web_only/searchable_codebook.html), we find that the concept id for gender is 1585838 and for birthplace is 1586135. We can use the `aou_survey` function to extract these variables from the All of Us database. This function takes a vector of concept ids or codes, and returns a dataset with one row per participant and one column per variable. The `question_output` argument allows you to specify the names of the column in the output dataset. Alternatively, you can specify "concept_id" or "concept_code" to name the variables according to one of those options.
 
 ```{r}
 library(allofus)

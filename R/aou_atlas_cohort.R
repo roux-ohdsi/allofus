@@ -8,7 +8,7 @@
 #'   <https://github.com/cmayer2/r4aou> with some tweaks to generate the
 #'   appropriate observation periods and incorporate other package functions.
 #'   Please see the [online
-#'   vignette](https://roux-ohdsi.github.io/allofus/articles/atlas.html) for
+#'   vignette](https://roux-ohdsi.github.io/allofus/vignettes/atlas.html) for
 #'   additional details.
 #' @param cohort_definition A cohort definition generated using
 #'   `getCohortDefinition() from ROhdsiWebApi`
@@ -28,7 +28,10 @@
 #' # If this cohort is not available, you can create one, or choose one already made.
 #' # aou_cohort_example contains the results of
 #' # cd <- ROhdsiWebApi::getCohortDefinition(1788061, "https://atlas-demo.ohdsi.org/WebAPI")
-#' # cd_sql <- ROhdsiWebApi::getCohortSql(cd, "https://atlas-demo.ohdsi.org/WebAPI")
+#' # for some cohorts, you must use the argument generateStats = FALSE or the cohort (its stats)
+#' # can't be generated on All of Us
+#' # cd_sql <- ROhdsiWebApi::getCohortSql(cd, "https://atlas-demo.ohdsi.org/WebAPI",
+#' #                                                   generateStats = FALSE)
 #'
 #' cohort <- aou_atlas_cohort(
 #'   cohort_definition = aou_cohort_example$cd,
@@ -51,6 +54,13 @@ aou_atlas_cohort <- function(cohort_definition,
         "i" = "Use {.code remotes::install_github(\"ohdsi/ROhdsiWebApi\")} to install ROhdsiWebApi."
       )
     )
+  }
+
+  if (is.null(con) & isFALSE(collect)) {
+    cli::cli_abort(c("No connection available.",
+                     "i" = "Provide a connection automatically by running {.code aou_connect()} before this function.",
+                     "i" = "You can also provide {.code con} as an argument or default with {.code options(aou.default.con = ...)}."
+    ))
   }
 
   out <- tryCatch(
