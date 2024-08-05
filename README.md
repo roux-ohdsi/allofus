@@ -9,7 +9,7 @@
 [![CRAN
 status](https://www.r-pkg.org/badges/version/allofus)](https://CRAN.R-project.org/package=allofus)
 [![](http://cranlogs.r-pkg.org/badges/grand-total/allofus)](https://cran.r-project.org/package=allofus)
-[![](https://img.shields.io/badge/DOI-10.1093%2Fjamia%2Focae198-007ec6)](https://www.doi.org/10.1093/jamia/ocae198)
+[![DOI](https://zenodo.org/badge/659848534.svg)](https://zenodo.org/doi/10.5281/zenodo.10420610)
 
 <!-- badges: end -->
 
@@ -73,24 +73,18 @@ vignette to learn how to use the package.
 ### Citation
 
 Please cite the `allofus` package as:
+
 <p>
-Smith LH, Cavanaugh R (2024). “allofus: An R Package to Facilitate Use
-of the All of Us Researcher Workbench.” <em>Journal of the American
-Medical Informatics Association</em>, ocae198.
-<a href="https://doi.org/10.1093/jamia/ocae198">doi:10.1093/jamia/ocae198</a>.
+Smith L, Cavanaugh R (2023). <em>allofus: Interface for ‘All of Us’
+Researcher Workbench</em>.
+<a href="https://doi.org/10.5281/zenodo.10420610">doi:10.5281/zenodo.10420610</a>,
+<a href="https://roux-ohdsi.github.io/allofus/">https://roux-ohdsi.github.io/allofus/</a>.
 </p>
 
 or with
 
 ``` r
 citation("allofus")
-```
-
-We also encourage you to reference the specific version of the package
-you use for an analysis. You can look this up with
-
-``` r
-packageVersion("allofus")
 ```
 
 ### Bugs
