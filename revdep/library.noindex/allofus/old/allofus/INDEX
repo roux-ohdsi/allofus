@@ -3,17 +3,21 @@ aou_atlas_cohort        Retrieve a cohort from ATLAS for use in All of
 aou_bucket_to_workspace
                         Move files from a bucket to your workspace
 aou_codebook            All of Us Modified Codebook
+aou_collect             Collect a tbl object and convert integer64
+                        columns to double
+aou_compute             Compute a dplyr tbl SQL query into a temp table
 aou_concept_set         Get occurrences of a concept set from AoU for a
                         given cohort
 aou_connect             Create a connection to the database in All of
                         Us
+aou_create_temp_table   Creates a temporary table from a local data
+                        frame or tibble
 aou_health_history      All of Us Health History Codebook
 aou_join                Join current query to another table
 aou_ls_bucket           List the current files in your bucket
 aou_ls_workspace        List the current files in your workspace
 aou_observation_period
-                        Generate an observation period table based on
-                        OMOP Conventions
+                        Generate an observation period table
 aou_session_info        Print session information for the AoU R
                         environment
 aou_sql                 Execute a SQL query on the All of Us database

@@ -5,8 +5,11 @@ aou_atlas_cohort	aou_atlas_cohort
 aou_bucket_to_workspace	aou_bucket_to_workspace
 aou_codebook	aou_codebook
 aou_cohort_example	aou_cohort_example
+aou_collect	aou_collect
+aou_compute	aou_compute
 aou_concept_set	aou_concept_set
 aou_connect	aou_connect
+aou_create_temp_table	aou_create_temp_table
 aou_health_history	aou_health_history
 aou_join	aou_join
 aou_ls_bucket	aou_ls_bucket
