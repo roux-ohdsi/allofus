@@ -60,6 +60,7 @@ be available.
 ### Citation
 
 Please cite the `allofus` package as:
+
 <p>
 Smith LH, Cavanaugh R (2024). “allofus: An R Package to Facilitate Use
 of the All of Us Researcher Workbench.” <em>Journal of the American
@@ -74,7 +75,7 @@ citation("allofus")
 ```
 
 *Note: A pre-print of the special issue can be found here:
-<https://doi.org/10.1101/2024.04.10.24305611>*
+https://doi.org/10.1101/2024.04.10.24305611*
 
 We also encourage you to reference the specific version of the package
 you use for an analysis. You can look this up with

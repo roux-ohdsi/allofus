@@ -389,7 +389,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <section id="allofus-r-package" class="level1">
 <h1><code>allofus</code> R Package</h1>
 <!-- badges: start -->
-<p><a href="https://github.com/roux-ohdsi/allofus/actions/workflows/R-CMD-check.yaml"><img src="https://github.com/roux-ohdsi/allofus/actions/workflows/R-CMD-check.yaml/badge.svg" class="img-fluid" alt="R-CMD-check"></a> <a href="https://CRAN.R-project.org/package=allofus"><img src="https://www.r-pkg.org/badges/version/allofus" class="img-fluid" alt="CRAN status"></a> <a href="https://cran.r-project.org/package=allofus"><img src="http://cranlogs.r-pkg.org/badges/grand-total/allofus" class="img-fluid"></a> <a href="https://zenodo.org/doi/10.5281/zenodo.10420610"><img src="https://zenodo.org/badge/659848534.svg" class="img-fluid" alt="DOI"></a></p>
+<p><a href="https://github.com/roux-ohdsi/allofus/actions/workflows/R-CMD-check.yaml"><img src="https://github.com/roux-ohdsi/allofus/actions/workflows/R-CMD-check.yaml/badge.svg" class="img-fluid" alt="R-CMD-check"></a> <a href="https://CRAN.R-project.org/package=allofus"><img src="https://www.r-pkg.org/badges/version/allofus" class="img-fluid" alt="CRAN status"></a> <a href="https://cran.r-project.org/package=allofus"><img src="http://cranlogs.r-pkg.org/badges/grand-total/allofus" class="img-fluid"></a> <a href="https://www.doi.org/10.1093/jamia/ocae198"><img src="https://img.shields.io/badge/DOI-10.1093%2Fjamia%2Focae198-007ec6" class="img-fluid"></a></p>
 <!-- badges: end -->
 <p>The goal of the <code>allofus</code> R package is to streamline the use of R within the <a href="https://www.researchallofus.org/data-tools/workbench/">All of Us Researcher Workbench</a>. It has 4 primary goals:</p>
 <ol type="1">
@@ -410,32 +410,26 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">install.packages</span>(<span class="st">"pak"</span>)</span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>pak<span class="sc">::</span><span class="fu">pak</span>(<span class="st">"roux-ohdsi/allofus"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<p>On the new RStudio interface on the workbench, you will need to manually specify the CRAN mirror to be able to download <em>any</em> recently updated packages.</p>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># specify the mirror directly</span></span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="fu">install.packages</span>(<span class="st">"allofus"</span>, <span class="at">repos =</span> <span class="st">"https://cloud.r-project.org"</span>)</span>
-<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a><span class="co"># OR set the mirror as an option at the top of your script</span></span>
-<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a><span class="fu">options</span>(<span class="at">repos =</span> <span class="fu">c</span>(<span class="at">CRAN =</span> <span class="st">"https://cloud.r-project.org"</span>))</span>
-<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Github development versions may requires using the remotes package</span></span>
-<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a><span class="fu">install.packages</span>(<span class="st">"remotes"</span>)</span>
-<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>remotes<span class="sc">::</span><span class="fu">install_github</span>(<span class="st">"roux-ohdsi/allofus"</span>, <span class="at">repos =</span> <span class="st">"https://cloud.r-project.org"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</div>
 </section>
 <section id="use" class="level3">
 <h3 class="anchored" data-anchor-id="use">Use</h3>
 <p>Read through the <a href="https://roux-ohdsi.github.io/allofus/vignettes/allofus.html">getting started</a> vignette to learn how to use the package.</p>
+<p>A community workspace on the <em>All of Us</em> Researcher Workbench will soon be available.</p>
 </section>
 <section id="citation" class="level3">
 <h3 class="anchored" data-anchor-id="citation">Citation</h3>
 <p>Please cite the <code>allofus</code> package as:</p>
 <p>
-Smith L, Cavanaugh R (2023). <em>allofus: Interface for ‘All of Us’ Researcher Workbench</em>. <a href="https://doi.org/10.5281/zenodo.10420610">doi:10.5281/zenodo.10420610</a>, <a href="https://roux-ohdsi.github.io/allofus/">https://roux-ohdsi.github.io/allofus/</a>.
+Smith LH, Cavanaugh R (2024). “allofus: An R Package to Facilitate Use of the All of Us Researcher Workbench.” <em>Journal of the American Medical Informatics Association</em>, ocae198. <a href="https://doi.org/10.1093/jamia/ocae198">doi:10.1093/jamia/ocae198</a>.
 </p>
 <p>or with</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">citation</span>(<span class="st">"allofus"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">citation</span>(<span class="st">"allofus"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p><em>Note: A pre-print of the special issue can be found here: https://doi.org/10.1101/2024.04.10.24305611</em></p>
+<p>We also encourage you to reference the specific version of the package you use for an analysis. You can look this up with</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">packageVersion</span>(<span class="st">"allofus"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
 <section id="bugs" class="level3">
