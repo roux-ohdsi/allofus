@@ -5,12 +5,11 @@
 
 <!-- badges: start -->
 
+[![](https://img.shields.io/badge/DOI-10.1093%2Fjamia%2Focae198-007ec6)](https://www.doi.org/10.1093/jamia/ocae198)
 [![R-CMD-check](https://github.com/roux-ohdsi/allofus/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/roux-ohdsi/allofus/actions/workflows/R-CMD-check.yaml)
 [![CRAN
 status](https://www.r-pkg.org/badges/version/allofus)](https://CRAN.R-project.org/package=allofus)
 [![](http://cranlogs.r-pkg.org/badges/grand-total/allofus)](https://cran.r-project.org/package=allofus)
-[![](https://img.shields.io/badge/DOI-10.1093%2Fjamia%2Focae198-007ec6)](https://www.doi.org/10.1093/jamia/ocae198)
-
 <!-- badges: end -->
 
 The goal of the `allofus` R package is to streamline the use of R within
@@ -60,7 +59,6 @@ be available.
 ### Citation
 
 Please cite the `allofus` package as:
-
 <p>
 Smith LH, Cavanaugh R (2024). “allofus: An R Package to Facilitate Use
 of the All of Us Researcher Workbench.” <em>Journal of the American
@@ -75,7 +73,7 @@ citation("allofus")
 ```
 
 *Note: A pre-print of the special issue can be found here:
-https://doi.org/10.1101/2024.04.10.24305611*
+<https://doi.org/10.1101/2024.04.10.24305611>*
 
 We also encourage you to reference the specific version of the package
 you use for an analysis. You can look this up with

@@ -17,11 +17,10 @@ knitr::opts_chunk$set(
 # `allofus` R Package
 
 <!-- badges: start -->
+[![](https://img.shields.io/badge/DOI-10.1093%2Fjamia%2Focae198-007ec6)](https://www.doi.org/10.1093/jamia/ocae198)
 [![R-CMD-check](https://github.com/roux-ohdsi/allofus/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/roux-ohdsi/allofus/actions/workflows/R-CMD-check.yaml)
 [![CRAN status](https://www.r-pkg.org/badges/version/allofus)](https://CRAN.R-project.org/package=allofus)
 [![](http://cranlogs.r-pkg.org/badges/grand-total/allofus)](https://cran.r-project.org/package=allofus)
-[![](https://img.shields.io/badge/DOI-10.1093%2Fjamia%2Focae198-007ec6)](https://www.doi.org/10.1093/jamia/ocae198)
-
 <!-- badges: end -->
 
 The goal of the `allofus` R package is to streamline the use of R within the [All of Us Researcher Workbench](https://www.researchallofus.org/data-tools/workbench/). It has 4 primary goals:
