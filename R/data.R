@@ -92,3 +92,17 @@
 #'   \item{cd_sql}{SQL query for cohort definition}
 #' }
 "aou_cohort_example"
+
+
+#' Concept codes and survey answers
+#'
+#' @description
+#' A data frame containing concept codes (`code`) and text responses (`answer`) for
+#' the SDOH and COPE surveys.
+#'
+#' @format aou_concept_codes
+#' \describe{
+#'   \item{code}{response from the observation table}
+#'   \item{answer}{Text responses}
+#' }
+"aou_concept_codes"
