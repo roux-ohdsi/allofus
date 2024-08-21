@@ -9,7 +9,8 @@
 #'   appropriate observation periods and incorporate other package functions.
 #'   Please see the [online
 #'   vignette](https://roux-ohdsi.github.io/allofus/vignettes/atlas.html) for
-#'   additional details.
+#'   additional details. Note that some cohorts may not be compatible with `aou_atlas_cohort()` but setting
+#'   generateStats = FALSE in `getCohortSql()` can resolve some issues.
 #' @param cohort_definition A cohort definition generated using
 #'   `getCohortDefinition() from ROhdsiWebApi`
 #' @param cohort_sql The cohort_sql generated using `getCohortSql() from

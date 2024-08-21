@@ -44,6 +44,9 @@ cd <- ROhdsiWebApi::getCohortDefinition(1788061, "https://atlas-demo.ohdsi.org/W
 cd_sql <- ROhdsiWebApi::getCohortSql(cd, "https://atlas-demo.ohdsi.org/WebAPI")
 ```
 
+*Note: Occasionally, some of the code in `getCohortSql()` is not compatible with `aou_atlas_cohort()`. If you encounter an error, try setting
+`generateStats = FALSE` in `ROhdsiWebApi::getCohortSql()` and running `aou_atlas_cohort()` again*
+
 Then, we can use the `aou_atlas_cohort()` function to generate the cohort in the All of Us database.
 
 ```{r cohort}

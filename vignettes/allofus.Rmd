@@ -26,6 +26,26 @@ Before diving into the specifics, let's clarify some vocabulary:
 - **dplyr**: A part of the `tidyverse` in R, `dplyr` is a package for data manipulation. It provides a set of functions that can be used to filter, select, arrange, mutate, summarize, and join data.
 - **dbplyr** : Also a part of the `tidyverse` in R, `dbplyr` is a database backend for `dplyr`. It allows you to write R code that is then translated into SQL queries.
 
+## Installing and Loading allofus
+
+You can install the `allofus` R package directly from CRAN, or you can install the development version from Github (https://github.com/roux-ohdsi/allofus).
+
+```{r, eval = FALSE}
+# Install from CRAN
+install.packages("allofus")
+
+# Or install development version
+install.packages("remotes")
+remotes::install_github("roux-ohdsi/allofus")
+```
+
+Use the `library()` command to load the allofus package and the `dplyr` package. Most functionality in `allofus` relies on the `dplyr` package, which comes pre-installed in the researcher workbench. Installing `allofus` will also make sure that the version of `dplyr` is up-to-date.
+
+```{r}
+library(allofus)
+library(dplyr)
+```
+
 ## Accessing Data
 
 ### Connecting to the database
@@ -33,7 +53,6 @@ Before diving into the specifics, let's clarify some vocabulary:
 A connection to a database is an object that allows you to interact with it from R. The `allofus` package relies on the `bigrquery` R package to create a connection to the Google BigQuery database when you run `aou_connect()`. 
 
 ```{r}
-library(allofus)
 con <- aou_connect()
 ```
 
