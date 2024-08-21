@@ -409,6 +409,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>cd <span class="ot">&lt;-</span> ROhdsiWebApi<span class="sc">::</span><span class="fu">getCohortDefinition</span>(<span class="dv">1788061</span>, <span class="st">"https://atlas-demo.ohdsi.org/WebAPI"</span>)</span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>cd_sql <span class="ot">&lt;-</span> ROhdsiWebApi<span class="sc">::</span><span class="fu">getCohortSql</span>(cd, <span class="st">"https://atlas-demo.ohdsi.org/WebAPI"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
+<p><em>Note: Occasionally, some of the code in <code>getCohortSql()</code> is not compatible with <code>aou_atlas_cohort()</code>. If you encounter an error, try setting <code>generateStats = FALSE</code> in <code>ROhdsiWebApi::getCohortSql()</code> and running <code>aou_atlas_cohort()</code> again</em></p>
 <p>Then, we can use the <code>aou_atlas_cohort()</code> function to generate the cohort in the All of Us database.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>cohort <span class="ot">&lt;-</span> <span class="fu">aou_atlas_cohort</span>(</span>
