@@ -372,6 +372,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
    
   <ul>
   <li><a href="#the-basics" id="toc-the-basics" class="nav-link active" data-scroll-target="#the-basics">The Basics</a></li>
+  <li><a href="#installing-and-loading-allofus" id="toc-installing-and-loading-allofus" class="nav-link" data-scroll-target="#installing-and-loading-allofus">Installing and Loading allofus</a></li>
   <li><a href="#accessing-data" id="toc-accessing-data" class="nav-link" data-scroll-target="#accessing-data">Accessing Data</a>
   <ul class="collapse">
   <li><a href="#connecting-to-the-database" id="toc-connecting-to-the-database" class="nav-link" data-scroll-target="#connecting-to-the-database">Connecting to the database</a></li>
@@ -424,18 +425,34 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <li><strong>dbplyr</strong> : Also a part of the <code>tidyverse</code> in R, <code>dbplyr</code> is a database backend for <code>dplyr</code>. It allows you to write R code that is then translated into SQL queries.</li>
 </ul>
 </section>
+<section id="installing-and-loading-allofus" class="level2">
+<h2 class="anchored" data-anchor-id="installing-and-loading-allofus">Installing and Loading allofus</h2>
+<p>You can install the <code>allofus</code> R package directly from CRAN, or you can install the development version from Github (https://github.com/roux-ohdsi/allofus).</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Install from CRAN</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">install.packages</span>(<span class="st">"allofus"</span>)</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Or install development version</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="fu">install.packages</span>(<span class="st">"remotes"</span>)</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>remotes<span class="sc">::</span><span class="fu">install_github</span>(<span class="st">"roux-ohdsi/allofus"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Use the <code>library()</code> command to load the allofus package and the <code>dplyr</code> package. Most functionality in <code>allofus</code> relies on the <code>dplyr</code> package, which comes pre-installed in the researcher workbench. Installing <code>allofus</code> will also make sure that the version of <code>dplyr</code> is up-to-date.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(allofus)</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dplyr)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
 <section id="accessing-data" class="level2">
 <h2 class="anchored" data-anchor-id="accessing-data">Accessing Data</h2>
 <section id="connecting-to-the-database" class="level3">
 <h3 class="anchored" data-anchor-id="connecting-to-the-database">Connecting to the database</h3>
 <p>A connection to a database is an object that allows you to interact with it from R. The <code>allofus</code> package relies on the <code>bigrquery</code> R package to create a connection to the Google BigQuery database when you run <code>aou_connect()</code>.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(allofus)</span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>con <span class="ot">&lt;-</span> <span class="fu">aou_connect</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>con <span class="ot">&lt;-</span> <span class="fu">aou_connect</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>The object <code>con</code> is used to refer to the connection to the All of Us database. When you run the <code>aou_connect()</code> function, it also gets stored as the default connection for a session, so you don’t need to include it in other functions from the <code>allofus</code> package. For instance, you can run <code>aou_tables()</code> to see a list of tables in the database:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">aou_tables</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">aou_tables</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <div class="cell">
 <pre><code>#&gt; # A tibble: 68 × 2
@@ -458,16 +475,16 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <h3 class="anchored" data-anchor-id="accessing-a-table">Accessing a table</h3>
 <p>To access a table in the database, use <code>tbl(con, "tablename")</code>. The resulting object is reference to a table in a database that allows you to interact with it from R. In order to connect to a table in the database, you must first create the database connection (<code>con</code>). For example, to create a reference to the person table:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>person_tbl <span class="ot">&lt;-</span> <span class="fu">tbl</span>(con, <span class="st">"person"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>person_tbl <span class="ot">&lt;-</span> <span class="fu">tbl</span>(con, <span class="st">"person"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Although the <code>person_tbl</code> object behaves similarly to a data frame, it is not actually a data frame. Instead, it is actually a SQL query that only gets run when you need to access the data. This is a feature of the <code>dbplyr</code> package that allows you to manipulate data without actually retrieving it. The SQL query behind the <code>person_tbl</code> object is:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span> <span class="op">*</span></span>
-<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="kw">FROM</span> `person`</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span> <span class="op">*</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="kw">FROM</span> `person`</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>When you print <code>person_tbl</code>, you’ll get something like this:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>person_tbl</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>person_tbl</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <pre><code>#&gt; # Source:   table&lt;person&gt; [?? x 23]
 #&gt; # Database: BigQueryConnection
@@ -499,18 +516,18 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <p>Before bringing data into R, you can manipulate it on the database using the <code>dplyr</code> functions. This allows you to perform operations on the database without bringing the data into R’s memory.</p>
 <p>For example, you can subset the person table to women born after 1980:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>young_women <span class="ot">&lt;-</span> person_tbl <span class="sc">%&gt;%</span></span>
-<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(gender_concept_id <span class="sc">==</span> <span class="dv">45878463</span>, year_of_birth <span class="sc">&gt;</span> <span class="dv">1980</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>young_women <span class="ot">&lt;-</span> person_tbl <span class="sc">%&gt;%</span></span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(gender_concept_id <span class="sc">==</span> <span class="dv">45878463</span>, year_of_birth <span class="sc">&gt;</span> <span class="dv">1980</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Before we print out <code>young_women</code>, the SQL query has not actually been run. In fact, <code>person_tbl</code> is not run either. When we do print it, it will run the following SQL:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span> `person`.<span class="op">*</span></span>
-<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="kw">FROM</span> `person`</span>
-<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a><span class="kw">WHERE</span> (`gender_concept_id` <span class="op">=</span> <span class="fl">45878463.0</span>) <span class="kw">AND</span> (`year_of_birth` <span class="op">&gt;</span> <span class="fl">1980.0</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span> `person`.<span class="op">*</span></span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a><span class="kw">FROM</span> `person`</span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a><span class="kw">WHERE</span> (`gender_concept_id` <span class="op">=</span> <span class="fl">45878463.0</span>) <span class="kw">AND</span> (`year_of_birth` <span class="op">&gt;</span> <span class="fl">1980.0</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>and print the first 10 rows:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>young_women</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>young_women</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <pre><code>#&gt; # Source:   SQL [?? x 23]
 #&gt; # Database: BigQueryConnection
@@ -535,7 +552,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 #   ethnicity_source_concept_id &lt;int64&gt;, …</code></pre>
 <p>Note that we don’t know how many observations match these conditions yet (the dimensions are <code>[?? x 23]</code>), because it hasn’t been fully executed – only the first 10 rows. To get the total number of observations, we can use <code>tally()</code>:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="fu">tally</span>(young_women)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="fu">tally</span>(young_women)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <pre><code>#&gt; # Source:   SQL [1 x 1]
 #&gt; # Database: BigQueryConnection
@@ -544,23 +561,23 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 #&gt; 1   76135</code></pre>
 <p>This is actually a SQL query that only results in 1 row, so we do get to see the entire thing. It’s much faster to run than to bring the entire table into R and then count the number of rows, because the code is executed on the database:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span> <span class="fu">count</span>(<span class="op">*</span>) <span class="kw">AS</span> `n`</span>
-<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a><span class="kw">FROM</span> (</span>
-<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>  <span class="kw">SELECT</span> `person`.<span class="op">*</span></span>
-<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>  <span class="kw">FROM</span> `person`</span>
-<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a>  <span class="kw">WHERE</span> (`gender_concept_id` <span class="op">=</span> <span class="fl">45878463.0</span>) <span class="kw">AND</span> (`year_of_birth` <span class="op">&gt;</span> <span class="fl">1980.0</span>)</span>
-<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span> <span class="fu">count</span>(<span class="op">*</span>) <span class="kw">AS</span> `n`</span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a><span class="kw">FROM</span> (</span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>  <span class="kw">SELECT</span> `person`.<span class="op">*</span></span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a>  <span class="kw">FROM</span> `person`</span>
+<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a>  <span class="kw">WHERE</span> (`gender_concept_id` <span class="op">=</span> <span class="fl">45878463.0</span>) <span class="kw">AND</span> (`year_of_birth` <span class="op">&gt;</span> <span class="fl">1980.0</span>)</span>
+<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <section id="the-collect-function" class="level3">
 <h3 class="anchored" data-anchor-id="the-collect-function">The <code>collect()</code> Function</h3>
 <p>We can bring the result of a query into the local R session using <code>collect()</code>:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>young_women <span class="sc">%&gt;%</span> <span class="fu">collect</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>young_women <span class="sc">%&gt;%</span> <span class="fu">collect</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>This brings the table into your local R workspace as a tibble, or dataframe. This is useful for performing operations that cannot be performed directly on the database, such as certain statistical analyses or plotting. For example, if you’re planning to run a regression analysis on the filtered data, you would first use <code>collect()</code> to bring the data into R.</p>
 <p>We can bring in the result of <code>tally()</code> as well:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="fu">tally</span>(young_women) <span class="sc">%&gt;%</span> <span class="fu">collect</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="fu">tally</span>(young_women) <span class="sc">%&gt;%</span> <span class="fu">collect</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <pre><code>#&gt; A tibble: 1 × 1
 #&gt;       n
@@ -568,8 +585,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 #&gt;   76135</code></pre>
 <p>Or even the entire person table, although that’s not recommended because it’s so large!</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>person_data <span class="ot">&lt;-</span> person_tbl <span class="sc">%&gt;%</span> <span class="fu">collect</span>()</span>
-<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>person_data</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>person_data <span class="ot">&lt;-</span> person_tbl <span class="sc">%&gt;%</span> <span class="fu">collect</span>()</span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>person_data</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <pre><code>#&gt; # A tibble: 413457 × 23
 #&gt; person_id    gender_concept_id   year_of_birth   month_of_birth  day_of_birth    
@@ -591,9 +608,9 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <p>The All of Us data is spread across multiple tables, for the most part corresponding to the OMOP Common Data Model. This allows for efficient storage and retrieval of data, but it can be a bit tricky to work with at first. Fortunately, <code>dbplyr</code> makes it easy to join tables together.</p>
 <p>For example, how did we know that <code>gender_concept_id == 45878463</code> referred to women? We can look up the names of concept ids in the <code>concept</code> table:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>concept_tbl <span class="ot">&lt;-</span> <span class="fu">tbl</span>(con, <span class="st">"concept"</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(concept_id, concept_name)</span>
-<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a>concept_tbl</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a>concept_tbl <span class="ot">&lt;-</span> <span class="fu">tbl</span>(con, <span class="st">"concept"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(concept_id, concept_name)</span>
+<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a>concept_tbl</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <pre><code>#&gt; # Source:   SQL [?? x 2]
 #&gt; # Database: BigQueryConnection
@@ -612,10 +629,10 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 #&gt; # ℹ more rows</code></pre>
 <p>We just want to extract the names of the gender concept ids. To do this, we can join the <code>person</code> table with the <code>concept</code> table. So that we can see the full range of gender ids, first we will count them:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a>genders_in_aou <span class="ot">&lt;-</span> person_tbl <span class="sc">%&gt;%</span></span>
-<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">count</span>(gender_concept_id) <span class="sc">%&gt;%</span></span>
-<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">left_join</span>(concept_tbl, <span class="at">by =</span> <span class="fu">join_by</span>(gender_concept_id <span class="sc">==</span> concept_id))</span>
-<span id="cb22-4"><a href="#cb22-4" aria-hidden="true" tabindex="-1"></a>genders_in_aou</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a>genders_in_aou <span class="ot">&lt;-</span> person_tbl <span class="sc">%&gt;%</span></span>
+<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">count</span>(gender_concept_id) <span class="sc">%&gt;%</span></span>
+<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">left_join</span>(concept_tbl, <span class="at">by =</span> <span class="fu">join_by</span>(gender_concept_id <span class="sc">==</span> concept_id))</span>
+<span id="cb24-4"><a href="#cb24-4" aria-hidden="true" tabindex="-1"></a>genders_in_aou</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <pre><code>#&gt; # Source:   SQL [9 x 3]
 #&gt; # Database: BigQueryConnection
@@ -635,8 +652,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <h3 class="anchored" data-anchor-id="aou_join"><code>aou_join()</code></h3>
 <p>The <code>allofus</code> package includes a function called <code>aou_join()</code> that makes it easy to join tables together. It includes some additional checks to help avoid mistakes in joining. For example, if we wanted to join the <code>person</code> table with the <code>observation</code> table, dropping people with no observations, we could do it like this:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a>obs <span class="ot">&lt;-</span> person_tbl <span class="sc">%&gt;%</span></span>
-<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">aou_join</span>(<span class="st">"observation"</span>, <span class="at">type =</span> <span class="st">"inner"</span>, <span class="at">by =</span> <span class="st">"person_id"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a>obs <span class="ot">&lt;-</span> person_tbl <span class="sc">%&gt;%</span></span>
+<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">aou_join</span>(<span class="st">"observation"</span>, <span class="at">type =</span> <span class="st">"inner"</span>, <span class="at">by =</span> <span class="st">"person_id"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <pre><code>Warning message:
 “There are shared column names not specified in the `by` argument.
@@ -647,18 +664,18 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 → Or if these additional shared columns are `NA`, remove them prior to joining.”</code></pre>
 <p>The warning message tells us that the <code>person</code> and <code>observation</code> tables share some column names that we didn’t specify as part of the join argument. That is because both tables have a column called <code>provider_id</code>. We can see this by looking at the column names of the <code>obs</code> table that have the default added suffix, “_x” and “_y”:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a>obs <span class="sc">%&gt;%</span></span>
-<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="fu">ends_with</span>(<span class="st">"_x"</span>), <span class="fu">ends_with</span>(<span class="st">"_y"</span>)) <span class="sc">%&gt;%</span></span>
-<span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">colnames</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb28"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a>obs <span class="sc">%&gt;%</span></span>
+<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="fu">ends_with</span>(<span class="st">"_x"</span>), <span class="fu">ends_with</span>(<span class="st">"_y"</span>)) <span class="sc">%&gt;%</span></span>
+<span id="cb28-3"><a href="#cb28-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">colnames</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <div class="cell">
 <pre><code>#&gt; [1] "provider_id_x" "provider_id_y"</code></pre>
 </div>
 <p>Because this is often a mistake occurring because we are not working with the tables directly, <code>aou_join()</code> warns us about this. We can avoid this warning by specifying all of the columns that we want to join on and removing the columns that we don’t want to join on. For example, we could remove the <code>provider_id</code> column from the <code>person</code> table before joining:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb28"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a>obs <span class="ot">&lt;-</span> person_tbl <span class="sc">%&gt;%</span></span>
-<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="sc">-</span>provider_id) <span class="sc">%&gt;%</span></span>
-<span id="cb28-3"><a href="#cb28-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">aou_join</span>(<span class="st">"observation"</span>, <span class="at">type =</span> <span class="st">"inner"</span>, <span class="at">by =</span> <span class="st">"person_id"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb30"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a>obs <span class="ot">&lt;-</span> person_tbl <span class="sc">%&gt;%</span></span>
+<span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="sc">-</span>provider_id) <span class="sc">%&gt;%</span></span>
+<span id="cb30-3"><a href="#cb30-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">aou_join</span>(<span class="st">"observation"</span>, <span class="at">type =</span> <span class="st">"inner"</span>, <span class="at">by =</span> <span class="st">"person_id"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
 </section>
@@ -671,19 +688,19 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <li>First subset the table on the database, then bring it into R and join it with the dataframe in R. For example, if you have a cohort of participants as a dataframe, e.g., as created by <code>aou_atlas_cohort()</code>, and you want to bring in activity data for those participants, you could run:</li>
 </ol>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb29"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a><span class="co"># instead of aou_join(cohort, "activity_summary", type = "left", by = "person_id")</span></span>
-<span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a>activity_data <span class="ot">&lt;-</span> <span class="fu">tbl</span>(con, <span class="st">"activity_summary"</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb29-3"><a href="#cb29-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(person_id <span class="sc">%in%</span> <span class="sc">!!</span>cohort<span class="sc">$</span>person_id) <span class="sc">%&gt;%</span></span>
-<span id="cb29-4"><a href="#cb29-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">collect</span>() <span class="sc">%&gt;%</span></span>
-<span id="cb29-5"><a href="#cb29-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">right_join</span>(cohort, <span class="at">by =</span> <span class="st">"person_id"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb31"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a><span class="co"># instead of aou_join(cohort, "activity_summary", type = "left", by = "person_id")</span></span>
+<span id="cb31-2"><a href="#cb31-2" aria-hidden="true" tabindex="-1"></a>activity_data <span class="ot">&lt;-</span> <span class="fu">tbl</span>(con, <span class="st">"activity_summary"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb31-3"><a href="#cb31-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(person_id <span class="sc">%in%</span> <span class="sc">!!</span>cohort<span class="sc">$</span>person_id) <span class="sc">%&gt;%</span></span>
+<span id="cb31-4"><a href="#cb31-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">collect</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb31-5"><a href="#cb31-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">right_join</span>(cohort, <span class="at">by =</span> <span class="st">"person_id"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
 <section id="viewing-the-underlying-sql-with-show_query" class="level2">
 <h2 class="anchored" data-anchor-id="viewing-the-underlying-sql-with-show_query">Viewing the Underlying SQL with <code>show_query()</code></h2>
 <p>Understanding the SQL code that <code>dbplyr</code> generates can be insightful, especially if you’re debugging or simply curious about the translation from R to SQL. To view the SQL query that corresponds to your <code>dbplyr</code> operations, use the <code>show_query()</code> function:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb30"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a>obs <span class="sc">%&gt;%</span></span>
-<span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">show_query</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb32"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a>obs <span class="sc">%&gt;%</span></span>
+<span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">show_query</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <pre><code>SELECT
   `edjnngldox`.`person_id` AS `person_id`,
@@ -737,18 +754,18 @@ INNER JOIN `observation` `zwcwezaowf`
 <h2 class="anchored" data-anchor-id="running-sql-code-directly">Running SQL code directly</h2>
 <p>Another approach to working with the data is to write SQL code directly. This is especially useful for complex queries that are difficult to express in <code>dplyr</code> syntax. The <code>allofus</code> package includes a function called <code>aou_sql()</code> that makes it easy to run SQL code directly on the database. For example, we could count the number of people in the <code>person</code> table like this:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb32"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a><span class="fu">aou_sql</span>(<span class="st">"SELECT COUNT(*) AS n FROM {CDR}.person"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb34"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a><span class="fu">aou_sql</span>(<span class="st">"SELECT COUNT(*) AS n FROM {CDR}.person"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>There are a few important things to note about this code. First, the <code>CDR</code> variable is a special variable referring to what All of Us calls the “curated data repository”. When writing SQL code directly, we don’t need the database connection object <code>con</code>, instead we need to direct the code to the correct tables by preceding the table names with “{CDR}”. This means we can’t run the code we get from <code>show_query()</code> without modification. For example, we could count the number of young women in the dataset, as we did above with the <code>dbplyr</code> approach, like this:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb33"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a><span class="fu">aou_sql</span>(<span class="st">"</span></span>
-<span id="cb33-2"><a href="#cb33-2" aria-hidden="true" tabindex="-1"></a><span class="st">SELECT count(*) AS `n`</span></span>
-<span id="cb33-3"><a href="#cb33-3" aria-hidden="true" tabindex="-1"></a><span class="st">FROM (</span></span>
-<span id="cb33-4"><a href="#cb33-4" aria-hidden="true" tabindex="-1"></a><span class="st">  SELECT `person`.*</span></span>
-<span id="cb33-5"><a href="#cb33-5" aria-hidden="true" tabindex="-1"></a><span class="st">  FROM {CDR}.`person`</span></span>
-<span id="cb33-6"><a href="#cb33-6" aria-hidden="true" tabindex="-1"></a><span class="st">  WHERE (`gender_concept_id` = 45878463.0) AND (`year_of_birth` &gt; 1980.0)</span></span>
-<span id="cb33-7"><a href="#cb33-7" aria-hidden="true" tabindex="-1"></a><span class="st">)</span></span>
-<span id="cb33-8"><a href="#cb33-8" aria-hidden="true" tabindex="-1"></a><span class="st">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb35"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a><span class="fu">aou_sql</span>(<span class="st">"</span></span>
+<span id="cb35-2"><a href="#cb35-2" aria-hidden="true" tabindex="-1"></a><span class="st">SELECT count(*) AS `n`</span></span>
+<span id="cb35-3"><a href="#cb35-3" aria-hidden="true" tabindex="-1"></a><span class="st">FROM (</span></span>
+<span id="cb35-4"><a href="#cb35-4" aria-hidden="true" tabindex="-1"></a><span class="st">  SELECT `person`.*</span></span>
+<span id="cb35-5"><a href="#cb35-5" aria-hidden="true" tabindex="-1"></a><span class="st">  FROM {CDR}.`person`</span></span>
+<span id="cb35-6"><a href="#cb35-6" aria-hidden="true" tabindex="-1"></a><span class="st">  WHERE (`gender_concept_id` = 45878463.0) AND (`year_of_birth` &gt; 1980.0)</span></span>
+<span id="cb35-7"><a href="#cb35-7" aria-hidden="true" tabindex="-1"></a><span class="st">)</span></span>
+<span id="cb35-8"><a href="#cb35-8" aria-hidden="true" tabindex="-1"></a><span class="st">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Second, the <code>aou_sql()</code> function returns a dataframe – the entire result of the SQL query is brought into memory. This means that we want to run an entire query at once, instead of breaking it into multiple steps like we did with <code>dbplyr</code>.</p>
 
