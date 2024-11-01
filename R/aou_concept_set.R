@@ -78,8 +78,9 @@ aou_concept_set <- function(cohort = NULL,
   }
 
   if (is.date({{ start_date }}) | is.date({{ end_date }})) {
-    cli::cli_abort(c("If used, start_date and end_date must be strings that refer to columns in your cohort table, not dates."))
+    cli::cli_abort(c("If used, start_date and end_date must be strings that refer to date columns in your cohort table, not dates themselves."))
   }
+
 
   # keep track of whether we are forced to collect
   # due to start and end dates provided with cohort as dataframe
@@ -88,23 +89,60 @@ aou_concept_set <- function(cohort = NULL,
   if (is.null(cohort)) {
     cli::cli_warn(c("No cohort provided.", ">" = "Pulling concepts for entire All of Us cohort."))
     if (!is.null(start_date) || !is.null(end_date)) {
-      cli::cli_warn(c("No cohort provided.",
+      start_date <- NULL
+      end_date <- NULL
+      cli::cli_warn(c(
         ">" = "Ignoring start and end date."
       ))
     }
     tmp <- dplyr::tbl(con, "person") %>% dplyr::select("person_id")
   } else {
+    # check to see that start and end exist
+    cohort_cols <- head(cohort, n = 1) %>%
+      collect() %>%
+      sapply(class)
+
+    if (!is.null(start_date)) {
+      if (!start_date %in% names(cohort_cols)) {
+        cli::cli_abort("{.code start_date} column does not exist in {.code cohort}")
+      }
+      if (!"Date" %in% cohort_cols[[start_date]]) {
+        cli::cli_abort("{.code start_date} column must be a date.")
+      }
+    }
+    if (!is.null(end_date)) {
+      if (!end_date %in% names(cohort_cols)) {
+        cli::cli_abort("{.code end_date} column does not exist in {.code cohort}")
+      }
+      if (!"Date" %in% cohort_cols[[end_date]]) {
+        cli::cli_abort("{.code end_date} column must be a date.")
+      }
+    }
+
     if (is.data.frame(cohort)) {
       tmp <- dplyr::tbl(con, "person") %>%
         dplyr::filter(.data$person_id %in% !!cohort$person_id) %>%
         dplyr::select("person_id")
       if (!collect && (!is.null(start_date) || !is.null(end_date))) {
         # can't have these both because we can't join (on the dates) without collecting
-        cli::cli_warn(c("Cannot have {.code collect = FALSE} and also provide start and end dates in a dataframe.",
+        cli::cli_warn(c("Cannot have {.code collect = FALSE} and also provide start and/or end dates in a dataframe.",
           ">" = "Changing to {.code collect = TRUE}."
         ))
         collect <- TRUE
         must_collect <- TRUE
+
+        # if they only provided one of them
+        if (is.null(start_date)) {
+          cohort <- dplyr::mutate(cohort, start_date = as.Date("1900-01-01"))
+          start_date <- "start_date"
+        }
+        if (is.null(end_date)) {
+          cohort <- dplyr::mutate(cohort, end_date = as.Date("1900-01-01"))
+          end_date <- "end_date"
+        }
+
+        # will be using these for joining back to the original cohort later if must_collect = TRUE
+        cohort_to_join <- dplyr::mutate(cohort, end_date = cohort[[end_date]], start_date = cohort[[start_date]])
       }
     } else {
       tmp <- cohort %>% dplyr::select("person_id", dplyr::any_of(c({{ start_date }}, {{ end_date }})))
@@ -164,9 +202,23 @@ aou_concept_set <- function(cohort = NULL,
 
   if (must_collect) {
     # collect to restrict the concepts between the given start and end dates
-    all_concepts <- dplyr::collect(all_concepts) %>%
-      dplyr::right_join(cohort, by = dplyr::join_by("person_id", between("concept_date", "start_date", "end_date")))
-    cohort_w_concepts <- all_concepts
+    cohort_w_concepts <- tryCatch(
+      {
+        all_concepts <- dplyr::collect(all_concepts) %>%
+          dplyr::right_join(cohort_to_join, by = dplyr::join_by("person_id", between("concept_date", "start_date", "end_date")))
+        all_concepts
+      },
+      error = function(e) {
+        cli::cli_abort(
+          c(
+            "The query is too large. Try providing the cohort as a remote table rather than a local dataframe, or split into multiple queries.",
+            "Please report this at report this issue at {.url https://github.com/roux-ohdsi/allofus/issues} so we can improve the package."
+          ),
+          call = NULL
+        )
+        return(e)
+      }
+    )
   } else {
     cohort_w_concepts <- dplyr::right_join(all_concepts, tmp,
       by = dplyr::join_by("person_id", between("concept_date", "start_date", "end_date"))
