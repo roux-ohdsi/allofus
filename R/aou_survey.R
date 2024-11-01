@@ -434,14 +434,17 @@ aou_survey <- function(cohort = NULL,
       # need to only do this if there are values in questions that correspond to these
       tmptbl = aou_create_temp_table(
         allofus::aou_concept_codes %>%
-          filter(str_detect(code, "SDOH|COPE")) %>%
-          rename(value_source_value = code,
-                 better_answer = answer)
+          dplyr::filter(
+            stringr::str_detect(code, "SDOH|COPE")) %>%
+          dplyr::rename(
+                value_source_value = code,
+                 better_answer = answer
+                )
       )
 
-      tmp <- left_join(tmp, tmptbl, by = "value_source_value") %>%
-        mutate(value_source_value = ifelse(is.na(better_answer), value_source_value, better_answer)) %>%
-        select(-better_answer)
+      tmp <- dplyr::left_join(tmp, tmptbl, by = "value_source_value") %>%
+        dplyr::mutate(value_source_value = ifelse(is.na(better_answer), value_source_value, better_answer)) %>%
+        dplyr::select(-better_answer)
     }
 
     # go wide
