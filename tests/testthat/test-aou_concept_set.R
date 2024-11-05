@@ -48,5 +48,5 @@ test_that("aou_concept_set() returns dataframe when start/end date given, even i
       domain = "procedure", output = "all"
     ))
 
-  expect_is(res, "data.frame")
+  expect_s3_class(res, "data.frame")
 })
