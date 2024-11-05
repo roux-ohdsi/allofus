@@ -1,11 +1,13 @@
-library(allofus)
-library(tidyverse)
-library(testthat)
+testthat::test_that("All dataframes in 'out' list are equivalent", {
+
+skip_workbench()
 con <- aou_connect()
 
-aou_concept_set <- purrr::possibly(aou_concept_set, otherwise = NA)
-collect <- purrr::possibly(collect, otherwise = NA)
-arrange <- purrr::possibly(arrange, otherwise = NA)
+if (!rlang::is_interactive()) {
+  aou_concept_set <- purrr::possibly(aou_concept_set, otherwise = NA)
+  collect <- purrr::possibly(collect, otherwise = NA)
+  arrange <- purrr::possibly(arrange, otherwise = NA)
+}
 
 eligible <- tbl(con, "person") %>%
   head(10000) %>%
@@ -24,6 +26,24 @@ eligible2 <- tbl(con, "person") %>%
   ) %>%
   head(10000)
 
+eligible3 <- tbl(con, "person") %>%
+  head(10000) %>%
+  select(person_id) %>%
+  mutate(
+    start_date = as.Date("2018-01-01"),
+    end_date = as.Date("2023-01-01")
+  ) %>%
+  collect()
+
+eligible4 <- tbl(con, "person") %>%
+  select(person_id) %>%
+  mutate(
+    start_date = as.Date("2018-01-01"),
+    end_date = as.Date("2023-01-01")
+  ) %>%
+  head(10000)
+
+
 CGM_obs <- aou_concept_set(
   eligible,
   concepts = c(
@@ -38,6 +58,7 @@ CGM_obs <- aou_concept_set(
   output = "all",
   collect = TRUE
 ) %>% arrange(person_id, concept_id, concept_date)
+
 
 
 CGM_obs2 <- aou_concept_set(
@@ -70,34 +91,38 @@ CGM_obs3 <- aou_concept_set(
   collect = FALSE
 ) %>% collect() %>% arrange(person_id, concept_id, concept_date)
 
-CGM_obs4 <- aou_concept_set(
-  eligible,
-  concepts = c(
-    725115,
-    2314092,
-    2314093
-  ),
-  concept_set_name = "CGM_obs",
-  domains = "procedure",
-  start_date = "first_eligible_date",
-  end_date = "end_study_date",
-  output = "all",
-  collect = FALSE
-) %>% collect() %>% arrange(person_id, concept_id, concept_date)
+suppressWarnings({
+  CGM_obs4 <- aou_concept_set(
+    eligible,
+    concepts = c(
+      725115,
+      2314092,
+      2314093
+    ),
+    concept_set_name = "CGM_obs",
+    domains = "procedure",
+    start_date = "first_eligible_date",
+    end_date = "end_study_date",
+    output = "all",
+    collect = FALSE
+  ) %>% collect() %>% arrange(person_id, concept_id, concept_date)
+})
 
-CGM_obs5 <- aou_concept_set(
-  eligible,
-  concepts = c(
-    725115,
-    2314092,
-    2314093
-  ),
-  concept_set_name = "CGM_obs",
-  domains = "procedure",
-  start_date = "first_eligible_date",
-  end_date = "end_study_date",
-  output = "all",
-) %>% collect() %>% arrange(person_id, concept_id, concept_date)
+suppressWarnings({
+  CGM_obs5 <- aou_concept_set(
+    eligible,
+    concepts = c(
+      725115,
+      2314092,
+      2314093
+    ),
+    concept_set_name = "CGM_obs",
+    domains = "procedure",
+    start_date = "first_eligible_date",
+    end_date = "end_study_date",
+    output = "all",
+  ) %>% collect() %>% arrange(person_id, concept_id, concept_date)
+})
 
 CGM_obs6 <- aou_concept_set(
   eligible2,
@@ -113,28 +138,21 @@ CGM_obs6 <- aou_concept_set(
   output = "all",
 ) %>% collect() %>% arrange(person_id, concept_id, concept_date)
 
-eligible3 <- tbl(con, "person") %>%
-  head(10000) %>%
-  select(person_id) %>%
-  mutate(
-    start_date = as.Date("2018-01-01"),
-    end_date = as.Date("2023-01-01")
-  ) %>%
-  collect()
-
-CGM_obs7 <- aou_concept_set(
-  eligible3,
-  concepts = c(
-    725115,
-    2314092,
-    2314093
-  ),
-  concept_set_name = "CGM_obs",
-  domains = "procedure",
-  start_date = "start_date",
-  end_date = "end_date",
-  output = "all",
-) %>% collect() %>% arrange(person_id, concept_id, concept_date)
+suppressWarnings({
+  CGM_obs7 <- aou_concept_set(
+    eligible3,
+    concepts = c(
+      725115,
+      2314092,
+      2314093
+    ),
+    concept_set_name = "CGM_obs",
+    domains = "procedure",
+    start_date = "start_date",
+    end_date = "end_date",
+    output = "all",
+  ) %>% collect() %>% arrange(person_id, concept_id, concept_date)
+})
 
 CGM_obs8 <- aou_concept_set(
   eligible3,
@@ -151,28 +169,22 @@ CGM_obs8 <- aou_concept_set(
   collect = TRUE
 ) %>% arrange(person_id, concept_id, concept_date)
 
-CGM_obs9 <- aou_concept_set(
-  eligible3,
-  concepts = c(
-    725115,
-    2314092,
-    2314093
-  ),
-  concept_set_name = "CGM_obs",
-  domains = "procedure",
-  start_date = "start_date",
-  end_date = "end_date",
-  output = "all",
-  collect = FALSE
-) %>% collect() %>% arrange(person_id, concept_id, concept_date)
-
-eligible4 <- tbl(con, "person") %>%
-  select(person_id) %>%
-  mutate(
-    start_date = as.Date("2018-01-01"),
-    end_date = as.Date("2023-01-01")
-  ) %>%
-  head(10000)
+suppressWarnings({
+  CGM_obs9 <- aou_concept_set(
+    eligible3,
+    concepts = c(
+      725115,
+      2314092,
+      2314093
+    ),
+    concept_set_name = "CGM_obs",
+    domains = "procedure",
+    start_date = "start_date",
+    end_date = "end_date",
+    output = "all",
+    collect = FALSE
+  ) %>% collect() %>% arrange(person_id, concept_id, concept_date)
+})
 
 CGM_obs10 <- aou_concept_set(
   eligible4,
@@ -233,26 +245,23 @@ out = list(
   CGM_obs12
 )
 
-# test that they're not all NA
 
-testthat::test_that("aou_survey returns all dataframes", {
+out_equivalent <- map(out, \(dat) select(dat, person_id, concept_date, concept_id, concept_name, concept_domain))
+
   testthat::expect_true(
-    all(!is.na(out))
+    all(!is.na(out)),
+    "Not all dataframes are equal"
   )
-})
 
-# row_counts <- map_int(out2, nrow)
-#
-# all_identical <- all(map_lgl(out2[-1], identical, out2[1]))
-# identical(out2[1], out2[3])
+  testthat::expect_equal(
+    map_dbl(out, ncol),
+    rep(7, length(out)), "not all dataframes have 7 columns"
+  )
 
-# waldo::compare(CGM_obs5, CGM_obs6)
+  expect_true(is.list(out_equivalent))
+  expect_gt(length(out_equivalent), 1)
 
-testthat::test_that("All dataframes in 'out' list are equivalent", {
-  expect_true(is.list(out))
-  expect_gt(length(out), 1)
-
-  all_same <- all(map_lgl(out[-1], identical, out[[1]]))
+  all_same <- all(map_lgl(out_equivalent[-1], identical, out_equivalent[[1]]))
   expect_true(all_same, "Not all dataframes in the list are identical")
 })
 
