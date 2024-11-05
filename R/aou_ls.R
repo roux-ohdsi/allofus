@@ -113,6 +113,8 @@ aou_ls_bucket <- function(pattern = "", silent = FALSE, recursive = TRUE, bucket
 #' aou_bucket_to_workspace("testdata.csv")
 #' # read in to your local environment
 #' read.csv("testdata.csv")
+#' file.remove("testdata.csv")
+#'
 #'
 aou_bucket_to_workspace <- function(file, directory = FALSE, bucket = getOption("aou.default.bucket")) {
   # # Copy the file from current workspace to the bucket

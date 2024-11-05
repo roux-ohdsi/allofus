@@ -45,6 +45,9 @@ Executes an SQL query on the All of Us database
 }
 \examples{
 \dontshow{if (on_workbench()) (if (getRversion() >= "3.4") withAutoprint else force)(\{ # examplesIf}
+
+con <- aou_connect()
+
 # Examples based on AoU snippets
 aou_sql("
   -- Compute the count of unique participants in our All of Us cohort.

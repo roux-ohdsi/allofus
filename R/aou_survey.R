@@ -425,9 +425,9 @@ aou_survey <- function(cohort = NULL,
     if (isTRUE(clean_answers)) {
       tmp <- dplyr::mutate(tmp,
         value_source_value = dplyr::case_when(
-          CONTAINS_SUBSTR(.data$value_source_value, "cope_") ~ value_source_value,
-          CONTAINS_SUBSTR(.data$value_source_value, "SDOH_") ~ value_source_value,
-          !CONTAINS_SUBSTR(.data$value_source_value, "_") ~ value_source_value,
+          CONTAINS_SUBSTR(.data$value_source_value, "cope_") ~ .data$value_source_value,
+          CONTAINS_SUBSTR(.data$value_source_value, "SDOH_") ~ .data$value_source_value,
+          !CONTAINS_SUBSTR(.data$value_source_value, "_") ~ .data$value_source_value,
           TRUE ~ REGEXP_EXTRACT(.data$value_source_value, ".+_(.+_*.*)")
         )
       )
@@ -435,15 +435,15 @@ aou_survey <- function(cohort = NULL,
       tmptbl = aou_create_temp_table(
         allofus::aou_concept_codes %>%
           dplyr::filter(
-            stringr::str_detect(code, "SDOH|COPE")) %>%
+            stringr::str_detect(.data$code, "SDOH|COPE")) %>%
           dplyr::rename(
-                value_source_value = code,
-                 better_answer = answer
+                value_source_value = "code",
+                 better_answer = "answer"
                 )
       )
 
       tmp <- dplyr::left_join(tmp, tmptbl, by = "value_source_value") %>%
-        dplyr::mutate(value_source_value = ifelse(is.na(better_answer), value_source_value, better_answer)) %>%
+        dplyr::mutate(value_source_value = ifelse(is.na(.data$better_answer), .data$value_source_value, .data$better_answer)) %>%
         dplyr::select(-"better_answer")
     }
 

@@ -115,6 +115,9 @@ aou_connect <- function(CDR = getOption("aou.default.cdr"), ...) {
 #' @export
 #'
 #' @examplesIf on_workbench()
+#'
+#' con <- aou_connect()
+#'
 #' # Examples based on AoU snippets
 #' aou_sql("
 #'   -- Compute the count of unique participants in our All of Us cohort.

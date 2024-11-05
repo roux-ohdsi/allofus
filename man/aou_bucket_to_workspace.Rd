@@ -46,5 +46,7 @@ aou_workspace_to_bucket(file.path(tmp, "testdata.csv"))
 aou_bucket_to_workspace("testdata.csv")
 # read in to your local environment
 read.csv("testdata.csv")
+file.remove("testdata.csv")
+
 \dontshow{\}) # examplesIf}
 }
