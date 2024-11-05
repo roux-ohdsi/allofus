@@ -1,13 +1,14 @@
 # Test aou_ls_workspace function
 test_that("aou_ls_workspace function returns correct files", {
   # Create some test files
-  tmp <- tempdir(check = TRUE)
+  tmp <- tempdir()
+  dir.create(tmp)
   file.create(file.path(tmp, "test1.csv"))
   file.create(file.path(tmp, "test2.txt"))
   file.create(file.path(tmp, "test3.R"))
 
   # Test finding all files
-  expect_equal(aou_ls_workspace(path = tmp, pattern = "test"), c("test1.csv", "test2.txt", "test3.R"))
+  expect_equal(aou_ls_workspace(path = tmp), c("test1.csv", "test2.txt", "test3.R"))
 
   # Test finding csv files
   expect_equal(aou_ls_workspace(pattern = "*.csv", path = tmp), "test1.csv")
