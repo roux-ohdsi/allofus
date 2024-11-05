@@ -1,6 +1,6 @@
-library(allofus)
-library(tidyverse)
-library(testthat)
+testthat::test_that("All dataframes in 'out' list are equivalent", {
+
+skip_workbench()
 con <- aou_connect()
 
 if (!rlang::is_interactive()) {
@@ -245,31 +245,19 @@ out = list(
   CGM_obs12
 )
 
-# test that they're not all NA
-
-testthat::test_that("aou_survey returns all dataframes", {
-  testthat::expect_true(
-    all(!is.na(out))
-  )
-})
-
-testthat::test_that("aou_survey returns the correct number of columns", {
-  testthat::expect_equal(
-    map_dbl(out, ncol),
-    rep(7, length(out))
-  )
-})
-
-# row_counts <- map_int(out2, nrow)
-#
-# all_identical <- all(map_lgl(out2[-1], identical, out2[1]))
-# identical(out2[1], out2[3])
-
-# waldo::compare(CGM_obs5, CGM_obs6)
 
 out_equivalent <- map(out, \(dat) select(dat, person_id, concept_date, concept_id, concept_name, concept_domain))
 
-testthat::test_that("All dataframes in 'out' list are equivalent", {
+  testthat::expect_true(
+    all(!is.na(out)),
+    "Not all dataframes are equal"
+  )
+
+  testthat::expect_equal(
+    map_dbl(out, ncol),
+    rep(7, length(out)), "not all dataframes have 7 columns"
+  )
+
   expect_true(is.list(out_equivalent))
   expect_gt(length(out_equivalent), 1)
 
