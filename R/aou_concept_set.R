@@ -241,13 +241,13 @@ aou_concept_set <- function(cohort = NULL,
       cli::cli_warn(c("Output includes data from the measurement or observation table. Values will be lost with {.code output = 'indicator'} or {.code output = 'count'}.",
                       ">" = "Consider using {.code output = 'all'} to get all data."
       ))
-    } else {
-      cohort_w_concepts <- cohort_w_concepts %>%
-        dplyr::select(-dplyr::any_of(c(
-          "value_as_number", "value_as_string",
-          "value_as_concept_id", "unit_concept_id"
-        )))
     }
+  } else {
+    cohort_w_concepts <- cohort_w_concepts %>%
+      dplyr::select(-dplyr::any_of(c(
+        "value_as_number", "value_as_string",
+        "value_as_concept_id", "unit_concept_id"
+      )))
   }
 
   if (output == "all") {
