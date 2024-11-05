@@ -35,6 +35,9 @@
 #'
 #' @examplesIf on_workbench()
 #' # indicator for any aspirin at any time
+#'
+#' con <- aou_connect()
+#'
 #' aspirin_users <- aou_concept_set(dplyr::tbl(con, "person"),
 #'   concepts = 1191, concept_set_name = "aspirin", domains = "drug"
 #' )

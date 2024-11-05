@@ -35,6 +35,8 @@ integer values are converted to doubles. If this is not what you want, set
 }
 \examples{
 \dontshow{if (on_workbench()) (if (getRversion() >= "3.4") withAutoprint else force)(\{ # examplesIf}
+# connect to database
+con <- aou_connect()
 
 # returns 2 rows, as expected
 dplyr::tbl(con, "concept") \%>\%
@@ -42,7 +44,7 @@ dplyr::tbl(con, "concept") \%>\%
   aou_collect() \%>\%
   dplyr::filter(concept_id \%in\% c(1112807, 4167538))
 
-default_collect <- tbl(con, "concept") \%>\%
+default_collect <- dplyr::tbl(con, "concept") \%>\%
   dplyr::filter(concept_id \%in\% c(1112807, 4167538)) \%>\%
   dplyr::collect()
 # returns 2 rows in Jupyter and 0 in RStudio

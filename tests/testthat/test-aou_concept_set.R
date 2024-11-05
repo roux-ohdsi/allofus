@@ -13,7 +13,8 @@ test_that("aou_concept_set() returns counts correctly", {
 
   expect_gt(
     {
-      dplyr::tbl(con, "person") %>%
+      suppressWarnings(
+        dplyr::tbl(con, "person") %>%
         dplyr::mutate(
           start_date = as.Date("2018-01-01"),
           end_date = as.Date("2022-01-01")
@@ -27,6 +28,7 @@ test_that("aou_concept_set() returns counts correctly", {
         dplyr::count(mammogram) %>%
         dplyr::tally() %>%
         dplyr::pull(1)
+      )
     },
     5
   )

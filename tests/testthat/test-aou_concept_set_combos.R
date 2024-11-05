@@ -5,39 +5,39 @@ con <- aou_connect()
 
 if (!rlang::is_interactive()) {
   aou_concept_set <- purrr::possibly(aou_concept_set, otherwise = NA)
-  collect <- purrr::possibly(collect, otherwise = NA)
-  arrange <- purrr::possibly(arrange, otherwise = NA)
+  collect <- purrr::possibly(dplyr::collect, otherwise = NA)
+  arrange <- purrr::possibly(dplyr::arrange, otherwise = NA)
 }
 
-eligible <- tbl(con, "person") %>%
+eligible <- dplyr::tbl(con, "person") %>%
   head(10000) %>%
-  select(person_id) %>%
-  mutate(
+  dplyr::select(person_id) %>%
+  dplyr::mutate(
     first_eligible_date = as.Date("2018-01-01"),
     end_study_date = as.Date("2023-01-01")
   ) %>%
   collect()
 
-eligible2 <- tbl(con, "person") %>%
-  select(person_id) %>%
-  mutate(
+eligible2 <- dplyr::tbl(con, "person") %>%
+  dplyr::select(person_id) %>%
+  dplyr::mutate(
     first_eligible_date = as.Date("2018-01-01"),
     end_study_date = as.Date("2023-01-01")
   ) %>%
   head(10000)
 
-eligible3 <- tbl(con, "person") %>%
+eligible3 <- dplyr::tbl(con, "person") %>%
   head(10000) %>%
-  select(person_id) %>%
-  mutate(
+  dplyr::select(person_id) %>%
+  dplyr::mutate(
     start_date = as.Date("2018-01-01"),
     end_date = as.Date("2023-01-01")
   ) %>%
   collect()
 
-eligible4 <- tbl(con, "person") %>%
-  select(person_id) %>%
-  mutate(
+eligible4 <- dplyr::tbl(con, "person") %>%
+  dplyr::select(person_id) %>%
+  dplyr::mutate(
     start_date = as.Date("2018-01-01"),
     end_date = as.Date("2023-01-01")
   ) %>%
@@ -246,7 +246,7 @@ out = list(
 )
 
 
-out_equivalent <- map(out, \(dat) select(dat, person_id, concept_date, concept_id, concept_name, concept_domain))
+out_equivalent <- purrr::map(out, \(dat) dplyr::select(dat, person_id, concept_date, concept_id, concept_name, concept_domain))
 
   testthat::expect_true(
     all(!is.na(out)),
@@ -254,14 +254,14 @@ out_equivalent <- map(out, \(dat) select(dat, person_id, concept_date, concept_i
   )
 
   testthat::expect_equal(
-    map_dbl(out, ncol),
-    rep(7, length(out)), "not all dataframes have 7 columns"
+    purrr::map_dbl(out, ncol),
+    rep(7, length(out))
   )
 
   expect_true(is.list(out_equivalent))
   expect_gt(length(out_equivalent), 1)
 
-  all_same <- all(map_lgl(out_equivalent[-1], identical, out_equivalent[[1]]))
+  all_same <- all(purrr::map_lgl(out_equivalent[-1], identical, out_equivalent[[1]]))
   expect_true(all_same, "Not all dataframes in the list are identical")
 })
 
