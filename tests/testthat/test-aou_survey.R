@@ -1,6 +1,9 @@
-library(allofus)
-library(tidyverse)
-library(testthat)
+
+
+testthat::test_that("All dataframes in 'out' list are equivalent", {
+
+skip_workbench()
+
 con <- aou_connect()
 
 aou_concept_set <- purrr::possibly(aou_concept_set, otherwise = NA)
@@ -233,22 +236,11 @@ out = list(
   CGM_obs12
 )
 
-# test that they're not all NA
 
-testthat::test_that("aou_survey returns all dataframes", {
   testthat::expect_true(
-    all(!is.na(out))
+    all(!is.na(out)), "aou_concept_set does not return all dataframes"
   )
-})
 
-# row_counts <- map_int(out2, nrow)
-#
-# all_identical <- all(map_lgl(out2[-1], identical, out2[1]))
-# identical(out2[1], out2[3])
-
-# waldo::compare(CGM_obs5, CGM_obs6)
-
-testthat::test_that("All dataframes in 'out' list are equivalent", {
   expect_true(is.list(out))
   expect_gt(length(out), 1)
 
