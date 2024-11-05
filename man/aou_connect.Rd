@@ -27,7 +27,8 @@ status (successful or not).
 \details{
 You can reference this object to connect to the All of Us database
 and run SQL code using, e.g., \code{dbplyr} or \code{DBI}. A message is printed with
-the connection status (successful or not).
+the connection status (successful or not). For RStudio users, setting quiet = TRUE
+will silence most (but not all) billing messages.
 }
 \examples{
 \dontshow{if (on_workbench()) (if (getRversion() >= "3.4") withAutoprint else force)(\{ # examplesIf}

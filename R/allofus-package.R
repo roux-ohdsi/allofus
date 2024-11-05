@@ -12,5 +12,6 @@
 #' @importFrom utils packageVersion
 #' @importFrom utils read.csv
 #' @importFrom utils untar
+#' @importFrom utils head
 ## usethis namespace: end
 NULL

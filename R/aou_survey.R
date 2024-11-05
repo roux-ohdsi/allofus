@@ -444,7 +444,7 @@ aou_survey <- function(cohort = NULL,
 
       tmp <- dplyr::left_join(tmp, tmptbl, by = "value_source_value") %>%
         dplyr::mutate(value_source_value = ifelse(is.na(better_answer), value_source_value, better_answer)) %>%
-        dplyr::select(-better_answer)
+        dplyr::select(-"better_answer")
     }
 
     # go wide

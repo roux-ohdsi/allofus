@@ -205,7 +205,7 @@ aou_concept_set <- function(cohort = NULL,
     # collect to restrict the concepts between the given start and end dates
     cohort_w_concepts <- tryCatch(
       {
-        tmp_concepts <- dplyr::right_join(all_concepts, dplyr::select(tmp, person_id), by = dplyr::join_by("person_id"))
+        tmp_concepts <- dplyr::right_join(all_concepts, dplyr::select(tmp, "person_id"), by = dplyr::join_by("person_id"))
         all_concepts <- dplyr::collect(tmp_concepts) %>%
           dplyr::right_join(cohort_to_join, by = dplyr::join_by("person_id", between("concept_date", "start_date", "end_date")))
         all_concepts

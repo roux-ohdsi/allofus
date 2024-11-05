@@ -47,7 +47,8 @@ The function is based on a similar function in
 \url{https://github.com/cmayer2/r4aou} with some tweaks to generate the
 appropriate observation periods and incorporate other package functions.
 Please see the \href{https://roux-ohdsi.github.io/allofus/vignettes/atlas.html}{online vignette} for
-additional details.
+additional details. Note that some cohorts may not be compatible with \code{aou_atlas_cohort()} but setting
+generateStats = FALSE in \code{getCohortSql()} can resolve some issues.
 }
 \examples{
 \dontshow{if (on_workbench()) (if (getRversion() >= "3.4") withAutoprint else force)(\{ # examplesIf}
