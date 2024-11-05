@@ -27,8 +27,8 @@ Roxygen: list(markdown = TRUE)
 RemoteType: local
 RemoteUrl: /Users/robcavanaugh/Documents/Github/allofus
 NeedsCompilation: no
-Packaged: 2024-08-05 14:36:40 UTC; robcavanaugh
+Packaged: 2024-11-05 21:07:55 UTC; robcavanaugh
 Author: Louisa Smith [aut, cph] (<https://orcid.org/0000-0001-9029-4644>),
   Rob Cavanaugh [aut, cre, cph] (<https://orcid.org/0000-0002-2114-6565>)
 Maintainer: Rob Cavanaugh <r.cavanaugh@northeastern.edu>
-Built: R 4.2.2; ; 2024-08-05 14:36:40 UTC; unix
+Built: R 4.2.2; ; 2024-11-05 21:07:55 UTC; unix

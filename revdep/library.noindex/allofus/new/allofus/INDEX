@@ -6,6 +6,7 @@ aou_codebook            All of Us Modified Codebook
 aou_collect             Collect a tbl object and convert integer64
                         columns to double
 aou_compute             Compute a dplyr tbl SQL query into a temp table
+aou_concept_codes       Concept codes and survey answers
 aou_concept_set         Get occurrences of a concept set from AoU for a
                         given cohort
 aou_connect             Create a connection to the database in All of
