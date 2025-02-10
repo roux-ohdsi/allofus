@@ -211,3 +211,36 @@ aou_workspace_to_bucket <- function(file, directory = FALSE,
   }
   invisible(file.remove(tmp_log))
 }
+
+
+aou_read_from_bucket <- function(filename, silent = FALSE,
+                                 bucket = Sys.getenv("WORKSPACE_BUCKET"),  # change to aou.default.bucket
+                                 project = Sys.getenv("GOOGLE_PROJECT"),
+                                 read_fn = readr::read_table,
+                                 gsutil_args = "", ...) {
+
+
+    # Check whether file is a full path including a gs:// prefix.
+    if (stringr::str_starts(filename, "gs://")) {
+      bucket_file = filename
+    } else {
+      bucket_file = file.path(bucket, filename)
+    }
+
+    print(bucket_file)
+
+    # Check if the file exists.
+    files <- suppressWarnings(system(paste0("gsutil ls ", gsutil_args, " ", bucket_file), intern = TRUE))
+    print(files)
+    if (length(files) == 0) {
+      stop("File not found in bucket.")
+    }
+
+    # If it exists, stream the contents into R.
+    cmd = paste0("gsutil -u ", project, " ", gsutil_args, " cat ", bucket_file)
+    print(cmd)
+    system(cmd, intern=T) %>%
+      I() %>%  # I forget why I had to include this.
+      read_fn(...)
+
+}
