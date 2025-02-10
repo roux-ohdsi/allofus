@@ -213,6 +213,25 @@ aou_workspace_to_bucket <- function(file, directory = FALSE,
 }
 
 
+#' Read the contents of a file in your bucket into memory.
+#'
+#' @description Streams the contents of a file in your bucket into memory.
+#'
+#' @param filename The name of the file to read in. This can either be a full bucket path,
+#'   or the path to the file relative to the bucket associated with the workspace.
+#' @param bucket The bucket to read the file from, if not specified in the filename.
+#' @param project The Google Cloud project to use.
+#' @param read_fn The function to use to read the file. Defaults to `readr::read_table`.
+#' @param gsutil_args Additional arguments to pass to `gsutil cat`.
+#' @param ... Other arguments passed to `read_fn`.
+#' @return The contents of the file as returned by read_fn.
+#'
+#' @export
+#' @examples on_workbench()
+#' files = aou_ls_bucket("*.tsv")
+#' file = files[1]
+#' aou_read_from_bucket(file, read_fn=readr::read_tsv)
+#'
 aou_read_from_bucket <- function(filename, silent = FALSE,
                                  bucket = Sys.getenv("WORKSPACE_BUCKET"),  # change to aou.default.bucket
                                  project = Sys.getenv("GOOGLE_PROJECT"),
