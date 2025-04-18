@@ -208,6 +208,8 @@ aou_atlas_cohort <- function(cohort_definition,
       sql_translated <- gsub("create table", "CREATE TEMP TABLE", sql_translated)
       sql_translated <- gsub("CREATE TABLE", "CREATE TEMP TABLE", sql_translated)
 
+      sql_translated <- gsub("\\s*DROP TABLE( IF EXISTS)?.*?;\\s*\n", "\n", sql_translated, ignore.case = TRUE)
+
       # Execute SQL
 
       r <- allofus::aou_sql(sql_translated, debug = debug, collect = collect, ..., con = con) %>%
