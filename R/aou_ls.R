@@ -211,3 +211,55 @@ aou_workspace_to_bucket <- function(file, directory = FALSE,
   }
   invisible(file.remove(tmp_log))
 }
+
+
+#' Read the contents of a file in your bucket into memory.
+#'
+#' @description Streams the contents of a file in your bucket into memory.
+#'
+#' @param filename The name of the file to read in. This can either be a full bucket path,
+#'   or the path to the file relative to the bucket associated with the workspace.
+#' @param bucket The bucket to read the file from, if not specified in the filename.
+#' @param project The Google Cloud project to use.
+#' @param read_fn The function to use to read the file. Defaults to `readr::read_table`.
+#' @param gsutil_args Additional arguments to pass to `gsutil cat`.
+#' @param ... Other arguments passed to `read_fn`.
+#' @return The contents of the file as returned by read_fn.
+#'
+#' @export
+#' @examples on_workbench()
+#' files = aou_ls_bucket("*.tsv")
+#' file = files[1]
+#' aou_read_from_bucket(file, read_fn=readr::read_tsv)
+#'
+aou_read_from_bucket <- function(filename, silent = FALSE,
+                                 bucket = Sys.getenv("WORKSPACE_BUCKET"),  # change to aou.default.bucket
+                                 project = Sys.getenv("GOOGLE_PROJECT"),
+                                 read_fn = readr::read_table,
+                                 gsutil_args = "", ...) {
+
+
+    # Check whether file is a full path including a gs:// prefix.
+    if (stringr::str_starts(filename, "gs://")) {
+      bucket_file = filename
+    } else {
+      bucket_file = file.path(bucket, filename)
+    }
+
+    print(bucket_file)
+
+    # Check if the file exists.
+    files <- suppressWarnings(system(paste0("gsutil ls ", gsutil_args, " ", bucket_file), intern = TRUE))
+    print(files)
+    if (length(files) == 0) {
+      stop("File not found in bucket.")
+    }
+
+    # If it exists, stream the contents into R.
+    cmd = paste0("gsutil -u ", project, " ", gsutil_args, " cat ", bucket_file)
+    print(cmd)
+    system(cmd, intern=T) %>%
+      I() %>%  # I forget why I had to include this.
+      read_fn(...)
+
+}
