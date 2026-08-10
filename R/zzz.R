@@ -1,23 +1,24 @@
 #' @keywords internal
 .onLoad <- function(libname = find.package("allofus"), pkgname = "allofus") {
-  # if the verily env vars aren't set, try to source them from the ~/.aou-env
-  # cache first (fast: no subprocess calls), then fall back to querying the
-  # Workbench CLI directly (workbench 2.0, where WORKSPACE_CDR is never
-  # injected as an OS env var), caching the result for next time
-  if (Sys.getenv("WORKSPACE_CDR") == "") {
-    cached <- read_aou_env()
+  # for any of the verily env vars that aren't already set, try to source them
+  # from the ~/.aou-env cache first (fast: no subprocess calls), then fall back
+  # to querying the Workbench CLI directly (workbench 2.0, where these are never
+  # injected as OS env vars), caching the result for next time. each variable is
+  # resolved independently: a cache written before GOOGLE_PROJECT was resolvable
+  # still holds a usable WORKSPACE_CDR, and shouldn't stop us looking up the rest
+  needed <- c("WORKSPACE_CDR", "GOOGLE_PROJECT")
+  unset <- needed[Sys.getenv(needed) == ""]
 
-    if (!is.na(cached["WORKSPACE_CDR"]) && cached["WORKSPACE_CDR"] != "") {
-      to_set <- as.list(cached)
-      to_set <- to_set[Sys.getenv(names(to_set)) == ""]
-      if (length(to_set) > 0) do.call(Sys.setenv, to_set)
-    } else {
-      resolved <- tryCatch(workbench_env_vars(), error = function(e) NULL)
-      if (length(resolved) > 0) {
-        write_aou_env(resolved)
-        resolved <- resolved[Sys.getenv(names(resolved)) == ""]
-        if (length(resolved) > 0) do.call(Sys.setenv, resolved)
-      }
+  if (length(unset) > 0) {
+    set_env_vars(read_aou_env()[unset])
+    unset <- needed[Sys.getenv(needed) == ""]
+  }
+
+  if (length(unset) > 0) {
+    resolved <- tryCatch(workbench_env_vars(), error = function(e) NULL)
+    if (length(resolved) > 0) {
+      write_aou_env(resolved)
+      set_env_vars(resolved[unset])
     }
   }
 
@@ -33,6 +34,31 @@
     options(op.aou[toset])
   }
   invisible()
+}
+
+#' Set environment variables that aren't already set
+#' @description Silently drops entries that are missing, `NA`, or empty (name
+#'   or value), so callers can pass the result of subsetting by a name that may
+#'   not be present.
+#' @param vars A named list or character vector of environment variables.
+#' @return Nothing; called for its side effect.
+#' @keywords internal
+set_env_vars <- function(vars) {
+  vars <- as.list(vars)
+  if (length(vars) == 0 || is.null(names(vars))) {
+    return(invisible(NULL))
+  }
+
+  keep <- !is.na(names(vars)) & names(vars) != "" &
+    vapply(vars, function(x) length(x) == 1 && !is.na(x) && x != "", logical(1))
+  vars <- vars[keep]
+  if (length(vars) == 0) {
+    return(invisible(NULL))
+  }
+
+  vars <- vars[Sys.getenv(names(vars)) == ""]
+  if (length(vars) > 0) do.call(Sys.setenv, vars)
+  invisible(NULL)
 }
 
 #' Read cached workspace environment variables from `~/.aou-env`
@@ -92,7 +118,32 @@ workbench_env_vars <- function() {
     return(NULL)
   }
 
-  response <- suppressWarnings(system2("wb", c("resource", "list", "--format=json"), stdout = TRUE, stderr = FALSE))
+  # the two come from different places (the CLI vs. the on-disk context file),
+  # so resolve them independently: a workspace whose CDR can't be identified
+  # still has a usable GOOGLE_PROJECT, and vice versa
+  to_set <- list(
+    WORKSPACE_CDR = workbench_cdr(),
+    GOOGLE_PROJECT = workbench_google_project()
+  )
+  to_set <- purrr::compact(to_set)
+
+  if (length(to_set) == 0) NULL else to_set
+}
+
+#' Resolve `WORKSPACE_CDR` from the Workbench CLI
+#' @return A `project.dataset` string, or `NULL` if it can't be determined.
+#' @keywords internal
+workbench_cdr <- function() {
+  # system2() signals a condition, not just a non-zero status, when `wb` isn't
+  # on the PATH at all (e.g. off the workbench entirely)
+  response <- tryCatch(
+    suppressWarnings(system2("wb", c("resource", "list", "--format=json"), stdout = TRUE, stderr = FALSE)),
+    error = function(e) NULL
+  )
+  if (is.null(response)) {
+    return(NULL)
+  }
+
   resources <- tryCatch(
     jsonlite::fromJSON(paste(response, collapse = "\n"), simplifyVector = FALSE),
     error = function(e) NULL
@@ -103,28 +154,38 @@ workbench_env_vars <- function() {
 
   # the main CDR is a referenced BigQuery dataset; workspaces can also have a
   # "prep_"-prefixed scratch dataset alongside it, which we don't want
-  cdr_resource <- purrr::detect(
-    resources,
-    ~ .x$resourceType %in% c("BQ_DATASET", "BIGQUERY_DATASET", "BIG_QUERY_DATASET") &&
-      .x$stewardshipType == "REFERENCED" &&
-      !startsWith(.x$datasetId, "prep_")
+  cdr_resource <- tryCatch(
+    purrr::detect(
+      resources,
+      ~ isTRUE(.x$resourceType %in% c("BQ_DATASET", "BIGQUERY_DATASET", "BIG_QUERY_DATASET")) &&
+        isTRUE(.x$stewardshipType == "REFERENCED") &&
+        isTRUE(!startsWith(.x$datasetId, "prep_"))
+    ),
+    error = function(e) NULL
   )
   if (is.null(cdr_resource)) {
     return(NULL)
   }
 
-  to_set <- list(WORKSPACE_CDR = paste0(cdr_resource$projectId, ".", cdr_resource$datasetId))
+  paste0(cdr_resource$projectId, ".", cdr_resource$datasetId)
+}
 
+#' Resolve `GOOGLE_PROJECT` from the Workbench context file
+#' @return The workspace's Google project id, or `NULL` if it can't be determined.
+#' @keywords internal
+workbench_google_project <- function() {
   context_path <- path.expand("~/.workbench/context.json")
-  if (file.exists(context_path)) {
-    context <- tryCatch(jsonlite::fromJSON(context_path, simplifyVector = FALSE), error = function(e) NULL)
-    google_project <- context$workspace$googleProjectId
-    if (!is.null(google_project) && google_project != "") {
-      to_set$GOOGLE_PROJECT <- google_project
-    }
+  if (!file.exists(context_path)) {
+    return(NULL)
   }
 
-  to_set
+  context <- tryCatch(jsonlite::fromJSON(context_path, simplifyVector = FALSE), error = function(e) NULL)
+  google_project <- context$workspace$googleProjectId
+  if (is.null(google_project) || google_project == "") {
+    return(NULL)
+  }
+
+  google_project
 }
 
 greet_startup <- function() {
