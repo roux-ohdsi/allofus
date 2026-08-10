@@ -2,13 +2,16 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.8.25">
+<meta name="generator" content="quarto-1.9.38">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
 <title>aou_connect – allofus</title>
 <style>
+/* Default styles provided by pandoc.
+** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
+*/
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
 div.columns{display: flex; gap: min(4vw, 1.5em);}
@@ -70,19 +73,18 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <link href="../images/favicon.ico" rel="icon">
 <script src="../site_libs/quarto-html/quarto.js" type="module"></script>
 <script src="../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
-<script src="../site_libs/quarto-html/axe/axe-check.js" type="module"></script>
 <script src="../site_libs/quarto-html/popper.min.js"></script>
 <script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
 <script src="../site_libs/quarto-html/anchor.min.js"></script>
 <link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="../site_libs/quarto-html/quarto-syntax-highlighting-a14e345711173c227b21482e2eb4cc70.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
-<link href="../site_libs/quarto-html/quarto-syntax-highlighting-dark-6d7e0e055978adcb0dc3bbe98a6d8351.css" rel="stylesheet" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
-<link href="../site_libs/quarto-html/quarto-syntax-highlighting-a14e345711173c227b21482e2eb4cc70.css" rel="stylesheet" class="quarto-color-scheme-extra" id="quarto-text-highlighting-styles">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-6d40f8af7092f34acea1908532066003.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-dark-cac0433bb97fa58dc0fc6599c25c149a.css" rel="stylesheet" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-6d40f8af7092f34acea1908532066003.css" rel="stylesheet" class="quarto-color-scheme-extra" id="quarto-text-highlighting-styles">
 <script src="../site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="../site_libs/bootstrap/bootstrap-c4ba24c007319be9030579b70ab027fb.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
-<link href="../site_libs/bootstrap/bootstrap-dark-a12ff73a71467d68b8ce8498a18a7aca.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
-<link href="../site_libs/bootstrap/bootstrap-c4ba24c007319be9030579b70ab027fb.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme-extra" id="quarto-bootstrap" data-mode="light">
+<link href="../site_libs/bootstrap/bootstrap-109e56bb2f1a920e7ae3d627304493b2.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
+<link href="../site_libs/bootstrap/bootstrap-dark-117298ccafc1d6bd04705c2ea6f2e1b1.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
+<link href="../site_libs/bootstrap/bootstrap-109e56bb2f1a920e7ae3d627304493b2.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme-extra" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -328,10 +330,6 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
 <!-- sidebar -->
   <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
-    <div class="pt-lg-2 mt-2 text-left sidebar-header">
-      <a href="../index.html" class="sidebar-logo-link">
-      </a>
-      </div>
     <div class="sidebar-menu-container"> 
     <ul class="list-unstyled mt-1">
         <li class="sidebar-item">
@@ -624,101 +622,9 @@ Further arguments passed along to <code>DBI::dbConnect()</code>.
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>con <span class="ot">&lt;-</span> <span class="fu">aou_connect</span>()</span>
 <span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="co"># reference the observation table in the database</span></span>
-<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>dplyr<span class="sc">::</span><span class="fu">tbl</span>(con, <span class="st">"observation"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-stdout">
-<pre><code># Source:   table&lt;`observation`&gt; [?? x 21]
-# Database: BigQueryConnection
-   observation_id person_id observation_concept_id observation_date
-          &lt;int64&gt;   &lt;int64&gt;                &lt;int64&gt; &lt;date&gt;          
- 1           7e16   9929706                1704135 2023-07-19      
- 2           7e16   3128683                1704135 2023-08-19      
- 3           7e16   8984266                1704135 2024-02-22      
- 4           7e16   3757069                1704135 2023-08-29      
- 5           7e16   3350503                1704135 2023-08-19      
- 6           7e16   2061569                1704135 2023-07-21      
- 7           7e16   7561169                1704135 2023-07-18      
- 8           7e16   6258330                1704135 2024-01-30      
- 9           7e16   1869655                1704135 2023-07-20      
-10           7e16   1550351                1704135 2023-07-18      
-# ℹ more rows
-# ℹ 17 more variables: observation_datetime &lt;dttm&gt;,
-#   observation_type_concept_id &lt;int64&gt;, value_as_number &lt;dbl&gt;,
-#   value_as_string &lt;chr&gt;, value_as_concept_id &lt;int64&gt;,
-#   qualifier_concept_id &lt;int64&gt;, unit_concept_id &lt;int64&gt;, provider_id &lt;int64&gt;,
-#   visit_occurrence_id &lt;int64&gt;, visit_detail_id &lt;int64&gt;,
-#   observation_source_value &lt;chr&gt;, observation_source_concept_id &lt;int64&gt;, …</code></pre>
-</div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># print a list of the tables in the database</span></span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>DBI<span class="sc">::</span><span class="fu">dbListTables</span>(con)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>  [1] "_cdr_metadata"                   "activity_summary"               
-  [3] "aou_death"                       "attribute_definition"           
-  [5] "attribute_definition_ext"        "care_site"                      
-  [7] "care_site_ext"                   "cb_criteria"                    
-  [9] "cb_criteria_ancestor"            "cb_criteria_attribute"          
- [11] "cb_criteria_menu"                "cb_criteria_relationship"       
- [13] "cb_review_all_events"            "cb_review_survey"               
- [15] "cb_search_all_events"            "cb_search_person"               
- [17] "cb_survey_attribute"             "cb_survey_version"              
- [19] "cb_variant_to_person"            "cdm_source"                     
- [21] "cohort"                          "cohort_attribute"               
- [23] "cohort_definition"               "cohort_definition_ext"          
- [25] "concept"                         "concept_ancestor"               
- [27] "concept_class"                   "concept_relationship"           
- [29] "concept_synonym"                 "condition_era"                  
- [31] "condition_era_ext"               "condition_occurrence"           
- [33] "condition_occurrence_ext"        "cost"                           
- [35] "cost_ext"                        "death"                          
- [37] "delaydiscounting"                "device"                         
- [39] "device_cost"                     "device_cost_ext"                
- [41] "device_exposure"                 "device_exposure_ext"            
- [43] "domain"                          "dose_era"                       
- [45] "dose_era_ext"                    "drug_cost"                      
- [47] "drug_cost_ext"                   "drug_era"                       
- [49] "drug_era_ext"                    "drug_exposure"                  
- [51] "drug_exposure_ext"               "drug_strength"                  
- [53] "ds_activity_summary"             "ds_condition_occurrence"        
- [55] "ds_data_dictionary"              "ds_delaydiscounting_metadata"   
- [57] "ds_delaydiscounting_outcomes"    "ds_delaydiscounting_trial_data" 
- [59] "ds_device"                       "ds_drug_exposure"               
- [61] "ds_emorecog_metadata"            "ds_emorecog_outcomes"           
- [63] "ds_emorecog_trial_data"          "ds_fitbit_device"               
- [65] "ds_flanker_metadata"             "ds_flanker_outcomes"            
- [67] "ds_flanker_trial_data"           "ds_gradcpt_metadata"            
- [69] "ds_gradcpt_outcomes"             "ds_gradcpt_trial_data"          
- [71] "ds_heart_rate_intraday"          "ds_heart_rate_summary"          
- [73] "ds_linking"                      "ds_measurement"                 
- [75] "ds_observation"                  "ds_person"                      
- [77] "ds_procedure_occurrence"         "ds_sleep_daily_summary"         
- [79] "ds_sleep_daily_summary_30dayavg" "ds_sleep_daily_summary_counts"  
- [81] "ds_sleep_level"                  "ds_sleep_level_short"           
- [83] "ds_steps_intraday"               "ds_survey"                      
- [85] "ds_visit_occurrence"             "ds_zip_code_socioeconomic"      
- [87] "emorecog"                        "fact_relationship"              
- [89] "flanker"                         "gradcpt"                        
- [91] "heart_rate_intraday"             "heart_rate_summary"             
- [93] "location"                        "location_ext"                   
- [95] "measurement"                     "measurement_ext"                
- [97] "metadata"                        "observation"                    
- [99] "observation_ext"                 "observation_period"             
-[101] "observation_period_ext"          "payer_plan_period"              
-[103] "payer_plan_period_ext"           "person"                         
-[105] "person_ext"                      "procedure_cost"                 
-[107] "procedure_cost_ext"              "procedure_occurrence"           
-[109] "procedure_occurrence_ext"        "provider"                       
-[111] "provider_ext"                    "relationship"                   
-[113] "sleep_daily_summary"             "sleep_daily_summary_30dayavg"   
-[115] "sleep_daily_summary_counts"      "sleep_daily_summary_ext"        
-[117] "sleep_level"                     "sleep_level_short"              
-[119] "source_to_concept_map"           "specimen"                       
-[121] "specimen_ext"                    "steps_intraday"                 
-[123] "survey_conduct"                  "survey_conduct_ext"             
-[125] "visit_cost"                      "visit_cost_ext"                 
-[127] "visit_detail"                    "visit_detail_ext"               
-[129] "visit_occurrence"                "visit_occurrence_ext"           
-[131] "vocabulary"                      "wear_study"                     
-[133] "zip3_ses_map"                   </code></pre>
-</div>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>dplyr<span class="sc">::</span><span class="fu">tbl</span>(con, <span class="st">"observation"</span>)</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="co"># print a list of the tables in the database</span></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>DBI<span class="sc">::</span><span class="fu">dbListTables</span>(con)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 
 
