@@ -70,7 +70,17 @@ aou_connect <- function(CDR = getOption("aou.default.cdr"), ...) {
       )
 
       if (is.na(connection@dataset) | connection@dataset != release) {
-        stop()
+          stop(
+            sprintf(
+            "BigQuery connection dataset mismatch. Expected dataset '%s' but connection has dataset '%s'. Data project: '%s'. Billing project: '%s'. CDR input: '%s'.",
+            release,
+            as.character(connection@dataset),
+            prefix,
+            Sys.getenv("GOOGLE_PROJECT"),
+            CDR
+            ),
+            call. = FALSE
+        )
       }
 
       # also let it fail if there's no person_table
@@ -82,7 +92,11 @@ aou_connect <- function(CDR = getOption("aou.default.cdr"), ...) {
       connection
     },
     error = function(e) {
-      cli::cli_abort(c("Unable to connect to CDR {CDR}"), call = NULL)
+      cli::cli_abort(
+      c(
+        "Unable to connect to CDR {CDR}",
+        "Caused by: {conditionMessage(e)}"
+      ), call = NULL)
       return(e)
     }
   )
