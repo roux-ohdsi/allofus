@@ -62,6 +62,17 @@ The All of Us Researcher Workbench has migrated to a new, Verily-based platform 
 - **Environment variables are resolved behind the scenes.** `WORKSPACE_CDR` and `GOOGLE_PROJECT` are no longer injected as OS environment variables on workbench 2.0. `allofus` resolves them automatically via the `wb` CLI when the package loads, and caches the result to `~/.aou-env` so subsequent sessions don't need to re-resolve them.
 - **`aou_create_temp_table()` currently doesn't support joins.** The temporary table it creates can be queried directly (e.g., with `dplyr::collect()`), but it currently can't be used in a join with another table in a later query. This seems to be a limitation in how the workbench is set up; it is unclear if it can be fixed.
 
+This was last tested on August 10, 2026, in a workbench 2.0 workspace using CDR version 9 and RStudio, with:
+
+```{r}
+install.packages("pak")
+pak::pak("roux-ohdsi/allofus")
+library(allofus)
+con <- aou_connect()
+```
+
+Workspaces are configured differently as the workbench changes, so please let us know (via the "Issues" tab) if a new workspace doesn't work with this code.
+
 ### Citation
 
 Please cite the `allofus` package as:

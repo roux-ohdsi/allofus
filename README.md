@@ -80,6 +80,20 @@ to the original workbench:
   another table in a later query. This seems to be a limitation in how
   the workbench is set up; it is unclear if it can be fixed.
 
+This was last tested on August 10, 2026, in a workbench 2.0 workspace
+using CDR version 9 and RStudio, with:
+
+``` r
+install.packages("pak")
+pak::pak("roux-ohdsi/allofus")
+library(allofus)
+con <- aou_connect()
+```
+
+Workspaces are configured differently as the workbench changes, so
+please let us know (via the “Issues” tab) if a new workspace doesn’t
+work with this code.
+
 ### Citation
 
 Please cite the `allofus` package as:
