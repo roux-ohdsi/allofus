@@ -22,6 +22,7 @@
   }
 
   op <- options()
+  op <- op[sapply(op, function(x) !identical(x, ""))]
   op.aou <- list(
     aou.default.cdr = Sys.getenv("WORKSPACE_CDR"),
     aou.default.bucket = Sys.getenv("WORKSPACE_BUCKET"),
