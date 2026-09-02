@@ -37,14 +37,6 @@ session and will need to be created again in a new session.
 \details{
 \ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#experimental}{\figure{lifecycle-experimental.svg}{options: alt='[Experimental]'}}}{\strong{[Experimental]}}
 }
-\section{Limitation}{
-
-The resulting temporary table can be queried directly (e.g., with
-\code{dplyr::collect()} or \code{dplyr::filter()}), but it currently cannot be used
-in a join with another table (another \code{dplyr::tbl(con, ...)}, or a second
-temporary table) in a later query.
-}
-
 \examples{
 \dontshow{if (on_workbench()) withAutoprint(\{ # examplesIf}
 con <- aou_connect()

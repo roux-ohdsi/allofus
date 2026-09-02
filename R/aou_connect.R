@@ -264,6 +264,56 @@ aou_sql <- function(query, collect = FALSE, debug = FALSE, ..., con = getOption(
   res
 }
 
+#' Resolve the CDR as a `bq_dataset` object
+#'
+#' Prefers the connection, so that a non-default CDR (e.g. the "base" CDR passed
+#' to `aou_connect()`) is respected, and falls back to the `aou.default.cdr`
+#' option.
+#' @keywords internal
+#' @noRd
+aou_cdr_dataset <- function(con = getOption("aou.default.con")) {
+  if (inherits(con, "BigQueryConnection") &&
+    !is.na(con@dataset) && nzchar(con@dataset)) {
+    return(bigrquery::bq_dataset(con@project, con@dataset))
+  }
+
+  cdr <- getOption("aou.default.cdr")
+  if (is.null(cdr) || !nzchar(cdr)) {
+    cli::cli_abort(c("Unable to determine which CDR to query.",
+      "i" = "Run {.code aou_connect()} first, or set {.code options(aou.default.cdr = ...)}."
+    ), call = NULL)
+  }
+  parts <- strsplit(cdr, split = "\\.")[[1]]
+  bigrquery::bq_dataset(parts[1], parts[2])
+}
+
+#' Run a query against the CDR and return the results table
+#'
+#' A BigQuery job cannot reference tables from two locations, and the All of Us
+#' CDR lives in a single region on Workbench 2.0. A query
+#' that references no CDR table has nothing to infer a location from, so
+#' BigQuery defaults it to the `US` multi-region and puts its results table
+#' there. That table can then never be referenced alongside a CDR table. Running
+#' every query with the CDR as the default dataset pins the job, and therefore
+#' its results table, to the CDR's own location, so intermediate tables stay
+#' joinable.
+#'
+#' @keywords internal
+#' @noRd
+aou_bq_query <- function(q, con = getOption("aou.default.con")) {
+  billing <- if (inherits(con, "BigQueryConnection") && nzchar(con@billing)) {
+    con@billing
+  } else {
+    Sys.getenv("GOOGLE_PROJECT")
+  }
+
+  bigrquery::bq_dataset_query(
+    aou_cdr_dataset(con),
+    query = q,
+    billing = billing
+  )
+}
+
 #' Helper function to get result of a query
 #' @param q query
 #' @param collect Whether to bring the resulting table into local memory
@@ -293,10 +343,9 @@ get_query_table <- function(q, collect = FALSE, ..., con = getOption("aou.defaul
     return(get_query_table_local(q, collect = collect, con = con))
   }
 
-  tbl_obj <- bigrquery::bq_project_query(
-    Sys.getenv("GOOGLE_PROJECT"),
-    query = q, temporary = TRUE
-  )
+  # run in the CDR's location so the results table can be joined to CDR tables
+  # in a later query; see aou_bq_query().
+  tbl_obj <- aou_bq_query(q, con = con)
 
   if (isTRUE(collect)) {
     return(bigrquery::bq_table_download(tbl_obj, ...))
