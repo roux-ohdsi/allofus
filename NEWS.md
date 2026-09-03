@@ -1,3 +1,5 @@
+# allofus (development version)
+
 # allofus 1.3.0
 
 The package now supports All of Us workbench 2.0. In particular, environment variables are resolved on package load. `aou_create_bucket()` can now be used to create a workspace bucket, as it is no longer automatic.
