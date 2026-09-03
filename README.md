@@ -53,9 +53,6 @@ Read through the [getting
 started](https://roux-ohdsi.github.io/allofus/vignettes/allofus.html)
 vignette to learn how to use the package.
 
-A community workspace on the *All of Us* Researcher Workbench will soon
-be available.
-
 ### A note on “Workbench 2.0”
 
 The All of Us Researcher Workbench has migrated to a new, Verily-based
@@ -74,13 +71,8 @@ to the original workbench:
   automatically via the `wb` CLI when the package loads, and caches the
   result to `~/.aou-env` so subsequent sessions don’t need to re-resolve
   them.
-- **`aou_create_temp_table()` currently doesn’t support joins.** The
-  temporary table it creates can be queried directly (e.g., with
-  `dplyr::collect()`), but it currently can’t be used in a join with
-  another table in a later query. This seems to be a limitation in how
-  the workbench is set up; it is unclear if it can be fixed.
 
-This was last tested on August 10, 2026, in a workbench 2.0 workspace
+This was last tested on September 2, 2026, in a workbench 2.0 workspace
 using CDR version 9 and RStudio, with:
 
 ``` r
@@ -111,8 +103,9 @@ or with
 citation("allofus")
 ```
 
-*Note: A pre-print of the special issue can be found here:
-<https://doi.org/10.1101/2024.04.10.24305611>*
+*Note: A pre-print can be found here:
+<https://doi.org/10.1101/2024.04.10.24305611>, or feel free to contact
+us if you can’t access the article.*
 
 We also encourage you to reference the specific version of the package
 you use for an analysis. You can look this up with

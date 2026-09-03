@@ -2,6 +2,8 @@
 
 The package now supports All of Us workbench 2.0. In particular, environment variables are resolved on package load. `aou_create_bucket()` can now be used to create a workspace bucket, as it is no longer automatic.
 
+In addition, this version fixes `aou_create_temp_table()` on workbench 2.0, where the resulting table could not be joined to a CDR table. The workbench 2.0 CDR lives in a single BigQuery region (`us-central1`), but a query built entirely from local data references no CDR table, so BigQuery had nothing to infer a location from and ran it in the `US` multi-region instead. Queries are now run with the CDR as the default dataset, which pins them to the CDR's region.
+
 
 # allofus 1.2.0
 
