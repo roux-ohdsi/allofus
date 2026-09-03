@@ -432,9 +432,8 @@ aou_survey <- function(cohort = NULL,
         )
       )
       # aou_concept_codes is small and bundled locally, so rather than pushing
-      # it into a temp table and joining (which aou_create_temp_table()
-      # doesn't currently support), translate the code -> answer lookup
-      # directly into a SQL CASE WHEN expression
+      # it into a temp table and joining, translate the code -> answer lookup
+      # directly into a SQL CASE WHEN expression: one fewer query job
       sdoh_cope_codes <- allofus::aou_concept_codes %>%
         dplyr::filter(stringr::str_detect(.data$code, "SDOH|COPE"))
 

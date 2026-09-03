@@ -15,11 +15,6 @@
 #' consequitive SQL queries; making `nchar_batch` smaller can avoid errors but
 #' will take longer. The table will only exist for the current connection
 #' session and will need to be created again in a new session.
-#' @section Limitation:
-#' The resulting temporary table can be queried directly (e.g., with
-#' `dplyr::collect()` or `dplyr::filter()`), but it currently cannot be used
-#' in a join with another table (another `dplyr::tbl(con, ...)`, or a second
-#' temporary table) in a later query.
 #' @return a reference to a temporary table in the database with the data from
 #'   `df`
 #' @export
@@ -118,9 +113,7 @@ aou_create_temp_table <- function(data, nchar_batch = 1000000, ..., con = getOpt
       # local (non-BigQuery) backend, e.g. DuckDB: execute through DBI
       n[[i]] <- get_query_table(q, collect = FALSE, con = con)
     } else {
-      tmptbl_object <- bigrquery::bq_project_query(Sys.getenv("GOOGLE_PROJECT"),
-        query = q
-      )
+      tmptbl_object <- aou_bq_query(q, con = con)
       n[[i]] <- dplyr::tbl(con, paste(tmptbl_object$project, tmptbl_object$dataset,
         tmptbl_object$table,
         sep = (".")
@@ -129,11 +122,6 @@ aou_create_temp_table <- function(data, nchar_batch = 1000000, ..., con = getOpt
   }
 
   final_tbl <- purrr::reduce(n, dplyr::union_all)
-
-  cli::cli_warn(c(
-    "!" = "The temporary table returned by {.fn aou_create_temp_table} currently cannot be used in a join with another CDR table.",
-    "i" = "You can still query it directly, e.g. with {.fn dplyr::collect} or {.fn dplyr::filter}."
-  ))
 
   # to deal with display error when printing the output in jupyter
   return(dplyr::filter(final_tbl, 1 > 0))
